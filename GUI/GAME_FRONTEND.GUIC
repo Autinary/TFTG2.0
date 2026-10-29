@@ -1,0 +1,6350 @@
+PakFile 1 "gui/game_frontend_#SKU_#LAN.fpk" 1
+Begin Image
+Name StartScreen_GFX
+File "gui/gfx/startscreen"
+Alpha 1
+End
+Begin Image ps2 wii
+Name front_load_back
+File "gui/gfx/front_load_back"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name front_load_back
+File "gui/gfx/front_load_back_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name Loading_screen
+File "gui/gfx/loading"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name Loading_screen
+File "gui/gfx/loading_hr"
+Alpha 1
+End
+Begin Image
+Name DemoTShield1
+File "gui/gfx/unlocks/DemoT_Shield1"
+Alpha 1
+End
+Begin Image
+Name BonusImage_Locked
+File "gui/gfx/unlocks/BonusImage_Locked"
+Alpha 1
+End
+Begin Image
+Name bracket_bg
+File "gui/gfx/bracket_bg"
+Alpha 1
+End
+Begin Image
+Name bracket_sm
+File "gui/gfx/bracket_sm"
+Alpha 1
+End
+Begin Image
+Name highlight_bg
+File "gui/gfx/highlight_bg"
+Alpha 1
+End
+Begin Image
+Name bracket_holder
+File "gui/gfx/bracket_holder"
+Alpha 1
+End
+Begin Image
+Name centre_bracket
+File "gui/gfx/centre_bracket"
+Alpha 1
+End
+Begin Image
+Name AutobotShield_bg
+File "gui/gfx/AutobotShield_bg"
+Alpha 1
+End
+Begin Image
+Name AutobotShield_bg_glow
+File "gui/gfx/AutobotShield_bg_glow"
+Alpha 1
+End
+Begin Image
+Name decepticonShield_bg
+File "gui/gfx/decepticonShield_bg"
+Alpha 1
+End
+Begin Image
+Name decepticonShield_bg_glow
+File "gui/gfx/decepticonShield_bg_glow"
+Alpha 1
+End
+Begin Image
+Name picture_frame
+File "gui/gfx/picture_frame"
+Alpha 1
+End
+Begin Image
+Name arrow
+File "gui/gfx/arrow"
+Alpha 1
+End
+Begin Image
+Name dot
+File "gui/gfx/dot"
+Alpha 1
+End
+Begin Image
+Name loadingbar
+File "gui/gfx/loadingbar"
+Alpha 1
+End
+Begin Image
+Name screen_airbase
+File "gui/gfx/screen_airbase"
+Alpha 1
+End
+Begin Image
+Name screen_barricade_tranquility
+File "gui/gfx/screen_barricade_tranquility"
+Alpha 1
+End
+Begin Image
+Name screen_blackout_tranquility
+File "gui/gfx/screen_blackout_tranquility"
+Alpha 1
+End
+Begin Image
+Name screen_tranquility
+File "gui/gfx/screen_tranquility"
+Alpha 1
+End
+Begin Image
+Name screen_tranquility2
+File "gui/gfx/screen_tranquility2"
+Alpha 1
+End
+Begin Image
+Name screen_cybertron
+File "gui/gfx/screen_cybertron"
+Alpha 1
+End
+Begin Image
+Name screen_hoover_dam
+File "gui/gfx/screen_hoover_dam"
+Alpha 1
+End
+Begin Image
+Name screen_hoover_external
+File "gui/gfx/screen_hoover_external"
+Alpha 1
+End
+Begin Image
+Name screen_hoover_internal
+File "gui/gfx/screen_hoover_internal"
+Alpha 1
+End
+Begin Image
+Name screen_qatar
+File "gui/gfx/screen_qatar"
+Alpha 1
+End
+Begin Image
+Name screen_city
+File "gui/gfx/screen_city"
+Alpha 1
+End
+Begin Image
+Name screen_in_the_city
+File "gui/gfx/screen_in_the_city"
+Alpha 1
+End
+Begin Image
+Name screen_dcon_city_boss
+File "gui/gfx/screen_dcon_city_boss"
+Alpha 1
+End
+Begin Image
+Name screen_abot_city_boss
+File "gui/gfx/screen_abot_city_boss"
+Alpha 1
+End
+Begin Image
+Name PauseBG_GFX
+File "gui/gfx/pause_logo"
+Alpha 1
+End
+Begin Image ps2 wii
+Name gallery_bottom
+File "gui/gfx/gallery_bottom"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name gallery_bottom
+File "gui/gfx/gallery_bottom_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name gallery_frame_centre
+File "gui/gfx/gallery_frame_centre"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name gallery_frame_centre
+File "gui/gfx/gallery_frame_centre_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name wiper
+File "gui/gfx/wiper"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name wiper
+File "gui/gfx/wiper_hr"
+Alpha 1
+End
+Begin Image
+Name corner
+File "gui/gfx/corner"
+Alpha 1
+End
+Begin Image
+Name side
+File "gui/gfx/side"
+Alpha 1
+End
+Begin Image
+Name teeth
+File "gui/gfx/level_complete_teeth"
+Alpha 1
+End
+Begin Image ps2 wii
+Name char_frame
+File "gui/gfx/frame"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name char_frame
+File "gui/gfx/frame"
+Alpha 1
+End
+Begin Image
+Name pocket
+File "gui/gfx/pocket"
+Alpha 1
+End
+Begin Image
+Name pocket_auto
+File "gui/gfx/pocket_auto"
+Alpha 1
+End
+Begin Image
+Name pocket_dec
+File "gui/gfx/pocket_dec"
+Alpha 1
+End
+Begin Image
+Name autolight
+File "gui/gfx/autolight"
+Alpha 1
+End
+Begin Image
+Name deceptlight
+File "gui/gfx/deceptlight"
+Alpha 1
+End
+Begin Image
+Name pocket_ironhide
+File "gui/gfx/pocket_ironhide"
+Alpha 1
+End
+Begin Image
+Name pocket_bumble
+File "gui/gfx/pocket_bumble"
+Alpha 1
+End
+Begin Image
+Name pocket_optimus
+File "gui/gfx/pocket_optimus"
+Alpha 1
+End
+Begin Image
+Name pocket_jazz
+File "gui/gfx/pocket_jazz"
+Alpha 1
+End
+Begin Image
+Name pocket_rachet
+File "gui/gfx/pocket_rachet"
+Alpha 1
+End
+Begin Image
+Name pocket_blackout
+File "gui/gfx/pocket_blackout"
+Alpha 1
+End
+Begin Image
+Name pocket_barricade
+File "gui/gfx/pocket_barricade"
+Alpha 1
+End
+Begin Image
+Name pocket_mega
+File "gui/gfx/pocket_mega"
+Alpha 1
+End
+Begin Image
+Name pocket_starscream
+File "gui/gfx/pocket_starscream"
+Alpha 1
+End
+Begin Image
+Name pocket_scorp
+File "gui/gfx/pocket_scorp"
+Alpha 1
+End
+Begin Image ps2 wii
+Name bumblebee_gallery
+File "gui/gfx/bumblebee_gallery"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name bumblebee_gallery
+File "gui/gfx/bumblebee_gallery_hr"
+Alpha 1
+End
+Begin Icon
+Name corner
+Image corner
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name corner_mirror
+Image corner
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name side
+Image side
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name side_mirror
+Image side
+NCoords 0,1,1,-1
+Colour 127,127,127,127
+End
+Begin Icon
+Name teeth
+Image teeth
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name wiper
+Image wiper
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name wiper_mirror
+Image wiper
+NCoords 0,1,1,-1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gallery_frame_centre
+Image gallery_frame_centre
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gallery_bottom
+Image gallery_bottom
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gallery_bottom_Mirror
+Image gallery_bottom
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name front_gallery_back
+Image front_load_back
+NCoords 0,0.60,1,0.4
+Colour 127,127,127,127
+End
+Begin Icon
+Name Startscreen
+Image Startscreen_GFX
+Coords 0,0,512,512
+Colour 127,127,127,127
+End
+Begin Icon
+Name front_load_back
+Image front_load_back
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name loading_screen
+Image loading_screen
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bracket_bg
+Image bracket_bg
+NCoords 0,0.01,1,0.98
+Colour 127,127,127,127
+End
+Begin Icon
+Name bracket_sm
+Image bracket_sm
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bracket_sm_mirror
+Image bracket_sm
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name highlight_bg
+Image highlight_bg
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bracket_holder_l
+Image bracket_holder
+NCoords 0,0,0.78,0.98
+Colour 127,127,127,127
+End
+Begin Icon
+Name bracket_holder_r
+Image bracket_holder
+NCoords 0.78,0,-0.78,0.98
+Colour 127,127,127,127
+End
+Begin Icon
+Name bracket_holder_left
+Image bracket_holder
+Coords 70,0,-70,63
+Colour 127,127,127,127
+End
+Begin Icon
+Name bracket_holder_right
+Image bracket_holder
+Coords 0,0,105,63
+Colour 127,127,127,127
+End
+Begin Icon
+Name centre_bracket
+Image centre_bracket
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name AutobotShield_bg
+Image AutobotShield_bg
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name AutobotShield_bg_glow
+Image AutobotShield_bg_glow
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name decepticonShield_bg
+Image decepticonShield_bg
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name decepticonShield_bg_glow
+Image decepticonShield_bg_glow
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name picture_frame_l
+Image picture_frame
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name picture_frame_r
+Image picture_frame
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name arrow
+Image arrow
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name dot
+Image dot
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name loadingbar
+Image loadingbar
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_1
+Image screen_airbase
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_2
+Image screen_barricade_tranquility
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_3
+Image screen_blackout_tranquility
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_4
+Image screen_tranquility
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_5
+Image screen_tranquility2
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_6
+Image screen_cybertron
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_7
+Image screen_hoover_dam
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_8
+Image screen_hoover_external
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_9
+Image screen_hoover_internal
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_10
+Image screen_qatar
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_11
+Image screen_city
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_12
+Image screen_in_the_city
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_13
+Image screen_dcon_city_boss
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name screen_14
+Image screen_abot_city_boss
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BonusImage_Locked
+Image BonusImage_Locked
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name DemoTShield1
+Image DemoTShield1
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon NGC PS2 WIN_PC
+Name PauseBGTop
+Image PauseBG_GFX
+Coords 67,73,61,81
+Colour 127,127,127,127
+End
+Begin Icon X360 PS3
+Name PauseBGTop
+Image PauseBG_GFX
+Coords 134,146,122,162
+Colour 127,127,127,127
+End
+Begin Icon NGC PS2 WIN_PC
+Name PauseBGLeft
+Image PauseBG_GFX
+Coords 0,126,67,130
+Colour 127,127,127,127
+End
+Begin Icon X360 PS3
+Name PauseBGLeft
+Image PauseBG_GFX
+Coords 0,252,134,260
+Colour 127,127,127,127
+End
+Begin Icon NGC PS2 WIN_PC
+Name PauseBGRight
+Image PauseBG_GFX
+Coords 67,126,-67,130
+Colour 127,127,127,127
+End
+Begin Icon X360 PS3
+Name PauseBGRight
+Image PauseBG_GFX
+Coords 134,252,-134,260
+Colour 127,127,127,127
+End
+Begin Icon NGC PS2 WIN_PC
+Name PauseBGBot
+Image PauseBG_GFX
+Coords 66,160,62,96
+Colour 127,127,127,127
+End
+Begin Icon X360 PS3
+Name PauseBGBot
+Image PauseBG_GFX
+Coords 132,320,124,192
+Colour 127,127,127,127
+End
+Begin Icon
+Name char_frame
+Image char_frame
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket
+Image pocket
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_auto
+Image pocket_auto
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_dec
+Image pocket_dec
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name autolight
+Image autolight
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name deceptlight
+Image deceptlight
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_ironhide
+Image pocket_ironhide
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_bumble
+Image pocket_bumble
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_optimus
+Image pocket_optimus
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_jazz
+Image pocket_jazz
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_rachet
+Image pocket_rachet
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_blackout
+Image pocket_blackout
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_barricade
+Image pocket_barricade
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_mega
+Image pocket_mega
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_starscream
+Image pocket_starscream
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pocket_scorp
+Image pocket_scorp
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bumblebee_gallery
+Image bumblebee_gallery
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Style
+Name STARTSCREENBG
+BackgroundColour 128,128,128,128
+End
+Begin Window
+Name OptionsMenu
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnActivate ResetMenuButtonIndex
+OnProcess ProcSelectedButton
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketScr
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name brack_5
+Position 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 0
+Text ? GetOptionsMenuItemText 0
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+Begin Window
+depends brack_5
+Name brack_4
+Position 0,84 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 1
+Text ? GetOptionsMenuItemText 1
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+Begin Window
+depends brack_4
+Name brack_3
+Position 0,134 0,84
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 2
+Text ? GetOptionsMenuItemText 2
+Align Center
+Alpha ? GetSelectedButtonAlpha 2
+End
+End
+End
+Begin List
+Name VirtualButtons
+Position 320,142
+Space 50
+OnActivate HighlightTop
+Begin Button
+depends brack_5
+Action ActivateOptionsMenuItem int 0
+Animation Decelerate 1
+End
+Begin Button
+depends brack_4
+Action ActivateOptionsMenuItem int 1
+Animation Decelerate 1
+End
+Begin Button
+depends brack_3
+Action ActivateOptionsMenuItem int 2
+Animation Decelerate 1
+End
+End
+End
+Begin Window
+Name GameSettingsMenu
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnActivate ResetMenuButtonIndex
+OnProcess ProcSelectedButton
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style MEDWHITE
+Text "Game_Settings"
+Align center
+Valign center
+Margin 10, 0
+End
+Begin Window
+Name bracks
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracketA
+Position 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 0
+Text "GameOption1"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+Begin Text
+Position 220,23
+Alpha 1.0, 0.0
+Style ? GetMenuButtonStyle 0
+Text ? GetGameOption1Text
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin Window
+depends bracketA
+Name bracketB
+Position 0,84 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 1
+Text "GameOption2"
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+Begin Text
+Position 220,23
+Alpha 1.0, 0.0
+Style ? GetMenuButtonStyle 1
+Text ? GetGameOption2Text
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin Window
+depends bracketB
+Name bracketC
+Position 0,134 0,84
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 2
+Text "GameOption3"
+Align Center
+Alpha ? GetSelectedButtonAlpha 2
+End
+Begin Text
+Position 220,23
+Alpha 1.0, 0.0
+Style ? GetMenuButtonStyle 2 
+Text ? GetGameOption3Text
+Align center
+Valign center
+Margin 10, 0
+End
+End
+End
+Begin List
+Name VirtualButtons
+Position 320,142
+Space 50
+OnActivate HighlightTop
+Begin Button
+depends bracketA
+Animation Decelerate 1
+Action ToggleVibration
+End
+Begin Button
+depends bracketB
+Animation Decelerate 1
+End
+Begin Button
+depends bracketC
+Animation Decelerate 1
+End
+End
+End
+Begin Window
+Name VideoSettingsMenu
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnActivate ResetMenuButtonIndex
+OnBackout ActivateBackoutPage
+OnProcess ProcSelectedButton
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style MEDWHITE
+Text "Video_Settings"
+Align center
+Valign center
+Margin 10, 0
+End
+Begin Window
+Name brackets
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name b_5
+Position 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 0
+Text "VideoOption1"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+Begin Window
+depends b_5
+Name b_4
+Position 0,84 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 1
+Text "VideoOption2"
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+Begin Window
+depends b_4
+Name b_3
+Position 0,134 0,84
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 2
+Text "VideoOption3"
+Align Center
+Alpha ? GetSelectedButtonAlpha 2
+End
+End
+End
+Begin List
+Name VirtualButtons
+Position 320,142
+Space 50
+OnActivate HighlightTop
+Begin Button
+depends b_5
+Text "VideoOption1"
+Animation Decelerate 1
+End
+Begin Button
+depends b_4
+Text "VideoOption2"
+Animation Decelerate 1
+End
+Begin Button
+depends b_3
+Animation Decelerate 1
+End
+End
+End
+Begin Window
+Name AudioSettingsMenu
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnActivate ResetMenuButtonIndex
+OnProcess ProcSelectedButton
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style MEDWHITE
+Text "Audio_Settings"
+Align center
+Valign center
+Margin 10, 0
+End
+Begin Window
+Name bracks
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name b5
+Position 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 0
+Text "AudioOption1"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+Begin Window
+depends b5
+Name b4
+Position 0,84 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 1
+Text "AudioOption2"
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+Begin Window
+depends b4
+Name b3
+Position 0,134 0,84
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 2
+Text "AudioOption3"
+Align Center
+Alpha ? GetSelectedButtonAlpha 2
+End
+End
+End
+Begin List
+Name VirtualButtons
+Position 320,142
+Space 50
+OnActivate HighlightTop
+Begin Button
+depends b5
+Animation Decelerate 1
+End
+Begin Button
+depends b4
+Animation Decelerate 1
+End
+Begin Button
+depends b3
+Animation Decelerate 1
+End
+End
+End
+Begin Window
+Name GameMenu
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+OnActivate ResetMenuButtonIndex
+OnProcess ProcSelectedButton
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name brackets
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracket_bg5
+Position 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 0
+Text ? GetGameMenuItemText 0
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+Begin Window
+depends bracket_bg5
+Name bracket_bg4
+Position 0,84 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 1
+Text ? GetGameMenuItemText 1
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+Begin Window
+depends bracket_bg4
+Name bracket_bg3
+Position 0,134 0,84
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 2
+Text ? GetGameMenuItemText 2
+Align Center
+Alpha ? GetSelectedButtonAlpha 2
+End
+End
+Begin Window
+depends bracket_bg3
+Name bracket_bg2
+Position 0,184 0,134
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 3
+Text ? GetGameMenuItemText 3
+Align Center
+Alpha ? GetSelectedButtonAlpha 3
+End
+End
+End
+Begin List
+Name VirtualButtons
+Position 320,142
+Space 50
+OnActivate HighlightTop
+Begin Button
+depends bracket_bg5
+Action ActivateGameMenuItem 0
+Animation Decelerate 1
+End
+Begin Button
+depends bracket_bg4
+Action ActivateGameMenuItem 1
+Animation Decelerate 1
+End
+Begin Button
+depends bracket_bg3
+Action ActivateGameMenuItem 2
+Animation Decelerate 1
+End
+Begin Button
+depends bracket_bg2
+Action ActivateGameMenuItem 3
+Animation Decelerate 1
+End
+End
+End
+Begin Window
+Name BonusMenu
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+OnActivate ResetMenuButtonIndex
+OnProcess ProcSelectedButton
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketWindows
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracket_bg_1
+Position 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 0
+Text ? GetBonusMenuItemText 0
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+Begin Window
+depends bracket_bg_1
+Name bracket_bg_2
+Position 0,84 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 1
+Text ? GetBonusMenuItemText 1
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+Begin Window
+depends bracket_bg_2
+Name bracket_bg_3
+Position 0,134 0,84
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 2
+Text ? GetBonusMenuItemText 2
+Align Center
+Alpha ? GetSelectedButtonAlpha 2
+End
+End
+End
+Begin List
+Name VirtualButtons
+Position 320,142
+Space 50
+OnActivate HighlightTop
+Begin Button
+depends bracket_bg_1
+Action ActivateBonusMenuItem int 0
+Animation Decelerate 1
+End
+Begin Button
+depends bracket_bg_2
+Action ActivateBonusMenuItem int 1
+Animation Decelerate 1
+End
+Begin Button
+depends bracket_bg_3
+Action ActivateBonusMenuItem int 2
+Animation Decelerate 1
+End
+End
+End
+Begin Window
+Name CreditsScreen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+OnBackout ActivateBackoutPage
+OnActivate ResetMenuButtonIndex
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketWindows
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracket_bg_1
+Position 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+End
+Begin Window
+depends bracket_bg_1
+Name bracket_bg_2
+Position 0,84 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+End
+Begin Window
+depends bracket_bg_2
+Name bracket_bg_3
+Position 0,134 0,84
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+End
+End
+End
+Begin Window
+Name StartMenu
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnActivate ResetMenuButtonIndex
+OnProcess ProcSelectedButton
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketsScreen
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracket_A
+Position 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 0
+Text ? GetMainMenuItemText 0
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+Begin Window
+depends bracket_A
+Name bracket_B
+Position 0,84 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 1 
+Text ? GetMainMenuItemText 1
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+Begin Window
+depends bracket_B
+Name bracket_C
+Position 0,134 0,84
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 2
+Text ? GetMainMenuItemText 2
+Align Center
+Alpha ? GetSelectedButtonAlpha 2
+End
+End
+End
+Begin List
+Name VirtualButtons
+Position 320,142
+Space 50
+ZOrder 0.22
+OnActivate HighlightTop
+Begin Button
+depends bracket_A
+Action ActivateMainMenuItem int 0
+Animation Decelerate 1
+End
+Begin Button
+depends bracket_B
+Action ActivateMainMenuItem int 1
+Animation Decelerate 1
+End
+Begin Button
+depends bracket_C
+Action ActivateMainMenuItem int 2
+Animation Decelerate 1
+End
+End
+End
+Begin Window
+Name load_game_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name small_brackets
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracket_holder_l
+Position 114,27 -102,27 -102,27
+Size 128,64
+ZOrder 0.22
+Icon bracket_holder_l
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_sm1
+Position 230,38 0,38 0,38
+Size 128,32
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_sm2
+Position 230,75 0,75 0,75
+Size 128,32
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_sm3
+Position 230,107 0,107 0,107
+Size 128,32
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name brackets
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracket_bg1
+Position 0,184 0,184 0,184
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_bg2
+Position -37,134 0,134 0,134
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_bg3
+Position -75,84 0,84 0,84
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_bg4
+Position -112,34 0,34 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_bg5
+Position -150,-14 0,-14 0,-14
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name highlight_bg
+Position 85,126
+Size 120,40
+ZOrder 0.22
+Icon highlight_bg
+Style white128
+Alpha 1
+Begin Window
+Name highlight_bg
+Position 0,0
+Size 120,40
+Pivot 120,20
+ZOrder 0.22
+Icon highlight_bg
+Style white128
+Alpha 1
+Angle 180
+End
+End
+End
+Begin Window
+Name continue_replay_screen_auto
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate ResetMenuButtonIndex
+OnProcess ProcGameEnterScreen int 0
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketa1_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketa1_null
+Name bracketa2_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketa2_null
+Name bracketa3_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketa1_null
+Name brackets_null
+Position 0,0 -20,0 -20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracketa3_null
+Name small_bracket_r
+Position 190,75 110,75 190,35
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracketa2_null
+Name bracket_holder
+Position 186,89 148,129
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_right
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.5
+Pivot 0,40
+Angle 0 -90 -90
+End
+Begin Window
+Depends bracketa2_null
+Name bracket_sm1_null
+Position 269,87 160,40
+Size 137,50 
+ZOrder 0.22
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position 0,0 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Angle 0 90 90
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 1
+Text ? GetContinueStoryText
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+End
+End
+End
+End
+Begin Window
+Name bracketa4_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketa4_null
+Name bracketa5_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketa5_null
+Name bracketa6_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketa4_null
+Name brackets_null
+Position 0,0 20,0 20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracketa3_null
+Name small_bracket_l
+Position 486,165 566,165 486,165
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracketa5_null
+Name bracket_holder
+Position -320,0 
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_r
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.5
+Pivot 100,40
+Angle 0 90 90
+End
+Begin Window
+Depends bracketa2_null
+Name bracket_sm1_null
+Position 51,87 160,0
+Size 137,50 
+ZOrder 0.22
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position -510,-90 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm_mirror
+Style white128
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 155,25
+Angle 0 -90 -90
+End
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position -432,-67
+Style ? GetMenuButtonStyle2 0
+Text "ReplayLevel"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+End
+End
+Begin Window
+Name autobotshield_glow
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon autobotshield_bg_glow
+Style white128
+Alpha ? GetAutoShieldAlpha
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobotshield_bg
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+Begin List
+Name VirtualButtons
+Position 5,159
+Size 200,100
+Space 0
+Animation DECELERATE 0.9
+Horizontal
+OnActivate HighlightTopButOne
+Begin Button
+Animation Decelerate 0.9
+Action ActivateAutoLevelSelectScreen
+Action Closepage
+End
+Begin Button
+Animation DECELERATE 0.9
+Action ActivateContinueStory 0
+Action Closepage
+End
+End
+End
+Begin Window
+Name replay_only_screen_auto
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate ResetMenuButtonIndex
+OnProcess ProcGlows int 0
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketb4_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketb4_null
+Name bracketb5_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketb5_null
+Name bracketb6_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketb6_null
+Name bracketb7_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.8
+End
+Begin Window
+Depends bracketb4_null
+Name brackets_null
+Position 0,0 20,0 20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1 1 0
+Animation LINEAR 0.5
+Begin Window
+Depends bracketb6_null
+Name small_bracket_l
+Position 486,165 566,165 486,165
+Size 280,35
+ZOrder 0.22
+Alpha 1 1 0
+Animation ACCELERATE 0.6
+Begin Window
+Depends bracketb5_null
+Name bracket_holder
+Position -320,0 
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_r
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.5
+Pivot 100,40
+Angle 0 90 90
+End
+Begin Window
+Depends bracketb5_null
+Name bracket_sm1_null
+Position 51,87 160,-30
+Size 137,50 
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracketb7_null
+Name bracket_sm2_null
+Position -510,-90 -513,-90 
+Size 137,50 
+ZOrder 0.22
+Alpha 1 1 0
+Animation DECELERATE 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position 0,0 -30,0
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm_mirror
+Style white128
+Alpha 1 1 0
+Animation LINEAR 0.5
+Pivot 155,25
+Angle 0 -90 -90
+End
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 0
+Text "ReplayLevel"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+End
+End
+End
+Begin List
+Name VirtualButtons
+OnActivate HighlightTop
+Begin Button
+Animation DECELERATE 0.9
+Action ActivateAutoLevelSelectScreen
+Action Closepage
+End
+End
+Begin Window
+Name autobotshield_glow
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon autobotshield_bg_glow
+Style white128
+Alpha ? GetAutoShieldAlpha
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobotshield_bg
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name continue_only_screen_auto
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate ResetMenuButtonIndex
+OnProcess ProcGameEnterScreen int 0
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketq1_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketq1_null
+Name bracketq2_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketq2_null
+Name bracketq3_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketq1_null
+Name brackets_null
+Position 0,0 -20,0 -20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracketq3_null
+Name small_bracket_r
+Position 190,75 110,75 190,35
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracketq2_null
+Name bracket_holder
+Position 186,89 148,129
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_right
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.5
+Pivot 0,40
+Angle 0 -90 -90
+End
+Begin Window
+Depends bracketq2_null
+Name bracket_sm1_null
+Position 269,87 160,40
+Size 137,50 
+ZOrder 0.22
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position 0,0 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Angle 0 90 90
+End
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 0
+Text "ContinueStory"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+End
+End
+Begin List
+Name VirtualButtons
+OnActivate HighlightTop
+Begin Button
+Animation DECELERATE 0.9
+Action ActivateContinueStory 0
+Action Closepage
+End
+End
+Begin Window
+Name autobotshield_glow
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon autobotshield_bg_glow
+Style white128
+Alpha ? GetAutoShieldAlpha
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobotshield_bg
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name Begin_story_screen_auto
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate ResetMenuButtonIndex
+OnProcess ProcGameEnterScreen int 0
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketc1_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketc1_null
+Name bracketc2_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketc2_null
+Name bracketc3_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketc1_null
+Name brackets_null
+Position 0,0 -20,0 -20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracketc3_null
+Name small_bracket_r
+Position 190,75 110,75 190,35
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracketc2_null
+Name bracket_holder
+Position 186,89 148,129
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_right
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.5
+Pivot 0,40
+Angle 0 -90 -90
+End
+Begin Window
+Depends bracketc2_null
+Name bracket_sm1_null
+Position 269,87 160,40
+Size 137,50 
+ZOrder 0.22
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position 0,0 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Angle 0 90 90
+End
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 0
+Text "BeginStory"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+End
+End
+Begin List
+Name VirtualButtons
+OnActivate HighlightTop
+Begin Button
+Animation DECELERATE 0.9
+Action ActivateContinueStory 0
+Action Closepage
+End
+End
+Begin Window
+Name autobotshield_glow
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon autobotshield_bg_glow
+Style white128
+Alpha ? GetAutoShieldAlpha
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobotshield_bg
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name continue_replay_screen_dec
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate ResetMenuButtonIndex
+OnProcess ProcGameEnterScreen int 1
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketd1_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketd1_null
+Name bracketd2_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketd2_null
+Name bracketd3_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketd1_null
+Name brackets_null
+Position 0,0 -20,0 -20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracketd3_null
+Name small_bracket_r
+Position 190,75 110,75 190,35
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracketd2_null
+Name bracket_holder
+Position 186,89 148,129
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_right
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.5
+Pivot 0,40
+Angle 0 -90 -90
+End
+Begin Window
+Depends bracketd2_null
+Name bracket_sm1_null
+Position 269,87 160,40
+Size 137,50 
+ZOrder 0.22
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position 0,0 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Angle 0 90 90
+End
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 1
+Text ? GetContinueStoryText
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+End
+End
+End
+Begin Window
+Name bracketd4_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketd4_null
+Name bracketd5_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketd5_null
+Name bracketd6_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketd4_null
+Name brackets_null
+Position 0,0 20,0 20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracketd3_null
+Name small_bracket_l
+Position 486,165 566,165 486,165
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracketd5_null
+Name bracket_holder
+Position -320,0 
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_r
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.5
+Pivot 100,40
+Angle 0 90 90
+End
+Begin Window
+Depends bracketd2_null
+Name bracket_sm1_null
+Position 51,87 160,0
+Size 137,50 
+ZOrder 0.22
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position -510,-90 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm_mirror
+Style white128
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 155,25
+Angle 0 -90 -90
+End
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position -432,-67
+Style ? GetMenuButtonStyle2 0
+Text "ReplayLevel"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+End
+End
+Begin Window
+Name decepticonshield_glow
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon decepticonshield_bg_glow
+Style white128
+Alpha ? GetDecShieldAlpha
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticon
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+Begin List
+Name VirtualButtons
+Position 5,159
+Size 200,100
+Space 0
+Animation DECELERATE 0.9
+Horizontal
+OnActivate HighlightTopButOne
+Begin Button
+Animation Decelerate 0.9
+Action ActivateDecLevelSelectScreen
+Action Closepage
+End
+Begin Button
+Animation DECELERATE 0.9
+Action ActivateContinueStory 0
+Action Closepage
+End
+End
+End
+Begin Window
+Name replay_only_screen_dec
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate ResetMenuButtonIndex
+OnProcess ProcGlows int 1
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name brackete4_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends brackete4_null
+Name brackete5_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends brackete5_null
+Name brackete6_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends brackete6_null
+Name brackete7_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.8
+End
+Begin Window
+Depends brackete4_null
+Name brackets_null
+Position 0,0 20,0 20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1 1 0
+Animation LINEAR 0.5
+Begin Window
+Depends brackete6_null
+Name small_bracket_l
+Position 486,165 566,165 486,165
+Size 280,35
+ZOrder 0.22
+Alpha 1 1 0
+Animation ACCELERATE 0.6
+Begin Window
+Depends brackete5_null
+Name bracket_holder
+Position -320,0 -320,-30 
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_r
+Style white128
+Alpha 1 1 0
+Animation LINEAR 0.5
+Pivot 100,40
+Angle 0 90 90
+End
+Begin Window
+Depends brackete5_null
+Name bracket_sm1_null
+Position 51,87 160,-30
+Size 137,50 
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends brackete7_null
+Name bracket_sm2_null
+Position -510,-90 -513,-90 
+Size 137,50 
+ZOrder 0.22
+Alpha 1 1 0
+Animation DECELERATE 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position 0,0 0,20
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm_mirror
+Style white128
+Alpha 1 1 0
+Animation LINEAR 0.5
+Pivot 155,25
+Angle 0 -90 -90
+End
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 0
+Text "ReplayLevel"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+End
+End
+End
+Begin List
+Name VirtualButtons
+OnActivate HighlightTop
+Begin Button
+Animation DECELERATE 0.9
+Action ActivateDecLevelSelectScreen
+Action Closepage
+End
+End
+Begin Window
+Name decepticonshield_glow
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon decepticonshield_bg_glow
+Style white128
+Alpha ? GetDecShieldAlpha
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticon
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name continue_only_screen_dec
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate ResetMenuButtonIndex
+OnProcess ProcGameEnterScreen int 1
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketp1_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketp1_null
+Name bracketp2_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketp2_null
+Name bracketp3_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketp1_null
+Name brackets_null
+Position 0,0 -20,0 -20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracketp3_null
+Name small_bracket_r
+Position 190,75 110,75 190,35
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracketp2_null
+Name bracket_holder
+Position 186,89 148,129
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_right
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.5
+Pivot 0,40
+Angle 0 -90 -90
+End
+Begin Window
+Depends bracketp2_null
+Name bracket_sm1_null
+Position 269,87 160,40
+Size 137,50 
+ZOrder 0.22
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position 0,0 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Angle 0 90 90
+End
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 0
+Text "ContinueStory"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+End
+End
+Begin List
+VirtualButtons
+OnActivate HighlightTop
+Begin Button
+Animation DECELERATE 0.9
+Action ActivateContinueStory 0
+Action Closepage
+End
+End
+Begin Window
+Name decepticonshield_glow
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon decepticonshield_bg_glow
+Style white128
+Alpha ? GetDecShieldAlpha
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticon
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name begin_story_screen_dec
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate ResetMenuButtonIndex
+OnProcess ProcGameEnterScreen int 1
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name bracketf1_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketf1_null
+Name bracketf2_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketf2_null
+Name bracketf3_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracketf1_null
+Name brackets_null
+Position 0,0 -20,0 -20,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracketf3_null
+Name small_bracket_r
+Position 190,75 110,75 190,35
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracketf2_null
+Name bracket_holder
+Position 186,89 148,129
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_right
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.5
+Pivot 0,40
+Angle 0 -90 -90
+End
+Begin Window
+Depends bracketf2_null
+Name bracket_sm1_null
+Position 269,87 160,40
+Size 137,50 
+ZOrder 0.22
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position 0,0 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 
+Animation LINEAR 0.5
+Pivot 0,25
+Angle 0 90 90
+End
+Begin Window
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 0
+Text "BeginStory"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+End
+End
+Begin List
+VirtualButtons
+OnActivate HighlightTop
+Begin Button
+Animation DECELERATE 0.9
+Action ActivateContinueStory 0
+Action Closepage
+End
+End
+Begin Window
+Name decepticonshield_glowAB
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon decepticonshield_bg_glow
+Style white128
+Alpha ? GetDecShieldAlpha
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticonAB
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name Choose_side_screen_Auto
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnDeactivate TriggerSideScreen
+OnProcess ProcChooseSideScreen
+OnBackout ActivateBackoutPage
+Animation DECELERATE 0.9
+Timeout 0.01
+Begin Window
+Name front_load_backB
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name autobotshield_glowB
+Position 37,83 37,83 200,50
+Size 160,160 160,160 240,240
+ZOrder 0.22
+Icon autobotshield_bg_glow
+Style white128
+Alpha ? GetAutoShieldAlpha 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobotshield_bgB
+Position 42,88 42,88 210,55
+Size 150,150 150,150 220,220
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticonshield_glowB
+Position 448,83
+Size 160,160
+ZOrder 0.22
+Icon decepticonshield_bg_glow
+Style white128
+Alpha ? GetDecShieldAlpha 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticonB
+Position 453,88
+Size 150,150
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1 1 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_holderB
+Position 376,165 
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_right
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.6
+Pivot 0,40
+Angle 45
+End
+Begin Window
+Name bracket_sm1B
+Position 456,238 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 1 0
+Animation LINEAR 0.7
+Pivot 0,25
+Angle 0
+End
+Begin Window
+Name DeceptoButtonB
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 1
+Text "Decepticon"
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+Begin Window
+Name bracket_holderB
+Position 166,165
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_r
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.6
+Pivot 100,40
+Angle -45
+End
+Begin Window
+Name bracket_sm1B
+Position 30,238 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm_mirror
+Style white128
+Alpha 1 1 0
+Animation LINEAR 0.7
+Pivot 155,25
+Angle 0
+End
+Begin Window
+Name AutoBotButtonB
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position -432,-67
+Style ? GetMenuButtonStyle2 0
+Text "Autobot"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+Begin Window
+Name centre_bracketB
+Position 190,100 
+Size 260,130
+ZOrder 0.22
+Icon centre_bracket
+Style white128
+Alpha 1 1 0
+Animation DECELERATE 0.7
+End
+Begin Window
+Position 220,145
+Size 200,30
+Text ChooseSide
+Align center
+VAlign center
+Style SUPERMINI
+Alpha 1 0 0
+Animation DECELERATE 0.6
+End
+Begin List
+Name VirtualButtons
+Position 5,232
+Size 200,100
+Space 0
+Animation DECELERATE 0.9
+Horizontal
+OnActivate HighlightTop
+Begin Button
+depends AutoBotButtonB
+Animation Accelerate 0.5
+Action ActivateAutoSideScreen
+End
+Begin Button
+depends DeceptoButtonB
+Animation Accelerate 0.5
+Action ActivateDecSideScreen
+End
+End
+End
+Begin Window
+Name Choose_side_screen_Dec
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnDeactivate TriggerSideScreen
+OnProcess ProcChooseSideScreen
+OnBackout ActivateBackoutPage
+Animation DECELERATE 0.9
+Timeout 0.01
+Begin Window
+Name front_load_backC
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name autobotshield_glowC
+Position 37,83
+Size 160,160
+ZOrder 0.22
+Icon autobotshield_bg_glow
+Style white128
+Alpha ? GetAutoShieldAlpha 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobotshield_bgC
+Position 42,88
+Size 150,150
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1 1 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticonshield_glowC
+Position 448,83 448,83 200,50
+Size 160,160 160,160 240,240
+ZOrder 0.22
+Icon decepticonshield_bg_glow
+Style white128
+Alpha ? GetDecShieldAlpha 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticonC
+Position 453,88 453,88 210,55
+Size 150,150 150,150 220,220
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_holderC
+Position 376,165
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_right
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.6
+Pivot 0,40
+Angle 45 
+End
+Begin Window
+Name bracket_sm1C
+Position 456,238
+Size 155,50
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 1 0
+Animation LINEAR 0.7
+Pivot 0,25
+Angle 0 
+End
+Begin Window
+Name DeceptoButtonC
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 1
+Text "Decepticon"
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+Begin Window
+Name bracket_holderC
+Position 166,165
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_r
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.6
+Pivot 100,40
+Angle -45 
+End
+Begin Window
+Name bracket_sm1C
+Position 30,238
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm_mirror
+Style white128
+Alpha 1 1 0
+Animation LINEAR 0.7
+Pivot 155,25
+Angle 0 
+End
+Begin Window
+Name AutoBotButtonC
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position -432,-67
+Style ? GetMenuButtonStyle2 0
+Text "Autobot"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+Begin Window
+Name centre_bracketC
+Position 190,100 
+Size 260,130
+ZOrder 0.22
+Icon centre_bracket
+Style white128
+Alpha 1 1 0
+Animation DECELERATE 0.7
+End
+Begin Window
+Position 220,145
+Size 200,30
+Text ChooseSide
+Align center
+VAlign center
+Style SUPERMINI
+Alpha 1 0 0
+Animation DECELERATE 0.6
+End
+Begin List
+Name VirtualButtons
+Position 5,232
+Size 200,100
+Space 0
+Animation DECELERATE 0.9
+Horizontal
+OnActivate HighlightTop
+Begin Button
+depends AutoBotButtonC
+Animation Accelerate 0.5
+Action ActivateAutoSideScreen
+End
+Begin Button
+depends DeceptoButtonC
+Animation Accelerate 0.5
+Action ActivateDecSideScreen
+End
+End
+End
+Begin Window
+Name choose_side_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnActivate ResetMenuButtonIndex
+OnDeactivate TriggerSideScreen
+OnProcess ProcChooseSideScreen
+OnBackout ActivateBackoutPage
+Animation DECELERATE 0.9
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name autobotshield_glow
+Position 37,83 37,83 200,50
+Size 160,160 160,160 240,240
+ZOrder 0.22
+Icon autobotshield_bg_glow
+Style white128
+Alpha ? GetAutoShieldAlpha 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobotshield_bg
+Position 42,88 42,88 210,55
+Size 150,150 150,150 220,220
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticonshield_glow
+Position 448,83 448,83 200,50
+Size 160,160 160,160 240,240
+ZOrder 0.22
+Icon decepticonshield_bg_glow
+Style white128
+Alpha ? GetDecShieldAlpha 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticon
+Position 453,88 453,88 210,55
+Size 150,150 150,150 220,220
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket1_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracket1_null
+Name bracket2_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracket2_null
+Name bracket3_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracket1_null
+Name brackets_null
+Position 0,0 -20,0 0,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracket3_null
+Name small_bracket_r
+Position 190,75 110,75 190,75
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracket2_null
+Name bracket_holder
+Position 186,90 
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_right
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.6
+Pivot 0,40
+Angle 45 -90 45
+End
+Begin Window
+Depends bracket2_null
+Name bracket_sm1_null
+Position 266,163 220,0 266,163
+Size 137,50 
+ZOrder 0.22
+Alpha 1 1 0
+Animation LINEAR 0.7
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position 0,0 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 1 0
+Animation LINEAR 0.7
+Pivot 0,25
+Angle 0 90 0
+End
+Begin Window
+Name DeceptoButton
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position 78,23
+Style ? GetMenuButtonStyle2 1
+Text "Decepticon"
+Align Center
+Alpha ? GetSelectedButtonAlpha 1
+End
+End
+End
+End
+End
+Begin Window
+Name bracket4_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracket4_null
+Name bracket5_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracket5_null
+Name bracket6_null
+Position 0,0 330,300
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+End
+Begin Window
+Depends bracket4_null
+Name brackets_null
+Position 0,0 20,0 0,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation LINEAR 0.5
+Begin Window
+Depends bracket3_null
+Name small_bracket_l
+Position 486,165 566,165 486,165
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Animation DECELERATE 0.5
+Begin Window
+Depends bracket5_null
+Name bracket_holder
+Position -320,0 
+Size 100,80
+ZOrder 0.22
+Icon bracket_holder_r
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.6
+Pivot 100,40
+Angle -45 90 -45
+End
+Begin Window
+Depends bracket2_null
+Name bracket_sm1_null
+Position 54,163 100,0 54,163
+Size 137,50 
+ZOrder 0.22
+Alpha 1 1 0
+Animation LINEAR 0.7
+Pivot 0,25
+Begin Window
+Name bracket_sm1
+Position -510,-90 
+Size 155,50 
+ZOrder 0.22
+Icon bracket_sm_mirror
+Style white128
+Alpha 1 
+Animation LINEAR 0.7
+Pivot 155,25
+Angle 0 -90 0
+End
+Begin Window
+Name AutoBotButton
+Alpha ? GetWindowFadeAlpha
+Begin Text
+Position -432,-67
+Style ? GetMenuButtonStyle2 0
+Text "Autobot"
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+End
+End
+Begin Window
+Name centre_bracket
+Position 190,100 
+Size 260,130
+ZOrder 0.22
+Icon centre_bracket
+Style white128
+Alpha 1 1 0
+Animation DECELERATE 0.7
+End
+Begin Window
+Position 220,145
+Size 200,30
+Text ChooseSide
+Align center
+VAlign center
+Style SUPERMINI
+Alpha 1 0 0
+Animation DECELERATE 0.6
+End
+Begin List
+Name VirtualButtons
+Position 5,232
+Size 200,100
+Space 0
+Animation DECELERATE 0.7
+Horizontal
+OnActivate HighlightTop
+Begin Button
+depends AutoBotButton
+Animation Accelerate 0.5
+Action ActivateAutoSideScreen
+End
+Begin Button
+depends DeceptoButton
+Animation Accelerate 0.5
+Action ActivateDecSideScreen
+End
+End
+End
+Begin Window
+Name autobot_side_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate TimeoutSideScreenReset
+OnProcess TimeoutSideScreen int 1
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name autobotshield
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon autobotshield_bg_glow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobot
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1 0.4 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name autobot_rtn_side_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate TimeoutSideScreenReset
+OnProcess TimeoutRtnSideScreen int 1
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name autobotshield
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon autobotshield_bg_glow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobot
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1 0.4 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name decepticon_side_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate TimeoutSideScreenReset
+OnProcess TimeoutSideScreen int 2
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name decepticonshield_glow
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon decepticonshield_bg_glow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticon
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1 0.4 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name decepticon_rtn_side_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate TimeoutSideScreenReset
+OnProcess TimeoutRtnSideScreen int 2
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name decepticonshield_glow
+Position 200,50 
+Size 240,240
+ZOrder 0.22
+Icon decepticonshield_bg_glow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticon
+Position 210,55 
+Size 220,220
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1 0.4 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name level_complete_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name brackets
+Position 90,47
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracket_1
+Position 0,0 
+Size 512,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_2
+Position 0,50 
+Size 512,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_3
+Position 0,100 
+Size 512,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_4
+Position 0,150 
+Size 512,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bracket_5
+Position 0,200 
+Size 512,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+End
+Begin Window
+Name LoadingProgressScreen
+Position 0,0
+Size 640,480
+ZOrder 0.05
+Animation DECELERATE 0.9
+OnActivate ResetStartScreen
+OnProcess ProcLoadingScreen
+Begin Window
+Position 220,370
+Size 200,32
+Style LOADING
+Text "Loading"
+Alpha ? GetStartScreenAlpha
+Align Centre
+VAlign center
+End
+End
+Begin Window
+Name loading_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate AddPage LoadingProgressScreen
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name loading_screen1
+Position 0,-10 0,-470 0,-470
+Size 640,480
+Icon loading_screen
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name press_start_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate ResetStartScreen
+OnDeactivate ChangePageNoBack StartMenu
+OnProcess ProcStartScreen
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name loading_screen1
+Position 0,-10 0,-470 0,-470
+Size 640,480
+Icon loading_screen
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+Begin List
+Position 220,370
+Size 200,32
+Space 1
+Animation DECELERATE 0.9
+Begin Button
+Position 0,0
+Size 200,32
+Style ? GetStartScreenStyle 
+Text "PressStart"
+Alpha ? GetStartScreenAlpha
+Align Centre
+VAlign center
+End
+End
+End
+Begin Window
+Name TheatreMenu
+Position 0,0
+Size 640,480
+ZOrder 0.29
+alpha 1 0
+Begin Window
+Name OptionsTitle
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style TITLE
+Text "Options"
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin List
+Name AutoBotMovies
+Position 135,170 -400,580
+Size 340,640
+Space 1
+OnActivate HighlightTop
+Dynamic ? GetNumAutoBotMovies
+Animation DECELERATE 1
+Begin Button
+Position 0,0
+Size 170,27
+Alpha 1 0
+Style ? GetMovieSelectedStyle
+Text ? GetAutoBotMovieName
+Align center
+VAlign center
+Action PlayAutoBotMovie
+End
+End
+End
+Begin Window
+Name art_gallery_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnProcess ProcGalleryIndex
+OnActivate ResetGalleryIndex
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name mission_panel
+Position 155,65
+Size 330,78 330,2 330,2
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 9,0 9,105 9,105
+Size 307,235 307,50 307,50
+style DIMBLACK
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_left
+Position 0,0 0,105 0,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_middle
+Position 12,0 12,105 12,105
+Size 308,12
+Pivot 0,0
+Style white128
+Icon mp_tm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name image_view
+Position 10,8 10,105 10,105
+Size 306,225
+Pivot 0,0
+Style white128
+Icon ? GetGalleryImage
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name image_view
+Position0,8 0,55 0,55
+Size 306,225
+Pivot 0,0
+Style INFOTXTWHITE
+Text ? GetGalleryIndex
+Alpha 1.0 0 0
+Align Center
+Animation DECELERATE 0.9
+End
+Begin Button
+Name image_name
+Position 17,210 17,210 17,210
+Size 308,207
+Pivot 0,0
+Style INFOTXTWHITE
+Alpha 1.0 0 0
+Text ? GetGalleryImageName
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_right
+Position 315,0 315,105 315,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_left
+Position 0,10 0,117 0,117
+Size 12,161 12,2 12,2
+Pivot 6,0
+Style white128
+Icon mp_sl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_right
+Position 315,10 315,117 315,117
+Size 12,161 12,2 12,2
+Pivot 16,32
+Style white128
+Icon mp_sr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_left
+Position -1,171 -1,110 -1,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_bl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_middle
+Position 40,231 40,171 40,171
+Size 249,16
+Pivot 0,0
+Style white128
+Icon mp_bm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_right
+Position 287,171 287,110 287,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_br
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends art_gallery_screen
+Name arrow_left
+Position 35,195 
+Size 25,25
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends art_gallery_screen
+Name arrow_right
+Position 263,195 
+Size 25,25
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Pivot 12.5,12.5
+Angle 180
+End
+End
+End
+Begin Window
+Name movie_theatre_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnProcess ProcMovieIndex
+OnBackout ActivateBackoutPage
+Animation DECELERATE 0.9
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name mission_panel_1
+Position 90,100
+Size 330,78 330,2 330,2
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 9,0 9,105 9,105
+Size 180,235 180,70 180,70
+style DIMBLACK
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_left
+Position 0,0 0,105 0,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_middle
+Position 12,0 12,105 12,105
+Size 181,12
+Pivot 0,0
+Style white128
+Icon mp_tm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_right
+Position 188,0 188,105 188,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_left
+Position 0,10 0,117 0,117
+Size 12,161 12,2 12,2
+Pivot 6,0
+Style white128
+Icon mp_sl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_right
+Position 188,10 188,117 188,117
+Size 12,161 12,2 12,2
+Pivot 16,32
+Style white128
+Icon mp_sr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_left
+Position -1,171 -1,110 -1,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_bl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_middle
+Position 40,231 40,171 40,171
+Size 121,16
+Pivot 0,0
+Style white128
+Icon mp_bm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_right
+Position 159,171 159,110 159,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_br
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends movie_theatre_screen
+Name autobot_icon
+Position 69,180 
+Size 50,50 
+Pivot 20,20
+Style white128
+Icon AutobotShield_bg
+Alpha 1.0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends movie_theatre_screen
+Name slider
+Position 13,26 
+Size 10,10 
+Pivot 20,20
+Style white128
+Icon gabi_slider
+Alpha 1.0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends movie_theatre_screen
+Name arrow_top
+Position 10,10 
+Size 16,16
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Pivot 8,8
+Angle 90
+End
+Begin Window
+Depends movie_theatre_screen
+Name arrow_bottom
+Position 10,160 
+Size 16,16
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Pivot 8,8
+Angle 270
+End
+End
+Begin Window
+Name mission_panel_2
+Position 350,100
+Size 330,78 330,2 330,2
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 9,0 9,105 9,105
+Size 180,235 180,70 180,70
+style DIMBLACK
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_left
+Position 0,0 0,105 0,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_middle
+Position 12,0 12,105 12,105
+Size 181,12
+Pivot 0,0
+Style white128
+Icon mp_tm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_right
+Position 188,0 188,105 188,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_left
+Position 0,10 0,117 0,117
+Size 12,161 12,2 12,2
+Pivot 6,0
+Style white128
+Icon mp_sl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_right
+Position 188,10 188,117 188,117
+Size 12,161 12,2 12,2
+Pivot 16,32
+Style white128
+Icon mp_sr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_left
+Position -1,171 -1,110 -1,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_bl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_middle
+Position 40,231 40,171 40,171
+Size 121,16
+Pivot 0,0
+Style white128
+Icon mp_bm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_right
+Position 159,171 159,110 159,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_br
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends movie_theatre_screen
+Name autobot_icon
+Position 69,180 
+Size 50,50 
+Pivot 20,20
+Style white128
+Icon decepticonShield_bg
+Alpha 1.0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends movie_theatre_screen
+Name slider
+Position 13,26 
+Size 10,10 
+Pivot 20,20
+Style white128
+Icon gabi_slider
+Alpha 1.0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends movie_theatre_screen
+Name arrow_top
+Position 10,10 
+Size 16,16
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Pivot 8,8
+Angle 90
+End
+Begin Window
+Depends movie_theatre_screen
+Name arrow_bottom
+Position 10,160 
+Size 16,16
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Pivot 8,8
+Angle 270
+End
+End
+Begin Window
+Name AutoMovies
+Position 0,10
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name mission_panel_1
+Position 90,100
+Size 330,78 330,2 330,2
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin List
+Name AutoMoviesLst
+Position 29,9
+Size 80,190
+Space 1
+OnActivate HighlightTop
+Dynamic ? GetNumAutoBotMovies
+Animation DECELERATE 1
+Begin Button
+Position 0,0
+Size 120,27
+Alpha ? GetAlphaList int 7
+Style ? GetMovieSelectedStyle0
+Text ? GetAutoBotMovieName
+Align center
+VAlign center
+Action PlayAutoBotMovie
+End
+End
+End
+End
+Begin Window
+Name DeceptoMovies
+Position 0,10
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name mission_panel_1
+Position 90,100
+Size 330,78 330,2 330,2
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin List
+Name DeceptoMoviesLst
+Position 289,9
+Size 80,190
+Space 1
+OnActivate HighlightTop
+Dynamic ? GetNumDecepticonMovies
+Animation DECELERATE 1
+Begin Button
+Position 0,0
+Size 120,27
+Alpha ? GetAlphaList 7
+Style ? GetMovieSelectedStyle1
+Text ? GetDecepticonMovieName
+Align center
+VAlign center
+Action PlayDecepticonMovie
+End
+End
+End
+End
+End
+Begin Window
+Name challenges_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnProcess ProcChallengeMenu
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name mission_panel_1
+Position 90,100
+Size 330,78 330,2 330,2
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 9,0 9,105 9,105
+Size 180,235 180,70 180,70
+style DIMBLACK
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_left
+Position 0,0 0,105 0,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_middle
+Position 12,0 12,105 12,105
+Size 181,12
+Pivot 0,0
+Style white128
+Icon mp_tm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_right
+Position 188,0 188,105 188,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_left
+Position 0,10 0,117 0,117
+Size 12,161 12,2 12,2
+Pivot 6,0
+Style white128
+Icon mp_sl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_right
+Position 188,10 188,117 188,117
+Size 12,161 12,2 12,2
+Pivot 16,32
+Style white128
+Icon mp_sr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_left
+Position -1,171 -1,110 -1,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_bl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_middle
+Position 40,231 40,171 40,171
+Size 121,16
+Pivot 0,0
+Style white128
+Icon mp_bm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_right
+Position 159,171 159,110 159,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_br
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends challenges_screen
+Name autobot_icon
+Position 69,180 
+Size 50,50 
+Pivot 20,20
+Style white128
+Icon AutobotShield_bg
+Alpha 1.0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends challenges_screen
+Name slider
+Position 13,26 
+Size 10,10 
+Pivot 20,20
+Style white128
+Icon gabi_slider
+Alpha 1.0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends challenges_screen
+Name arrow_top
+Position 10,10 
+Size 16,16
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Pivot 8,8
+Angle 90
+End
+Begin Window
+Depends challenges_screen
+Name arrow_bottom
+Position 10,160 
+Size 16,16
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Pivot 8,8
+Angle 270
+End
+End
+Begin Window
+Name mission_panel_2
+Position 350,100
+Size 330,78 330,2 330,2
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 9,0 9,105 9,105
+Size 180,235 180,70 180,70
+style DIMBLACK
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_left
+Position 0,0 0,105 0,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_middle
+Position 12,0 12,105 12,105
+Size 181,12
+Pivot 0,0
+Style white128
+Icon mp_tm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_right
+Position 188,0 188,105 188,105
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_left
+Position 0,10 0,117 0,117
+Size 12,161 12,2 12,2
+Pivot 6,0
+Style white128
+Icon mp_sl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_right
+Position 188,10 188,117 188,117
+Size 12,161 12,2 12,2
+Pivot 16,32
+Style white128
+Icon mp_sr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_left
+Position -1,171 -1,110 -1,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_bl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_middle
+Position 40,231 40,171 40,171
+Size 121,16
+Pivot 0,0
+Style white128
+Icon mp_bm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_right
+Position 159,171 159,110 159,110
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_br
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends challenges_screen
+Name autobot_icon
+Position 69,180 
+Size 50,50 
+Pivot 20,20
+Style white128
+Icon decepticonShield_bg
+Alpha 1.0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends challenges_screen
+Name slider
+Position 13,26 
+Size 10,10 
+Pivot 20,20
+Style white128
+Icon gabi_slider
+Alpha 1.0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends challenges_screen
+Name arrow_top
+Position 10,10 
+Size 16,16
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Pivot 8,8
+Angle 90
+End
+Begin Window
+Depends challenges_screen
+Name arrow_bottom
+Position 10,160 
+Size 16,16
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Pivot 8,8
+Angle 270
+End
+End
+Begin Window
+Name Challenges
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name mission_panel_1
+Position 90,100
+Size 330,78 330,2 330,2
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin List
+Name ChallengesList
+Depends challenges_screen
+Position 33,9
+Size 80,27
+Space 1
+OnActivate HighlightTop
+Dynamic ? GetNumBonusLevels
+Animation DECELERATE 1
+Begin Button
+Position 0,0
+Size 120,27
+Alpha ? GetAlphaList 7
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetBonusLevelName
+Align center
+VAlign center
+Action PlayBonusLevel
+End
+End
+End
+End
+Begin Window
+Name ChallengeDescription
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name mission_panel_1
+Position 90,100
+Size 330,78 330,2 330,2
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name DeceptoMoviesLst
+Depends challenges_screen
+Position 289,9
+Size 80,27
+Space 1
+OnActivate HighlightTop
+Animation DECELERATE 1
+Begin Button
+Position 0,0
+Size 164,27
+Alpha 1.0 0.0 0.0
+Style ENABLED
+Text ? GetBonusLevelDesc
+Align center
+VAlign center
+End
+End
+End
+End
+End
+Begin Window
+Name level_select_screen_auto
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate SetLevelMenuItemAmt int 0
+OnProcess ProcLevelMenu int 0
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name small_brackets
+Position 190,44 100,44 100,44
+Size 280,35
+ZOrder 0.22
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name bracket_holder
+Position 216,120 
+Size 80,80
+ZOrder 0.22
+Icon bracket_holder_left
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name picture_frame
+Position 251,57 251,120 251,120
+Size 160,80
+ZOrder 0.22
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin window
+Name picture_frame_back
+Position 20,15 
+Size 120,70
+ZOrder 0.22
+Style solidblack
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name picture_frame_image
+Position 20,15 
+Size 120,70
+ZOrder 0.22
+Icon ? GetLevelMenuItemImage
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name picture_frame_top
+Position 0,0 
+Size 80,80
+ZOrder 0.22
+Icon picture_frame_l
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name picture_frame
+Position 80,0 
+Size 80,80
+ZOrder 0.22
+Icon picture_frame_r
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name picture_frame_bottom
+Position 251,87 251,17 251,17
+Size 80,80
+Pivot 80,80
+ZOrder 0.22
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin window
+Name picture_frame_back
+Position 20,150 
+Size 120,70
+Pivot 60,0
+ZOrder 0.22
+Style solidblack
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Angle 180
+End
+Begin window
+Name picture_frame_bottom
+Position 0,0 
+Size 80,80
+Pivot 80,80
+ZOrder 0.22
+Icon picture_frame_l
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Angle 180
+End
+Begin Window
+Name picture_frame
+Position 80,0 
+Size 80,80
+Pivot 0,80
+ZOrder 0.22
+Icon picture_frame_r
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Angle 180
+End
+Begin Window
+Name Shield_Unlocks
+Position -20,87
+Size 200,30
+Text ? GetLevShieldUnlockTxt
+Align center
+VAlign center
+Style TINYMINI
+Alpha 1.0
+End
+Begin Window
+Name Movie_Unlocks
+Position -20,107
+Size 200,30
+Text ? GetLevMovieUnlockTxt
+Align center
+VAlign center
+Style TINYMINI
+Alpha 1.0
+End
+End
+Begin Window
+Name bracket_sm1
+Position 260,127 
+Size 152,50
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name bracket_holder
+Position 150,166 250,166 250,166
+Size 80,80
+ZOrder 0.22
+Icon bracket_holder_left
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name autobotshield_bg
+Position 40,96 140,96 140,96
+Size 150,150
+ZOrder 0.22
+Icon autobotshield_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name centre_bracket
+Position 190,100 
+Size 260,130
+ZOrder 0.22
+Icon centre_bracket
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+Begin Window
+Name arrows
+Position 207,108 
+Size 260,130
+ZOrder 0.22
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name arrow_left
+Position 31,37 
+Size 25,25
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name arrow_right
+Position 164,37 
+Size 25,25
+Pivot 12.5,12.5
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Angle 180
+End
+End
+Begin Window
+Position 220,130
+Size 200,30
+Text Autobot
+Align center
+VAlign center
+Style TINYMINI
+Alpha 1.0
+End
+Begin Window
+Position 220,165
+Size 200,40
+Text ? GetLevelMenuItemText
+Align center
+VAlign center
+Style SUPERMINI
+Alpha 1.0
+End
+End
+Begin Window
+Name level_select_screen_dec
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+OnActivate SetLevelMenuItemAmt int 1
+OnProcess ProcLevelMenu int 1
+OnBackout ActivateBackoutPage
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name small_brackets
+Position 190,44 100,44 100,44
+Size 280,35
+ZOrder 0.22
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name bracket_holder
+Position 216,120 
+Size 80,80
+ZOrder 0.22
+Icon bracket_holder_left
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name picture_frame
+Position 251,57 251,120 251,120
+Size 160,80
+ZOrder 0.22
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin window
+Name picture_frame_back
+Position 20,15 
+Size 120,70
+ZOrder 0.22
+Style solidblack
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name picture_frame_image
+Position 20,15 
+Size 120,70
+ZOrder 0.22
+Icon ? GetLevelMenuItemImage
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name picture_frame_top
+Position 0,0 
+Size 80,80
+ZOrder 0.22
+Icon picture_frame_l
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name picture_frame
+Position 80,0 
+Size 80,80
+ZOrder 0.22
+Icon picture_frame_r
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name picture_frame_bottom
+Position 251,87 251,17 251,17
+Size 80,80
+Pivot 80,80
+ZOrder 0.22
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin window
+Name picture_frame_back
+Position 20,150 
+Size 120,70
+Pivot 60,0
+ZOrder 0.22
+Style solidblack
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Angle 180
+End
+Begin window
+Name picture_frame_bottom
+Position 0,0 
+Size 80,80
+Pivot 80,80
+ZOrder 0.22
+Icon picture_frame_l
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Angle 180
+End
+Begin Window
+Name picture_frame
+Position 80,0 
+Size 80,80
+Pivot 0,80
+ZOrder 0.22
+Icon picture_frame_r
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Angle 180
+End
+Begin Window
+Name Shield_Unlocks
+Position -20,87
+Size 200,30
+Text ? GetLevShieldUnlockTxt
+Align center
+VAlign center
+Style TINYMINI
+Alpha 1.0
+End
+Begin Window
+Name Movie_Unlocks
+Position -20,107
+Size 200,30
+Text ? GetLevMovieUnlockTxt
+Align center
+VAlign center
+Style TINYMINI
+Alpha 1.0
+End
+End
+Begin Window
+Name bracket_sm1
+Position 260,127 
+Size 152,50
+ZOrder 0.22
+Icon bracket_sm
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name bracket_holder
+Position 150,166 250,166 250,166
+Size 80,80
+ZOrder 0.22
+Icon bracket_holder_left
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name decepticonshield_bg
+Position 40,96 140,96 140,96
+Size 150,150
+ZOrder 0.22
+Icon decepticonshield_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name centre_bracket
+Position 190,100 
+Size 260,130
+ZOrder 0.22
+Icon centre_bracket
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+Begin Window
+Name arrows
+Position 207,108 
+Size 260,130
+ZOrder 0.22
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name arrow_left
+Position 31,37 
+Size 25,25
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name arrow_right
+Position 164,37 
+Size 25,25
+Pivot 12.5,12.5
+ZOrder 0.22
+Icon arrow
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Angle 180
+End
+End
+Begin Window
+Position 220,130
+Size 200,30
+Text Decepticon
+Align center
+VAlign center
+Style TINYMINI
+Alpha 1.0
+End
+Begin Window
+Position 220,165
+Size 200,40
+Text ? GetLevelMenuItemText
+Align center
+VAlign center
+Style SUPERMINI
+Alpha 1.0
+End
+End
+Begin Window
+Name temp_Menu
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name brackets
+Position 190,0
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracket_bg5
+Position 0,180
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+End
+Begin Window
+Name bracket_bg4
+Position 0,140 
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+End
+End
+End
+Begin Window
+Name G1_Chars
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon front_load_back
+Style white128
+Alpha 1
+OnActivate ResetMenuButtonIndex
+OnProcess PRocSelectedButton
+OnBackout ActivateBackoutPage
+Begin Window
+Name brackets
+Position 190,84
+Size 280,35
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name bracket_bg1
+Position 0,34
+Size 280,50
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.1
+Begin Text
+Position 130,23
+Style ? GetMenuButtonStyle 0
+Text ? GetG1CharItemText 0
+Align Center
+Alpha ? GetSelectedButtonAlpha 0
+End
+End
+End
+Begin List
+Name VirtualButtons
+Position 321,140
+Size 301,195
+Space 1
+OnActivate HighlightTop
+Animation DECELERATE 1
+Begin Button
+depends bracket_bg1
+Action ToggleG1Char 0
+Animation Decelerate 1
+End
+End
+End
+Begin Window
+Name char_gallery_1
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name gallery_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Style solidblack
+Alpha 1
+End
+Begin Window
+Name front_gallery_back
+Position 0,284 0,284 0,384
+Size 640,192
+ZOrder 0.22
+Icon front_gallery_back
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+End
+Begin Window
+Name teeth
+Position 192,0 
+Size 256,64
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+Icon teeth
+End
+Begin Window
+Name corner_TL
+Position 0,0 
+Size 200,100
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+Icon corner
+End
+Begin Window
+Name corner_TR
+Position 440,0 
+Size 200,100
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+Icon corner_mirror
+End
+Begin Window
+Name frames_auto
+Position 0,75 0,75 0,260
+Size 640,80
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name frame1
+Position 73,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 1
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_ironhide
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_auto
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon autolight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name frame2
+Position 165,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 1
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_bumble
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_auto
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon autolight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name frame3
+Position 256,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 1
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_optimus
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_auto
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon autolight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name frame4
+Position 346,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 1
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_jazz
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_auto
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon autolight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name frame5
+Position 440,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 1
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_rachet
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_auto
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon autolight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+End
+Begin Window
+Name frames_dec
+Position 0,185 0,185 0,260
+Size 640,80
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name frame6
+Position 73,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_blackout
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_dec
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon deceptlight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name frame7
+Position 165,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_barricade
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_dec
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon deceptlight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name frame8
+Position 256,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_mega
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_dec
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon deceptlight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name frame9
+Position 346,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_starscream
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_dec
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon deceptlight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name frame10
+Position 440,0
+Size 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Depends frame1
+Name pocket_char
+Position 27,27
+Size 73,73
+ZOrder 0.22
+Icon pocket_scorp
+Style white128
+Alpha 1 0 0
+Animation LINEAR 0.1
+End
+Begin Window
+Name pocket
+Position 22,22
+Size 83,83
+ZOrder 0.22
+Icon pocket
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name badge
+Position 48,43
+Size 32,32
+ZOrder 0.22
+Icon pocket_dec
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name light
+Position 48,99
+Size 32,16
+ZOrder 0.22
+Icon deceptlight
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+End
+Begin Window
+Name bracket
+Position 202,47
+Size 256,32
+ZOrder 0.22
+Icon bracket_bg
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name char_gallery_2
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name gallery_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Style solidblack
+Alpha 1
+End
+Begin Window
+Name null1
+Position 0,0 1,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends null1
+Name null2
+Position 0,0 1,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends null2
+Name bumblebee_gallery
+Position 0,0 0,0 0,-200
+Size 640,223
+ZOrder 0.1
+Icon bumblebee_gallery
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name front_gallery_back
+Position 0,384
+Size 640,192
+ZOrder 0.22
+Icon front_gallery_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name teeth
+Position 192,-20 
+Size 256,64
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+Icon teeth
+End
+Begin Window
+Name corner_TL
+Position 0,-20 
+Size 200,100
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+Icon corner
+End
+Begin Window
+Name corner_TR
+Position 440,-20 
+Size 200,100
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+Icon corner_mirror
+End
+Begin Window
+Name frames
+Position 0,260
+Size 640,80
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name frame1
+Position 73,0
+Size 150,150 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name frame2
+Position 159,0 165,0
+Size 150,150 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name frame3
+Position 245,0 256,0
+Size 150,150 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name frame4
+Position 330,0 346,0
+Size 150,150 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name frame5
+Position 415,0 440,0
+Size 150,150 128,128
+ZOrder 0.22
+Icon char_frame
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Depends frames
+Name wiper_l
+Position 0,180 0,-20 0,-20
+Size 320,80
+ZOrder 0.22
+Icon wiper
+Style white128
+Alpha 1 0 1
+Animation DECELERATE 0.9
+End
+Begin Window
+Depends frames
+Name wiper_r
+Position 640,260 640,60 640,60
+Size 320,80
+ZOrder 0.22
+Icon wiper_mirror
+Style white128
+Alpha 1 0 1
+Animation DECELERATE 0.9
+Angle 180
+End
+End
+Begin Window
+Name char_gallery_3
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Alpha 1
+Begin Window
+Name gallery_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Style solidblack
+Alpha 1
+End
+Begin Window
+Name front_gallery_back
+Position 0,384
+Size 640,192
+ZOrder 0.22
+Icon front_gallery_back
+Style white128
+Alpha 1
+End
+Begin Window
+Name gallery_bottom_r
+Position 337,371 
+Size 256,64
+ZOrder 0.22
+Icon gallery_bottom
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+End
+Begin Window
+Name gallery_bottom_l
+Position 42,371 
+Size 256,64
+ZOrder 0.22
+Icon gallery_bottom_mirror
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+End
+Begin Window
+Name gallery_centre
+Position 256,384 
+Size 128,32
+ZOrder 0.22
+Icon gallery_frame_centre
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+End
+Begin Window
+Name gallery_side_r
+Position 571,34 
+Size 64,356
+ZOrder 0.22
+Icon side
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+End
+Begin Window
+Name gallery_side_l
+Position 68,388 
+Size 64,356
+ZOrder 0.22
+Icon side_mirror
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Angle 180
+End
+Begin Window
+Name wiper_l
+Position 0,-20 
+Size 320,80
+ZOrder 0.22
+Icon wiper
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+End
+Begin Window
+Name wiper_r
+Position 640,60 
+Size 320,80
+ZOrder 0.22
+Icon wiper_mirror
+Style white128
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Angle 180
+End
+End
+
+

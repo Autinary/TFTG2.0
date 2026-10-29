@@ -1,0 +1,8512 @@
+Display 640,480
+Path "gui"
+Language ENGLISH "gui/strings_bio.csv" LABEL ENGLISH
+Language AMERICAN "gui/strings_bio.csv" LABEL AMERICAN
+Language FRENCH "gui/strings_bio.csv" LABEL FRENCH
+Language GERMAN "gui/strings_bio.csv" LABEL GERMAN
+Language SPANISH "gui/strings_bio.csv" LABEL SPANISH
+Language ITALIAN "gui/strings_bio.csv" LABEL ITALIAN
+Language DANISH "gui/strings_bio.csv" LABEL DANISH
+Language RUSSIAN "gui/strings_bio.csv" LABEL RUSSIAN
+Language POLISH "gui/strings_bio.csv" LABEL POLISH
+Allocate window 20
+Allocate button 20
+Allocate action 65
+Allocate query 60
+Allocate done
+PakFile 0 "gui/game_global_#SKU_#LAN.fpk" 1
+Begin Font
+Name default
+File "gui/fonts/newTransformerFont"
+End
+Begin Image
+Name TransLogoGfx
+File "gui/gfx/transformersBanner"
+Alpha 1
+End
+Begin Image
+Name ScrollyHeadGfx
+File "gui/gfx/transformerIcon"
+Alpha 1
+End
+Begin Icon
+Name Invis
+Image LogoGfx
+Coords 0,0,0,0
+Colour 0,0,0,0
+End
+Begin Icon
+Name Empty
+Image LogoGfx
+Coords 0,0,0,0
+Colour 0,0,0,0
+End
+Begin Icon
+Name TransLogo
+Image TransLogoGfx
+Coords 0,0,512,64
+Colour 127,127,127,127
+End
+Begin Icon
+Name ScrollyHead
+Image ScrollyHeadGfx
+Coords 0,0,512,64
+Colour 127,127,127,127
+UVScroll -30,0
+End
+
+Begin Style
+Name BACKGROUND
+Font default 127,127,127,127 14,12
+BackgroundColour 32,32,32,127
+End
+Begin Style
+Name TITLE
+Font default 128,128,128,128 40,32
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name TITLE_MEDIUM
+Font default 128,128,128,128 32,30
+BackgroundColour 0,0,0,0
+DropShadowColour 0,0,0,128
+DropShadow 4.0
+End
+Begin Style
+Name DEFAULT
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name LOCATIONZONETEXT
+Font default 128,128,128,128 16,14
+BackgroundColour 0,0,0,0
+DropShadowColour 0,0,0,128
+DropShadow 2.0
+End
+Begin Style
+Name HUBTEXTWHITE
+Font default 128,128,128,128 16,14
+BackgroundColour 0,0,0,0
+DropShadowColour 0,0,0,128
+DropShadow 1.0
+End
+Begin Style
+Name CONTINUETEXTWHITE
+Font default 128,128,128,128 16,14
+BackgroundColour 0,0,0,0
+DropShadowColour 0,0,0,128
+DropShadow 1.0
+End
+Begin Style
+Name PROMPTTEXTWHITE
+Font default 128,128,128,128 16,14
+BackgroundColour 0,0,0,0
+DropShadowColour 0,0,0,128
+DropShadow 2.0
+End
+Begin Style
+Name HUBTEXTWHITEMEDIUM
+Font default 128,128,128,128 12,10
+BackgroundColour 0,0,0,0
+DropShadowColour 0,0,0,128
+DropShadow 2.0
+End
+Begin Style
+Name HUBTEXTWHITE2
+Font default 128,128,128,128 16,14
+BackgroundColour 0,0,0,0
+DropShadowColour 0,0,0,128
+DropShadow 2.0
+End
+Begin Style
+Name HUBTEXTWHITE3
+Font default 128,128,128,128 16,14
+BackgroundColour 0,0,0,0
+DropShadowColour 0,0,0,128
+DropShadow 2.0
+End
+Begin Style
+Name NARROW
+Font default 128,128,128,128 12,12
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name ENABLED_START 
+Font default 128,128,128,64 9,7
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name SELECTED_START 
+Font default 128,128,128,128 9,7
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name WHITE_START 
+Font default 128,128,128,128 9,7
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name GREEN_START 
+Font default 0,127,0,128 9,7
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name LOADING 
+Font default 128,128,128,128 11,11
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name ENABLED_MENU 
+Font default 128,128,128,64 13,11
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name SELECTED_MENU 
+Font default 128,128,128,128 13,11
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name ENABLED 
+Font default 90,90,90,128 14,12
+BackgroundColour 0,0,0,32
+End
+Begin Style
+Name DISABLED 
+Font default 90,90,90,64 14,12
+BackgroundColour 0,0,0,32
+End
+Begin Style
+Name SELECTED 
+Font default 128,128,128,128 14,12
+BackgroundColour 0,64,128,64
+BorderColour 255,255,255,127
+Outline 1.0
+End
+Begin Style
+Name WHITESELECTED 
+Font default 128,128,128,128 14,12
+BackgroundColour 128,128,128,128
+BorderColour 255,255,255,127
+Outline 1.0
+End
+Begin Style
+Name DSELECTED 
+Font default 128,128,128,64 14,12
+BackgroundColour 128,51,0,128 
+BackgroundIcon MonoBlurSmall
+BorderColour 255,255,255,127
+End
+Begin Style
+Name CAPTION_BLACK
+Font default 0,0,0,128 15,13
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name CAPTIONS 
+Font default 128,128,128,128 17.5,15
+BackgroundColour 0,0,0,40
+Outline 1.0
+OutlineColour 0,0,0,127
+End
+Begin Style
+Name CAPTIONS_NO 
+Font default 128,128,128,128 17.5,15
+BackgroundColour 0,0,0,0
+Outline 1.0
+OutlineColour 0,0,0,127
+End
+Begin Style
+Name CAPTIONS_NO_STATUS 
+Font default 128,128,128,128 15,12.5
+BackgroundColour 0,0,0,0
+Outline 1.0
+OutlineColour 0,0,0,127
+End
+Begin Style
+Name CAPTIONS_NO_STATUS_TOP 
+Font default 128,128,128,128 12,10
+BackgroundColour 0,0,0,0
+Outline 1.0
+OutlineColour 0,0,0,127
+End
+Begin Style
+Name CAPTIONS_PULSE 
+Font default 128,128,128,128 17.5,15
+BackgroundColour 0,0,0,0
+Outline 1.0
+OutlineColour 0,0,0,127
+End
+Begin Style
+Name NOTASBIGWHITE_CAPTIONS
+Font default 128,128,128,128 17.5,15
+BackgroundColour 0,0,0,0
+Outline 1.0
+OutlineColour 0,0,0,127
+End
+Begin Style
+Name BIGWHITE_CAPTIONS
+Font default 128,128,128,128 22,18
+BackgroundColour 0,0,0,0
+Outline 1.6
+OutlineColour 0,0,0,127
+End
+Begin Style
+Name BIGGERWHITE_CAPTIONS
+Font default 128,128,128,128 28,23
+BackgroundColour 0,0,0,0
+Outline 1.6
+OutlineColour 0,0,0,127
+End
+Begin Style
+Name KEY_ENABLED 
+Font default 90,90,90,128 18,16
+BackgroundColour 0,0,0,80
+End
+Begin Style
+Name KEY_SELECTED 
+Font default 128,128,128,128 18,16
+BackgroundColour 128,51,0,128 
+BackgroundIcon MonoBlurSmall
+End
+Begin Style
+Name OUTLINEDWHITE
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name WHITEONCLEAR
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name WHITEONCLEARSMALL
+Font default 128,128,128,128 12,10
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name MEDIUMWHITE
+Font default 128,128,128,128 11,11
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name MEDWHITE
+Font default 128,128,128,128 16,14
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name BIGWHITE
+Font default 128,128,128,128 22,18
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name WHITEONBLACK
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,128
+End
+Begin Style
+Name BLACK
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,128
+End
+Begin Style
+Name DIMBLACK
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,100
+End
+Begin Style
+Name WEAKBLACK
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,50
+End
+Begin Style
+Name BRIGHTWHITE
+Font default 128,128,128,128 14,12
+BackgroundColour 255,255,255,128
+End
+Begin Style
+Name WHITE
+Font default 128,128,128,128 14,12
+BackgroundColour 255,255,255,128
+End
+Begin Style
+Name WHITE128
+Font default 128,128,128,128 14,12
+BackgroundColour 128,128,128,128
+End
+Begin Style
+Name GREENONCLEAR
+Font default 0,127,0,128 14,12
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name CROSSHAIR_WHITE
+Font default 128,128,128,128 14,12
+BackgroundColour 128,128,128,128
+End
+Begin Style
+Name CROSSHAIR_RED
+Font default 100,0,0,128 14,12
+BackgroundColour 100,0,0,128
+End
+Begin Style
+Name GREEN
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,255,128
+End
+Begin Style
+Name DIMWHITE
+Font default 128,128,128,64 14,12
+BackgroundColour 128,128,128,64
+End
+Begin Style
+Name DIMBRIGHTWHITE
+Font default 128,128,128,64 14,12
+BackgroundColour 255,255,255,64
+End
+Begin Style
+Name TRANSSTRONG
+Font default 128,128,128,64 14,12
+BackgroundColour 128,128,128,92
+End
+Begin Style
+Name TRANS
+Font default 128,128,128,64 14,12
+BackgroundColour 128,128,128,64
+End
+Begin Style
+Name TRANSWEAK
+Font default 128,128,128,64 14,12
+BackgroundColour 128,128,128,20
+End
+Begin Style
+Name GREY
+Font default 127,127,127,127 14,12
+BackgroundColour 64,64,64,127
+End
+Begin Style
+Name DIMGREY
+Font default 127,127,127,127 14,12
+BackgroundColour 64,64,64,64
+End
+Begin Style
+Name LIGHTGREY
+Font default 127,127,127,127 14,12
+BackgroundColour 92,92,92,127
+End
+Begin Style
+Name FAINTGREY
+Font default 127,127,127,127 14,12
+BackgroundColour 92,92,92,40
+End
+Begin Style
+Name CARINFO
+Font default 0,0,0,128 12,11
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name redtxt
+Font default 128,51,0,127 14,12
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name smallredtxt
+Font default 64,0,0,127 12,11
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name smalldimredtxt
+Font default 64,0,0,64 12,11
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name semitrans
+Font default 127,127,127,127 14,12
+BackgroundColour 127,127,127,64
+End
+Begin Style
+Name SMALLWHITE
+Font default 127,127,127,127 10,10
+BackgroundColour 0,0,0,0
+DropShadowColour 0,0,0,128
+DropShadow 1.0
+End
+Begin Style
+Name SMALLGREY
+Font default 90,90,90,127 10,10
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name SUPERMINI
+Font default 127,127,127,127 8,8
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name TINYMINI
+Font default 127,127,127,127 6,6
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name SMALLRED
+Font default 127,51,0,127 10,10
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name INFOTXT
+Font default 90,90,90,127 14,12
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name INFOTXTGREY
+Font default 90,90,90,60 14,12
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name INFOTXTBLACK
+Font default 127,127,127,127 14,12
+BackgroundColour 0,0,0,110
+End
+Begin Style
+Name INFOTXTORANGE
+Font default 127,127,127,127 14,12
+BackgroundColour 127,51,0,100
+BackgroundIcon MonoBlurSmall
+End
+Begin Style
+Name INFOTXTWHITE
+Font default 127,127,127,127 14,12
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name BLACKONDIMWHITE
+Font default 0,0,0,128 14,12
+BackgroundColour 127,127,127,92
+End
+Begin Style
+Name INFOTITLE
+Font default 92,92,92,128 15,12
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name TINTRED
+Font default 127,0,0,128 14,12
+BackgroundColour 127,0,0,20
+End
+Begin Style
+Name TINTSOLIDRED
+Font default 127,0,0,128 14,12
+BackgroundColour 127,0,0,128
+End
+Begin Style
+Name TINTSOLIDREDoutlined
+Font default 127,0,0,128 14,12
+BackgroundColour 127,0,0,128
+Outline 1.0
+End
+Begin Style
+Name TINTSOLIDORANGE
+Font default 127,0,0,128 14,12
+BackgroundColour 127,55,0,128
+End
+Begin Style
+Name TINTSOLIDYELLOW
+Font default 127,0,0,128 14,12
+BackgroundColour 127,127,0,128
+End
+Begin Style
+Name TINTSOLIDLIGHTGREEN
+Font default 127,0,0,128 14,12
+BackgroundColour 78,127,0,128
+EnD
+Begin Style
+Name TINTBLUE
+Font default 0,0,127,128 14,12
+BackgroundColour 0,0,127,20
+End
+Begin Style
+Name TINTSOLIDBLUE
+Font default 0,75,127,128 14,12
+BackgroundColour 0,75,127,128
+End
+Begin Style
+Name TINTGREEN
+Font default 0,127,0,128 14,12
+BackgroundColour 0,127,0,20
+End
+Begin Style
+Name TINTSOLIDGREEN
+Font default 0,127,0,128 14,12
+BackgroundColour 0,127,0,128
+End
+Begin Style
+Name OUTLINEDGREEN
+Font default 0,127,0,128 14,12
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name TINTWHITE
+Font default 127,127,127,128 14,12
+BackgroundColour 127,127,127,30
+End
+Begin Style
+Name TINTBROWN
+Font default 121,79,0,128 14,12
+BackgroundColour 121,79,0,20
+End
+Begin Style
+Name TINTBLACK
+Font default 0,0,0,128 14,12
+BackgroundColour 0,0,0,40
+End
+Begin Style
+Name TINTYELLOW
+Font default 127,127,0,128 14,12
+BackgroundColour 127,127,0,30
+End
+Begin Style
+Name HITRED
+Font default 127,0,0,128 14,12
+BackgroundColour 127,0,0,64
+End
+Begin Style
+Name FlashRed
+Font default 80,0,0,128 14,12
+BackgroundColour 80,0,0,128
+End
+Begin Style
+Name GABI1
+Font default 127,0,0,128 14,12
+BackgroundColour 127,0,0,128
+End
+Begin Style
+Name GABI2
+Font default 0,0,0,128 14,12
+BackgroundColour 127,0,64,128
+End
+Begin Style
+Name GABI3
+Font default 0,0,0,128 14,12
+BackgroundColour 127,0,127,128
+End
+Begin Style
+Name GABI4
+Font default 0,0,0,128 14,12
+BackgroundColour 64,0,127,128
+End
+Begin Style
+Name GABI5
+Font default 0,0,0,128 14,12
+BackgroundColour 0,0,127,128
+End
+Begin Style
+Name GABIBLOCK5
+Font default 127,0,0,128 14,12
+BackgroundColour 127,0,0,128
+End
+Begin Style
+Name GABIBLOCK4
+Font default 127,0,0,128 14,12
+BackgroundColour 127,27,68,128
+End
+Begin Style
+Name GABIBLOCK3
+Font default 127,0,0,128 14,12
+BackgroundColour 127,80,127,128
+End
+Begin Style
+Name GABIBLOCK1
+Font default 127,0,0,128 14,12
+BackgroundColour 75,105,127,128
+EnD
+Begin Style
+Name GABIBLOCK2
+Font default 0,127,0,128 14,12
+BackgroundColour 0,78,127,128
+End
+
+Begin Window
+Name Fadeout_timer
+Position 0,0
+Size 0,0
+Alpha 0.0
+ZOrder 0.01
+Timeout 0.5
+OnDeactivate QuitRace
+End
+Begin Window
+Name Fadeout
+Position 0,0
+Size 640,480
+Style whiteonblack,whiteonblack,whiteonblack
+Animation LINEAR 0.4
+NoBlockInput
+Alpha 1.0 0.0 1.0
+ZOrder 0.01
+OnActivate AddPage Fadeout_timer
+End
+Begin Window
+Name Fadein
+Position 0,0
+Size 640,480
+Style whiteonblack,whiteonblack,whiteonblack
+Animation LINEAR 1.3
+Alpha 1.0 1.0 0.0
+ZOrder 0.01
+Timeout 0.05
+End
+Begin Window
+Name Flash
+Position 0,0
+Size 640,480
+Style white,white,white
+Animation LINEAR 0.2
+Alpha 1.0 0.0 0.0
+ZOrder 0.01
+Timeout 0.1
+NoBlockInput
+End
+Begin Window
+Name FlashRed
+Position 0,0
+Size 640,480
+Style FlashRed,FlashRed,FlashRed
+Animation LINEAR 0.2
+Alpha 0.8 0.0 0.0
+ZOrder 0.01
+Timeout 0.1
+NoBlockInput
+End
+Begin Window
+Name FlashBehind 
+Position 0,0
+Size 640,480
+Style white,white,white
+Animation LINEAR 0.2
+Alpha 1.0 1.0 0.0
+ZOrder 0.9
+NoBlockInput
+End
+Begin Window
+Name FlashTurn 
+Position 0,0
+Size 640,480
+Style white,white,white
+Animation LINEAR 0.2
+Alpha 1.0 1.0 0.0
+ZOrder 0.9
+End
+
+Begin Window
+Name Loading
+Position 0,0
+Size 640,480
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.011
+Begin Text
+Position 0,130
+Size 640,20
+Style SMALLWHITE
+Text ? GetTimeStamp
+Align center
+End
+Begin Window 
+Position 0,230,0,300
+Size 640,30
+Alpha 1 0
+Animation DECELERATE 0.2
+Begin Text
+Position 0,0
+Size 640,30
+Style SMALLWHITE
+Text ? GetLoadingText
+Align center
+End
+Begin Text
+Position 0,20
+Size 640,30
+Style SMALLWHITE
+Text ? GetLastFile
+Align center
+End
+End
+End
+
+Begin Style WII
+Name WIIRETICLELEFT
+Font default 256,0,0,256 14,12
+BackgroundColour 128,0,0,128
+End
+Begin Style WII
+Name WIIRETICLEUP
+Font default 0,256,0,256 14,12
+BackgroundColour 0,128,0,128
+End
+Begin Style WII
+Name WIIRETICLERIGHT
+Font default 0,0,256,256 14,12
+BackgroundColour 0,0,128,128
+End
+Begin Style WII
+Name WIIRETICLEDOWN
+Font default 256,0,256,256 14,12
+BackgroundColour 128,0,128,128
+End
+Begin Style
+Name HUDINFO_BG
+Font default 128,128,128,128 64,64
+End
+Begin Style
+Name HUDINFO_BG_FF
+Font default 128,128,128,128 20,20
+End
+Begin Style
+Name HUDMSG_TEXT
+Font default 128,128,128,128 12,12
+DropShadowColour 0,0,0,128
+DropShadow 1.0
+End
+Begin Style
+Name TIMER_TEXT
+Font default 128,128,128,128 11,11
+OutlineColour 0,0,0,128
+Outline 1.0
+End
+Begin Style
+Name RETICULE_TEXT
+Font default 128,128,128,128 11,11
+BackgroundColour 0,0,0,0
+OutlineColour 0,0,0,128
+Outline 1.0
+End
+Begin Style
+Name HUDINFO_TEXT
+Font default 128,128,128,128 64,64
+End
+Begin Style
+Name StylePressX
+Font default 96,96,128,96 25,35
+BackgroundColour 0,0,0,0
+OutlineColour 64,64,128,128
+Outline 1.0
+End
+Begin Style
+Name REDONCLEAR
+Font default 116,31,31,128 11,9
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name GREENONCLEAR
+Font default 31,118,31,128 11,9
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name BLUEONCLEAR
+Font default 23,70,101,128 11,9
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name OUTLINEDBLUEONCLEAR
+Font default 23,70,101,128 14,12
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name SpeedLimit
+Font default 128,128,128,128 10,12
+BackgroundColour 128,128,128,128
+Outline 0.0
+End
+Begin Style
+Name GABIMSGWHITE
+Font default 128,128,128,128 14,12
+BackgroundColour 128,128,128,128
+Outline 1.0
+End
+Begin Style
+Name StyleBonusUnlocked
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,0
+Outline 1.0
+End
+Begin Style
+Name SPEEDOWHITE
+Font default 128,128,128,128 9,7
+BackgroundColour 128,128,128,128
+Outline 1.0
+End
+Begin Style
+Name GABIMSGBLUE
+Font default 23,70,101,128 9,7
+BackgroundColour 128,128,128,128
+Outline 1.0
+End
+Begin Style
+Name GABIMSGRED
+Font default 116,31,31,128 9,7
+BackgroundColour 128,128,128,128
+Outline 1.0
+End
+Begin Style
+Name GBMETER_RED
+Font default 127,0,0,128 14,12
+BackgroundColour 127,0,0,128
+End
+Begin Style
+Name GBMETER_GREEN
+Font default 0,127,0,128 14,12
+BackgroundColour 0,127,0,128
+End
+Begin Style
+Name GBMETER_BLUE
+Font default 0,0,127,128 14,12
+BackgroundColour 0,0,127,128
+End
+Begin Style
+Name BLACKWITHALPHA
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,50
+End
+Begin Style
+Name MISSION_TITLE_sm_WHITE
+Font default 128,128,128,128 14,12
+End
+Begin Style
+Name MISSION_DESC
+Font default 128,128,128,128 11,9
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name MISSION_TITLE_sm
+Font default 0,0,0,128 12,11
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name CAPTION_TEXT
+Font default 255,255,255,128 10,8
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name BLACKFADE
+Font default 128,128,128,128 14,12
+BackgroundColour 0,0,0,128
+End
+Begin Style
+Name DESTROYDRONES_STYLE
+Font default 128,128,128,128 16,14
+End
+Begin Style
+Name solidblack
+Font default 0,0,0,128 14,12
+BackgroundColour 0,0,0,128
+End
+Begin Style
+Name autobot_blue
+Font default 0,127,0,128 14,12
+BackgroundColour 80,110,127,128
+End
+Begin Style
+Name autobot_lightblue
+Font default 0,127,0,128 14,12
+BackgroundColour 62,99,127,128
+End
+Begin Style
+Name autobot_amber
+Font default 0,127,0,128 14,12
+BackgroundColour 126,86,30,128
+End
+Begin Style
+Name autobot_red
+Font default 0,127,0,128 14,12
+BackgroundColour 126,0,0,128
+End
+Begin Style
+Name autobot_blue2
+Font default 0,127,0,128 14,12
+BackgroundColour 50,90,127,128
+End
+Begin Image
+Name energon_cube
+File "gui/gfx/energon_cube"
+Alpha 1
+End
+Begin Icon
+Name energon_cube
+Image energon_cube
+nCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Image
+Name cross
+File "gui/gfx/cross"
+Alpha 1
+End
+Begin Image 
+Name autobot_shield
+File "gui/gfx/autobotshield1"
+Alpha 1
+End
+Begin Image 
+Name autobot_shield_outline
+File "gui/gfx/autobotshield_outline"
+Alpha 1
+End
+Begin Image 
+Name decepticon_shield_outline
+File "gui/gfx/dshield_outline"
+Alpha 1
+End
+Begin Image 
+Name decepticon_shield
+File "gui/gfx/decepticonshield1"
+Alpha 1
+End
+Begin Image
+Name radar_shapes
+File "gui/gfx/radar_shapes"
+Alpha 1
+Clamped
+End
+Begin Image
+Name Interference
+File "gui/gfx/static"
+Alpha 1
+End
+Begin Image
+Name radar_shapes_outlined
+File "gui/gfx/radar_shapes_outlined"
+Alpha 1
+End
+Begin Image
+Name fuzzy_dot
+File "gui/gfx/fuzzy_dot"
+Alpha 1
+End
+Begin Image ps2 wii
+Name blackoutHead
+File "gui/gfx/blackoutHead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name blackoutHead
+File "gui/gfx/blackoutHead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name starscreamHead
+File "gui/gfx/starscreamHead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name starscreamHead
+File "gui/gfx/starscreamHead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name jazzHead
+File "gui/gfx/jazzHeadIcon_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name jazzHead
+File "gui/gfx/jazzHeadIcon_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name frenzyHead
+File "gui/gfx/frenzyHead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name frenzyHead
+File "gui/gfx/frenzyHead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name optimusHead
+File "gui/gfx/optimusHead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name optimusHead
+File "gui/gfx/optimusHead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name bumblebeeHead
+File "gui/gfx/bumblebeeHead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name bumblebeeHead
+File "gui/gfx/bumblebeeHead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name bumblebeeHead07
+File "gui/gfx/bumblebeeHead07_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name bumblebeeHead07
+File "gui/gfx/bumblebeeHead07_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name blackoutHead
+File "gui/gfx/blackoutHead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name blackoutHead
+File "gui/gfx/blackoutHead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name ironhideHead
+File "gui/gfx/ironhideHead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name ironhideHead
+File "gui/gfx/ironhideHead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name bonecrusherhead
+File "gui/gfx/bonecrusherhead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name bonecrusherhead
+File "gui/gfx/bonecrusherhead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name brawlhead
+File "gui/gfx/brawlhead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name brawlhead
+File "gui/gfx/brawlhead_128_hr"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name dconHead
+File "gui/gfx/br_bc_dconheads"
+Alpha 1
+End
+Begin Image ps2 wii
+Name megatronhead
+File "gui/gfx/megatronhead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name megatronhead
+File "gui/gfx/megatronhead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name Scorponokhead
+File "gui/gfx/Scorponokhead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name Scorponokhead
+File "gui/gfx/Scorponokhead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name barricadehead
+File "gui/gfx/barricadehead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name barricadehead
+File "gui/gfx/barricadehead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name triplechangerhead
+File "gui/gfx/triplechangerhead_128"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name triplechangerhead
+File "gui/gfx/triplechangerhead_128_hr"
+Alpha 1
+End
+Begin Image 360 win_pc ps3
+Name rachethead
+File "gui/gfx/rachethead_128_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name rachethead
+File "gui/gfx/rachethead_128"
+Alpha 1
+End
+Begin Image
+Name pr_triangle
+File "gui/gfx/pr_triangle"
+Alpha 1
+End
+Begin Image
+Name location_circle
+File "gui/gfx/location_circle"
+Alpha 1
+End
+Begin Image
+Name breakable
+File "gui/gfx/breakable"
+Alpha 1
+End
+Begin Image
+Name retfan_icon
+File "gui/gfx/retfan_icon"
+Alpha 1
+End
+Begin Image 
+Name computer
+File "gui/gfx/computer"
+Alpha 1
+End
+Begin Image 
+Name car_icon
+File "gui/gfx/car_icon"
+Alpha 1
+End
+Begin Image 
+Name plane_icon
+File "gui/gfx/plane_icon"
+Alpha 1
+End
+Begin Image 
+Name drone_icon
+File "gui/gfx/drone_icon"
+Alpha 1
+End
+Begin Image
+Name commtower_icon
+File "gui/gfx/commtower"
+Alpha 1
+End
+Begin Image ps2 wii
+Name destruction_icon
+File "gui/gfx/destruction_icon"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name destruction_icon
+File "gui/gfx/destruction_icon"
+Alpha 1
+End
+Begin Image
+Name map_mask
+File "gui/gfx/map_mask"
+Alpha 1
+End
+Begin Image
+Name autobotshield_outline_glow
+File "gui/gfx/autobotshield_outline_glow"
+Alpha 1
+End
+Begin Image
+Name DecShield_outline_glow
+File "gui/gfx/DShield_outline_glow"
+Alpha 1
+End
+Begin Image WII
+Name WiiReticleGfx
+File "gui/gfx/wii_reticle"
+Alpha 1
+End
+Begin Image
+Name radar_ashield
+File "gui/gfx/radar_ashield"
+Alpha 1
+End
+Begin Image
+Name radar_dshield
+File "gui/gfx/radar_dshield"
+Alpha 1
+End
+Begin Image
+Name Hint_Button_Target
+File "gui/gfx/buttons/#SKU_l1_btn"
+Alpha 1
+End
+Begin Icon
+Name destruction_icon2
+Image destruction_icon2
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name Hint_Button_Target
+Image Hint_Button_Target
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Image
+Name lightning
+File "gui/gfx/lightning"
+Alpha 1
+End
+Begin Image
+Name mast
+File "gui/gfx/mast"
+Alpha 1
+End
+Begin Image
+Name nitrogen_icon
+File "gui/gfx/nitrogen_icon"
+Alpha 1
+End
+Begin Image
+Name heli_icon
+File "gui/gfx/heli_icon"
+Alpha 1
+End
+Begin Image ps2 wii
+Name dialog5
+File "gui/gfx/dialog5"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name dialog5
+File "gui/gfx/dialog5_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name map1
+File "gui/gfx/map1"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name map1
+File "gui/gfx/map1_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name dials
+File "gui/gfx/dials"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name dials
+File "gui/gfx/dials_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name dials_speedo
+File "gui/gfx/dials_car"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name dials_speedo
+File "gui/gfx/dials_car_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name health2
+File "gui/gfx/health2"
+Alpha 1
+End
+Begin Image 360 ps3 win_pc
+Name health2
+File "gui/gfx/health2_hr"
+Alpha 1
+End
+Begin Image
+Name health_bars2
+File "gui/gfx/health_bars2_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name gabi_frames_top
+File "gui/gfx/gabi_frames_top"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name gabi_frames_top
+File "gui/gfx/gabi_frames_top_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name reticle_outer
+File "gui/gfx/reticle_outer"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name reticle_outer
+File "gui/gfx/reticle_outer_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name reticle_inner
+File "gui/gfx/reticle_inner"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name reticle_inner
+File "gui/gfx/reticle_inner_hr"
+Alpha 1
+End
+Begin Image
+Name reticle_health
+File "gui/gfx/enemy_health"
+Alpha 1
+End
+Begin Image
+Name primary
+File "gui/gfx/primary"
+Alpha 1
+End
+Begin Image
+Name secondary
+File "gui/gfx/secondary"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name hit_point_bar
+File "gui/gfx/hit_pointbar_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name hit_point_bar
+File "gui/gfx/hit_pointbar"
+Alpha 1
+End
+Begin Image ps2 wii
+Name hit_pointbar_health
+File "gui/gfx/hit_pointbar_health"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name hit_pointbar_health
+File "gui/gfx/hit_pointbar_health_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name city_destruction_icon
+File "gui/gfx/city_destruction_icon"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name city_destruction_icon
+File "gui/gfx/city_destruction_icon_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name energon_cube_icon
+File "gui/gfx/energon_cube_icon"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name energon_cube_icon
+File "gui/gfx/energon_cube_icon_hr"
+Alpha 1
+End
+Begin Image
+Name energon_arrow
+File "gui/gfx/energon_arrow"
+Alpha 1
+End
+Begin Image ps2 wii
+Name reticle_info
+File "gui/gfx/reticle_info"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name reticle_info
+File "gui/gfx/reticle_info_hr"
+Alpha 1
+End
+Begin Image
+Name Ally_health_bar1
+File "gui/gfx/allyhealth1"
+Alpha 1
+End
+Begin Image
+Name timer_icon
+File "gui/gfx/timer"
+Alpha 1
+End
+Begin Image
+Name flame_icon
+File "gui/gfx/flame_icon"
+Alpha 1
+End
+Begin Image
+Name fan_icon
+File "gui/gfx/fan_icon"
+Alpha 1
+End
+Begin Image
+Name sector7_icon
+File "gui/gfx/sector7_icon"
+Alpha 1
+End
+Begin Image
+Name alarm_icon
+File "gui/gfx/alarm_icon"
+Alpha 1
+End
+Begin Image
+Name clasp_icon
+File "gui/gfx/clasp_icon"
+Alpha 1
+End
+Begin Image
+Name truck_icon
+File "gui/gfx/truck_icon"
+Alpha 1
+End
+Begin Image
+Name cube_arrow
+File "gui/gfx/cube_arrow"
+Alpha 1
+End
+Begin Icon
+Name ally_health_bar1
+Image ally_health_bar1
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name timer_icon
+Image timer_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name autobot_shield
+Image autobot_shield
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name autobot_shield_outline
+Image autobot_shield_outline
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name decepticon_shield_outline
+Image decepticon_shield_outline
+NCoords 0.02,0,1,.98
+Colour 127,127,127,127
+End
+Begin Icon
+Name decepticon_shield
+Image decepticon_shield
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name cross
+Image cross
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name lightning
+Image lightning
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name lightning_Clamped
+Image lightning
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name police_response_box_end
+Image police_response_box
+Coords 0,0,8,63
+Colour 127,127,127,127
+End
+Begin Icon
+Name police_response_box_middle
+Image police_response_box
+Coords 8,0,23,63
+Colour 127,127,127,127
+End
+Begin Icon
+Name police_response_box_end_mirror
+Image police_response_box
+Coords 8,0,-8,63
+Colour 127,127,127,127
+End
+Begin Icon
+Name GB_meter
+Image GB_meter
+Coords 0.5,0,31,63
+Colour 127,127,127,127
+End
+Begin Icon
+Name GB_meter_mirror
+Image GB_meter
+Coords 31,0,-30.5,63
+Colour 127,127,127,127
+End
+Begin Icon
+Name reticle
+Image reticle
+Coords 0,0,127,64
+Colour 127,127,127,127
+End
+Begin Icon
+Name Interference
+Image Interference
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_centre
+Image radar_shapes
+Coords 1,1,31,31
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_triangle
+Image radar_shapes
+Coords 0,32,36,32
+Colour 127,127,127,127
+End
+Begin Icon
+Name fuzzy_dot
+Image fuzzy_dot
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_centre_outlined
+Image radar_shapes_outlined
+Coords 1,1,31,31
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_triangle_outlined
+Image radar_shapes_outlined
+Coords 0,32,36,32
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_triangle_Mirror
+Image radar_shapes
+Coords 0,64,36,-32
+Colour 127,127,127,127
+End
+Begin Icon
+Name reticle_centre
+Image radar_shapes
+Coords 1,1,32,32
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_frame
+Image radar_frame
+Coords 1,1,126,126
+Colour 127,127,127,127
+End
+Begin Icon
+Name blackoutHead
+Image blackoutHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name blackoutHead_m
+Image blackoutHead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name starscreamHead
+Image starscreamHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name starscreamHead_m
+Image starscreamHead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name jazzHead
+Image jazzHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name jazzHead_m
+Image jazzHead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name frenzyHead
+Image frenzyHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name frenzyHead_m
+Image frenzyHead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name optimusHead
+Image optimusHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name optimusHead_m
+Image optimusHead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bumblebeeHead07
+Image bumblebeeHead07
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bumblebeeHead07_m
+Image bumblebeeHead07
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bumblebeeHead
+Image bumblebeeHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bumblebeeHead_m
+Image bumblebeeHead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ironhideHead
+Image ironhideHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ironhideHead_m
+Image ironhideHead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bonecrusherHead
+Image bonecrusherHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name bonecrusherHead_m
+Image bonecrusherHead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name brawlHead
+Image brawlHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name dconHead
+Image dconHead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name brawlHead_m
+Image brawlHead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name megatronhead
+Image megatronhead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name megatronhead_m
+Image megatronhead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name rachethead
+Image rachethead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name rachethead_m
+Image rachethead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name Scorponokhead
+Image Scorponokhead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name Scorponokhead_m
+Image Scorponokhead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name barricadehead
+Image barricadehead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name barricadehead_m
+Image barricadehead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name triplechangerhead
+Image triplechangerhead
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name triplechangerhead_m
+Image triplechangerhead
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pr_triangle
+Image pr_triangle
+Coords 0,0,64,64
+Colour 127,127,127,127
+End
+Begin Icon
+Name pr_triangle_mirror
+Image pr_triangle
+Coords 0,64,64,-64
+Colour 127,127,127,127
+End
+Begin Icon
+Name location_circle
+Image location_circle
+Coords 1,1,62,62
+Colour 127,127,127,127
+End
+Begin Icon
+Name grey_circle_dot
+Image radar_shapes
+Coords 1,1,31,31
+Colour 127,127,127,127
+End
+Begin Icon
+Name grey_circle
+Image location_circle
+Coords 1,1,62,62
+Colour 127,127,127,127
+End
+Begin Icon
+Name breakable
+Image breakable
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name computer
+Image computer
+NCoords 0,0 1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name car_icon
+Image car_icon
+NCoords 0,0 1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name plane_icon
+Image plane_icon
+NCoords 0,0 1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name drone_icon
+Image drone_icon
+NCoords 0,0 1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name commtower_icon
+Image commtower_icon
+NCoords 0,0 1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name destruction_icon
+Image destruction_icon
+NCoords 0,0 1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name clasp_icon
+Image clasp_icon
+NCoords 0,0 1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name retfan_icon
+Image retfan_icon
+NCoords 0,0 1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name truck_icon
+Image truck_icon
+NCoords 0,0 1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name machinegun_icon
+Image machinegun_icon
+NCoords 0,0 0.96,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name rocket_icon
+Image rocket_icon
+NCoords 0,0 0.98,1
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name health
+Image health_bars
+Coords 0,0,127,71
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name health
+Image health_bars
+Coords 0,0,254,142
+Colour 127,127,127,127
+End
+Begin Icon
+Name health_ext
+Image health_ext
+NCoords 0,0,0.98,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name health_bar
+Image health_bar_graphics
+Coords 0,17,64,16
+Colour 127,127,127,127
+End
+Begin Icon
+Name nitro_bar
+Image health_bar_graphics
+Coords 0,32,64,4
+Colour 127,127,127,127
+End
+Begin Icon
+Name ammo_count
+Image health_bar_graphics
+Coords 0,32,64,4
+Colour 127,127,127,127
+End
+Begin Icon
+Name BumbleBeeMachineGun
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BLACKOUTHELIPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BLACKOUTHELISECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BARRICADEPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BARRICADESECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BONECRUSHERPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BONECRUSHERSECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BRAWLPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BRAWLSECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name JAZZPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name JAZZSECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name MEGATRONPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name MEGATRONSECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name OPTIMUSPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name OPTIMUSSECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name STARSCREAMPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name STARSCREAMSECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name STARSCREAMPLANEPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name STARSCREAMPLANESECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name IRONHIDEPRIMARY
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name IRONHIDESECONDARY
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ScorponokPrimary
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ScorponokSecondary
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BumbleBeePlasma
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name laser
+Image machinegun_icon
+NCoords 0,0,0.97,0.97
+Colour 127,127,127,127
+End
+Begin Icon
+Name laserX2
+Image combine_gun_icon
+NCoords 0,0,0.99,0.99
+Colour 127,127,127,127
+End
+Begin Icon
+Name bullet
+Image computer
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name missile
+Image rocket_icon
+NCoords 0,0,0.97,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BlackoutStar
+Image machinegun_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name BlackoutDisK
+Image rocket_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name grenade
+Image map
+Coords 0,0,128,128
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name Ally_health
+Image health_bars
+Coords 35,87,93,41
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name Ally_health
+Image health_bars
+Coords 70,174,186,82
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name Ally_health1
+Image health_bars
+Coords 35,106,85,22
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name Ally_health1
+Image health_bars
+Coords 70,212,170,44
+Colour 127,127,127,127
+End
+Begin Icon
+Name Ally_health_bar
+Image health_bar_graphics
+Coords 0,36,64,7
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name Ally_portrait
+Image health_bars
+Coords 0,76,35,49
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name Ally_portrait
+Image health_bars
+Coords 0,152,70,98
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name enemy_health
+Image health_bars
+Coords 75,74,51,12
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name enemy_health
+Image health_bars
+Coords 150,148,102,24
+Colour 127,127,127,127
+End
+Begin Icon
+Name enemy_health_bar
+Image health_bar_graphics
+Coords 0,43,46,5
+Colour 127,127,127,127
+End
+Begin Icon
+Name health_bar_back
+Image health_bar_graphics
+Coords 1,0,64,17
+Colour 127,127,127,127
+End
+Begin Icon
+Name nitro_bar_back
+Image health_bar_graphics
+Coords 0,0,64,17
+Colour 127,127,127,127
+End
+Begin Icon
+Name ally_health_bar_back
+Image health_bar_graphics
+Coords 0,0,64,17
+Colour 127,127,127,127
+End
+Begin Icon
+Name enemy_health_bar_back
+Image health_bar_graphics
+Coords 0,0,64,17
+Colour 127,127,127,127
+End
+Begin Icon
+Name map
+Image map
+NCoords 0.01,0.01,0.99,0.99
+Colour 127,127,127,127
+End
+Begin Icon
+Name map_ext
+Image map_ext
+NCoords 0.01,0.01,0.98,0.98
+Colour 127,127,127,127
+End
+Begin Icon
+Name map_mask
+Image map_mask
+NCoords 0.01,0.01,0.99,0.99
+Colour 127,127,127,127
+End
+Begin Icon
+Name dialog
+Image dialog_points
+Coords 0,0,465,127
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name dialog1
+Image dialog_points
+Coords 0,0,115,127
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name dialog1
+Image dialog_points
+Coords 0,0,115,127
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name dialog2
+Image dialog_points
+Coords 116,0,90,127
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name dialog2
+Image dialog_points
+Coords 116,0,302,127
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name dialog3
+Image dialog_points
+Coords 206,0,45,127
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name dialog3
+Image dialog_points
+Coords 418,0,47,127
+Colour 127,127,127,127
+End
+Begin Icon
+Name bracket_holder_l
+Image bracket_holder
+NCoords 0,0,0.78,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name autobotshield_outline_glow
+Image autobotshield_outline_glow
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name DecShield_outline_glow
+Image DecShield_outline_glow
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name gabi1_right
+Image gabi1
+Coords 160,1 ,-157 ,47
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name gabi1_right
+Image gabi1
+Coords 320.5,1,-315.5,94
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name gabi1_left
+Image gabi1
+Coords 160,51.5,-157,47
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name gabi1_left
+Image gabi1
+Coords 321.5,102,-316,94
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_colours
+Image gabi1
+Coords 0,112,256,15
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_slider
+Image cube_arrow
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_pointer
+Image gabi1
+Coords 164,78,6,30
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name point_light_red
+Image gabi1
+Coords 168,13,21,20
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name point_light_red
+Image gabi1
+Coords 336,26,42,40
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name point_light_blue
+Image gabi1
+Coords 168,33,21,21
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name point_light_blue
+Image gabi1
+Coords 336,66,42,42
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name target_main
+Image gabi1
+Coords 202,1.5,46,46
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name target_main
+Image gabi1
+Coords 404,3,92,92
+Colour 127,127,127,127
+End
+Begin Icon
+Name target_lock
+Image gabi1
+Coords 176,49,72,61
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name target_idle
+Image gabi1
+Coords 183,5,5,4
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name target_idle
+Image gabi1
+Coords 366,10,10,8
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name glass_tube
+Image gabi1
+Coords 0,100,135,28
+Colour 127,127,127,127
+End
+Begin Icon win_pc 360 ps3
+Name glass_tube
+Image gabi1
+Coords 0,200,270,56
+Colour 127,127,127,127
+End
+Begin Icon WII
+Name WII_Reticle_icon
+Image WiiReticleGfx
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name mos
+Image mos
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name textboxTL
+Image textbox
+Coords 0,0,24,24
+Colour 127,127,127,127
+End
+Begin Icon
+Name textboxTR
+Image textbox
+Coords 39,0,24,24
+Colour 127,127,127,127
+End
+Begin Icon
+Name textboxBR
+Image textbox
+Coords 39,39,24,24
+Colour 127,127,127,127
+End
+Begin Icon
+Name textboxBL
+Image textbox
+Coords 0,39,24,24
+Colour 127,127,127,127
+End
+Begin Icon
+Name textboxTM
+Image textbox
+Coords 25,0,16,24
+Colour 127,127,127,127
+End
+Begin Icon
+Name textboxSR
+Image textbox
+Coords 40,25,24,16
+Colour 127,127,127,127
+End
+Begin Icon
+Name textboxBM
+Image textbox
+Coords 25,40,16,24
+Colour 127,127,127,127
+End
+Begin Icon
+Name textboxSL
+Image textbox
+Coords 0,25,24,16
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name mp_tr
+Image dialog_points
+Coords 447,20,15,37
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name mp_tr
+Image dialog_points
+Coords 236,20,15,37
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name mp_tl
+Image dialog_points
+Coords 461,20,-15,37
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name mp_tl
+Image dialog_points
+Coords 251,20,-15,37
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name mp_sr
+Image dialog_points
+Coords 236,37,15,9
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name mp_sr
+Image dialog_points
+Coords 447,37,15,9
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name mp_sl
+Image dialog_points
+Coords 251,37,-15,9
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name mp_sl
+Image dialog_points
+Coords 461,37,-15,9
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name mp_br
+Image dialog_points
+Coords 208,46,43,80
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name mp_br
+Image dialog_points
+Coords 418,46,43,80
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name mp_bl
+Image dialog_points
+Coords 251,46,-43,80
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name mp_bl
+Image dialog_points
+Coords 461,46,-43,80
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name mp_tm
+Image dialog_points
+Coords 228,20,8,17
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name mp_tm
+Image dialog_points
+Coords 439,20,8,17
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name mp_bm
+Image dialog_points
+Coords 208,105,6,17
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name mp_bm
+Image dialog_points
+Coords 418,105,6,17
+Colour 127,127,127,127
+End
+Begin Icon
+Name health1
+Image health1
+NCoords 1,0,0.99,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name lens
+Image lens
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_glow
+Image gabi_glow
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_graphic
+Image gabi_graphic
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_graphic1
+Image gabi_graphic1
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_ashield
+Image radar_ashield
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_ashield_clamped
+Image radar_ashield
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_dshield
+Image radar_dshield
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name radar_dshield_clamped
+Image radar_dshield
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name sector7_icon
+Image sector7_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name sector7_icon_clamped
+Image radar_dshield
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name alarm_icon
+Image alarm_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name alarm_icon_clamped
+Image alarm_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name flame_icon
+Image flame_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name flame_icon_clamped
+Image flame_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name fan_icon
+Image fan_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name fan_icon_clamped
+Image fan_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name nitrogen_icon
+Image nitrogen_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name nitrogen_icon_Clamped
+Image nitrogen_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name mast
+Image mast
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name mast_Clamped
+Image mast
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name heli_icon
+Image heli_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name heli_icon_clamped
+Image heli_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name pickup_icon
+Image pickup_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name dialog4
+Image dialog4
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name dialog6
+Image dialog5
+Coords 0,0,255,204
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name dialog6
+Image dialog5
+Coords 0,0,127,102
+Colour 127,127,127,127
+End
+Begin Icon
+Name dialog5
+Image dialog5
+Coords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name dialog5_mirror
+Image dialog5
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name map1
+Image map1
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name extension
+Image map1
+Coords 47,116,34,5
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name extension
+Image map1
+Coords 94,233,68,8
+Colour 127,127,127,127
+End
+Begin Icon 
+Name dials_speedo
+Image dials_speedo
+NCoords 1,0.01,1,0.99
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name dials_weapons
+Image dials
+Coords 0,25.5,127,38
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name dials_weapons
+Image dials
+Coords 0,51,255,76
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name submission2
+Image dials
+Coords 0,95,255,31
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name submission2
+Image dials
+Coords 0,48,127,15
+Colour 127,127,127,127
+End
+Begin Icon ps3 360 win_pc
+Name submission1
+Image dials
+Coords 255,95,-255,31
+Colour 127,127,127,127
+End
+Begin Icon ps2 wii
+Name submission1
+Image dials
+Coords 127,48,-127,15
+Colour 127,127,127,127
+End
+Begin Icon
+Name health2
+Image health2
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_frames_left
+Image gabi_frames_left
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_frames_left_mirror
+Image gabi_frames_left
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name health_bar2
+Image health_bars2
+Coords 1,1,118,10
+Colour 127,127,127,127
+End
+Begin Icon
+Name nitro_bar2
+Image health_bars2
+Coords 1,13,125,5
+Colour 127,127,127,127
+End
+Begin Icon
+Name primary_bar
+Image health_bars2
+Coords 0,20,125,10
+Colour 127,127,127,127
+End
+Begin Icon
+Name secondary_bar
+Image health_bars2
+Coords 0,20,126,10
+Colour 127,127,127,127
+End
+Begin Icon
+Name autobot_blue
+Image autobot_blue
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_frames_top
+Image gabi_frames_top
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name gabi_frames_top_mirror
+Image gabi_frames_top
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name police
+Image police
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name military
+Image military
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name sector7
+Image sector7
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name reticle_outer
+Image reticle_outer
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name reticle_inner
+Image reticle_inner
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name reticle_health
+Image reticle_health
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name primary
+Image primary
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name secondary
+Image secondary
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name hud_text
+Image hud_text
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name hud_text1
+Image hud_text
+NCoords 0.4,0,0.3,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name hud_text2
+Image hud_text
+NCoords 0,0,0.29,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name hit_point_bar
+Image hit_point_bar
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name hit_pointbar_health
+Image hit_pointbar_health
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name citydestructionhead_m
+Image city_destruction_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name energon_cube_icon
+Image energon_cube_icon
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name energon_arrow
+Image energon_arrow
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name reticle_info_right
+Image reticle_info
+NCoords 0,0,1,0.5
+Colour 127,127,127,127
+End
+Begin Icon
+Name reticle_info_left
+Image reticle_info
+NCoords 0,0.5,1,0.5
+Colour 127,127,127,127
+End
+Begin Text
+Name DronesToDestroy
+Position 220, 110
+Size 200, 15
+Style DESTROYDRONES_STYLE
+Text ? GetDronesToDestroyTxt
+Align center
+VAlign center
+End
+Begin Text
+Name DamageDone
+Position 220, 100
+Size 200, 25
+Style HUDINFO_TEXT
+Text ? GetDamageDoneTxt
+Align center
+VAlign center
+End
+Begin Window
+Name HUDPopMsg
+Position 0,0
+Size 640,480
+ZOrder 0.29
+Begin Window
+Position 170.5,128 
+Size 32,64
+Pivot 16,32
+Style white128
+Icon box_end_mirror
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Window
+Position 434,128 
+Size 32,64
+Pivot 16,32
+Style white128
+Icon box_end
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Window
+Position 202,128 
+Size 233,64
+Style white128
+Icon box_middle
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Text
+Position 180,135, 260,159
+Size 280,48, 120,20
+Alpha 1.0, 0.0
+Animation DECELERATE 0.3
+Style HUDINFO_BG
+Margin 5,5
+Text ? GetHudPopMsg
+Align center
+Valign center
+End
+End
+Begin Window
+Name HUDMsg
+Position 0,0
+Size 640,480
+ZOrder 0.29
+Alpha 1.0 0.0
+Timeout 0.4
+Begin Text
+Position 20,135 
+Size 600,32
+Alpha 1.0, 0.0
+Animation DECELERATE 0.3
+Style HUDMSG_TEXT
+Text ? GetHudMsg
+Align center
+Valign center
+MaxLines 8
+End
+End
+Begin Window
+Name TimerWindow
+Position 0,0
+Size 640,480
+ZOrder 0.29
+Alpha 1.0 0.0
+Animation DECELERATE 0.3
+Widescreen Centre
+Begin Window
+Name Time
+OnDrawOverride DrawTimer
+End
+End
+Begin Window
+Name HUDMsg2
+Position 0,0
+Size 640,480
+ZOrder 0.29
+Alpha 1.0 0.0
+Timeout 0.4
+Begin Text
+Position 20,170
+Size 600,32
+Alpha 1.0, 0.0
+Animation DECELERATE 0.3
+Style HUDMSG_TEXT
+Text ? GetHudMsg2
+Align center
+Valign center
+MaxLines 8
+End
+End
+Begin Window
+Name BonusUnlocked
+Position 0,120
+Size 640,200
+Style StyleBonusUnlocked
+Alpha 1.0 1.0 0.0
+Animation Decelerate 1.5
+Timeout 1.5
+Widescreen Center
+Align Center
+VAlign Center
+Text UnlockTextA
+MaxLines 8
+End
+Begin Window
+Name HUDCountdownTimer
+Position 0,0
+Size 640,480
+ZOrder 0.29
+Timeout 0.5
+Begin Window
+Position 214,186 
+Size 32,64
+Pivot 16,32
+Style white128
+Icon box_end_mirror
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Window
+Position 389,186 
+Size 32,64
+Pivot 16,32
+Style white128
+Icon box_end
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Window
+Position 246,186 
+Size 144,64
+Style white128
+Icon box_middle
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Text
+Position 220,185, 295,201
+Size 200,64, 50,16
+Alpha 1.0, 0.0
+Animation DECELERATE 0.3
+Style HUDINFO_BG
+Margin 5,5
+Text ? GetHUDCountdownTime
+Align center
+Valign center
+End
+End
+Begin Window
+Name HUDGO
+Position 0,0
+Size 640,480
+ZOrder 0.28
+Timeout 2.0
+Begin Window
+Position 214,186 
+Size 32,64
+Pivot 16,32
+Style white128
+Icon box_end_mirror
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Window
+Position 389,186 
+Size 32,64
+Pivot 16,32
+Style white128
+Icon box_end
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Window
+Position 246,186 
+Size 144,64
+Style white128
+Icon box_middle
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Text
+Position 220,185, 295,201
+Size 200,64, 50,16
+Alpha 1.0, 0.0
+Animation DECELERATE 0.3
+Style HUDINFO_BG
+Margin 5,5
+Text "GO"
+Align center
+Valign center
+End
+End
+Begin Window
+Name HUDGETREADY
+Position 0,0
+Size 640,480
+ZOrder 0.28
+Timeout 0.5
+Begin Window
+Position 214,186 
+Size 32,64
+Pivot 16,32
+Style white128
+Icon box_end_mirror
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Window
+Position 389,186 
+Size 32,64
+Pivot 16,32
+Style white128
+Icon box_end
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Window
+Position 246,186 
+Size 144,64
+Style white128
+Icon box_middle
+Alpha 1.0
+Animation DECELERATE 0.3
+End
+Begin Text
+Position 220,183, 295,201
+Size 200,64, 50,16
+Alpha 1.0, 0.0
+Animation DECELERATE 0.3
+Style HUDINFO_BG
+Margin 5,5
+Text "Get Ready!"
+Align center
+Valign center
+End
+End
+Begin Window
+Name SubMissionCounter
+Position 58,40 -100,40 -100,40
+Size 70,70
+Pivot 6,74
+Alpha 1.0 0 0
+ZOrder 0.28
+Animation DECELERATE 0.3
+Widescreen LEFT
+Begin Window
+Name background1
+Position -51,57
+Size 90,30
+Pivot 65,0
+Style autobot_blue2
+Icon submission1
+Alpha 1
+Angle 180
+End
+Begin Window
+Name background2
+Position -11,57
+Size 90,30
+Pivot 6,74
+Style autobot_blue2
+Icon submission2
+Alpha 1
+End
+Begin Window
+Name CounterIcon
+Position 19,31
+Size 32,32
+style white128
+Alpha 1
+Icon energon_cube
+End
+Begin Window
+Name ItemCountText
+Position -6,60
+Size 80,60
+Text ? GetSubMissionItemCount
+Align center
+Style SMALLWHITE
+Alpha ? GetSubMissionCubeAmtAlpha
+End
+End
+Begin Window
+Name SubMissionBuyScreen
+Position 155,75
+Size 330,78 330,2 330,2
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+OnProcess SubMissionProcess
+Begin Window
+Name background
+Position 9,0 9,175 9,175
+Size 307,345 307,2 307,2
+style DIMBLACK
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Text
+Name Title
+Position 42,20 
+Size 246,32
+Animation DECELERATE 0.9
+Alpha 1.0, 0.0
+Style MISSION_TITLE_sm_WHITE
+Text ? GetSubMissionTitleText
+Align center
+Valign center
+End
+Begin Text
+Name Description
+Position 60,120 
+Size 210,87
+Animation DECELERATE 0.9
+Alpha 1.0, 0.0
+Style MISSION_DESC
+Text ? GetSubMissionDescriptionText
+Align Centre
+Valign center
+End
+Begin Text
+Name CostTitle
+Position 60,160 
+Size 210,87
+Animation DECELERATE 0.9
+Alpha ? GetSubMissionCostAlpha
+Style MISSION_DESC
+Text "Cost"
+Align centre
+Valign center
+End
+Begin Text
+Name Cost
+Position 60,180 
+Size 210,87
+Animation DECELERATE 0.9
+Alpha ? GetSubMissionCostAlpha
+Style MISSION_DESC
+Text ? GetSubMissionCost
+Align centre
+Valign center
+End
+Begin List
+Position 69,300
+Size 200,300
+Space 1
+OnActivate HighlightBottom
+Horizontal
+Begin Button
+Position 0,0 
+Size 86,26
+Alpha 1.0, 0.0
+Animation DECELERATE 0.9
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "Buy"
+Align center
+VAlign center
+Margin 10 0
+Action SubMissionBuy
+End
+Begin Button
+Position 5,0 
+Size 86,26
+Alpha 1.0, 0.0
+Animation DECELERATE 0.9
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "Decline"
+Align center
+VAlign center
+Margin 10 0
+Action SubMissionDecline
+End
+End
+End
+Begin Window
+Name SubMissionScreen
+Position 155,75
+Size 330,78 330,2 330,2
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+OnProcess SubMissionProcess
+Begin Window
+Name background
+Position 9,0 9,175 9,175
+Size 307,345 307,2 307,2
+style DIMBLACK
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Text
+Name Title
+Position 42,20 
+Size 246,32
+Animation DECELERATE 0.9
+Alpha 1.0, 0.0
+Style MISSION_TITLE_sm_WHITE
+Text ? GetSubMissionTitleText
+Align center
+Valign center
+End
+Begin Text
+Name Description
+Position 60,120 
+Size 210,87
+Animation DECELERATE 0.9
+Alpha 1.0, 0.0
+Style MISSION_DESC
+Text ? GetSubMissionDescriptionText
+Align Centre
+Valign center
+End
+Begin List
+Position 69,300
+Size 200,300
+Space 1
+OnActivate HighlightBottom
+Horizontal
+Begin Button
+Position 0,0 
+Size 86,26
+Alpha 1.0, 0.0
+Animation DECELERATE 0.9
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "Accept"
+Align center
+VAlign center
+Margin 10 0
+Action SubMissionAccept
+End
+Begin Button
+Position 5,0 
+Size 86,26
+Alpha 1.0, 0.0
+Animation DECELERATE 0.9
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "Decline"
+Align center
+VAlign center
+Margin 10 0
+Action SubMissionDecline
+End
+End
+End
+Begin Window
+Name Player_Health
+Position 39,17 -100,17 -100,17
+Size 140,80
+Pivot 6,74
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Widescreen LEFT
+Begin Window
+Name health_graphic
+Position 28,9
+Size 140,35
+Pivot 6,74
+Style autobot_blue2
+Icon health2
+Alpha 1
+End
+Begin Window
+Name health_bar
+Position 34,22
+OnDrawOverride DrawPlayerHealth
+Alpha 1
+End
+Begin Window
+Name frame_ext
+Position -48,22
+Size 80,4
+style autobot_blue2
+Icon extension
+Alpha 1.0 0.0
+End
+Begin Window
+Name frame_ext1
+Position -48,18
+Size 80,2
+style autobot_blue2
+Icon extension
+Alpha 1.0 0.0
+End
+Begin Window
+Name hud_text
+Position -16,27
+Size 52,10
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Icon hud_text2
+End
+End
+Begin Window
+Name Player_HealthNoNitro
+Position 17,17 -100,17 -100,17
+Size 140,80
+Pivot 6,74
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Widescreen LEFT
+Begin Window
+Name health_bar
+Position 46,28
+Size 76,30
+Pivot 6,74
+Style white128
+Icon health_bar
+Alpha 1
+End
+Begin Window
+Name health_bar_patch
+Position 122,28
+OnDrawOverride DrawPlayerHealth int 1
+Alpha 1
+End
+Begin Window
+Name health_graphic
+Position 0,0
+Size 140,80
+Pivot 6,74
+Style white128
+Icon health2
+Alpha 1
+End
+Begin Window
+Name health_ext
+Position -36,5
+Size 62,62
+Pivot 6,74
+Style white128
+Icon health_ext
+Alpha 1
+End
+Begin Window
+Name glass_tube
+Position 45,29
+Size 77,18
+ZOrder 0.40
+Alpha 0.7
+Style white128
+Icon glass_tube
+End
+End
+Begin Window
+Name gabi_meter
+Position 550,26 700,26
+Size 256,100
+ZOrder 0.42
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Widescreen RIGHT
+Begin Window
+Name Shield
+Position 0,0
+OnDrawOverride DrawGABIShield
+End
+End
+Begin Window
+Name gabi_meterOLD
+Position 152,13 168,-110
+Size 256,100 
+ZOrder 0.42
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Widescreen CENTRE
+Begin Window
+Name gabi_Fill
+Position 20,19
+Size 220,12
+ZOrder 0.41
+Alpha 1.0
+Style solidblack
+End
+Begin Window
+Name Gabi_Blocks
+OnDrawOverride DrawGABIMeterBlocks
+End
+Begin Window
+Name gabi_right
+Position 127,1
+Size 128,42
+ZOrder 0.40
+Alpha 1.0
+Style white128
+Icon gabi1_right
+End
+Begin Window
+Name gabi_left
+Position 0,1
+Size 128,42
+ZOrder 0.40
+Alpha 1.0
+Style white128
+Icon gabi1_left
+End
+Begin Window
+Name lens
+Position 26,16
+Size 204,24
+ZOrder 0.40
+Alpha 1.0
+Style white128
+Icon lens
+End
+Begin Window
+Name Gabi_Block_Glow
+OnDrawOverride DrawGABIBlockGlow
+End
+Begin Window
+Name autobot_Glow
+Position 222,3
+Position -11,3
+Size 42,42
+ZOrder 0.40
+Alpha ? GetGABIAutoHeadAlpha
+Style white128
+Icon autobotshield_outline_glow
+End
+Begin Window
+Name decepticon_Glow
+Position 222,3
+Size 42,42
+ZOrder 0.40
+Alpha ? GetGABIDecHeadAlpha
+Style white128
+Icon DecShield_outline_glow
+End
+Begin Window
+Name gabi_slider
+OnDrawOverride DrawGABIMeterIndicator
+End
+Begin Window
+Name HumanAlertLevel
+Position 0,43
+Size 256,100
+Text ? GetAlertLevelText
+Align center
+Style SMALLWHITE
+Alpha ? GetAlertLevelAlpha
+zorder 0.4
+End
+End
+Begin Window
+Name GABI_Msg_Window
+Position 0,0
+Size 640,480
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.7
+OnDrawOverride DrawGABIMsgText
+End
+Begin Window
+Name GabiRewardWindow
+Position 0,0 0,-147
+Size 640,480
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Begin Window
+Name Bckgrnd
+Alpha ? GetRewardBackgroundAlpha
+Begin Window
+Name frame1
+Position 210.5,30
+Size 110,24
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon gabi_frames_top_mirror
+End
+Begin Window
+Name frame2
+Position 318,30
+Size 110,24
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon gabi_frames_top
+End
+End
+Begin Window
+Name gabi_heads
+Position 0,0
+Size 640,480
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+OnDrawOverride DrawRewardHeads
+End
+End
+Begin Window
+Name GabiRewardSlots
+Position 0,0 -80,0
+Size 640,480
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+OnDrawOverride DrawRewardHeadSlots
+End
+Begin Window
+Name GabiRewardWindowOLD
+Position 0,0 0,-147
+Size 640,480
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Begin Window
+Name Bckgrnd
+Alpha ? GetRewardBackgroundAlpha
+Begin Window
+Name gabi_graphic
+Position 209,68
+Size 220,37
+Pivot 16,32
+Style white128
+Icon gabi_graphic
+Alpha 0.7
+End
+Begin Window
+Name gabi_graphic1
+Position 168,60
+Size 64,64
+Pivot 16,32
+Style white128
+Icon gabi_graphic1
+Alpha 0.9
+End
+End
+Begin Window
+Name gabi_heads
+Position 0,0
+Size 640,480
+Alpha 1.0 0 0
+OnDrawOverride DrawRewardHeads
+End
+End
+Begin Window
+Name GABI_SCORE_DISPLAY
+Position 454,-12 554,-22 554,-12
+Size 144,144
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Widescreen RIGHT
+Begin Window
+Name points
+Position 42,-4
+Size 38,140
+Pivot 22.5,64
+Style white128
+Icon points
+Angle -90
+zorder 0.5
+End
+Begin Window
+Name GB_text
+Position 0,25
+Size 144,80
+Text ? GetGABIScoreText
+Align center
+VAlign center
+Style ? GetGABIScoreTextStyle
+Alpha 1.0
+zorder 0.4
+End
+Begin Window
+Name point_light_red
+Position 0,47
+Size 36,27
+Pivot 18,18
+Style white128
+Icon point_light_red
+Alpha ? GetGABIScoreBadAlpha
+Angle -90
+zorder 0.4
+End
+Begin Window
+Name point_light_blue
+Position 118,47
+Size 34,25
+Pivot 18,18
+Style white128
+Icon point_light_blue
+Alpha ? GetGABIScoreGoodAlpha
+Angle -90
+zorder 0.4
+End
+Begin Window
+Name glass_tube
+Position 22,54
+Size 100,25
+ZOrder 0.40
+Alpha 0.4
+Style white128
+Icon glass_tube
+End
+End
+Begin Window
+Name radar
+Position 438,311 542,311
+Size 122,122
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Widescreen RIGHT
+Begin Window
+Name radarMap
+Position 20,20 
+Size 110,110 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+OnDrawOverride DrawRadarMap
+End
+Begin Window
+Name radarIconsMask
+Position 20,20 
+Size 110,110 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+OnDrawOverride DrawMaskedRadarItems
+End
+Begin Window 
+Name greyCircleIcons
+Position 20,20 
+Size 110,110 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+OnDrawOverride DrawGreyCirleRadarItems
+End
+Begin Window
+Name HeadIcons
+Position 20,20 
+Size 110,110 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+OnDrawOverride DrawTopRadarItems
+End
+Begin Window
+Name frame 
+Position 18,19
+Size 114,114
+style autobot_blue2
+Icon map1
+Alpha 1.0 0.0
+End
+Begin Window
+Name frame_ext1
+Position 116,112
+Size 98,2
+style autobot_blue2
+Icon extension
+Alpha 1.0 0.0
+End
+Begin Window
+Name frame_ext2
+Position 113,115
+Size 98,2
+style autobot_blue2
+Icon extension
+Alpha 1.0 0.0
+End
+Begin Window
+Name hud_text
+Position 127,101
+Size 52,10
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Icon hud_text1
+End
+Begin Window
+Name radarIconsNonMask
+Position 20,20 
+Size 110,110 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+OnDrawOverride DrawNonMaskedRadarItems
+End
+End
+Begin Window
+Name Speedometer
+Position 80,379 -186,379 -186,379
+Size 128,26
+ZOrder 0.28
+Alpha 1 0 0 
+Animation DECELERATE 0.3
+Widescreen LEFT
+Begin Window
+Depends speeddials
+Name speedo
+Position 1,-2 
+Size 112,28
+style autobot_blue2
+ZOrder 0.28
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Icon dials_speedo
+Widescreen LEFT
+Begin Window
+Position 10,4
+Alpha 1 0 0
+Widescreen LEFT
+OnDrawOverride RenderSpeedometer
+End
+Begin Window
+Name nitro
+Position 34,20.5 
+OnDrawOverride DrawNitroCharge
+End
+End
+End
+Begin Window
+Name ammo_count
+Position 66,379 -200,379 -200,379
+Size 128,26
+ZOrder 0.28
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Widescreen LEFT
+Begin Window
+Name weapons
+Position 0,26
+Size 128,38
+style autobot_blue2
+ZOrder 0.28
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Icon dials_weapons
+Widescreen LEFT
+End
+Begin Window
+Name primaryAmmoBar
+Position 7,49
+OnDrawOverride DrawAmmoCount int 0
+End
+Begin Window
+Name secondaryAmmoBar
+Position 66,49
+OnDrawOverride DrawAmmoCount int 1
+End
+Begin Window
+Name frame_ext
+Position -75,48
+Size 77,4
+style autobot_blue2
+Icon extension
+Alpha 1.0 0.0
+End
+Begin Window
+Name primary
+Position 29,26
+Size 26,26
+style white128
+ZOrder 0.28
+Alpha ? GetWeaponSlotAlpha 0 
+Icon primary
+End
+Begin Window
+Name secondary
+Position 81,25
+Size 27,27
+style white128
+ZOrder 0.28
+Alpha ? GetWeaponSlotAlpha 1 
+Icon secondary
+End
+Begin Window
+Name hud_text
+Position -51,38
+Size 52,10
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Icon hud_text1
+End
+End
+Begin Window
+Name target_main
+Position 0,0
+Alpha 1.0 0.0
+zorder 0.27
+Widescreen CENTRE
+OnDrawOverride DrawReticle
+Begin Window
+Name reticle_health
+Position 0,0
+Size 64,64
+ZOrder 0.28
+Alpha 1
+Begin Window
+Name reticle_health1
+Position 18,2
+Pivot 14,30
+Size 28,7
+style white128
+ZOrder 0.28
+Alpha 1.0f
+Icon reticle_health
+Angle 120
+End
+Begin Window
+Name reticle_health2
+Position 18,2
+Pivot 14,30
+Size 28,7
+style white128
+ZOrder 0.28
+Alpha 1.0f
+Icon reticle_health
+Angle 60
+End
+Begin Window
+Name reticle_health3
+Position 18,2
+Pivot 14,30
+Size 28,7
+style white128
+ZOrder 0.28
+Alpha 1.0f
+Icon reticle_health
+End
+Begin Window
+Name reticle_health4
+Position 18,2
+Pivot 14,30
+Size 28,7
+style white128
+ZOrder 0.28
+Alpha 1.0f
+Icon reticle_health
+Angle -60
+End
+Begin Window
+Name reticle_health5
+Position 18,2
+Pivot 14,30
+Size 28,7
+style white128
+ZOrder 0.28
+Alpha 1.0f
+Icon reticle_health
+Angle -120
+End
+End
+End
+Begin Window
+Name target_lock
+Position 284,190
+Size 72,61
+Pivot 18,18
+Style white128
+Icon target_lock
+Alpha 1
+zorder 0.4
+End
+Begin Window
+Name target_idle
+Position 317.5,125
+Alpha 1.0 0.0
+zorder 0.4
+Begin Window
+Name inner
+Position 0,0
+Size 5,5
+Pivot 18,18
+Style ? GetReticleStyle
+Icon target_main
+Alpha ? GetReticleInnerAlpha
+Animation DECELERATE 0.3
+End
+End
+Begin Window
+Name WII_Reticle
+Position ? GetReticleX, ? GetReticleY
+Size 40,40
+Pivot 20,20
+Animation LINEAR 0.1
+Alpha 1.0 0.0
+ZOrder 0.45
+Begin Window 
+Position 0,0
+Size 38,18
+Pivot 40,9
+Style WIIRETICLELEFT
+Icon wii_reticle_icon
+Alpha 0.6
+End
+Begin Window 
+Position 0,0
+Size 38,18
+Pivot 40,9
+Style WIIRETICLEUP
+Icon wii_reticle_icon
+Alpha 0.6
+Angle 90
+End
+Begin Window 
+Position 0,0
+Size 38,18
+Pivot 40,9
+Style WIIRETICLERIGHT
+Icon wii_reticle_icon
+Alpha 0.6
+Angle 180
+End
+Begin Window 
+Position 0,0
+Size 38,18
+Pivot 40,9
+Style WIIRETICLEDOWN
+Icon wii_reticle_icon
+Alpha 0.6
+Angle 270
+End
+End
+Begin Window
+Name dialog
+Position 100,353 100,500 100,500
+Size 445,123
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Widescreen LEFT
+ZOrder 0.5
+End
+Begin Window
+Name blackoutHead
+Position 210,371 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon blackoutHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-9
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name starscreamHead
+Position 210,368 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon starscreamHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-6
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name jazzHead
+Position 210,368 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon jazzHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-6
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name frenzyHead
+Position 210,368 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon frenzyHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-6
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name optimusHead
+Position 210,368 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon optimusHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-6
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name bumblebeeHead
+Position 210,371 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon dconHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-9
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name bumblebeeHead07
+Position 210,371 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon bumblebeeHead07
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-9
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name ironhideHead
+Position 210,368 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon ironhideHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-6
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name bonecrusherHead
+Position 210,371 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon bonecrusherHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-9
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name brawlHead
+Position 210,371 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon brawlHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-9
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name megatronHead
+Position 210,368 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon megatronHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-6
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name rachetHead
+Position 210,368 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon rachetHead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-6
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name Scorponokhead
+Position 210,371 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon Scorponokhead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-9
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name barricadehead
+Position 210,371 210,615 210,615
+Size 90,90 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Style white128
+Icon barricadehead
+Widescreen LEFT
+Begin Window
+Name dialog5
+Position -5,-9
+Size 104,83
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.3
+Icon dialog6
+End
+End
+Begin Window
+Name destruction_Icon
+Position 54,355
+Size 16,16
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Style autobot_blue
+Icon destruction_icon
+End
+Begin Window
+Name optimusHead_allyhealth
+Position 557,83 572,98 572,98
+Size 30,30 0,0 0,0
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Style white128
+Icon optimusHead
+End
+Begin Window
+Name ComboWindow
+Position 0,0
+Size 640,480
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.7
+OnDrawOverride DrawComboText
+End
+Begin Window
+Name MissionItemPanel
+Position 0,0
+Size 640, 480
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Widescreen Centre
+Begin Window
+Name Meter
+OnDrawOverride DrawMissionItemPanel
+End
+End
+Begin Window
+Name mos_panel_1
+Position 32,85 -100,85 -100,85
+Size 330,78 
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin Window
+depends mos_panel_1
+Name background
+Position 10,0 
+Size 81,100 81,77 81,77
+style DIMBLACK
+ZOrder 0.28
+Alpha 0.4 0.4 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Position 30,10
+Size 40,40
+Style white128
+Icon ? GetMissionItemPanelIcon
+Alpha 1.0
+End
+Begin Window
+Position 10,46
+Size 80,40
+Text ? GetMissionItemPanelText
+Align center
+VAlign center
+Style SUPERMINI
+Alpha 1.0
+End
+Begin Window
+depends mos_panel_1
+Name top_left
+Position 0,0 
+Size 12,20
+Pivot 16,32
+Style white128
+Icon mp_tl
+Alpha 1.0 0.4 0
+Animation DECELERATE 0.9
+End
+Begin Window
+depends mos_panel_1
+Name top_middle
+Position 12,0 
+Size 76,9
+Pivot 0,0
+Style white128
+Icon mp_tm
+Alpha 1.0 0.4 0
+Animation DECELERATE 0.9
+End
+Begin Window
+depends mos_panel_1
+Name top_right
+Position 88,0 
+Size 12,20
+Pivot 16,32
+Style white128
+Icon mp_tr
+Alpha 1.0 0.4 0
+Animation DECELERATE 0.9
+End
+Begin Window
+depends mos_panel_1
+Name side_left
+Position 0,15 
+Size 12,25 12,2 12,2
+Pivot 0,0
+Style white128
+Icon mp_sl
+Alpha 1.0 0.4 0
+Animation DECELERATE 0.9
+End
+Begin Window
+depends mos_panel_1
+Name side_right
+Position 87,15 
+Size 13,25 13,2 13,2
+Pivot 16,32
+Style white128
+Icon mp_sr
+Alpha 1.0 0.4 0
+Animation DECELERATE 0.9
+End
+Begin Window
+depends mos_panel_1
+Name bottom_left
+Position -1,35 -1,14 -1,14
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_bl
+Alpha 1.0 0.4 0
+Animation DECELERATE 0.9
+End
+Begin Window
+depends mos_panel_1
+Name bottom_middle
+Position 35,94.5 12,74 12,74
+Size 54,17
+Pivot 0,0
+Style white128
+Icon mp_bm
+Alpha 1.0 0.4 0
+Animation DECELERATE 0.9
+End
+Begin Window
+depends mos_panel_1
+Name bottom_right
+Position 60,35.5 60,14 60,14
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_br
+Alpha 1.0 0.4 0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name DestructionMeter
+Position 0,0
+Size 640, 480
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Widescreen Centre
+Begin Window
+Name Meter
+OnDrawOverride DrawDestructionMeter
+End
+End
+Begin Window
+Name OnScreenIndicator
+Position 0,0
+Size 640,480
+zOrder 0.28
+Alpha 1.0 0.0
+Animation DECELERATE 0.9
+Begin Window
+Name Indicator
+OnDrawOverride DrawOnScreenIndicator
+End
+End
+Begin Window
+Name SpeedometerOLD
+Position 240,360 240,500
+Size 160,120
+zOrder 0.75
+Alpha 1.0 0.0
+Animation DECELERATE 0.9
+OnDrawOverride RenderSpeedometer
+End
+Begin Window
+Name ally_health1
+Position 450,129 470,44 470,44
+Size 93,41
+Pivot 6,74
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Zorder 0.9
+Widescreen RIGHT
+Begin Window
+Name ally_portrait
+Position 46,-10
+Size 52,72
+Pivot 6,74
+Style white128
+Icon ally_portrait
+Alpha 1
+Angle 90
+End
+Begin Window
+Name ally_health_bar
+Position 10,41
+Size 100,12
+Pivot 6,74
+Style white128
+Icon Ally_health_bar
+Alpha 1
+End
+Begin Window
+Name health_bar_patch
+Position 74,28
+Widescreen RIGHT
+OnDrawOverride DrawMissionHealth int 1
+Alpha 1
+End
+Begin Window
+Name ally_health_graphic
+Position 0,29
+Size 125,33
+Pivot 6,74
+Style white128
+Icon ally_health1
+Alpha 1
+End
+Begin Window
+Position 65,58
+Size 42,42
+Style white128
+Icon ? GetMissionEnergyPanelHead
+Alpha 1.0
+End
+End
+Begin Window
+Name ally_health2
+Position 450,129 470,44 470,44
+Size 93,41
+Pivot 6,74
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Zorder 0.9
+Begin Window
+Name ally_portrait
+Position 46,-10
+Size 52,72
+Pivot 6,74
+Style white128
+Icon ally_portrait
+Alpha 1
+Angle 90
+End
+Begin Window
+Name ally_health_bar
+Position 10,41
+Size 100,12
+Pivot 6,74
+Style white128
+Icon Ally_health_bar
+Alpha 1
+End
+Begin Window
+Name health_bar_patch
+Position 74,28
+OnDrawOverride DrawMissionHealth int 2
+Alpha 1
+End
+Begin Window
+Name ally_health_graphic
+Position 0,29
+Size 125,33
+Pivot 6,74
+Style white128
+Icon ally_health1
+Alpha 1
+End
+Begin Window
+Position 65,58
+Size 42,42
+Style white128
+Icon ? GetMissionEnergyPanel2Head
+Alpha 1.0
+End
+End
+Begin Window
+Name ally_health3
+Position 450,36 600,36 600,36
+Size 93,41
+Pivot 6,74
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Widescreen Right
+Begin Window
+Name ally_portrait_frame
+Position 46,-10
+Size 80,80
+Pivot 6,74
+Style autobot_blue2
+Icon dialog5_mirror
+Alpha 1
+End
+Begin Window
+Name Ally_Portrait
+Position 53,-6
+Size 70,70
+Style white128
+Icon ? GetMissionEnergyPanelHead
+Alpha 1.0
+End
+Begin Window
+Name ally_health_bar
+Position 52,53
+Size 67,15
+Pivot 6,74
+Style autobot_blue
+Icon Ally_health_bar1
+OnDrawOverride DrawMissionHealth int 1
+Alpha 1
+End
+End
+Begin Window
+Name EnergonHealth
+Position 450,109 600,109 600,109
+Size 93,41
+Pivot 6,74
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Widescreen Right
+Begin Window
+Name frame
+Position 46,-10
+Size 80,80
+Pivot 6,74
+Style autobot_blue2
+Icon dialog5_mirror
+Alpha 1
+End
+Begin Window
+Name headIcon
+Position 53,-6
+Size 70,70
+Style white128
+Icon ? GetMissionEnergyPanel2Head
+Alpha 1.0
+End
+Begin Window
+Name healthBar
+Position 52,53
+Size 67,15
+Pivot 6,74
+Style autobot_blue
+Icon Ally_health_bar1
+OnDrawOverride DrawMissionHealth int 2
+Alpha 1
+End
+End
+Begin Window
+Name ally_health4
+Position 450,109 600,109 600,109
+Size 93,41
+Pivot 6,74
+Alpha 1 0 0
+Animation DECELERATE 0.3
+Widescreen Right
+Begin Window
+Name ally_portrait_frame
+Position 46,-10
+Size 80,80
+Pivot 6,74
+Style autobot_blue2
+Icon dialog5_mirror
+Alpha 1
+End
+Begin Window
+Name Ally_Portrait
+Position 53,-6
+Size 70,70
+Style white128
+Icon ? GetMissionEnergyPanel2Head
+Alpha 1.0
+End
+Begin Window
+Name ally_health_bar
+Position 52,53
+Size 67,15
+Pivot 6,74
+Style autobot_blue
+Icon Ally_health_bar1
+OnDrawOverride DrawMissionHealth int 2
+Alpha 1
+End
+End
+Begin Window
+Name mission_panel
+Position 155,75
+Size 330,78 330,2 330,2
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 9,0 9,175 9,175
+Size 307,345 307,2 307,2
+style DIMBLACK
+ZOrder 0.28
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_left
+Position 0,0 0,165 0,165
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_middle
+Position 12,0 12,165 12,165
+Size 308,12
+Pivot 0,0
+Style white128
+Icon mp_tm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_right
+Position 315,0 315,165 315,165
+Size 12,12
+Pivot 16,32
+Style white128
+Icon mp_tr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_left
+Position 0,10 0,147 0,147
+Size 12,271 12,2 12,2
+Pivot 6,29
+Style white128
+Icon mp_sl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_right
+Position 315,10 315,147 315,147
+Size 12,271 12,2 12,2
+Pivot 16,32
+Style white128
+Icon mp_sr
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_left
+Position -1,281 -1,116 -1,116
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_bl
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_middle
+Position 40,341 40,177 40,177
+Size 249,14
+Pivot 0,0
+Style white128
+Icon mp_bm
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_right
+Position 287,281 287,116 287,116
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_br
+Alpha 1.0 0 0
+Animation DECELERATE 0.9
+End
+Begin Text
+Position 42,140 
+Size 246,32
+Animation DECELERATE 0.9
+Alpha 1.0, 0.0
+Style MISSION_TITLE_sm_WHITE
+Text ? GetMissionTitle
+Align center
+Valign center
+End
+Begin List
+Position 69,300
+Size 200,300
+Space 1
+OnActivate HighlightBottom
+Horizontal
+Begin Button
+Position 0,0 
+Size 86,26
+Alpha 1.0, 0.0
+Animation DECELERATE 0.9
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "Accept"
+Align center
+VAlign center
+Margin 10 0
+Action closepage
+Action MissionSelectAccept
+End
+Begin Button
+Position 5,0 
+Size 86,26
+Alpha 1.0, 0.0
+Animation DECELERATE 0.9
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "Decline"
+Align center
+VAlign center
+Margin 10 0
+Action closepage
+Action MissionSelectDecline
+End
+End
+End
+Begin Window
+Name Saving
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Timeout 1.0
+Begin Text
+Position 0,260
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+NoBlockInput
+Style TITLE
+Text "SAVING"
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin Window
+Name future_location_dot
+Position 250,100
+Size 32,32
+ZOrder 0.28
+Alpha 1.0
+Animation DECELERATE 0.9
+Style white128
+Icon location_circle
+End
+Begin Window
+Name key_location_zone
+Position 477,328
+Size 100,100
+ZOrder 0.26
+Animation DECELERATE 0.9
+Begin Window
+Name centre
+Position 29,29
+Size 64,64
+ZOrder 0.28
+Alpha 0.3
+Style white128
+Icon radar_centre
+End
+Begin Window
+Name border
+Position 29,29
+Size 64,64
+ZOrder 0.28
+Alpha 1.0
+Style white128
+Icon location_circle
+End
+End
+Begin Window
+Name radar_zone
+Position 525.25,376.25
+Size 25.5,25.5
+Pivot 6,74
+Style white128
+Icon radar_frame
+Alpha 1
+End
+Begin Window
+Name breakable
+Position 500,200
+Size 60,50
+Pivot 6,74
+Style white128
+Icon breakable
+Alpha 1
+End
+Begin Window
+Name target_health
+Position 50,65 -100,65 -100,65
+Size 100,100
+ZOrder 0.26
+Animation DECELERATE 0.9
+Begin Window
+Name optimusHead
+Position 0,0
+Size 40,40
+ZOrder 0.22
+Alpha 1.0 0 0
+Style white128
+Icon optimusHead
+End
+Begin Window
+Name target_health_red
+Position 50,13
+Size 64,15
+Pivot 6,74
+Style GBMETER_RED
+Alpha 1
+End
+Begin Window
+Name target_health_green
+Position 50,13
+Size 64,15
+Pivot 6,74
+Style GBMETER_GREEN
+Alpha 1
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name enemy_health
+Position 200,200
+Size 51,12
+Pivot 6,74
+Alpha 1
+Begin Window
+Name enemy_health_bar
+Position 2,4
+Size 46,5
+Pivot 6,74
+Style white128
+Icon enemy_health_bar
+Alpha 1
+End
+Begin Window
+Name health_bar_patch
+Position 2,4
+Size 46,5
+Pivot 6,74
+Style white128
+Icon enemy_health_bar_back
+Alpha 1
+End
+Begin Window
+Name enemy_health_graphic
+Position 0,0
+Size 51,12
+Pivot 6,74
+Style white128
+Icon enemy_health
+Alpha 1
+End
+End
+Begin Window
+Name mos
+Position 0,90 -150,90 -150,90
+Size 120,120
+Pivot 18,18
+Alpha 1 0 0
+zorder 0.4
+Animation DECELERATE 0.9
+Begin Window
+Name holder
+Position -5,86
+Size 60,30
+Pivot 18,18
+Style white128
+Icon bracket_holder_l
+Alpha 1
+zorder 0.4
+End
+Begin Window
+Name mos
+Position 24,0
+Size 120,120
+Pivot 18,18
+Style white128
+Icon mos
+Alpha 1
+zorder 0.4
+End
+End
+Begin Window
+Name computer
+Position 346,107
+Size 42,42
+Pivot 18,18
+Style autobot_blue
+Icon computer
+Alpha 1
+zorder 0.4
+End
+Begin Window
+Name car_icon
+Position 55,100
+Size 40,40
+Pivot 18,18
+Style autobot_blue
+Icon car_icon
+Alpha 1
+zorder 0.4
+End
+Begin Window
+Name plane_icon
+Position 55,100
+Size 40,40
+Pivot 18,18
+Style autobot_blue
+Icon plane_icon
+Alpha 1
+zorder 0.4
+End
+Begin Window
+Name drone_icon
+Position 57,104
+Size 30,30
+Pivot 18,18
+Style autobot_blue
+Icon drone_icon
+Alpha 1
+zorder 0.4
+End
+Begin Window
+Name commtower_icon
+Position 57,104
+Size 30,30
+Pivot 18,18
+Style autobot_blue
+Icon commtower_icon
+Alpha 1
+zorder 0.4
+End
+Begin Window
+Name machinegun_icon
+Position 57,104
+Size 30,30
+Pivot 18,18
+Style white128
+Icon machinegun_icon
+Alpha 1
+zorder 0.4
+End
+Begin Window
+Name rocket_icon
+Position 57,104
+Size 30,30
+Pivot 18,18
+Style white128
+Icon rocket_icon
+Alpha 1
+zorder 0.4
+End
+Begin Window
+Name mos_panel_2
+Position 32,85 
+Size 330,78 
+ZOrder 0.28
+Alpha 1.0 
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 10,0 
+Size 81,140 81,100 81,100
+style DIMBLACK
+ZOrder 0.28
+Alpha 0.4 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_left
+Position 0,0 
+Size 12,20
+Pivot 16,32
+Style white128
+Icon mp_tl
+Alpha 1.0 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_middle
+Position 12,0 
+Size 76,10
+Pivot 0,0
+Style white128
+Icon mp_tm
+Alpha 1.0 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name top_right
+Position 88,0 
+Size 12,20
+Pivot 16,32
+Style white128
+Icon mp_tr
+Alpha 1.0 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_left
+Position 0,17 
+Size 12,64 12,24 12,24
+Pivot 0,0
+Style white128
+Icon mp_sl
+Alpha 1.0 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name side_right
+Position 88,17 
+Size 12,64 12,24 12,24
+Pivot 16,32
+Style white128
+Icon mp_sr
+Alpha 1.0 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_left
+Position -1,77 -1,37 -1,37
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_bl
+Alpha 1.0 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_middle
+Position 32,137 32,97 32,97
+Size 56,16
+Pivot 0,0
+Style white128
+Icon mp_bm
+Alpha 1.0 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name bottom_right
+Position 60,77 60,37 60,37
+Size 40,80
+Pivot 16,32
+Style white128
+Icon mp_br
+Alpha 1.0 
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name gabi_glow
+Position 249,40
+Size 63,19
+Pivot 16,32
+Style white128
+Icon gabi_glow
+Alpha 0.4
+Zorder 0.1
+End
+Begin Window
+Name gabi
+Position 232.5,150
+Size 330,78
+ZOrder 0.28
+Alpha 1.0 
+Animation DECELERATE 0.9
+Begin Window
+Name autobot_shield 1
+Position 0,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+End
+Begin Window
+Name autobot_shield 2
+Position 35,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+End
+Begin Window
+Name autobot_shield 3
+Position 70,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon decepticon_shield
+End
+Begin Window
+Name autobot_shield 4
+Position 105,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon decepticon_shield_outline
+End
+Begin Window
+Name autobot_shield 5
+Position 140,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield_outline
+End
+Begin Window
+Name cross
+Position 140,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon cross
+End
+End
+Begin Window
+Name gabi_graphic
+Position 220,75
+Size 180,40
+Pivot 16,32
+Alpha 1
+Begin Window
+Name gabi_graphic
+Position 0,0
+Size 220,37
+Pivot 16,32
+Style white128
+Icon gabi_graphic
+Alpha 0.7
+End
+Begin Window
+Name gabi_graphic1
+Position -41,-8
+Size 64,64
+Pivot 16,32
+Style white128
+Icon gabi_graphic1
+Alpha 0.9
+End
+Begin Window
+Name autobot_shield1
+Position 15,38
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+Begin Window
+Name shield1
+Position 0,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+End
+Begin Window
+Name autobot_outline1
+Position -1,-1
+Size 34,34
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield_outline
+End
+End
+Begin Window
+Name autobot_shield2
+Position 49,38
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+Begin Window
+Name shield2
+Position 0,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+End
+Begin Window
+Name autobot_outline2
+Position -1,-1
+Size 34,34
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield_outline
+End
+End
+Begin Window
+Name autobot_shield3
+Position 83,38
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+Begin Window
+Name shield3
+Position 0,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+End
+Begin Window
+Name autobot_outline3
+Position -1,-1
+Size 34,34
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield_outline
+End
+End
+Begin Window
+Name autobot_shield4
+Position 117,38
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+Begin Window
+Name shield4
+Position 0,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+End
+Begin Window
+Name autobot_outline4
+Position -1,-1
+Size 34,34
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield_outline
+End
+End
+Begin Window
+Name autobot_shield5
+Position 151,38
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+Begin Window
+Name shield5
+Position 0,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield
+End
+Begin Window
+Name autobot_outline5
+Position -1,-1
+Size 34,34
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_shield_outline
+End
+End
+Begin Window
+Name cross
+Position 140,0
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon cross
+End
+End
+Begin Window
+Name pickup_icon
+Position 151,38
+Size 40,60
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon pickup_icon
+Begin Window
+Name button
+Position 4,4
+Size 32,32
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon buttoncircle
+End
+End
+Begin Window
+Name lightning
+Position 500,300
+Size 16,16
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon lightning
+End
+Begin Window
+Name heli
+Position 500,300
+Size 16,16
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon mast
+End
+Begin Window
+Name destruction2
+Position 300,300
+Size 64,64
+style white128
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon destruction_icon2
+End
+Begin Window
+Name timer_icon
+Position 300,300
+Size 16,16
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon timer_icon
+End
+Begin Window
+Name ButtonTargetHint
+Position 0,0 
+Size 640,480
+Pivot 16,16
+ZOrder 0.43
+Alpha 1 0.0 0.0
+Timeout 0.1
+Animation DECELERATE 0.2
+Begin Window
+Name autobot_shield5
+Position 200,240
+Size 240,100
+style PROMPTTEXTWHITE 
+Text lock
+ZOrder 0.28
+Alpha 1
+Align CENTRE
+End
+End
+Begin Window
+Name ButtonNitroHint
+Position 0,0
+Size 640,480
+Pivot 16,16
+ZOrder 0.43
+Alpha 1 0.0 0.0
+Timeout 0.1
+Animation DECELERATE 0.2
+Begin Window
+Name autobot_shield5
+Position 200,240
+Size 240,100
+style PROMPTTEXTWHITE 
+Text Nitro
+ZOrder 0.28
+Alpha 1
+Align CENTRE
+End
+End
+Begin Window
+Name ButtonBlockHint
+Position 0,0
+Size 640,480
+Pivot 16,16
+ZOrder 0.43
+Alpha 1 0.0 0.0
+Timeout 0.1
+Animation DECELERATE 0.2
+Begin Window
+Name autobot_shield5
+Position 200,240
+Size 240,100
+style PROMPTTEXTWHITE 
+Text Block
+ZOrder 0.28
+Alpha 1
+Align CENTRE
+End
+End
+Begin Window
+Name ButtonPickupHint
+Position 0,0
+Size 640,480
+Pivot 16,16
+ZOrder 0.43
+Alpha 1 0.0 0.0
+Timeout 0.1
+Animation DECELERATE 0.2
+Begin Window
+Name autobot_shield5
+Position 200,240
+Size 240,100
+style PROMPTTEXTWHITE 
+Text Pickup
+ZOrder 0.28
+Alpha 1
+Align CENTRE
+End
+End
+Begin Window
+Name ButtonThrowHint
+Position 0,0
+Size 640,480
+Pivot 16,16
+ZOrder 0.43
+Alpha 1 0.0 0.0
+Timeout 0.1
+Animation DECELERATE 0.2
+Begin Window
+Name autobot_shield5
+Position 200,240
+Size 240,100
+style PROMPTTEXTWHITE 
+Text Throw
+ZOrder 0.28
+Alpha 1
+Align CENTRE
+End
+End
+Begin Window
+Name gabi_frames_left
+Position -1,100
+Size 52,26
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Begin Window
+Name frame1
+Position 0,0
+Size 52,26
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon gabi_frames_left
+End
+Begin Window
+Name head1
+Position 48,-6
+Size 34,34
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+Begin Window
+Name frame2
+Position 0,35
+Size 52,26
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon gabi_frames_left
+End
+Begin Window
+Name head2
+Position 48,29
+Size 34,34
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+Begin Window
+Name frame3
+Position 0,70
+Size 52,26
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon gabi_frames_left
+End
+Begin Window
+Name head3
+Position 48,64
+Size 34,34
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+Begin Window
+Name frame4
+Position 0,105
+Size 52,26
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon gabi_frames_left
+End
+Begin Window
+Name head4
+Position 48,99
+Size 34,34
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+Begin Window
+Name frame5
+Position 0,140
+Size 52,26
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon gabi_frames_left
+End
+Begin Window
+Name head5
+Position 48,134
+Size 34,34
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+End
+Begin Window
+Name gabi_frames_top
+Position 240,35
+Size 52,26
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Begin Window
+Name frame1
+Position -4,0
+Size 84,20
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon gabi_frames_top_mirror
+End
+Begin Window
+Name frame2
+Position 80,0
+Size 84,20
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon gabi_frames_top
+End
+Begin Window
+Name head1
+Position -20,-2
+Size 22,22
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+Begin Window
+Name head2
+Position 22,-2
+Size 22,22
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+Begin Window
+Name head3
+Position 69,-2
+Size 22,22
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+Begin Window
+Name head4
+Position 116,-2
+Size 22,22
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+Begin Window
+Name head5
+Position 158,-2
+Size 22,22
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Icon autobot_blue
+End
+End
+Begin Window
+Name dialog_buzzer
+Position 520,100
+Size 104,104
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Icon dialog5_mirror
+End
+Begin Window
+Name police
+Position 560,23 700,23
+Size 52,52
+style ? GetResponseStyle 
+ZOrder 0.28
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Icon police
+End
+Begin Window
+Name military
+Position 560,23 700,23
+Size 52,52
+style ? GetResponseStyle 
+ZOrder 0.28
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Icon military
+End
+Begin Window
+Name sector7
+Position 560,23 700,23
+Size 70,70
+ZOrder 0.28
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name sector7_badge
+Position 0,0 0,0
+Size 70,70
+style ? GetResponseStyle 
+ZOrder 0.28
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Icon sector7
+End
+End
+Begin Window
+Name reticle1
+Position 300,200
+Size 64,64
+ZOrder 0.28
+Alpha 1
+Begin Window
+Name reticle_outer
+Position 0,0
+Size 64,64
+style autobot_blue
+ZOrder 0.28
+Alpha 0.7
+Icon reticle_outer
+End
+Begin Window
+Name reticle_inner
+Position 10,12
+Size 44,44
+Pivot 22,22
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Icon reticle_inner
+End
+Begin Window
+Name reticle_health
+Position 0,0
+Size 64,64
+ZOrder 0.28
+Alpha 1
+Begin Window
+Name reticle_health1
+Position 13,21
+Size 28,7
+Pivot 22,22
+style white128
+ZOrder 0.28
+Alpha 1
+Icon reticle_health
+Angle 120
+End
+Begin Window
+Name reticle_health2
+Position 21,13
+Size 28,7
+Pivot 22,22
+style white128
+ZOrder 0.28
+Alpha 1
+Icon reticle_health
+Angle 60
+End
+Begin Window
+Name reticle_health3
+Position 19,2
+Size 28,7
+Pivot 8,28
+style white128
+ZOrder 0.28
+Alpha 1
+Icon reticle_health
+End
+Begin Window
+Name reticle_health4
+Position 7,-1
+Size 28,7
+Pivot 22,22
+style white128
+ZOrder 0.28
+Alpha 1
+Icon reticle_health
+Angle -60
+End
+Begin Window
+Name reticle_health5
+Position -1,7
+Size 28,7
+Pivot 22,22
+style white128
+ZOrder 0.28
+Alpha 1
+Icon reticle_health
+Angle -120
+End
+End
+End
+Begin Window
+Name primary
+Position 72,405
+Size 26,26
+style white128
+ZOrder 0.28
+Alpha 0.4
+Icon primary
+End
+Begin Window
+Name secondary
+Position 125,404
+Size 27,27
+style white128
+ZOrder 0.28
+Alpha 0.4
+Icon secondary
+End
+Begin Window
+Name hud_text
+Position 192,450
+Size 256,32
+style autobot_blue
+ZOrder 0.28
+Alpha 0.4
+Icon hud_text
+End
+Begin Window
+Name enemy_health1
+Position 520,100
+Size 100,100
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Icon dialog5_mirror
+End
+Begin Window
+Name enemy_health2
+Position 520,173
+Size 100,100
+style autobot_blue
+ZOrder 0.28
+Alpha 1
+Icon dialog5_mirror
+End
+Begin Window
+Name reticle_info_left
+Position 125,404
+Size 80,20
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Icon reticle_info_left
+End
+Begin Window
+Name reticle_info_right
+Position 225,404
+Size 80,20
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Icon reticle_info_right
+End
+Begin Window
+Name static
+Position 325,404
+Size 128,64
+style white128
+ZOrder 0.28
+Alpha 0.8
+Icon static
+End
+Begin Window
+Name city_destruction_icon
+Position 325,404
+Size 80,80
+style white128
+ZOrder 0.28
+Alpha 0.8
+Icon citydestructionhead_m
+End
+Begin Window
+Name energon_cube_icon
+Position 325,404
+Size 80,80
+style white128
+ZOrder 0.28
+Alpha 0.8
+Icon energon_cube_icon
+End
+Begin Window
+Name hit_point_bar
+Position 320,173
+Size 100,100
+ZOrder 0.28
+Alpha 1
+Animation DECELERATE 0.9
+Begin Window
+Name hit_point_bar_border
+Position 0,0
+Size 140,35
+style autobot_blue2
+ZOrder 0.28
+Alpha 1
+Icon hit_point_bar
+End
+Begin Window
+Name hit_point_bar
+Position 0,0
+Size 140,35
+style autobot_red
+ZOrder 0.28
+Alpha 0.7
+Icon hit_pointbar_health
+End
+End
+Begin Window
+Name PressXToContinue
+Position 0,0
+Size 640,480
+ZOrder 0.15
+Alpha 1 0.0 0.0
+Timeout 0.1
+Begin Window
+Name PushStartText
+Position 200,390
+Size 240,100
+style HUBTEXTWHITE 
+Text "XtoContinue"
+ZOrder 0.15
+Alpha 1
+Align center
+VAlign center
+End
+End
+Begin Window
+Name FmvChapterEnter
+Position 0,0
+Size 640,480
+ZOrder 0.15
+Alpha 1 0.0 0.0
+Timeout 0.1
+OnDrawOverride DrawChapterEnterScreen
+End
+
+Begin Window
+Name ButtonPrompts
+Position 0
+Size 640,480
+ZOrder 0.10
+Alpha 1.0 0.0
+Animation DECELERATE 0.9
+Begin Text
+Name PromptSelect
+Position 500,343
+Size 240,100
+Animation DECELERATE 0.9
+Alpha 1.0
+Text "PromptSelect"
+Style SMALLWHITE 
+Align left 
+Valign center
+End
+Begin Text
+Name PromptBack
+Position 500,372
+Size 240,100
+Animation DECELERATE 0.9
+Alpha 1.0
+Text "PromptBack"
+Style SMALLWHITE 
+Align left 
+Valign center
+End
+End
+Begin Window
+Name LoadingScreen_A
+Position 0,0
+Size 640,480
+ZOrder 0.28
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 0,0
+Size 640,480
+Style white128
+Icon ? GetLoadingBackGround
+Alpha 1 0 0
+End
+End
+
+Begin Style
+Name MEMCARDTEXT 
+Font default 128,128,128,128 17.5,15
+BackgroundColour 0,0,0,0
+Outline 1.0
+OutlineColour 0,0,0,127
+End
+Begin Style
+Name MEMCARDTEXT_PULSE 
+Font default 128,128,128,128 17.5,15
+BackgroundColour 0,0,0,0
+Outline 1.0
+OutlineColour 0,0,0,127
+End
+Begin Image ps2 wii
+Name memory_screen
+File "gui/gfx/memory_screen"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name memory_screen
+File "gui/gfx/memory_screen_hr"
+Alpha 1
+End
+Begin Image ps2 wii
+Name memory_flap
+File "gui/gfx/memory_flap"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name memory_flap
+File "gui/gfx/memory_flap_hr"
+Alpha 1
+End
+Begin Image
+Name highlight_sm
+File "gui/gfx/highlight_sm"
+Alpha 1
+End
+Begin Icon
+Name memory_screen
+Image memory_screen
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name highlight_sm
+Image highlight_sm
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name memory_flap_l
+Image memory_flap
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name memory_flap_r
+Image memory_flap
+NCoords 1,0,-1,1
+Colour 127,127,127,127
+End
+Begin Image wii ps2
+Name SaveImage
+File "gui/gfx/savegame641"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name SaveImage
+File "gui/gfx/savegame641_hr"
+Alpha 1
+End
+Begin Icon
+Name SaveIcon
+Image SaveImage
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Window
+Name memory_screen
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Animation DECELERATE 0.9
+Begin Window
+Name front_load_back
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Icon memory_screen
+Style white128
+Alpha 1
+End
+Begin Window
+Name memory_flaps_1
+Position 132,400 132,185 132,185
+Size 216,216
+ZOrder 0.22
+Icon memory_flap_l
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+End
+Begin Window
+Name memory_flaps_r
+Position 292,400 292,185 292,185
+Size 216,216
+ZOrder 0.22
+Icon memory_flap_r
+Style white128
+Alpha 1 
+Animation DECELERATE 0.9
+End
+End
+Begin Window PS2
+Name NoController
+Position 0,0
+Size 640,480
+Animation LINEAR 0.3
+Style whiteonblack,whiteonblack,whiteonblack
+Alpha 1.0 0.0
+ZOrder 0.0001
+Timeout 0.4
+OnActivate MenuSoundToggle int 1
+OnDeactivate MenuSoundToggle int 0
+Begin Window
+Position -1,-1
+Size 642,482
+Style DIMBLACK
+Alpha 1.0 0.0
+ZOrder 0.05
+Animation DECELERATE 0.3
+BlockInput
+End
+Begin Text
+Position 0,125
+Size 640,40
+Style MEDWHITE
+Text NoDualShock1
+Align center
+VAlign center
+End
+Begin Text
+Position 0,165
+Size 640,40
+Style MEDWHITE
+Text NoDualShock2
+Align center
+VAlign center
+End
+Begin Text
+Position 0,205
+Size 640,40
+Style MEDWHITE
+Text NoDualShock3
+Align center
+VAlign center
+End
+Begin Text
+Position 0,245
+Size 640,40
+Style MEDWHITE
+Text NoDualShock4
+Align center
+VAlign center
+End
+Begin Text
+Position 0,285
+Size 640,40
+Style MEDWHITE
+Text NoDualShock5
+Align center
+VAlign center
+End
+End
+Begin Window 360
+Name NoController
+Position 0,0
+Size 640,480
+Animation LINEAR 0.3
+Style whiteonblack,whiteonblack,whiteonblack
+Alpha 1.0 0.0
+ZOrder 0.0001
+Timeout 0.4
+OnActivate MenuSoundToggle int 1
+OnDeactivate MenuSoundToggle int 0
+Begin Window
+Position -1,-1
+Size 642,482
+Style DIMBLACK
+Alpha 1.0 0.0
+ZOrder 0.05
+Animation DECELERATE 0.3
+BlockInput
+End
+Begin Text
+Position 0,125
+Size 640,40
+Style MEDWHITE
+Text Paused
+Align center
+VAlign center
+End
+Begin Text
+Position 0,165
+Size 640,40
+Style MEDWHITE
+Text No360Pad1
+Align center
+VAlign center
+End
+Begin Text
+Position 0,205
+Size 640,40
+Style MEDWHITE
+Text No360Pad2
+Align center
+VAlign center
+End
+Begin Text
+Position 0,245
+Size 640,40
+Style MEDWHITE
+Text No360Pad3
+Align center
+VAlign center
+End
+Begin Text
+Position 0,285
+Size 640,40
+Style MEDWHITE
+Text No360Pad4
+Align center
+VAlign center
+End
+End
+Begin Window PS3
+Name NoController
+Position 0,0
+Size 640,480
+Animation LINEAR 0.3
+Style whiteonblack,whiteonblack,whiteonblack
+Alpha 1.0 0.0
+ZOrder 0.0001
+Timeout 0.4
+OnActivate MenuSoundToggle int 1
+OnDeactivate MenuSoundToggle int 0
+Begin Window
+Position -1,-1
+Size 642,482
+Style DIMBLACK
+Alpha 1.0 0.0
+ZOrder 0.05
+Animation DECELERATE 0.3
+BlockInput
+End
+Begin Text
+Position 0,125
+Size 640,40
+Style MEDWHITE
+Text NOSIXAXIS1
+Align center
+VAlign center
+End
+Begin Text
+Position 0,165
+Size 640,40
+Style MEDWHITE
+Text NOSIXAXIS2
+Align center
+VAlign center
+End
+Begin Text
+Position 0,205
+Size 640,40
+Style MEDWHITE
+Text NOSIXAXIS3
+Align center
+VAlign center
+End
+Begin Text
+Position 0,245
+Size 640,40
+Style MEDWHITE
+Text NOSIXAXIS4
+Align center
+VAlign center
+End
+Begin Text
+Position 0,285
+Size 640,40
+Style MEDWHITE
+Text NOSIXAXIS5
+Align center
+VAlign center
+End
+End
+Begin Window Wii
+Name NoController
+Position 0,0
+Size 640,480
+Animation LINEAR 0.3
+Style whiteonblack,whiteonblack,whiteonblack
+Alpha 1.0 0.0
+ZOrder 0.0001
+Timeout 0.4
+OnActivate MenuSoundToggle int 1
+OnDeactivate MenuSoundToggle int 0
+Begin Window
+Position -1,-1
+Size 642,482
+Style DIMBLACK
+Alpha 1.0 0.0
+ZOrder 0.05
+Animation DECELERATE 0.3
+BlockInput
+End
+Begin Text
+Position 0,125
+Size 640,40
+Style MEDWHITE
+Text Paused
+Align center
+VAlign center
+End
+Begin Text
+Position 0,165
+Size 640,40
+Style MEDWHITE
+Text No360Pad1
+Align center
+VAlign center
+End
+Begin Text
+Position 0,205
+Size 640,40
+Style MEDWHITE
+Text No360Pad2
+Align center
+VAlign center
+End
+Begin Text
+Position 0,245
+Size 640,40
+Style MEDWHITE
+Text No360Pad3
+Align center
+VAlign center
+End
+Begin Text
+Position 0,285
+Size 640,40
+Style MEDWHITE
+Text No360Pad4
+Align center
+VAlign center
+End
+End
+Begin Window PC
+Name NoController
+Position 0,0
+Size 640,480
+Animation LINEAR 0.3
+Style whiteonblack,whiteonblack,whiteonblack
+Alpha 1.0 0.0
+ZOrder 0.0001
+Timeout 0.4
+OnActivate MenuSoundToggle int 1
+OnDeactivate MenuSoundToggle int 0
+Begin Window
+Position -1,-1
+Size 642,482
+Style DIMBLACK
+Alpha 1.0 0.0
+ZOrder 0.05
+Animation DECELERATE 0.3
+BlockInput
+End
+Begin Text
+Position 0,125
+Size 640,40
+Style MEDWHITE
+Text Paused
+Align center
+VAlign center
+End
+Begin Text
+Position 0,165
+Size 640,40
+Style MEDWHITE
+Text No360Pad1
+Align center
+VAlign center
+End
+Begin Text
+Position 0,205
+Size 640,40
+Style MEDWHITE
+Text No360Pad2
+Align center
+VAlign center
+End
+Begin Text
+Position 0,245
+Size 640,40
+Style MEDWHITE
+Text No360Pad3
+Align center
+VAlign center
+End
+Begin Text
+Position 0,285
+Size 640,40
+Style MEDWHITE
+Text No360Pad4
+Align center
+VAlign center
+End
+End
+Begin Window
+Name NoControllerPressX
+Position 0,320
+Size 640,40
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.0001
+Timeout 0.4
+Begin Text
+Position 0,5
+Size 640,40
+Style WHITEONCLEAR
+Text NoDualShock6
+Align center
+VAlign center
+End
+End
+Begin Window
+Name Autosave
+Position 0,0
+Size 640,480
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.005
+Timeout 0.1
+widescreen centre
+Begin Window
+Name autosavingtxt
+Position 220,200
+size 200,80
+Text "Autosaving"
+Align center
+VAlign center
+Style WHITEONCLEAR
+Alpha 1.0
+End
+Begin window
+Position 280,340
+Size 80,80
+Style WHITE128
+Icon SaveIcon
+End
+End
+Begin Window
+Name Autosave2
+Position 0,210
+Size 640,60
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.005
+Timeout 0.1
+widescreen centre
+OnActivate ope
+Begin window
+Position 280,5
+Size 80,80
+Style WHITE128
+Icon SaveIcon
+End
+End
+Begin Window
+Name MemSlot1
+Position 320,50
+Size 123,130
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.005
+Timeout 0.1
+widescreen centre
+Begin window
+Name ICON
+Position 0,0
+Size 80,80
+Align center
+Icon ? MemActiveSlot
+OnDrawOverride DrawSaveIcon
+End
+Begin window
+Name SLOT_ID1
+Position 1,-6
+Size 125,64
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 4
+End
+Begin window
+Name SLOT_COMPLETE
+Position -19,69
+Size 163,68
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 5
+End
+Begin window
+Name Percent
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT,MEMCARDTEXT_PULSE
+Text ? MemCardText 3
+End
+Begin window
+Name Empty
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT,MEMCARDTEXT_PULSE
+Text ? MemCardText 7
+End
+End
+Begin Window
+Name MemSlot2
+Position 320,50
+Size 123,130
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.005
+Timeout 0.1
+widescreen centre
+Begin window
+Name ICON
+Position 0,0
+Size 80,80
+Align center
+Icon ? MemActiveSlot
+OnDrawOverride DrawSaveIcon
+End
+Begin window
+Name SLOT_ID1
+Position 1,-6
+Size 125,64
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 4
+End
+Begin window
+Name SLOT_COMPLETE
+Position -19,69
+Size 163,68
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 5
+End
+Begin window
+Name Percent
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT,MEMCARDTEXT_PULSE
+Text ? MemCardText 3
+End
+Begin window
+Name Empty
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT,MEMCARDTEXT_PULSE
+Text ? MemCardText 7
+End
+End
+Begin Window
+Name MemSlot3
+Position 320,50
+Size 123,130
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.005
+Timeout 0.1
+widescreen centre
+Begin window
+Name ICON
+Position 0,0
+Size 80,80
+Align center
+Icon ? MemActiveSlot
+OnDrawOverride DrawSaveIcon
+End
+Begin window
+Name SLOT_ID1
+Position 1,-6
+Size 125,64
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 4
+End
+Begin window
+Name SLOT_COMPLETE
+Position -19,69
+Size 163,68
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 5
+End
+Begin window
+Name Percent
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT,MEMCARDTEXT_PULSE
+Text ? MemCardText 3
+End
+Begin window
+Name Empty
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT,MEMCARDTEXT_PULSE
+Text ? MemCardText 7
+End
+End
+Begin Window
+Name MemSlot4
+Position 320,50
+Size 123,130
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.005
+Timeout 0.1
+widescreen centre
+Begin window
+Name ICON
+Position 0,0
+Size 80,80
+Align center
+Icon ? MemActiveSlot
+OnDrawOverride DrawSaveIcon
+End
+Begin window
+Name SLOT_ID1
+Position 1,-6
+Size 125,64
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 4
+End
+Begin window
+Name SLOT_COMPLETE
+Position -19,69
+Size 163,68
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 5
+End
+Begin window
+Name Percent
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT
+Text ? MemCardText 3
+End
+Begin window
+Name Empty
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT,MEMCARDTEXT_PULSE
+Text ? MemCardText 7
+End
+End
+Begin Window
+Name MemSlot5
+Position 320,50
+Size 123,130
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.005
+Timeout 0.1
+widescreen centre
+Begin window
+Name ICON
+Position 0,0
+Size 80,80
+Align center
+Icon ? MemActiveSlot
+OnDrawOverride DrawSaveIcon
+End
+Begin window
+Name SLOT_ID1
+Position 1,-6
+Size 125,64
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 4
+End
+Begin window
+Name SLOT_COMPLETE
+Position -19,69
+Size 163,68
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 5
+End
+Begin window
+Name Percent
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT
+Text ? MemCardText 3
+End
+Begin window
+Name Empty
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT,MEMCARDTEXT_PULSE
+Text ? MemCardText 7
+End
+End
+Begin Window
+Name MemSlot6
+Position 320,50
+Size 123,130
+Animation LINEAR 0.3
+Alpha 1.0 0.0
+ZOrder 0.005
+Timeout 0.1
+widescreen centre
+Begin window
+Name ICON
+Position 0,0
+Size 80,80
+Align center
+Icon ? MemActiveSlot
+OnDrawOverride DrawSaveIcon
+End
+Begin window
+Name SLOT_ID1
+Position 1,-6
+Size 125,64
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 4
+End
+Begin window
+Name SLOT_COMPLETE
+Position -19,69
+Size 163,68
+Align center
+Style MEMCARDTEXT
+Text ? MemCardText 5
+End
+Begin window
+Name Percent
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT
+Text ? MemCardText 3
+End
+Begin window
+Name Empty
+Position 8,99
+Size 106,67
+Align center
+State ? SlotSelected
+Style MEMCARDTEXT,MEMCARDTEXT_PULSE
+Text ? MemCardText 7
+End
+End
+Begin Window
+Name SaveBackdrop
+Position -1,-1
+Size 642,482
+Style whiteonblack,whiteonblack,whiteonblack
+Animation LINEAR 0.2
+Alpha 1.0 0.0 
+ZOrder 0.0105
+NoBlockInput
+Timeout 0.1
+End
+
+Begin Image ps2 wii
+Name backscreen_t
+File "gui/gfx/backscreen_t"
+Alpha 1
+End
+Begin Image ps2 wii
+Name backscreen_b
+File "gui/gfx/backscreen_b"
+Alpha 1
+End
+Begin Image ps2 wii
+Name backscreen_c
+File "gui/gfx/backscreen_c"
+Alpha 1
+End
+Begin Image ps3 360 win_pc
+Name backscreen
+File "gui/gfx/backscreen_hr"
+Alpha 1
+End
+Begin Icon
+Name backscreen_t
+Image backscreen_t
+NCoords 0,0,1,0.99
+Colour 127,127,127,127
+End
+Begin Icon
+Name backscreen_b
+Image backscreen_b
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name backscreen_c
+Image backscreen_c
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name backscreen
+Image backscreen
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Window
+Name BlackScreen
+Position 0
+Size 640,480
+ZOrder 0.26 
+Alpha 1.0 0.0
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 0,0
+Size 640,480
+style solidblack
+ZOrder 0.26
+Alpha 1.0
+Animation DECELERATE 0.9
+End
+End
+Begin Window
+Name FadeScreen
+Position 0
+Size 640,480 
+ZOrder 0.26 
+Alpha 1.0 
+Animation DECELERATE 0.9
+Begin Window
+Name background
+Position 0,0 
+Size 640,480 
+style ? GetFadeStyle 
+ZOrder 0.26
+Alpha 1.0 
+Animation DECELERATE 0.9
+End
+End
+Begin Window ps2 wii
+Name InGameScreenBackground
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Alpha 1.0
+Animation DECELERATE 0.9
+Style solidblack
+Begin Window
+Name backscreen_c
+Position 0,20
+Size 640,433
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+Icon backscreen_c
+End
+Begin Window
+Name backscreen_t
+Position 0,0
+Size 640,46
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+Icon backscreen_t
+End
+Begin Window
+Name backscreen_b
+Position 0,406
+Size 640,74
+Style white128
+Alpha 1
+Animation DECELERATE 0.9
+Icon backscreen_b
+End
+End
+Begin Window ps3 360 win_pc
+Name InGameScreenBackground
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Alpha 1.0
+Animation DECELERATE 0.9
+Icon backscreen
+Style white128
+End
+Begin Window
+Name HUBTextScreen
+Position 0
+Size 640,480
+ZOrder 0.22
+Alpha 1.0
+Animation DECELERATE 1.5
+Begin Text
+Name HUBText
+Position 200,165
+Size 240,100
+Animation DECELERATE 1.5
+Alpha 1.0
+Text ? GetLevelIntroText
+Style ? GetHubTextStyle
+Align Centre 
+Valign center
+End
+End
+Begin Window
+Name LevelZoneTextScreen
+Position 0
+Size 640,480
+ZOrder 0.28
+Alpha 1 0 0
+Animation DECELERATE 1.0
+Begin Text
+Name LocationText
+Position 200,412 
+Size 240,100
+Animation DECELERATE 0.9
+Text ? GetLocationText
+Style LOCATIONZONETEXT
+Align Centre
+End
+End
+Begin Window
+Name ChapterTextScreen
+Position 0
+Size 640,480
+ZOrder 0.22
+Alpha 1.0
+Animation DECELERATE 0.9
+Begin Text
+Name ChapterText
+Position 200,165
+Size 240,100
+Animation DECELERATE 0.9
+Alpha 1.0
+Text ? GetChapterDesc
+Style HUBTEXTWHITE
+Align Centre 
+Valign center
+End
+End
+Begin Window
+Name ChapterCompleteInitial
+Position 0,0
+Size 640,480
+ZOrder 0.22 
+Alpha 1 0
+Animation DECELERATE 0.9
+Begin Text
+Name ChapterCompleteTxt
+Position 200,165
+Size 240,100
+Animation DECELERATE 0.9
+Alpha 1.0
+Text "ChapterComplete"
+Style HUBTEXTWHITE2
+Align Centre
+Valign center
+End
+End
+Begin Window
+Name ChapterCompleteScreen
+Position 0
+Size 640,480
+ZOrder 0.1
+Alpha 1.0 0.0
+Animation DECELERATE 0.9
+OnActivate addpage InGameScreenBackground
+OnClosing closepage InGameScreenBackground
+Begin Text
+Name ChptText
+Position 200,20
+Size 240,100
+Animation DECELERATE 0.9
+Alpha 1.0
+Text ? GetChapterDesc
+Style HUBTEXTWHITE
+Align Centre
+Valign center
+End
+Begin Text
+Name CompleteText
+Position 200,60
+Size 240,100
+Animation DECELERATE 0.9
+Alpha 1.0
+Text "Complete"
+Style HUBTEXTWHITE
+Align Centre
+Valign center
+End
+End
+Begin Window
+Name ChapterGABIScoreWindow
+Position 0,0 
+Size 640,480
+ZOrder 0.22
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Begin Window
+Name GABI_Title
+Position 250,180
+Size 140,80
+Text "GABI_Title"
+Align center
+VAlign center
+Style WHITEONCLEAR
+Alpha 1.0
+End
+Begin Window
+Name GABI_Score
+Position 270,220
+Size 100,80
+Text ? GetLevelGABIScoreText
+Align center
+VAlign center
+Style WHITEONCLEAR
+Alpha 1.0
+End
+End
+Begin Window
+Name MissionFailedTitleScreen
+Position 0
+Size 640,480
+ZOrder 0.22
+Alpha 1.0 0.0
+Animation DECELERATE 0.9
+Begin Text
+Name MissionFailedTitle
+Position 200,165
+Size 240,100
+Animation DECELERATE 0.9
+Alpha 1.0
+Text ? GetMissionFailedTitle
+Style ? GetMissionFailedTitleStyle
+Align Centre 
+Valign center
+End
+End
+Begin Window
+Name ContinueWindow
+Position 0
+Size 640,480
+ZOrder 0.22
+Alpha 1.0 0.0
+Animation DECELERATE 0.9
+OnProcess ProcSelectedButton
+Begin Text
+Name ContinueMsg
+Position 0,376
+Size 640,100
+Animation DECELERATE 0.9
+Alpha ? GetSelectedButtonAlpha
+Text "XToContinue"
+Style HUBTEXTWHITEMEDIUM
+Align Centre 
+Valign center
+End
+End
+Begin Window
+Name levelCompleteScreen
+Position 0,0
+Size 640,480
+ZOrder 0.1
+Alpha 1 0 0
+Animation DECELERATE 0.9
+OnActivate addpage InGameScreenBackground
+OnClosing closepage InGameScreenBackground
+OnDeactivate LevelCompleteScreenClosed
+Begin Window
+Name LevelCompleteTitle
+Position 200,40
+Size 240,100
+Text "Level_Complete"
+Align center
+VAlign center
+Style BIGWHITE
+Alpha 1.0
+End
+End
+Begin Window
+Name levelCompleteText
+Position 0,0
+Size 640,480
+ZOrder 0.1
+Alpha 1 0 0
+Animation DECELERATE 0.9
+Begin Window
+Name CompleteText
+Position 120,140
+Size 400,200
+Text ? GetLevelCompleteText
+Align center
+VAlign center
+Style WHITEONCLEAR
+Alpha 1.0
+MaxLines 8
+End
+End
+Begin Window
+Name LevelGABIScoreWindow
+Position 0,0 
+Size 640,480
+ZOrder 0.22
+Alpha 1.0 0 0
+Animation DECELERATE 0.3
+Begin Window
+Name GABI_Title
+Position 250,180
+Size 140,80
+Text "GABI_Title"
+Align center
+VAlign center
+Style WHITEONCLEAR
+Alpha 1.0
+End
+Begin Window
+Name GABI_Score
+Position 270,220
+Size 100,80
+Text ? GetLevelGABIScoreText
+Align center
+VAlign center
+Style WHITEONCLEAR
+Alpha 1.0
+End
+End
+Begin Window
+Name UnlockScreen
+Position 0,0 
+Size 640,480
+ZOrder 0.22
+Alpha 1.0 0.0
+Animation DECELERATE 0.3
+Begin Window
+Name UnlockA
+Position 0,270
+Size 640,200
+Text UnlockTextA
+Align center
+VAlign top
+Style WHITEONCLEAR
+Alpha 1.0
+End
+Begin Window
+Name UnlockB
+Position 0,300
+Size 640,200
+Text UnlockTextB
+Align center
+VAlign top
+Style WHITEONCLEARSMALL
+Alpha 1.0
+End
+End
+Begin Window
+Name UnlockBonusImages
+Position 0,0 
+Size 640,480
+ZOrder 0.22
+Alpha 1.0 0.0
+Animation DECELERATE 0.3
+Begin Window
+Name UnlockImageText
+Position 170,260
+Size 300,80
+Text ? GetUnlockShieldsText
+Align center
+VAlign center
+Style WHITEONCLEAR
+Alpha 1.0
+End
+Begin Window
+Name UnlockImageText
+Position 170,270
+Size 300,80
+Text ? GetUnlockImageText
+Align center
+VAlign center
+Style WHITEONCLEAR
+Alpha 1.0
+End
+End
+Begin Window
+Name UnlockedMovie
+Position 0,0 
+Size 640,480
+ZOrder 0.22
+Alpha 1.0 0.0
+Animation DECELERATE 0.3
+Begin Window
+Name UnlockMovieText
+Position 170,260
+Size 300,80
+Text ? GetUnlockMovieText
+Align center
+VAlign center
+Style WHITEONCLEAR
+Alpha 1.0
+End
+End
+Begin Window
+Name ContinueToStartButton
+Position 0,0
+Size 640,480
+ZOrder 0.22
+OnActivate HighlightTop
+OnProcess ProcSelectedButton
+Begin Button
+Name ContinueToStart
+Position 200,348
+Size 240,100
+Alpha ? GetSelectedButtonAlpha
+Animation DECELERATE 0.9
+Style CONTINUETEXTWHITE
+Text "XToContinue"
+Align center
+VAlign center
+Action LevelCompleteContinuePressed
+End
+End
+Begin Window
+Name SubMissionCompleteTitle
+Position 0,0
+Size 640,480
+ZOrder 0.22
+Alpha 1 0 0
+Animation DECELERATE 1.0
+Begin Text
+Name ChapterCompleteTxt
+Position 200,165
+Size 240,100
+Animation DECELERATE 1.0
+Alpha 1 0 0
+Text "Submission_Complete"
+Style HUBTEXTWHITE
+Align Centre
+Valign center
+End
+End
+Begin Window
+Name SubMissionContinue
+Position 0,0
+Size 640,480
+Alpha 1 0 0
+ZOrder 0.22
+OnActivate HighlightTop
+OnProcess ProcSelectedButton
+Begin Button
+Name ContinueSub
+Position 200,348
+Size 240,100
+Alpha ? GetSelectedButtonAlpha
+Animation DECELERATE 1.0
+Style HUBTEXTWHITE
+Text "XToContinue"
+Align center
+VAlign center
+Action SubmissionCompleteContinuePressed
+End
+End
+
+Begin Icon NGC PS2 WIN_PC
+Name PauseBGTop
+Image PauseBG_GFX
+Coords 67,73,61,81
+Colour 127,127,127,127
+End
+Begin Icon X360 PS3
+Name PauseBGTop
+Image PauseBG_GFX
+Coords 134,146,122,162
+Colour 127,127,127,127
+End
+Begin Icon NGC PS2 WIN_PC
+Name PauseBGLeft
+Image PauseBG_GFX
+Coords 0,126,67,130
+Colour 127,127,127,127
+End
+Begin Icon X360 PS3
+Name PauseBGLeft
+Image PauseBG_GFX
+Coords 0,252,134,260
+Colour 127,127,127,127
+End
+Begin Icon NGC PS2 WIN_PC
+Name PauseBGRight
+Image PauseBG_GFX
+Coords 67,126,-67,130
+Colour 127,127,127,127
+End
+Begin Icon X360 PS3
+Name PauseBGRight
+Image PauseBG_GFX
+Coords 134,252,-134,260
+Colour 127,127,127,127
+End
+Begin Icon NGC PS2 WIN_PC
+Name PauseBGBot
+Image PauseBG_GFX
+Coords 66,160,62,96
+Colour 127,127,127,127
+End
+Begin Icon X360 PS3
+Name PauseBGBot
+Image PauseBG_GFX
+Coords 132,320,124,192
+Colour 127,127,127,127
+End
+Begin Style
+Name PAUSEBG
+BackgroundColour 64,64,128,128
+End
+Begin Window
+Name BackgroundMenu
+Position 0,0
+Size 640,448
+ZOrder 0.29
+Begin Window
+Position 0,0
+Size 640,480
+Style DIMBLACK
+Animation LINEAR 0.4
+Alpha 0.5 0.0
+End
+End
+Begin Window
+Name MissionSelectMenu
+Position 0,0
+Size 640,448
+ZOrder 0.29
+Begin Window
+Name MissionSelectTitle
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style TITLE
+Text "MISSION_SELECT"
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin List
+Position 195,110
+Size 250,300
+Space 1
+OnActivate HighlightTop
+Dynamic ? GetNumMissions
+Begin Button
+Position 0,0
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetMissionTitleText
+Align center
+VAlign center
+Margin 10 0
+Action closepage
+Action closepage BackgroundMenu
+Action MissionSelect
+End
+End
+End
+Begin Window
+Name LevelSelectMenu
+Position 0,0
+Size 640,448
+ZOrder 0.29
+Begin Window
+Name LevelSelectTitle
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style TITLE
+Text "LEVEL_SELECT"
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin List
+Position 195,110
+Size 250,300
+Space 1
+OnActivate HighlightTop
+Dynamic ? GetNumLevels
+Begin Button
+Position 0,0
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetLevelTitleText
+Align center
+VAlign center
+Margin 10 0
+Action closepage
+Action LevelSelect
+End
+End
+End
+Begin Window
+Name CameraShakeOptions
+Position 0,0
+Size 640,480
+ZOrder 0.20
+Begin Window
+Name Init
+Position 0,0
+Size 0,0
+OnActivate StoreCamShakeOptions
+End
+Begin Window
+Name CameraShakeTitle
+Position 0,0
+Size 640,50
+ZOrder 0.3
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style TITLE
+Text "CAMERA_SHAKE_OPTIONS"
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin Window
+Name CameraShakeUsage
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 170,360 
+Size 300,30
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style SMALLWHITE
+Text "SLIDER_USAGE"
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin List
+OnActivate HighlightTop
+Position 170,120
+Size 300,300
+Space 1
+Begin Button
+Name CameraShake0
+Position 0,4
+Size 300,30
+Animation DECELERATE 0.1
+Alpha 1 0
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetCameraShakeTxt 0
+Align center
+VAlign center
+Margin 10 0
+OnActivate GetCamShakeVal int 0
+OnProcess ProcessCamShakeOptions int 0
+SLIDER 0 100 5
+End
+Begin Button
+Name CameraShake1
+Position 0,4
+Size 300,30
+Animation DECELERATE 0.1
+Alpha 1 0
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetCameraShakeTxt 1
+Align center
+VAlign center
+Margin 10 0
+OnActivate GetCamShakeVal int 1
+OnProcess ProcessCamShakeOptions int 1
+SLIDER 0 100 5
+End
+Begin Button
+Name CameraShake2
+Position 0,4
+Size 300,30
+Animation DECELERATE 0.1
+Alpha 1 0
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetCameraShakeTxt 2
+Align center
+VAlign center
+Margin 10 0
+OnActivate GetCamShakeVal int 2
+OnProcess ProcessCamShakeOptions int 2
+SLIDER 0 100 5
+End
+Begin Button
+Name CameraShake3
+Position 0,4
+Size 300,30
+Animation DECELERATE 0.1
+Alpha 1 0
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetCameraShakeTxt 3
+Align center
+VAlign center
+Margin 10 0
+OnActivate GetCamShakeVal int 3
+OnProcess ProcessCamShakeOptions int 3
+SLIDER 0 100 5
+End
+Begin Button
+Name CameraShake4
+Position 0,4
+Size 300,30
+Animation DECELERATE 0.1
+Alpha 1 0
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetCameraShakeTxt 4
+Align center
+VAlign center
+Margin 10 0
+OnActivate GetCamShakeVal int 4
+OnProcess ProcessCamShakeOptions int 4
+SLIDER 0 100 5
+End
+Begin Button
+Name Reset
+Position 0,4
+Size 300,30
+Animation DECELERATE 0.1
+Alpha 1 0
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "RESET"
+Align center
+VAlign center
+Margin 10 0
+Action SetDefaultCamShakeOptions
+Action StoreCamShakeOptions
+End
+Begin Button
+Position 0,4
+Size 300,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "ACCEPT"
+Align center
+VAlign center
+Margin 10 0
+Action SetCamShakeOptions
+Action Backout
+End
+End
+End
+Begin Window
+Name DebugOptionsMenu
+Position 0,0
+Size 640,448
+ZOrder 0.29
+Begin Window
+Name DebugOptionsTitle
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style TITLE
+Text "DEBUG_OPTIONS"
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin List
+Position 195,110 
+Size 200,300
+Space 1
+OnActivate HighlightTop
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "LEVEL_SELECT"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ChangePage LevelSelectMenu
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "Level_Complete"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action SetLevelComplete
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "MISSION_SELECT"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ChangePage MissionSelectMenu
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetHUDText
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ToggleHUD
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetGodModeText
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ToggleGodMode
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetCameraInvertedText
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ToggleCameraInverted
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetFlyCameraText
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ToggleFlyCamera
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetCameraSensitivityText
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ToggleCameraSensitivity
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetAspectRatioText
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ToggleAspectRatio
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetVibrationText
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ToggleVibration
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetSFXText
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ToggleSFX
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetMusicText
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ToggleMusic
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "CAMERA_SHAKE_OPTIONS"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ChangePage CameraShakeOptions
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "BACK"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action Backout
+End
+End
+End
+Begin Window
+Name ExtraOptionsMenu
+Position 0,0
+Size 640,448
+ZOrder 0.29
+Begin Window
+Name AdditionalDebugOptionsTitle
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style TITLE
+Text "DEBUG_OPTIONS"
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin List
+Position 195,110
+Size 250,300
+Space 1
+OnActivate HighlightTop
+Dynamic ? GetNumDebugOptions
+Begin Button
+Position 0,0
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text ? GetDebugOptionText
+Align center
+VAlign center
+Margin 10 0
+Action ToggleDebugOption
+End
+End
+End
+Begin Window
+Name PauseMenu
+Position 0,0
+Size 640,448
+ZOrder 0.2
+Begin Window
+Name background
+Position 0,0 
+Size 640,480 
+style DIMBLACK
+ZOrder 0.5
+Alpha 0.6 0.0 0.0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name PauseTitle
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style TITLE_MEDIUM
+Text Paused
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin Window
+Name Version
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 500,25 
+Size 100,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style SMALLWHITE
+Text Version
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin List
+Position 220,110 
+Size 200,300
+Space 1
+OnActivate HighlightTop
+Begin Button
+Position 0,0 
+Size 200,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "RESUME"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action closepage
+Action ResumeGame
+End
+Begin Button
+Position 0,0 
+Size 200,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "DEBUG_OPTIONS"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ChangePage DebugOptionsMenu
+End
+Begin Button
+Position 0,0 
+Size 200,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "DEBUG_OPTIONS2"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ChangePage ExtraOptionsMenu
+End
+Begin Button
+Position 0,0 
+Size 200,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "QUIT"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action QuitLevel
+End
+End
+End
+Begin Window
+Name InMissionPauseMenu
+Position 0,0
+Size 640,448
+ZOrder 0.2
+Begin Window
+Name background
+Position 0,0 
+Size 640,480 
+style DIMBLACK
+ZOrder 0.5
+Alpha 0.6 0.0 0.0
+Animation DECELERATE 0.9
+End
+Begin Window
+Name PauseTitle
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 0,30 
+Size 640,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style TITLE_MEDIUM
+Text Paused
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin Window
+Name Version
+Position 0,0
+Size 640,480
+ZOrder 0.3
+Begin Text
+Position 500,25 
+Size 100,50
+Animation DECELERATE 0.3
+Alpha 1.0, 0.0
+Style SMALLWHITE
+Text Version
+Align center
+Valign center
+Margin 10, 0
+End
+End
+Begin List
+Position 220,110 
+Size 200,300
+Space 1
+OnActivate HighlightTop
+Begin Button
+Position 0,0 
+Size 200,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "RESUME"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action closepage
+Action ResumeGame
+End
+Begin Button
+Position 0,0 
+Size 200,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "DEBUG_OPTIONS"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ChangePage DebugOptionsMenu
+End
+Begin Button
+Position 0,0 
+Size 200,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "DEBUG_OPTIONS2"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action ChangePage ExtraOptionsMenu
+End
+Begin Button
+Position 0,0 
+Size 200,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text QUIT_MISSION
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action closepage
+Action QuitMission
+End
+Begin Button
+Position 0,0 
+Size 200,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text "QUIT"
+Align center
+VAlign center
+Margin 10 0
+Depends previous
+Action QuitLevel
+End
+End
+End
+
+Begin Icon
+Name ButtonTriangle
+Image ButtonTriangleGfx
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ButtonTarget
+Image ButtonTargetGfx
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ButtonBlock
+Image ButtonBlockGfx
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ButtonCross
+Image ButtonCrossGfx
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ButtonCircle
+Image ButtonCircleGfx
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ButtonBack
+Image ButtonBackGfx
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Icon
+Name ButtonEscBack
+Image ButtonEscGfx
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+
+Begin Window
+Name TestMenuOptions
+Position 0,0
+Size 640,480
+ZOrder 0.29
+Alpha 1 0
+OnActivate PlayCutscene 3MenuOpen
+OnClosing PlayCutscene 3MenuClose
+Begin List
+Position 195,110 
+Size 200,300
+Space 1
+OnActivate HighlightTop
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text Video_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid 
+3DObj Menu1_left
+3DObj Menu1_right
+OnProcess Process3DText
+OnDraw3D Draw3DText
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text Audio_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+OnProcess Process3DText
+OnDraw3D Draw3DText
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text Game_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+OnProcess Process3DText
+OnDraw3D Draw3DText
+End
+End
+End
+Begin Window
+Name TestMenu
+Position 0,0
+Size 640,480
+ZOrder 0.29
+Alpha 1 0
+OnActivate PlayCutscene buttons
+OnClosing PlayCutscene 4MenuClose
+Begin List
+Position 195,110 
+Size 200,300
+Space 1
+OnActivate HighlightTop
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text NewGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid 
+3DObj Menu1_left
+3DObj Menu1_right
+OnProcess Process3DText
+OnDraw3D Draw3DText
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text LoadGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+OnProcess Process3DText
+OnDraw3D Draw3DText
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text Options
+Align center
+VAlign top
+Margin 10 0
+Action ChangePage TestMenuOptions
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+OnProcess Process3DText
+OnDraw3D Draw3DText
+End
+Begin Button
+Position 0,0 
+Size 250,30
+Alpha 1 0
+Animation DECELERATE 0.1
+Style ENABLED,SELECTED,DEFAULT,DSELECTED
+Text LevelSelect
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+OnProcess Process3DText
+OnDraw3D Draw3DText
+End
+End
+End
+
+

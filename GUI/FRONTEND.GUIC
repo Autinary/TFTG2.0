@@ -1,0 +1,2995 @@
+PakFile 1 "gui/frontend_#SKU_#LAN.fpk" 1
+PakFile 1 "gui/bonuscontent_#SKU_#LAN.fpk" 1
+Begin Style
+Name CheatBackStyle
+BackgroundColour 0,0,0,128
+Font default 128,128,128,128 40,40
+End
+Begin Style
+Name CheatTitleStyle
+BackgroundColour 0,0,0,0
+Font default 128,128,128,128 40,30
+End
+Begin Style
+Name CheatStyle
+BackgroundColour 0,0,0,0
+Font default 128,128,128,128 15,15
+End
+Begin Style PS2 PS3 360 WIN_PC
+Name StylePressStart
+Font default 96,96,128,96 25,33
+BackgroundColour 0,0,0,0
+OutlineColour 64,64,128,128
+Outline 1.0
+End
+Begin Style WII
+Name StylePressStart
+Font default 96,96,128,96 14,14
+BackgroundColour 0,0,0,0
+OutlineColour 64,64,128,128
+Outline 1.0
+End
+Begin Style PS3 WII WIN_PC 360
+Name StyleButton
+Font default 96,96,128,96 25,40
+BackgroundColour 0,0,0,0
+End
+Begin Style PS2
+Name StyleButton
+Font default 96,96,128,96 25,27
+BackgroundColour 0,0,0,0
+End
+Begin Style PS3 WII WIN_PC 360
+Name StyleLevelName
+Font default 128,128,128,128 50,182
+BackgroundColour 0,0,0,0
+End
+Begin Style PS2
+Name StyleAutoDCon
+Font default 96,96,128,96 25,33
+BackgroundColour 0,0,0,0
+End
+Begin Style PS3 WII WIN_PC 360
+Name StyleAutoDCon
+Font default 96,96,128,96 25,55
+BackgroundColour 0,0,0,0
+End
+Begin Style PS2
+Name StyleLevelName
+Font default 128,128,128,128 50,125
+BackgroundColour 0,0,0,0
+End
+Begin Style
+Name UnlockedImageStyle
+BackgroundColour 127,127,127,127
+End
+Begin Style
+Name SixaxisStyle
+Font default 96,96,128,96 16,33
+BackgroundColour 127,127,127,127
+End
+Begin Style
+Name GameSettingsStyle
+Font default 96,96,128,96 19,33
+BackgroundColour 127,127,127,127
+End
+Begin Style
+Name VideoSettingsStyle
+Font default 96,96,128,96 16,35
+BackgroundColour 127,127,127,127
+End
+Begin Style
+Name EffectsSettingsStyle
+Font default 96,96,128,96 16,35
+BackgroundColour 127,127,127,127
+End
+Begin Style
+Name ScreenResStyle
+Font default 96,96,128,96 13,33
+BackgroundColour 127,127,127,127
+End
+Begin Image
+Name LockedImage
+File "gui\gfx\unlocks\BonusImage_Locked"
+End
+Begin Image
+Name UnlockedImage
+File "gui\gfx\activision_logo"
+Alpha 1
+End
+Begin Icon
+Name UnlockedIcon
+Image UnlockedImage
+NCoords 0,0,1,1
+Colour 127,127,127,127
+End
+Begin Image ps2 wii 360 ps3
+Name DemoTranquilityImage
+File "gui\gfx\Tranq"
+Alpha 1
+End
+Begin Image pc
+Name DemoTranquilityImage
+File "gui\gfx\Tranq_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name Tranquility2Image
+File "gui\gfx\Tranq_2"
+Alpha 1
+End
+Begin Image pc
+Name Tranquility2Image
+File "gui\gfx\Tranq_2_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name HooverIntImage
+File "gui\gfx\HooverInt"
+Alpha 1
+End
+Begin Image pc
+Name HooverIntImage
+File "gui\gfx\HooverInt_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name CityImage
+File "gui\gfx\City"
+Alpha 1
+End
+Begin Image pc
+Name CityImage
+File "gui\gfx\City_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name AutoCityBossImage
+File "gui\gfx\AutoCityBoss"
+Alpha 1
+End
+Begin Image pc
+Name AutoCityBossImage
+File "gui\gfx\AutoCityBoss_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name CybertronImage
+File "gui\gfx\Cybertron"
+Alpha 1
+End
+Begin Image pc
+Name CybertronImage
+File "gui\gfx\Cybertron_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name QatarImage
+File "gui\gfx\Qatar"
+Alpha 1
+End
+Begin Image pc
+Name QatarImage
+File "gui\gfx\Qatar_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name BarricadeTranquilityImage
+File "gui\gfx\Tranq_B"
+Alpha 1
+End
+Begin Image pc
+Name BarricadeTranquilityImage
+File "gui\gfx\Tranq_B_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name AirbaseImage
+File "gui\gfx\Airbase"
+Alpha 1
+End
+Begin Image pc
+Name AirbaseImage
+File "gui\gfx\Airbase_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name InTheCityImage
+File "gui\gfx\InTheCity"
+Alpha 1
+End
+Begin Image pc
+Name InTheCityImage
+File "gui\gfx\InTheCity_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name DConCityBossImage
+File "gui\gfx\DConCityBoss"
+Alpha 1
+End
+Begin Image pc
+Name DConCityBossImage
+File "gui\gfx\DConCityBoss_hr"
+Alpha 1
+End
+Begin Image ps2 wii 360 ps3
+Name CybertronDConImage
+File "gui\gfx\CyberDCon"
+Alpha 1
+End
+Begin Image pc
+Name CybertronDConImage
+File "gui\gfx\CyberDCon_hr"
+Alpha 1
+End
+Begin Window WIN_PC
+Name PCAcceptDecliceVideoChanges
+Position 0,0
+Size 640,480
+ZOrder 0.2
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightBottom
+Begin Button
+Position 0,0
+Size 250,30
+Text UseCurrentVideoSettings2
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action Backout
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text ? FEGetRevertVideoSettingsText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEPCUpdateCountdownTimer
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action FEPCRestoreVideoSettings
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene BMenuOpen
+OnActivate SetFocus PCAcceptDecliceVideoChanges
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene BMenuClose
+OnDeactivate SetFocus
+End
+Begin Window WIN_PC
+Name PCQuitToWindowsConfirm
+Position 0,0
+Size 640,480
+ZOrder 0.2
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+Begin Button
+Position 0,0
+Size 250,30
+Text ReturnToGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action Backout
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text QuitToWindows
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action FEPCQuitToWindows
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene BMenuOpen
+OnActivate SetFocus PCQuitToWindowsConfirm
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene BMenuClose
+OnDeactivate SetFocus
+End
+Begin Window
+Name CheatActivated
+Position 0,0
+Size 640,480
+ZOrder 1.0
+Animation Linear 0.5
+Style CheatBackStyle
+Begin Window
+Position 320,10
+Size 300,40
+Align Center
+Style CheatTitleStyle
+Text Cheatactivated
+End
+Begin Button 360 WIN_PC
+Position 320,175
+Size 500,40
+Align Center
+Style CheatStyle
+Text Nomoresave
+End
+Begin Button
+Position 0,250
+Size 500,40
+Align Center
+Style CheatStyle
+Text Nomorecontent
+End
+Begin Button 360
+Position 0,325
+Size 570,80
+Align Center
+Style CheatStyle
+MaxLines 8
+Text 360_ACHIEVEMENTS_DISABLED
+End
+Begin Button
+Action FakeAcion
+End
+OnActivate SetFocus CheatActivated
+OnDraw DrawActionButtons
+End
+Begin Window WII
+Name AudioSettings
+Position 0,0
+Size 640,480
+ZOrder 0.2
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+Begin Button
+Name WIIMusicVolumeButton
+Position 0,0
+Size 250,30
+Text ? FEGetMusicVolumeText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetMusicVolume
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleMusicVolume
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 10 10
+End
+Begin Button
+Name WIISFXVolumeButton
+Position 0,0
+Size 250,20
+Text ? FEGetSoundVolumeText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetSoundVolume
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleSoundVolume
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 10 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action AcceptChanges
+Action Backout
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene CMenuOpen
+OnActivate SetFocus AudioSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene CMenuClose
+OnDeactivate SetFocus
+End
+Begin Window PS2 PS3 360
+Name AudioSettings
+Position 0,0
+Size 640,480
+ZOrder 0.2
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+Begin Button
+Name MusicVolumeButton
+Position 0,0
+Size 250,30
+Text ? FEGetMusicVolumeText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetMusicVolume
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleMusicVolume
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 10 10
+End
+Begin Button
+Name SFXVolumeButton
+Position 0,0
+Size 250,20
+Text ? FEGetSoundVolumeText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetSoundVolume
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleSoundVolume
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 10 1
+End
+Begin Button
+Name SurroundButton
+Position 0,0
+Size 250,30
+Text ? FEGetSurroundText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetSurround
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleSurround
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action AcceptChanges
+Action Backout
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene DMenuOpen
+OnActivate SetFocus AudioSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene DMenuClose
+OnDeactivate SetFocus
+End
+Begin Window WIN_PC
+Name AudioSettings
+Position 0,0
+Size 640,480
+ZOrder 0.2
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+Begin Button
+Name MusicVolumeButton
+Position 0,0
+Size 250,30
+Text ? FEGetMusicVolumeText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetMusicVolume
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleMusicVolume
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 10 10
+End
+Begin Button
+Name SFXVolumeButton
+Position 0,0
+Size 250,20
+Text ? FEGetSoundVolumeText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetSoundVolume
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleSoundVolume
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 10 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action AcceptChanges
+Action Backout
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene CMenuOpen
+OnActivate SetFocus AudioSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene CMenuClose
+OnDeactivate SetFocus
+End
+Begin Window WIN_PC
+Name VideoSettings
+Position 0,0
+Size 640,480
+ZOrder 0.4
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+OnActivate FECopyFromPCSettings
+Begin Button
+Name Resolution
+Position 0,0
+Size 250,30
+Text ? FEGetScreenResText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style ScreenResStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleScreenRes
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 2 1
+End
+Begin Button
+Name RefreshRate
+Position 0,0
+Size 250,30
+Text ? FEGetScreenRefreshRateText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style ScreenResStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleScreenRefreshRate
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 2 1
+End
+Begin Button
+Name AspectRatio
+Position 0,0
+Size 250,20
+Text ? FEGetAspectRatioText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetAspectRatio
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleAspectRatio
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 3 1
+End
+Begin Button
+Name HighResAssets
+Position 0,0
+Size 250,20
+Text ? FEGetHighResAssetsText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+State ? FEGetHiresAssetsAvailable
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetHighResAssets
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleHighResAssets
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu5_mid
+3DObj Menu5_left
+3DObj Menu5_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action FEApplyPCVideoSettings
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene EMenuOpen
+OnActivate SetFocus VideoSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene EMenuClose
+OnDeactivate SetFocus
+End
+Begin Window WIN_PC
+Name EffectsSettings
+Position 0,0
+Size 640,480
+ZOrder 0.4
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+OnActivate FECopyFromPCSettings
+Begin Button
+Name FSAA
+Position 0,0
+Size 250,20
+Text ? FEGetFSAAText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+State ? FEGetFSAAAvailable
+Style ScreenResStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleFSAA
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 2 1
+End
+Begin Button
+Name Shadows
+Position 0,0
+Size 250,20
+Text ? FEGetShadowsText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+State ? FEGetShadowsAvailable
+Style EffectsSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetShadows
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleShadows
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Name Bloom
+Position 0,0
+Size 250,20
+Text ? FEGetBloomText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+State ? FEGetBloomAvailable
+Style EffectsSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetBloom
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleBloom
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Name SpeedBlur
+Position 0,0
+Size 250,20
+Text ? FEGetSpeedBlurText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+Style EffectsSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetSpeedBlur
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleSpeedBlur
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu5_mid
+3DObj Menu5_left
+3DObj Menu5_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action FEApplyPCVideoSettings
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene EMenuOpen
+OnActivate SetFocus EffectsSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene EMenuClose
+OnDeactivate SetFocus
+End
+Begin Window WII PS2 PS3 360
+Name VideoSettings
+Position 0,0
+Size 640,480
+ZOrder 0.4
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+Begin Button
+Name ScreenXButton
+Position 0,0
+Size 250,30
+Text ? FEGetScreenXText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetScreenX
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleScreenX
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider -24 24 1
+End
+Begin Button
+Name ScreenYButton
+Position 0,0
+Size 250,20
+Text ? FEGetScreenYText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style VideoSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetScreenY
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleScreenY
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider -24 24 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action AcceptChanges
+Action Backout
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene CMenuOpen
+OnActivate SetFocus VideoSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene CMenuClose
+OnDeactivate SetFocus
+End
+Begin Window WII
+Name GameSettings
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+Begin Button
+Name WIICameraSensitivityButton
+Position 0,0
+Size 250,30
+Text ? FEGetCameraSensitivityText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetCameraSensitivity
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleCameraSensitivity
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 2 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action AcceptChanges
+Action Backout
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene BMenuOpen
+OnActivate SetFocus GameSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene BMenuClose
+OnDeactivate SetFocus
+End
+Begin Window PS3
+Name GameSettings
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+Begin Button
+Name PS3CameraSensitivityButton
+Position 0,0
+Size 250,30
+Text ? FEGetCameraSensitivityText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetCameraSensitivity
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleCameraSensitivity
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 2 1
+End
+Begin Button
+Name PS3CameraInvertButton
+Position 0,0
+Size 250,20
+Text ? FEGetCameraInvertText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetCameraInvert
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleCameraInvert
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Name SixaxisButton
+Position 0,0
+Size 250,20
+Text ? FEGetSixaxisText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style SixaxisStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetSixaxis
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleSixaxis
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action AcceptChanges
+Action Backout
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene DMenuOpen
+OnActivate SetFocus GameSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene DMenuClose
+OnDeactivate SetFocus
+End
+Begin Window PS2 360
+Name GameSettings
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+Begin Button
+Name CameraSensitivityButton
+Position 0,0
+Size 250,30
+Text ? FEGetCameraSensitivityText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetCameraSensitivity
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleCameraSensitivity
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 2 1
+End
+Begin Button
+Name CameraInvertButton
+Position 0,0
+Size 250,20
+Text ? FEGetCameraInvertText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetCameraInvert
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleCameraInvert
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Name VibrationButton
+Position 0,0
+Size 250,30
+Text ? FEGetVibrationText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetVibration
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleVibration
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action AcceptChanges
+Action Backout
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene DMenuOpen
+OnActivate SetFocus GameSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene DMenuClose
+OnDeactivate SetFocus
+End
+Begin Window WIN_PC
+Name GameSettings
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate HighlightTop
+Begin Button
+Name CameraSensitivityButton
+Position 0,0
+Size 250,30
+Text ? FEGetCameraSensitivityText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetCameraSensitivity
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleCameraSensitivity
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 2 1
+End
+Begin Button
+Name CameraInvertButton
+Position 0,0
+Size 250,20
+Text ? FEGetCameraInvertText
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnOpened FEGetCameraInvert
+OnProcess FrontEndProcess3DTextScale
+OnProcess FEToggleCameraInvert
+OnProcess DontDrawAcceptIfSelected
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Slider 0 1 1
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Accept
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+Action AcceptChanges
+Action Backout
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene CMenuOpen
+OnActivate SetFocus GameSettings
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene CMenuClose
+OnDeactivate SetFocus
+End
+Begin Window WII PS3 360
+Name OptionsMenu
+Position 0,0
+Size 640,480
+ZOrder 0.4
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text Game_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action RequestChangePage GameSettings
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Audio_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action RequestChangePage AudioSettings
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene BMenuOpen
+OnActivate SetFocus OptionsMenu
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene BMenuClose
+OnDeactivate SetFocus
+End
+Begin Window PS2
+Name OptionsMenu
+Position 0,0
+Size 640,480
+ZOrder 0.4
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text Game_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action RequestChangePage GameSettings
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Video_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action RequestChangePage VideoSettings
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Audio_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action RequestChangePage AudioSettings
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene CMenuOpen
+OnActivate SetFocus OptionsMenu
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene CMenuClose
+OnDeactivate SetFocus
+End
+Begin Window WIN_PC
+Name ControllerSettings
+Position 0,0
+Size 640,480
+ZOrder 0.5
+OnActivate ActivateControllerScreen
+OnActivate SetFocus ControllerSettings
+OnProcess ProcessControllerScreen
+OnBackout ScrollBackOn
+OnBackout RequestBackout
+OnDeactivate SetFocus
+End
+Begin Window WIN_PC
+Name OptionsMenu
+Position 0,0
+Size 640,480
+ZOrder 0.4
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text Game_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action RequestChangePage GameSettings
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Video_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action RequestChangePage VideoSettings
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Effects_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action RequestChangePage EffectsSettings
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Audio_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action RequestChangePage AudioSettings
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Ctrl_Settings
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu5_mid
+3DObj Menu5_left
+3DObj Menu5_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ResetChanges
+Action ScrollOffTop
+Action RequestChangePage ControllerSettings
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene EMenuOpen
+OnActivate SetFocus OptionsMenu
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene EMenuClose
+OnDeactivate SetFocus
+End
+Begin Window
+Name UnlockedImage
+Position 0,0
+Size 640,480
+ZOrder 1.0
+Alpha 1 0 0
+Animation Linear 0.5
+Begin Button
+Position 0,0
+Size 640,480
+Align Centre
+VAlign Centre
+Style UnlockedImageStyle
+Icon ? GetUnlockedImageIcon
+Widescreen Centre
+OnDraw DrawActionButtons
+Action Dummy
+End
+OnActivate SetFocus UnlockedImage
+OnBackout PlaySFX ui_gallery_shrink
+OnDeactivate SetFocus
+End
+Begin Window
+Name G1Characters
+Position 0,0
+Size 640,480
+ZOrder 0.1 
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text ? G1Character 0
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text ? G1Character 1
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text ? G1Character 2
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text ? G1Character 3
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text ? G1Character 4
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu5_mid
+3DObj Menu5_left
+3DObj Menu5_right
+Style GameSettingsStyle
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnSelected PlaySFX ui_allspark_hilight
+End
+Action ToggleG1Character
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene EMenuOpen
+OnActivate SetFocus G1Characters
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene EMenuClose
+OnDeactivate SetFocus
+End
+Begin Window
+Name BonusMovies
+Position 0,0
+Size 640,480
+ZOrder 0.5 
+Alpha 1
+Begin Button
+Position 0,0
+Size 250,30
+Align center
+VAlign top
+Margin 10 0
+Style StyleLevelName
+Text ? GetMovieIndex
+3DObj movieScreenText
+3DObj moviesScreen
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess Draw3DObjects
+OnDrawOverride FrontEndDraw3DText
+OnProcess OverrideMaterialWithImage int 1
+End
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+Horizontal
+Loop
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 0,0
+OnActivate RegisterMovieSelector
+OnDeselected DeselectMovie
+OnSelected SelectMovie
+Action DisplayUnlockedMovie
+End
+Begin Button
+Position 0,0
+Size 0,0
+OnActivate RegisterMovieSelector
+OnDeselected DeselectMovie
+OnSelected SelectMovie
+Action DisplayUnlockedMovie
+End
+Begin Button
+Position 0,0
+Size 0,0
+OnActivate RegisterMovieSelector
+OnDeselected DeselectMovie
+OnSelected SelectMovie
+Action DisplayUnlockedMovie
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene MoviesOpen
+OnActivate SetArrowsOn int 1
+OnActivate SetFocus BonusMovies
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene MoviesClose
+OnDeactivate SetArrowsOn int 0
+OnDeactivate SetFocus
+End
+Begin Window
+Name BonusGallery
+Position 0,0
+Size 640,480
+ZOrder 0.2 
+Alpha 1
+Begin Button
+Position 0,0
+Size 250,30
+Align center
+VAlign top
+Margin 10 0
+Style StyleLevelName
+Text ? GetImageIndex
+3DObj movieScreenText
+3DObj moviesScreen
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess Draw3DObjects
+OnDrawOverride FrontEndDraw3DText
+OnProcess OverrideMaterialWithImage int 0
+End
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+Horizontal
+Loop
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 0,0
+OnActivate RegisterImageSelector
+OnDeselected DeselectImage
+OnSelected SelectImage
+Action DisplayUnlockedImage
+End
+Begin Button
+Position 0,0
+Size 0,0
+OnActivate RegisterImageSelector
+OnDeselected DeselectImage
+OnSelected SelectImage
+Action DisplayUnlockedImage
+End
+Begin Button
+Position 0,0
+Size 0,0
+OnActivate RegisterImageSelector
+OnDeselected DeselectImage
+OnSelected SelectImage
+Action DisplayUnlockedImage
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene MoviesOpen
+OnActivate SetArrowsOn int 1
+OnActivate SetFocus BonusGallery
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene MoviesClose
+OnDeactivate SetArrowsOn int 0
+OnDeactivate SetFocus
+End
+Begin Window
+Name BonusFeatures
+Position 0,0
+Size 640,480
+ZOrder 0.1 
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text MovieGallery
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action RequestChangePage BonusMovies
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text ImageGallery
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action RequestChangePage BonusGallery
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text G1Chars
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action RequestChangePage G1Characters
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene CMenuOpen
+OnActivate SetFocus BonusFeatures
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene CMenuClose
+OnDeactivate SetFocus
+End
+Begin Window
+Name CubeFlyOff
+Position 0,0
+Size 640,480
+ZOrder 0.0
+Alpha 1
+Animation Accelerate 10.0
+OnActivate PlayCutscene CubeSpinOut
+OnOpened GoToLevel
+End
+Begin Window
+Name CloseCube
+Position 0,0
+Size 640,480
+ZOrder 0.0 
+Alpha 1
+Animation Accelerate 10.0
+OnActivate PlayCutscene CubeShutDown
+OnActivate SetFocus CloseCube 
+OnOpened ChangePage CubeFlyOff
+End
+Begin Window
+Name ReplayLevel
+Position 0,0
+Size 640,480
+ZOrder 0.1 
+Alpha 1
+Begin Button
+Position 0,0
+Size 250,30
+Align center
+VAlign top
+Margin 10 0
+Style StyleLevelName
+Text ? GetLevelName
+3DObj movieScreenText
+3DObj moviesScreen
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess ProcessLevelSelectArrows
+OnProcess Draw3DObjectsIncInCutscene
+OnDrawOverride FrontEndDraw3DTextIncInCutscene
+OnProcess OverrideMaterialWithImageIncInCutscene int 2
+End
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+Horizontal
+Loop
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 0,0
+OnActivate RegisterLevelSelector
+OnDeselected DeselectLevel
+OnSelected SelectLevel
+Action PlaySFX ui_allspark_exit
+Action PlayCutscene MoviesClose
+Action ReplayLevel CloseCube
+End
+Begin Button
+Position 0,0
+Size 0,0
+OnActivate RegisterLevelSelector
+OnDeselected DeselectLevel
+OnSelected SelectLevel
+Action PlaySFX ui_allspark_exit
+Action PlayCutscene MoviesClose
+Action ReplayLevel CloseCube
+End
+Begin Button
+Position 0,0
+Size 0,0
+OnActivate RegisterLevelSelector
+OnDeselected DeselectLevel
+OnSelected SelectLevel
+Action PlaySFX ui_allspark_exit
+Action PlayCutscene MoviesClose
+Action ReplayLevel CloseCube
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene MoviesOpen
+OnActivate SetFocus ReplayLevel
+OnActivate EnterLevelSelect
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnBackout SetArrowsOn int 0
+OnBackout PlayCutscene MoviesClose
+OnDeactivate SetArrowsOn int 0
+OnDeactivate SetFocus
+End
+Begin Window
+Name StoryContReplay
+Position 0,0
+Size 640,480
+ZOrder 0.1 
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text ContinueStory
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+Action SetLevel Next
+Action RequestCutscene BMenuClose
+Action RequestChangePage CloseCube
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text ReplayLevel
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+Action RequestChangePage ReplayLevel
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene BMenuOpen
+OnActivate SetFocus StoryContReplay
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene BMenuClose
+OnDeactivate SetFocus
+End
+Begin Window
+Name StoryReplay
+Position 0,0
+Size 640,480
+ZOrder 0.1 
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text ReplayLevel
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+Action RequestChangePage ReplayLevel
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene AMenuOpen
+OnActivate SetFocus StoryReplay
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene AMenuClose
+OnDeactivate SetFocus
+End
+Begin Window
+Name StoryCont
+Position 0,0
+Size 640,480
+ZOrder 0.1 
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text ContinueStory
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+Action SetLevel Next
+Action RequestCutscene AMenuClose
+Action RequestChangePage CloseCube
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene AMenuOpen
+OnActivate SetFocus StoryCont
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene AMenuClose
+OnDeactivate SetFocus
+End
+Begin Window
+Name StoryNew
+Position 0,0
+Size 640,480
+ZOrder 0.1 
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text BeginStory
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+Action SetLevel First
+Action RequestCutscene AMenuClose
+Action RequestChangePage CloseCube
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene AMenuOpen
+OnActivate SetFocus StoryNew
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene AMenuClose
+OnDeactivate SetFocus
+End
+Begin Window
+Name TeamSelect
+Position 0,0
+Size 640,480
+ZOrder 0.6 
+Alpha 1
+Begin Button
+Position 0,0
+Size 250,30
+VAlign top
+Text ? SideSelect
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleAutoDCon
+OnCreate SetTextStyle FESTeamText
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextNoScale
+OnDrawOverride DrawSpinningTextIncInCutscene
+End
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+Horizontal
+OnBackout HighlightTop
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Name ExitAuto
+Position 0,0
+Size 250,30
+Align center
+VAlign top
+Margin 10 0
+3DObj AUTO_piece_1
+3DObj AUTO_piece_2
+3DObj AUTO_piece_3
+3DObj AUTO_piece_4
+3DObj AUTO_piece_5
+3DObj AUTO_piece_6
+3DObj AUTO_piece_7
+3DObj scrollRightArrow
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnActivate SetupListInfo
+OnSelected PlayCutscene DConToAuto
+OnSelected RegisterSelection
+OnSelected SelectAutobot int 1
+OnProcess Draw3DObjects
+OnProcess DrawArrow int 3
+Action PlaySFX ui_allspark_faction_choice
+Action ActivateAutoStory ReplayLevel
+End
+Begin Button
+Name ExitDCon
+Position 0,0
+Size 250,30
+Align center
+VAlign top
+Margin 10 0
+3DObj DCON_piece_1
+3DObj DCON_piece_2
+3DObj DCON_piece_3
+3DObj DCON_piece_4
+3DObj DCON_piece_5
+3DObj DCON_piece_6
+3DObj DCON_piece_7
+3DObj scrollLeftArrow
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnActivate SetupListInfo
+OnSelected PlayCutscene AutoToDCon
+OnSelected RegisterSelection
+OnSelected SelectAutobot int 0
+OnProcess Draw3DObjects
+OnProcess DrawArrow int 2
+Action PlaySFX ui_allspark_faction_choice
+Action ActivateDConStory ReplayLevel
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene AutoHeadAppear
+OnActivate SetFocus TeamSelect
+OnBackout PlayChildCut
+OnBackout RequestBackout
+OnDeactivate SetFocus
+End
+Begin Window
+Name NewGame
+Position 0,0
+Size 640,480
+ZOrder 0.1 
+Alpha 1
+Begin List
+Name NewGameList
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Name StoryModeButton
+Position 0,0
+Size 250,30
+Text StoryMode
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select_storymode
+Action RequestChangePage TeamSelect
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text BonusFeatures
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action RequestChangePage BonusFeatures
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Credits
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlayFMV FMV\$langCredits.pss
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene CMenuOpen
+OnActivate SetFocus NewGame
+OnProcess ProcessCheats
+OnBackout PlaySFX ui_allspark_return
+OnBackout RequestResetSpinningText
+OnBackout RequestBackout
+OnDeactivate PlayCutscene CMenuClose
+OnDeactivate SetFocus
+End
+Begin Window PS2 PS3 360 WII
+Name FrontEndCont
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin List
+Name FrontEndContList
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Name ContinueGameButton
+Position 0,0
+Size 250,30
+Text Continue
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ContinueGame NewGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text NewGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action FrontEndNewGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text LoadGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action FrontEndLoadGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Options
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action OptionsSelected
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene DMenuOpen
+OnActivate SetFocus FrontEndCont
+OnDeactivate SetFocus
+End
+Begin Window WIN_PC
+Name FrontEndCont
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin List
+Name FrontEndContList
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Name ContinueGameButton
+Position 0,0
+Size 250,30
+Text Continue
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action ContinueGame NewGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text NewGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action FrontEndNewGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text LoadGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action FrontEndLoadGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Options
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action OptionsSelected
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Quit
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu5_mid
+3DObj Menu5_left
+3DObj Menu5_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action RequestChangePage PCQuitToWindowsConfirm
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene EMenuOpen
+OnActivate SetFocus FrontEndCont
+OnDeactivate SetFocus
+End
+Begin Window PS2 PS3 360 WII
+Name FrontEnd
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text NewGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action FrontEndNewGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text LoadGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action FrontEndLoadGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Options
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action OptionsSelected
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene CMenuOpen
+OnActivate SetFocus FrontEnd
+OnDeactivate SetFocus
+End
+Begin Window WIN_PC
+Name FrontEnd
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin List
+Position 195,110
+Size 200,300
+Space 1
+Alpha 0
+OnActivate GetSelection
+Action SetSelection
+Begin Button
+Position 0,0
+Size 250,30
+Text NewGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu1_mid
+3DObj Menu1_left
+3DObj Menu1_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action FrontEndNewGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text LoadGame
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu2_mid
+3DObj Menu2_left
+3DObj Menu2_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action FrontEndLoadGame
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Options
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu3_mid
+3DObj Menu3_left
+3DObj Menu3_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action OptionsSelected
+End
+Begin Button
+Position 0,0
+Size 250,30
+Text Quit
+Align center
+VAlign top
+Margin 10 0
+3DObj Menu4_mid
+3DObj Menu4_left
+3DObj Menu4_right
+Style StyleButton
+OnCreate SetTextStyle FESButton
+Animation Accelerate 3.0
+OnOpened InitialiseButton
+OnProcess FrontEndProcess3DTextScale
+OnDrawOverride DrawSpinningText
+OnDeselected PlaySFX ui_allspark_hilight
+Action PlaySFX ui_allspark_select
+Action RequestChangePage PCQuitToWindowsConfirm
+End
+End
+Animation Accelerate 10.0
+OnActivate PlayCutscene DMenuOpen
+OnActivate SetFocus FrontEnd
+OnDeactivate SetFocus
+End
+Begin Window
+Name CubeController
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+3DObj cubeCentreBit
+3DObj BCK_RGT_TOP_cornerController
+3DObj FRT_LFT_TOP_cornerController
+3DObj FRT_LFT_BOT_cornerController
+3DObj BCK_RGT_BOT_cornerController
+3DObj FRT_RGT_TOP_cornerController
+3DObj BCK_LFT_TOP_cornerController
+3DObj BCK_LFT_BOT_cornerController
+3DObj FRT_RGT_BOT_cornerController
+Animation Accelerate 10.0
+OnActivate PlayCutscene CombinedStart
+OnOpened InitialiseCubeMatrix
+OnOpened EnterFrontEnd
+OnProcess ProcessCubeMovement
+End
+Begin Window WII
+Name PushStartButton
+Position 0,65
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin Button
+Name PushStartText
+Position 0,-12
+ZOrder 0.5
+Alpha 1.0 0.0 0.0
+Animation Accelerate 0.5
+Style StylePressStart
+Align Center
+VAlign Center
+Text WiiPressStart
+OnProcess StartPressedChangePage CubeController
+End
+End
+Begin Window PS2 PS3 360
+Name PushStartButton
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin Button
+Name PushStartText
+Position 0,-12
+ZOrder 0.5
+Alpha 1.0
+Style StylePressStart
+Text PressStart
+OnCreate SetTextStyle FESPressStart
+OnDrawOverride DrawSpinningText
+OnProcess StartPressedChangePage CubeController
+End
+End
+Begin Window WIN_PC
+Name PushStartButton
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Begin Button
+Name PushStartText
+Position 0,-12
+ZOrder 0.5
+Alpha 1.0
+Style StylePressStart
+Text PressStartAnyKey
+OnCreate SetTextStyle FESPressStart
+OnDrawOverride DrawSpinningText
+OnProcess StartPressedChangePage CubeController
+End
+End
+Begin Window
+Name TransLogoAppear
+Position 0,0
+Size 640,480
+ZOrder 0.5
+Alpha 1
+Animation Accelerate 10.0
+OnActivate EnableSpecial "screenFadeBorder stars earth clouds hue"
+OnActivate PlayCutsceneInWide LogoAppear
+OnActivate GoToLevelSelectIfNeeded
+OnOpened AddPage PushStartButton
+OnDraw3D DrawDeferredSpecials 
+End
+

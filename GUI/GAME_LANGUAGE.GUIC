@@ -1,0 +1,54 @@
+Path "gui"
+Display 640,480
+PakFile 2 "gui/game_language_#SKU_#LAN.fpk" 1
+Begin Image PS2 Wii
+Name hasbro_logo
+File "gui/gfx/hasbro_logo"
+Alpha 1
+End
+Begin Image 360 PS3 WIN_PC
+Name hasbro_logo
+File "gui/gfx/hasbro_logo_hr"
+Alpha 1
+End
+Begin Image PS2 Wii
+Name paramount_logo
+File "gui/gfx/paramount_logo"
+Alpha 1
+End
+Begin Image 360 PS3 WIN_PC
+Name paramount_logo
+File "gui/gfx/paramount_logo_hr"
+Alpha 1
+End
+Begin Image PS2 Wii
+Name dreamworks_logo
+File "gui/gfx/dreamworks_logo"
+Alpha 1
+End
+Begin Image 360 PS3 WIN_PC
+Name dreamworks_logo
+File "gui/gfx/dreamworks_logo_hr"
+Alpha 1
+End
+Begin Image PS2 Wii
+Name legal_screen1
+File "gui/gfx/legal_screen1_#lan"
+Alpha 1
+End
+Begin Image 360 PS3 WIN_PC
+Name legal_screen1
+File "gui/gfx/legal_screen1_#lan_hr"
+Alpha 1
+End
+Begin Image PS2 Wii
+Name legal_screen2
+File "gui/gfx/legal_screen2_#lan"
+Alpha 1
+End
+Begin Image 360 PS3 WIN_PC
+Name legal_screen2
+File "gui/gfx/legal_screen2_#lan_hr"
+Alpha 1
+End
+
