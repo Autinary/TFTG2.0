@@ -1,0 +1,19 @@
+Scriptname "plasma5"
+
+Start:
+	Rate	3,0   ;;update rate plus rand  
+	wait 0,0
+loop:
+	
+	Repeat		
+	TexAdj 1,0,4
+	UntilTex = 4
+
+	Tex 0
+
+
+	Goto 	loop
+
+
+	
+

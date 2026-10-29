@@ -1,0 +1,15 @@
+Scriptname "loop30"
+
+Start:
+	Rate	2,0   ;;update rate plus rand  
+	wait 0,0
+loop:
+	
+	Repeat		
+	TexAdj 1,0,29
+	UntilTex = 29
+	Tex 0
+
+
+	Goto 	loop
+

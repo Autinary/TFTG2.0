@@ -1,0 +1,26 @@
+Scriptname "cube16_2"
+
+Start:
+	Rate	3,0   ;;update rate plus rand  
+	wait 0,0
+
+	Repeat		
+	TexAdj 1,5,15
+	UntilTex = 15
+
+	Tex 0
+
+loop:
+	
+	Repeat		
+	TexAdj 1,0,15
+	UntilTex = 15
+
+	Tex 0
+
+
+	Goto 	loop
+
+
+	
+

@@ -1,0 +1,15 @@
+Scriptname "loop24rate1point5"
+
+Start:
+	Rate	1.5,0   ;;update rate plus rand  
+	wait 25,0
+loop:
+	
+	Repeat		
+	TexAdj 1,0,23
+	UntilTex = 23
+	Tex 0
+
+
+	Goto 	loop
+

@@ -1,0 +1,15 @@
+Scriptname "loop10"
+
+Start:
+	Rate	1,0   ;;update rate plus rand  
+	wait 0,0
+loop:
+	
+	Repeat		
+	TexAdj 1,0,9
+	UntilTex = 9
+	Tex 0
+
+
+	Goto 	loop
+

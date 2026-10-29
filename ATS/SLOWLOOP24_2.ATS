@@ -1,0 +1,16 @@
+Scriptname "slowloop24_2"
+
+Start:
+	Rate	2.3,0   ;;update rate plus rand  
+	wait 0,0
+loop:
+	
+	Repeat		
+	TexAdj 1,0,23
+	UntilTex = 23
+	Tex 0
+	wait 135,0
+
+
+	Goto 	loop
+

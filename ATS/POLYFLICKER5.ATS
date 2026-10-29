@@ -1,0 +1,19 @@
+Scriptname "polyFlicker5"
+
+Start:
+	Rate	2,0   ;;update rate plus rand  
+	tex 0
+singleShad0:
+	wait 4,4
+	tex 1
+	wait 4,4
+	tex 2
+	wait 4,4
+	tex 3
+	wait 4,4
+	tex 4
+
+
+	Goto 	singleShad0
+
+
