@@ -1,0 +1,27 @@
+
+state Base {
+	Actions {
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Main
+	}
+}
+
+state Main {
+	ReferenceScript {
+		Script=FollowSplineD3
+		Source=Level
+		ReturnState=Main
+		Conditions {
+			if TolsRemainAsCar == 1.0
+		}
+	}
+
+	ReferenceScript {
+		Script=Block
+		Source=Global
+		ReturnState=Main
+		Conditions {
+			if TolsRemainAsCar == 0.0
+		}
+	}
+}

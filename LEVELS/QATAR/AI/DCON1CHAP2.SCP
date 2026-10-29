@@ -1,0 +1,921 @@
+state Chapter2_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		
+		SetState "Chapter2_Goto2"
+	}
+}
+state Chapter2_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter2_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#PlayerType=Blackout"
+
+		CreateModule "#VehicleLevels" "#VehicleLevels"
+		SendToModule "#VehicleLevels" "#TrafficLv=3" "#PatrolLv=3"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 3"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 3"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+;;;;		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.4" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#D1_ch3_Goto" "#Start"
+		Idle 3.0
+		
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Goto2
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#D1_ch3_Goto" "#Start"
+		Idle 3.0
+		
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		SetState "Exit"
+	}
+}
+state Chapter2_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter2_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter2_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#ResponseLvPlayerDetected=0"
+		
+;		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=4" "#TrafficLv=4" "#PatrolLv=0"
+		
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#Protect"
+		SendToModule "#VehicleLevels" "#TrafficLv=3" "#PatrolLv=3"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 3"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 3"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+;;;		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.4" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		SendToModule "#General" "#StartMissionIntro=" "#SetPlayerDeathPoint=#Chapter3Restart" "#RESETLEVEL"
+	}
+}
+state Chapter2_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#PlayerType=Blackout"
+	}
+}
+;;state Chapter2_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter2_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D1C3Intro1" "#RESETLEVEL"
+;;	}
+;;}
+state Chapter2_Main
+{
+	conditions
+	{
+		if message "MissionMessage" == 1.0 goto Chapter2_Complete
+		if message "MissionMessage" == 2.0 goto Chapter2_FailMission 
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter3_DeathFailMission"
+
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D1_ch3_obj2" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3Start" "#FadeUp"  "#CountBSet=0"
+		
+		CreateModule "#HardBuildings" "#D1C3Build" "#Spline=D1C3Build" "#FuzzyRange=150" "#Scale=0.1" "#DrawHealthBar" "#MinRand=2" "#MaxRand=5" "#SetSize=5" "#AddLargeExplosion"
+		
+		;CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=10" "#TrafficLv=0" "#PatrolLv=1"
+		
+
+		CreateModule "#SpecialObj" "#D1C3SpecialA" "#Type=PHYSOBJTYPE_QAT_GENERIC22" "#SetRadarType=#MediumGreen" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#NoDamage" "#DamageOnPickedUp" "#AutoDestroy"
+		CreateModule "#SpecialObj" "#D1C3SpecialB" "#Type=PHYSOBJTYPE_QAT_GENERIC22" "#SetRadarType=#MediumGreen" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#NoDamage" "#DamageOnPickedUp" "#AutoDestroy"
+		CreateModule "#SpecialObj" "#D1C3SpecialC" "#Type=PHYSOBJTYPE_QAT_GENERIC22" "#SetRadarType=#MediumGreen" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#NoDamage" "#DamageOnPickedUp" "#AutoDestroy"
+		CreateModule "#SpecialObj" "#D1C3SpecialD" "#Type=PHYSOBJTYPE_QAT_GENERIC22" "#SetRadarType=#MediumGreen" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#NoDamage" "#DamageOnPickedUp" "#AutoDestroy"
+		CreateModule "#SpecialObj" "#D1C3SpecialE" "#Type=PHYSOBJTYPE_QAT_GENERIC22" "#SetRadarType=#MediumGreen" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#NoDamage" "#DamageOnPickedUp" "#AutoDestroy"
+
+		
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=5" "#IconType=#Computer"
+
+		CreateModule "#DriverDrone" "#CreatureWave" "#spline=SatelliteGuns" "#maxalive=15" "#count=15" "#FollowPlayer" "#type=ShilkaTracer" "#spacing=20.0" "#GoalRange=40.0" "#RapidInitFire" 
+		
+		
+		;;;;; TURRETS ;;;;;;		
+		CreateModule "#AAGun" "#AAGunA"
+		CreateModule "#AAGun" "#AAGunB"
+		
+		SendToModule "#AAGunA" "#Type=AAGUNTYPE_ROCKETS" "#Placement=D1C3_ROCKET" "#Range=100.0" "#Delay=2.0" "#Energy=100.0" "#RespawnDelay=0" "#Ammo=0" "#Create"
+		SendToModule "#AAGunB" "#Type=AAGUNTYPE_BULLITS" "#Placement=D1C3_BULLET" "#Range=100.0" "#Delay=0.4" "#Energy=100.0" "#RespawnDelay=0" "#Ammo=0" "#Create"
+
+		;;;;; End of TURRETS ;;;;;;
+		
+		SetMessage Name=PickupA Value=0
+		SetMessage Name=PickupB Value=0
+		SetMessage Name=PickupC Value=0
+		SetMessage Name=PickupD Value=0
+		SetMessage Name=PickupE Value=0
+		
+		SetState Chapter2_RetrieveData
+	}
+}
+
+state Chapter2_RetrieveData
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter2_Midtro2
+		if module "D1C3Build RandBeenTriggered1" == 1.0 goto Chapter2_BuildAUncover 
+		if module "D1C3Build RandBeenTriggered2" == 1.0 goto Chapter2_BuildBUncover
+		if module "D1C3Build RandBeenTriggered3" == 1.0 goto Chapter2_BuildCUncover
+		if module "D1C3Build RandBeenTriggered4" == 1.0 goto Chapter2_BuildDUncover
+		if module "D1C3Build RandBeenTriggered5" == 1.0 goto Chapter2_BuildEUncover
+		
+		if module "D1C3SpecialA PlayerPickup" == 1.0 and
+			if message PickupA == 0 goto Chapter2_PickupMessageA
+			
+		if module "D1C3SpecialB PlayerPickup" == 1.0 and
+			if message PickupB == 0 goto Chapter2_PickupMessageB
+		
+		if module "D1C3SpecialC PlayerPickup" == 1.0 and
+			if message PickupC == 0 goto Chapter2_PickupMessageC
+		
+		if module "D1C3SpecialD PlayerPickup" == 1.0 and
+			if message PickupD == 0 goto Chapter2_PickupMessageD
+		
+		if module "D1C3SpecialE PlayerPickup" == 1.0 and
+			if message PickupE == 0 goto Chapter2_PickupMessageE
+	
+		if module "DroneCounter GetPercentageComplete" == 1.0 goto Chapter2_PreMidtro3
+		
+		
+		
+	}
+	
+
+}
+state Chapter2_RetrieveData2
+{
+	conditions
+	{
+		if module "D1C3Build RandBeenTriggered1" == 1.0 goto Chapter2_BuildAUncover2 
+		if module "D1C3Build RandBeenTriggered2" == 1.0 goto Chapter2_BuildBUncover2
+		if module "D1C3Build RandBeenTriggered3" == 1.0 goto Chapter2_BuildCUncover2
+		if module "D1C3Build RandBeenTriggered4" == 1.0 goto Chapter2_BuildDUncover2
+		if module "D1C3Build RandBeenTriggered5" == 1.0 goto Chapter2_BuildEUncover2
+		
+		if module "D1C3SpecialA PlayerPickup" == 1.0 and
+			if message PickupA == 0 goto Chapter2_PickupMessageA2
+			
+		if module "D1C3SpecialB PlayerPickup" == 1.0 and
+			if message PickupB == 0 goto Chapter2_PickupMessageB2
+		
+		if module "D1C3SpecialC PlayerPickup" == 1.0 and
+			if message PickupC == 0 goto Chapter2_PickupMessageC2
+		
+		if module "D1C3SpecialD PlayerPickup" == 1.0 and
+			if message PickupD == 0 goto Chapter2_PickupMessageD2
+		
+		if module "D1C3SpecialE PlayerPickup" == 1.0 and
+			if message PickupE == 0 goto Chapter2_PickupMessageE2
+	
+			
+		if module "DroneCounter GetPercentageComplete" == 1.0 goto Chapter2_CompleteDelay
+		
+	}
+	
+
+}
+
+state Chapter2_Midtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_Complete ;Chapter2_Speech1
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D1C3Intro1"
+	}
+}
+state Chapter2_Midtro4
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_Complete2Start ;Chapter2_Speech1
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D1C3Intro1"
+	}
+}
+
+state Chapter2_Midtro2
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_Midtro2end
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D1C2Intro1"
+	}
+}
+state Chapter2_PreMidtro3
+{
+	conditions
+	{
+		if timer > 0.1 goto Chapter2_CompleteDelay2
+	}
+	actions
+	{
+		ResetTimer 
+		DestroyModule "#Trigger"
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#ScorpDeploy" "#AddToRadar" "#Beacon"
+		DestroyModule "#DroneCounter"
+		;CreateModule "#Speech" "#PlayDelay=1.3" "#speech=#D1_ch3_obj5" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter2_Midtro3
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_CompleteDelay2
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D1C2Midtro"
+	}
+}
+state Chapter2_Midtro2end
+{
+	
+	actions
+	{
+		DestroyModule "#Trigger"
+		;DestroyModule "#TimerA"
+		;CreateModule "#Timer" "#TimerB" "#Time=1" "#NoRender"
+		SendToModule "#General" "#SetPlayer=#PSSet" "#SetMessage=QS1" "#SetMessageTimer=5"
+		SetState Chapter2_RetrieveData2
+	}
+}
+
+
+
+state Chapter2_SpeechMain
+{
+	conditions
+	{
+		if module "DroneCounter DronesDefeated" == 1.0 goto Chapter2_Speech1 ;Chapter2_Midtro
+		if module "DroneCounter DronesDefeated" == 2.0 goto Chapter2_Speech2
+		if module "DroneCounter DronesDefeated" == 3.0 goto Chapter2_Speech3
+		if module "DroneCounter DronesDefeated" == 4.0 goto Chapter2_Speech4
+		if module "DroneCounter DronesDefeated" == 5.0 goto Chapter2_Speech5
+		if AlwaysTrue == 1.0 goto Chapter2_RetrieveData
+	}
+}
+state Chapter2_SpeechMain2
+{
+	conditions
+	{
+		if module "DroneCounter DronesDefeated" == 1.0 goto Chapter2_Speech1 ;Chapter2_Midtro
+		if module "DroneCounter DronesDefeated" == 2.0 goto Chapter2_Speech2
+		if module "DroneCounter DronesDefeated" == 3.0 goto Chapter2_Speech32
+		if module "DroneCounter DronesDefeated" == 4.0 goto Chapter2_Speech42
+		if module "DroneCounter DronesDefeated" == 5.0 goto Chapter2_Speech52
+		if AlwaysTrue == 1.0 goto Chapter2_RetrieveData2
+	}
+}
+state Chapter2_Speech1
+{
+	actions
+	{
+
+		CreateModule "#Speech" "#D1C3DataCollected1" "#GotoReminderSpeech" "#speech=#D1_ch3_obj1" "#AutoDestroy" "#Start"
+		;CreateModule "#Speech" "#D1C3DataCollected1" "#speech=#D1_ch2_obj6" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1C3DataCollected1" "#AutoDestroy" 
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=15" "#times=1"
+		SetState Chapter2_RetrieveData
+		 
+	}
+}
+state Chapter2_Speech2
+{
+	actions
+	{
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#ScorpDeploy" "#AddToRadar" "#Beacon" "#ParticleRing"
+		CreateModule "#Timer" "#TimerA" "#Time=1" "#NoRender"
+		DestroyModule "#DelayedSend"
+		DestroyModule "#DelayedSendReminder"
+		CreateModule "#Speech" "#D1C3DataCollected2" "#GotoReminderSpeech" "#speech=#D1_ch2_Goto" "#AutoDestroy" "#Start"		
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1C3DataCollected2" "#AutoDestroy" "#Start"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=15" "#times=1"
+		SetState Chapter2_RetrieveData
+	}
+}
+state Chapter2_Speech3
+{
+	actions
+	{
+		DestroyModule "#DelayedSend"
+		DestroyModule "#DelayedSendReminder"
+		CreateModule "#Speech" "#D1C3DataCollected3" "#speech=#D1C3DataCollected3" "#AutoDestroy" "#Start"
+		SetState Chapter2_RetrieveData
+	}
+}
+state Chapter2_Speech4
+{
+	actions
+	{
+		
+		CreateModule "#Speech" "#D1C3DataCollected4" "#speech=#D1C3DataCollected4" "#AutoDestroy" "#Start"
+		SetState Chapter2_RetrieveData
+	}
+}
+state Chapter2_Speech5
+{
+	actions
+	{
+		
+		;CreateModule "#Speech" "#D1C3DataCollected5" "#speech=#D1C3DataCollected5" "#AutoDestroy" "#Start"
+		SetState Chapter2_RetrieveData
+	}
+}
+state Chapter2_Speech32
+{
+	actions
+	{
+		
+		CreateModule "#Speech" "#D1C3DataCollected3" "#speech=#D1C3DataCollected3" "#AutoDestroy" "#Start"
+		SetState Chapter2_RetrieveData2
+	}
+}
+state Chapter2_Speech42
+{
+	actions
+	{
+		
+		CreateModule "#Speech" "#D1C3DataCollected4" "#speech=#D1C3DataCollected4" "#AutoDestroy" "#Start"
+		SetState Chapter2_RetrieveData2
+	}
+}
+state Chapter2_Speech52
+{
+	actions
+	{
+		
+		;CreateModule "#Speech" "#D1C3DataCollected5" "#speech=#D1C3DataCollected5" "#AutoDestroy" "#Start"
+		SetState Chapter2_RetrieveData2
+	}
+}
+state Chapter2_PickupMessageA
+{
+	actions
+	{
+		SendToModule "#D1C3SpecialA" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupA Value=1
+		SetState Chapter2_SpeechMain
+	}
+}
+
+state Chapter2_PickupMessageB
+{
+	actions
+	{
+		;CreateModule "#Speech" "#D1C3DataCollected2" "#speech=#D1C3DataCollected2" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3SpecialB" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupB Value=1
+		Idle 2.0
+		SetState Chapter2_SpeechMain
+	}
+}
+
+state Chapter2_PickupMessageC
+{
+	actions
+	{
+		;CreateModule "#Speech" "#D1C3DataCollected3" "#speech=#D1C3DataCollected3" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3SpecialC" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupC Value=1
+		SetState Chapter2_SpeechMain
+	}
+}
+
+state Chapter2_PickupMessageD
+{
+	actions
+	{
+		;CreateModule "#Speech" "#D1C3DataCollected4" "#speech=#D1C3DataCollected4" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3SpecialD" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupD Value=1
+		SetState Chapter2_SpeechMain
+	}
+}
+
+state Chapter2_PickupMessageE
+{
+	actions
+	{
+		;CreateModule "#Speech" "#D1C3DataCollected5" "#speech=#D1C3DataCollected5" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3SpecialE" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupE Value=1
+		SetState Chapter2_SpeechMain
+	}
+}
+
+state Chapter2_BuildAUncover
+{
+	actions
+	{
+		
+		SendToModule "#D1C3Build" "#ClearRandTriggered=1" "#SpecialObj=#D1C3SpecialA" "#AddLargeExplosion"
+		
+		SetState Chapter2_CheckFinished
+	}
+}
+
+state Chapter2_BuildBUncover
+{
+	actions
+	{
+		
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D1_ch3_obj3" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3Build" "#ClearRandTriggered=2" "#SpecialObj=#D1C3SpecialB" "#AddLargeExplosion"
+
+		
+		SetState Chapter2_CheckFinished
+	}
+}
+
+state Chapter2_BuildCUncover
+{
+	actions
+	{
+		
+		SendToModule "#D1C3Build" "#ClearRandTriggered=3" "#SpecialObj=#D1C3SpecialC" "#AddLargeExplosion"
+		
+		SetState Chapter2_CheckFinished
+	}
+}
+
+state Chapter2_BuildDUncover
+{
+	actions
+	{ 
+		
+		SendToModule "#D1C3Build" "#ClearRandTriggered=4" "#SpecialObj=#D1C3SpecialD" "#AddLargeExplosion"
+		
+		SetState Chapter2_CheckFinished
+	}
+}
+
+state Chapter2_BuildEUncover
+{
+	actions
+	{
+		
+		SendToModule "#D1C3Build" "#ClearRandTriggered=5" "#SpecialObj=#D1C3SpecialE" "#AddLargeExplosion"
+
+		
+		SetState Chapter2_CheckFinished
+	}
+}
+state Chapter2_PickupMessageA2
+{
+	actions
+	{
+		SendToModule "#D1C3SpecialA" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupA Value=1
+		SetState Chapter2_SpeechMain2
+	}
+}
+
+state Chapter2_PickupMessageB2
+{
+	actions
+	{
+		;CreateModule "#Speech" "#D1C3DataCollected2" "#speech=#D1C3DataCollected2" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3SpecialB" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupB Value=1
+		SetState Chapter2_SpeechMain2
+	}
+}
+
+state Chapter2_PickupMessageC2
+{
+	actions
+	{
+		;CreateModule "#Speech" "#D1C3DataCollected3" "#speech=#D1C3DataCollected3" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3SpecialC" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupC Value=1
+		SetState Chapter2_SpeechMain2
+	}
+}
+
+state Chapter2_PickupMessageD2
+{
+	actions
+	{
+		;CreateModule "#Speech" "#D1C3DataCollected4" "#speech=#D1C3DataCollected4" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3SpecialD" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupD Value=1
+		SetState Chapter2_SpeechMain2
+	}
+}
+
+state Chapter2_PickupMessageE2
+{
+	actions
+	{
+		;CreateModule "#Speech" "#D1C3DataCollected5" "#speech=#D1C3DataCollected5" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3SpecialE" "#ClearTriggeredPickup" "#AddToRadar=0" "#PhysObjGlow=0"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetMessage Name=PickupE Value=1
+		SetState Chapter2_SpeechMain2
+	}
+}
+
+state Chapter2_BuildAUncover2
+{
+	actions
+	{
+		SendToModule "#D1C3Build" "#ClearRandTriggered=1" "#SpecialObj=#D1C3SpecialA" "#AddLargeExplosion"
+		SetState Chapter2_CheckFinished2
+	}
+}
+
+state Chapter2_BuildBUncover2
+{
+	actions
+	{
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D1_ch3_obj3" "#AutoDestroy" "#Start"
+		SendToModule "#D1C3Build" "#ClearRandTriggered=2" "#SpecialObj=#D1C3SpecialB" "#AddLargeExplosion"
+		SetState Chapter2_CheckFinished2
+	}
+}
+
+state Chapter2_BuildCUncover2
+{
+	actions
+	{
+		SendToModule "#D1C3Build" "#ClearRandTriggered=3" "#SpecialObj=#D1C3SpecialC" "#AddLargeExplosion"
+		SetState Chapter2_CheckFinished2
+	}
+}
+
+state Chapter2_BuildDUncover2
+{
+	actions
+	{ 
+		SendToModule "#D1C3Build" "#ClearRandTriggered=4" "#SpecialObj=#D1C3SpecialD" "#AddLargeExplosion"
+		SetState Chapter2_CheckFinished2
+	}
+}
+
+state Chapter2_BuildEUncover2
+{
+	actions
+	{
+		SendToModule "#D1C3Build" "#ClearRandTriggered=5" "#SpecialObj=#D1C3SpecialE" "#AddLargeExplosion"
+		SetState Chapter2_CheckFinished2
+	}
+}
+state Chapter2_CheckFinished
+{
+	Conditions
+	{
+
+		
+	}
+	Actions
+	{
+	
+		SetState Chapter2_RetrieveData
+	}
+
+}
+state Chapter2_CheckFinished2
+{
+	Conditions
+	{
+
+		
+	}
+	Actions
+	{
+	
+		SetState Chapter2_RetrieveData2
+	}
+
+}
+
+state Chapter2_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter2_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General" "#EndOfMission"  "#FailMission"
+	}
+}
+state Chapter2_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		
+		SendToModule "#General" "#PlayerType=Blackout,Blackout,Scorponok,Blackout"
+		SendToModule "#General" "#ResponseLvPlayerDetected=4"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "Exit"
+	}
+}
+state Chapter2_CompleteDelay
+{
+	actions
+	{
+		;SendToModule "#General"  "#EndOfMission" 
+		Idle 3.0
+		;DestroyAllModules "#IncludeProtected"
+		
+		SetState Chapter2_Midtro ;Chapter2_Complete
+	}
+}
+state Chapter2_CompleteDelay2
+{
+	actions
+	{
+		
+		;SendToModule "#General"  "#EndOfMission" 
+		
+		Idle 3.0
+		;SetMusic "ACTION Mission1_3 QUIET Generic Play Action"
+		;DestroyAllModules "#IncludeProtected"
+		
+		SetState Chapter2_Midtro4 ; Chapter2_Complete2Start
+	}
+}
+state Chapter2_Complete
+{
+	
+	actions
+	{
+		SetMusic "ACTION Mission1_3 QUIET Generic Play Action"
+		DestroyAllModules "#IncludeProtected"
+		
+		Idle 0.1
+		SetState Chapter2_CompleteStart
+	}
+}
+state Chapter2_CompleteStart
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+		CreateModule "#Speech" "#PlayDelay=1.3" "#speech=#D1_ch3_obj5" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter2_Complete2Start
+{
+	
+	actions
+	{
+		SetMusic "ACTION Mission1_3 QUIET Generic Play Action"
+		DestroyAllModules "#IncludeProtected"
+		
+		Idle 0.1
+		SetState Chapter2_Complete3Start
+	}
+}
+state Chapter2_Complete3Start
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo2
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+		CreateModule "#Speech" "#PlayDelay=1.3" "#speech=#D1_ch3_obj5" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter2_Complete2
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo2
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+		
+	}
+}
+state Chapter2_CompleteVideo
+{
+	conditions
+	{
+		;if module "General VideoFinished" == 1.0 goto Chapter2_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#StartOutroVideo=#D1C3Outro1"
+		SetState "Chapter2_CompleteVideoFinished"
+	}
+}
+state Chapter2_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter2_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#PlayerType=Blackout,Blackout,Scorponok,Blackout"
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter2_CompleteVideo2
+{
+	conditions
+	{
+		;if module "General VideoFinished" == 1.0 goto Chapter2_CompleteVideoFinished2
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#StartOutroVideo=#D1C3Outro1"
+		SetState "Chapter2_CompleteVideoFinished2"
+	}
+}
+state Chapter2_CompleteVideoFinished2
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter2_Leave2
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#PlayerType=Blackout,Blackout,Blackout,Blackout"
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter2_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter3"
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT3"
+		
+		SendToModule "#General" "#ResponseLvPlayerDetected=4"
+		
+		IncreasePlayerHealth max
+		;SendToModule "#VehicleLevels" "#ResponseLv=0" "#TrafficLv=0" "#PatrolLv=0"
+		SetMusic "ACTION Mission2_1 QUIET Generic"
+		setstate "PickGoto"
+	}
+}
+state Chapter2_Leave2
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter3"
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT3"
+		
+		SendToModule "#General" "#ResponseLvPlayerDetected=4"
+		
+		IncreasePlayerHealth max
+		;SendToModule "#VehicleLevels" "#ResponseLv=0" "#TrafficLv=0" "#PatrolLv=0"
+		setstate "PickGoto2"
+	}
+}
+

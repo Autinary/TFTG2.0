@@ -1,0 +1,511 @@
+state Chapter3_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		;CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch3_Goto"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#LevelSpecialOff=1" "#LevelSpecialOff=2" "#LevelSpecialOn=3" 
+		SendToModule "#General" "#LevelSpecialOff=1" "#LevelSpecialOff=2"
+		SetState "Chapter3_Goto"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+	}
+}
+state Chapter3_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+        CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_BULLITS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=5.0" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch3_Goto" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch3_Goto2" "#AutoDestroy" 
+		Idle 3.0
+
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter3_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+	}
+}
+;;state Chapter3_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter3_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartVideo=#A3C3Intro1"
+;;	}
+;;}
+state Chapter3_Main
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		SendToModule "#General" "#ResetCounters"
+		
+		CreateModule "#DroneCounter" "#DroneCounter" "#IgnoreDroneKills" "#DronesToDefeat=6" "#IconType=#ReactorItem"  "#Protect
+		SetDeathPoint "Chapter3_DeathFailMission"
+		CreateModule "#Speech" "#A3_ch3_obj2" "#speech=#A3_ch3_obj2" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3Start" "#FadeUp"
+        CreateModule "#AAGun" "#AAGun" "#Protect"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_BULLITS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=5.0" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+		
+		SendToModule "#General" "#ClearStateBits"
+
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		
+		SetState "Chapter3_ReactorInit"
+	}
+}
+state Chapter3_ReactorInit
+{
+	actions
+	{
+
+		CreateModule "#SpecialObj" "#ReactorCoreA" "#Spline=A3C3ReactorA" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#Breakable" "#Radius=2" "#SetDestroyTime=40" "#SetCriticalWarnTime=10"  ;10" "#Protect" "#RadarType=#Generator"  #DeathVFX=VFX_EMP
+		CreateModule "#SpecialObj" "#ReactorCoreB" "#Spline=A3C3ReactorB" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#Breakable" "#Radius=2" "#SetDestroyTime=45" "#SetCriticalWarnTime=10"  ;10" "#Protect" "#RadarType=#Generator"  #DeathVFX=VFX_EMP
+		CreateModule "#SpecialObj" "#ReactorCoreC" "#Spline=A3C3ReactorC" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#Breakable" "#Radius=2" "#SetDestroyTime=120" "#SetCriticalWarnTime=10"  ;10" "#Protect" "#RadarType=#Generator"  #DeathVFX=VFX_EMP
+		CreateModule "#SpecialObj" "#ReactorCoreD" "#Spline=A3C3ReactorD" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#Breakable" "#Radius=2" "#SetDestroyTime=65" "#SetCriticalWarnTime=10"  ;10" "#Protect" "#RadarType=#Generator"  #DeathVFX=VFX_EMP
+		CreateModule "#SpecialObj" "#ReactorCoreE" "#Spline=A3C3ReactorE" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#Breakable" "#Radius=2" "#SetDestroyTime=52" "#SetCriticalWarnTime=10"  ;10" "#Protect" "#RadarType=#Generator"  #DeathVFX=VFX_EMP
+		CreateModule "#SpecialObj" "#ReactorCoreF" "#Spline=A3C3ReactorF" "#PhysObjGlow=1" "#PhysObjGlowColour=GREEN" "#Breakable" "#Radius=2" "#SetDestroyTime=85" "#SetCriticalWarnTime=10"  ;10" "#Protect" "#RadarType=#Generator"  #DeathVFX=VFX_EMP
+		;CreateModule "#Timer" "#Timer" "Time=40.0" "#Protect"
+		;CreateModule "#Timer" "#Timer1" "Time=200.0" "#Protect"
+		;CreateModule "#Timer" "#Timer2" "Time=230.0" "#Protect"
+		;CreateModule "#Timer" "#Timer3" "Time=660.0" "#Protect"
+		;CreateModule "#Timer" "#Timer4" "Time=340.0" "#Protect"
+		;CreateModule "#Timer" "#Timer5" "Time=280.0" "#Protect"
+		;CreateModule "#Timer" "#Timer6" "Time=430.0" "#Protect"
+		
+		SendToModule "#ReactorCoreA" "#Reactor"
+		SendToModule "#ReactorCoreB" "#Reactor"
+		SendToModule "#ReactorCoreC" "#Reactor"
+		SendToModule "#ReactorCoreD" "#Reactor"
+		SendToModule "#ReactorCoreE" "#Reactor"
+		SendToModule "#ReactorCoreF" "#Reactor"
+
+		SetState "Chapter3_ReactorMain"	
+	}
+}
+state Chapter3_ReactorMainRestart
+{
+	conditions
+	{
+		if module "DroneCounter DronesDefeated" == 1.0 goto Chapter3_SetTimeA
+		if module "DroneCounter DronesDefeated" == 2.0 goto Chapter3_SetTimeB
+		if module "DroneCounter DronesDefeated" == 3.0 goto Chapter3_SetTimeC
+		if module "DroneCounter DronesDefeated" == 4.0 goto Chapter3_SetTimeD
+		if module "DroneCounter DronesDefeated" == 5.0 goto Chapter3_SetTimeE
+		if module "DroneCounter DronesDefeated" == 6.0 goto Chapter3_ReactorMainSpeech
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#SetStateBit=6"
+	}
+}
+state Chapter3_ReactorMainSpeech
+{
+	conditions
+	{
+		if Timer > 1.0 and
+			if module "DroneCounter DronesDefeated" == 1.0 goto Chapter3_PlaySpeech1
+		if Timer > 1.0 and
+			if module "DroneCounter DronesDefeated" == 6.0 goto Chapter3_PlaySpeech2
+		if Timer > 1.5 goto Chapter3_ReactorMain
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#SetStateBit=6"
+	}
+}
+state Chapter3_PlaySpeech1
+{
+	actions
+	{
+		CreateModule "#Speech" "#A3_ch3_obj1" "#speech=#A3_ch3_obj1"  "#AutoDestroy" "#Start"
+		SetState "Chapter3_ReactorMain"
+	}
+}
+state Chapter3_PlaySpeech2
+{
+	actions
+	{
+		;CreateModule "#Speech" "#A3_ch3_cmplt" "#speech=#A3_ch3_cmplt"  "#AutoDestroy" "#Start"
+		SetState "Chapter3_ReactorMain"
+	}
+}
+state Chapter3_ReactorMain
+{
+	conditions
+	{
+		if module "General GetStateBit1" == 0.0 and
+			if module "ReactorCoreA GetPercentageComplete" == 1.0 goto Chapter3_AwardTimeA
+		if module "General GetStateBit2" == 0.0 and
+			if module "ReactorCoreB GetPercentageComplete" == 1.0 goto Chapter3_AwardTimeB
+		if module "General GetStateBit3" == 0.0 and
+			if module "ReactorCoreC GetPercentageComplete" == 1.0 goto Chapter3_AwardTimeC
+		if module "General GetStateBit4" == 0.0 and
+			if module "ReactorCoreD GetPercentageComplete" == 1.0 goto Chapter3_AwardTimeD
+		if module "General GetStateBit5" == 0.0 and
+			if module "ReactorCoreE GetPercentageComplete" == 1.0 goto Chapter3_AwardTimeE
+		if module "General GetStateBit6" == 0.0 and
+			if module "ReactorCoreF GetPercentageComplete" == 1.0 goto Chapter3_AwardTimeF
+	
+		if module "ReactorCoreA GetPercentageComplete" == 1.0 and
+			if module "ReactorCoreB GetPercentageComplete" == 1.0 and
+				if module "ReactorCoreC GetPercentageComplete" == 1.0 and
+					if module "ReactorCoreD GetPercentageComplete" == 1.0 and
+						if module "ReactorCoreE GetPercentageComplete" == 1.0 and
+							if module "ReactorCoreF GetPercentageComplete" == 1.0 goto Chapter3_Outro
+		if module "ReactorCoreA GetDestroyTime" < 0.0 goto Chapter3_FailMission
+		if module "ReactorCoreB GetDestroyTime" < 0.0 goto Chapter3_FailMission
+		if module "ReactorCoreC GetDestroyTime" < 0.0 goto Chapter3_FailMission
+		if module "ReactorCoreD GetDestroyTime" < 0.0 goto Chapter3_FailMission
+		if module "ReactorCoreE GetDestroyTime" < 0.0 goto Chapter3_FailMission
+		if module "ReactorCoreF GetDestroyTime" < 0.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+	}
+	
+}
+state Chapter3_SetTimeA
+{
+	actions
+	{
+		
+		SendToModule "#ReactorCoreA" "#SetDestroyTime=53" "#SetCriticalWarnTime=10"  ;10"9"  ; 1
+		SendToModule "#ReactorCoreB" "#SetDestroyTime=60" "#SetCriticalWarnTime=10"  ;10"11"  ; 1
+		SendToModule "#ReactorCoreC" "#SetDestroyTime=150" "#SetCriticalWarnTime=10"  ;10"25"  ; 5
+		SendToModule "#ReactorCoreD" "#SetDestroyTime=85" "#SetCriticalWarnTime=10"  ;10"18"  ; 2
+		SendToModule "#ReactorCoreE" "#SetDestroyTime=69" "#SetCriticalWarnTime=10"  ;10"15"  ; 3
+		SendToModule "#ReactorCoreF" "#SetDestroyTime=109" "#SetCriticalWarnTime=10"  ;10"20"  ; 4
+		SetState "Chapter3_ReactorMainSpeech"
+	}
+}
+state Chapter3_SetTimeB
+{
+	actions
+	{
+		
+		SendToModule "#ReactorCoreA" "#SetDestroyTime=45" "#SetCriticalWarnTime=10"  ;10"8"
+		SendToModule "#ReactorCoreB" "#SetDestroyTime=53" "#SetCriticalWarnTime=10"  ;10"
+		SendToModule "#ReactorCoreC" "#SetDestroyTime=120" "#SetCriticalWarnTime=10"  ;10"20"
+		SendToModule "#ReactorCoreD" "#SetDestroyTime=65" "#SetCriticalWarnTime=10"  ;10"16"
+		SendToModule "#ReactorCoreE" "#SetDestroyTime=60" "#SetCriticalWarnTime=10"  ;10"12"
+		SendToModule "#ReactorCoreF" "#SetDestroyTime=92" "#SetCriticalWarnTime=10"  ;10"16"
+		SetState "Chapter3_ReactorMainSpeech"
+	}
+}
+state Chapter3_SetTimeC
+{
+	actions
+	{
+		
+		SendToModule "#ReactorCoreA" "#SetDestroyTime=37" "#SetCriticalWarnTime=10"  ;10"7" 
+		SendToModule "#ReactorCoreB" "#SetDestroyTime=46" "#SetCriticalWarnTime=10"  ;10"9"  
+		SendToModule "#ReactorCoreC" "#SetDestroyTime=90" "#SetCriticalWarnTime=10"  ;10"15"  
+		SendToModule "#ReactorCoreD" "#SetDestroyTime=45" "#SetCriticalWarnTime=10"  ;10"14"  
+		SendToModule "#ReactorCoreE" "#SetDestroyTime=51" "#SetCriticalWarnTime=10"  ;10"9"  
+		SendToModule "#ReactorCoreF" "#SetDestroyTime=75" "#SetCriticalWarnTime=10"  ;10"12"  
+		SetState "Chapter3_ReactorMainSpeech"
+	}
+}
+state Chapter3_SetTimeD
+{
+	actions
+	{
+		
+		SendToModule "#ReactorCoreA" "#SetDestroyTime=30" "#SetCriticalWarnTime=10"  ;10"6"
+		SendToModule "#ReactorCoreB" "#SetDestroyTime=39" "#SetCriticalWarnTime=10"  ;10"8"
+		SendToModule "#ReactorCoreC" "#SetDestroyTime=60" "#SetCriticalWarnTime=10"  ;10"
+		SendToModule "#ReactorCoreD" "#SetDestroyTime=30" "#SetCriticalWarnTime=10"  ;10"8"
+		SendToModule "#ReactorCoreE" "#SetDestroyTime=42" "#SetCriticalWarnTime=10"  ;10"9"
+		SendToModule "#ReactorCoreF" "#SetDestroyTime=58" "#SetCriticalWarnTime=10"  ;10"8"
+		SetState "Chapter3_ReactorMainSpeech"
+	}
+}
+state Chapter3_SetTimeE
+{
+	actions
+	{
+		
+		SendToModule "#ReactorCoreA" "#SetDestroyTime=30" "#SetCriticalWarnTime=10"  ;10"5"
+		SendToModule "#ReactorCoreB" "#SetDestroyTime=30" "#SetCriticalWarnTime=10"  ;10"6"
+		SendToModule "#ReactorCoreC" "#SetDestroyTime=30" "#SetCriticalWarnTime=10"  ;10"6"
+		SendToModule "#ReactorCoreD" "#SetDestroyTime=30" "#SetCriticalWarnTime=10"  ;10"5"
+		SendToModule "#ReactorCoreE" "#SetDestroyTime=30" "#SetCriticalWarnTime=10"  ;10"7"
+		SendToModule "#ReactorCoreF" "#SetDestroyTime=30" "#SetCriticalWarnTime=10"  ;10"8"
+		SetState "Chapter3_ReactorMainSpeech"
+	}
+}
+state Chapter3_SetTimeF
+{
+	actions
+	{
+		
+		SendToModule "#ReactorCoreA" "#SetDestroyTime=40"
+		SendToModule "#ReactorCoreB" "#SetDestroyTime=45"
+		SendToModule "#ReactorCoreC" "#SetDestroyTime=120"
+		SendToModule "#ReactorCoreD" "#SetDestroyTime=65"
+		SendToModule "#ReactorCoreE" "#SetDestroyTime=52"
+		SendToModule "#ReactorCoreF" "#SetDestroyTime=85"
+		SetState "Chapter3_ReactorMainSpeech"
+	}
+}
+state Chapter3_AwardTimeA
+{
+	actions
+	{
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#General" "#SetStateBit=0"
+		;SendToModule "#Timer" "#AddTime=30.0"
+		
+		SetState "Chapter3_ReactorMainRestart"
+	}
+}
+state Chapter3_AwardTimeB
+{
+	actions
+	{
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#General" "#SetStateBit=1"
+		;SendToModule "#Timer" "#AddTime=30.0"
+		
+		SetState "Chapter3_ReactorMainRestart"
+	}
+}
+state Chapter3_AwardTimeC
+{
+	actions
+	{
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#General" "#SetStateBit=2"
+		;SendToModule "#Timer" "#AddTime=30.0"
+		
+		SetState "Chapter3_ReactorMainRestart"
+	}
+}
+state Chapter3_AwardTimeD
+{
+	actions
+	{
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#General" "#SetStateBit=3"
+		;SendToModule "#Timer" "#AddTime=30.0"
+		
+		SetState "Chapter3_ReactorMainRestart"
+	}
+}
+state Chapter3_AwardTimeE
+{
+	actions
+	{
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#General" "#SetStateBit=4"
+		;SendToModule "#Timer" "#AddTime=30.0"
+		
+		SetState "Chapter3_ReactorMainRestart"
+	}
+}
+state Chapter3_AwardTimeF
+{
+	actions
+	{
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#General" "#SetStateBit=5"
+		;SendToModule "#Timer" "#AddTime=30.0"
+		
+		SetState "Chapter3_ReactorMainRestart"
+	}
+}
+
+state Chapter3_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+
+state Chapter3_Restart
+{
+	conditions
+	{
+		if timer > 0.2 goto Chapter3_Restart3
+		if module "General ChapterProgress" >= 3.0 goto GlobalActionRing
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing
+		
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter3Restart" "#FadeUp"
+	
+		ResetTimer
+	}
+}
+
+state Chapter3_Restart3
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+			
+
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+
+
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#LevelSpecialOff=1" "#LevelSpecialOff=2" "#LevelSpecialOff=3" 
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+		CreateModule "#Speech" "Complete" "#speech=#A3_ch3_cmplt" "#AutoDestroy" "#Start"
+		;SetState "Chapter3_CompleteVideo"
+	}
+}
+state Chapter3_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#StartOutroVideo=#A3C3Outro1"
+	}
+}
+state Chapter3_Outro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_Complete
+	}
+	actions
+	{
+	
+		SendToModule "#General" "#StartVideo=#A3C3Outro1"
+	}
+}
+state Chapter3_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter4"
+		IncreasePlayerHealth max
+		setstate "PickGoto"
+	}
+}

@@ -1,0 +1,1361 @@
+state Chapter3_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch3_Goto"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch3_Goto" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch3_Goto2" "#AutoDestroy"
+		Idle 3.0
+		
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A5C3Intro"
+	}
+}
+state Chapter3_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+		SendToModule "#General" "#PlayerType=IronHide"  ; Jazz
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=Brawl"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+	}
+}
+;;state Chapter3_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter3_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#A5C3Intro"
+;;	}
+;;}
+state Chapter3_Main
+{
+	conditions
+	{
+		if Timer > 0.2 goto Chapter3_MainLoop
+	}
+	actions
+	{
+		ResetTimer
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter3_DeathFailMission"
+		CreateModule "#Speech" "#A5_ch3_obj1" "#speech=#A5_ch3_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chapter3Start" 
+
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 4"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 4"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+	}
+}
+state Chapter3_MainLoop
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature IsEnergyAtMin" == 1.0 goto Chapter3_BrawlDriveAwayToA
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF1A
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeUp" "#CountASet=1"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A5C3KeyLoc"  "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#Optimus" "#Timeout=30"
+		CreateModule "#Goto" "#BrawlCreature" "#Spline=A5C3Brawl" "#Script=Brawl" "#Boss" "#count=1" "#maxalive=1" "#Type=Brawl" "#SpawnAsCreature" "#SpawnInLOSInit" "#SetEnergyMax=4000" "#SetHealth=4000" "#SetEnergyMin=100" "#BlockDeath" "#InhibitRubble"  ;"#SetEnergyMax=12100" 
+		CreateModule "#Creature" "#Ratchet" "#Spline=A5C1KeyLoc" "#Type=DroneArmouredCar_a" "#count=1" "#maxalive=1" "#AddToRadar" "#SpawnAsCreature" "#SpawnInLOSInit" "#Script=Ratchet"  "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#SetPosition=#RatchetSpawn3"
+		
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A5C3Spawn" "#count=20000" "#maxalive=2" "#Type=DroneDefault" "#SpawnAsVehicle" "#KeyLocation=On" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetHealth=1000"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A5C3Spawn" "#count=20000" "#maxalive=2" "#Type=DronePickupTruck" "#SpawnAsVehicle" "#KeyLocation=On" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetHealth=1200"
+		
+	}
+}
+state Chapter3_HealF1A
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF1A
+		
+	}
+}
+state Chapter3_PostMedicProcessF1A
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature IsEnergyAtMin" == 1.0 goto Chapter3_BrawlDriveAwayToA
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF1A
+	}
+	
+}
+state Chapter3_HealF1B
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF1B
+		
+	}
+}
+state Chapter3_HealF1B2
+{
+	
+	actions
+	{
+		CreateModule "#Speech" "#A5_ch3_obj3" "#speech=#A5_ch3_obj3" "#AutoDestroy" "#Start"
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF1B
+		
+	}
+}
+state Chapter3_PostMedicProcessF1B
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtA
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Energy" <= 0.0 goto Chapter3_PlayerDriveToBrawlAEarly
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF1B
+	}
+	
+}
+state Chapter3_HealF1C
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF1C
+		
+	}
+}
+state Chapter3_PostMedicProcessF1C
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Energy" <= 0.0 goto Chapter3_PlayerDriveToBrawlA
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF1C
+	}
+	
+}
+state Chapter3_BrawlDriveAwayToA
+{
+	conditions
+	{
+		if module "Ratchet PlayerRange" < 30 and  
+			if Timer < 4.0 and 
+				if module "General GetCountA" == 1.0 goto Chapter3_HealF1B2
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtA
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Energy" <= 0.0 goto Chapter3_PlayerDriveToBrawlAEarly
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF1B
+	}
+	actions
+	{
+		
+		ResetTimer 
+		SendToModule "#BrawlCreature"  "#RemoveBoss" "#DirectSpline=A5C3BrawlRouteA" "#Script=FollowSplineVeh" "#Unstoppable" "#AddToRadarOff" 
+		SendToModule "#CreatureWaveA" "#count=2"  
+		SendToModule "#CreatureWaveB" "#count=2" 
+		Idle 4.0
+		CreateModule "#Speech" "#A5_ch3_obj3" "#speech=#A5_ch3_obj3" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter3_BrawlArrivedAtA
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Energy" <= 0.0 goto Chapter3_PlayerDriveToBrawlA
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF1C
+	}
+	actions
+	{
+		SendToModule "#BrawlCreature" "#Script=TurnToShoot"
+		Idle 1.6 
+		
+	}
+}
+state Chapter3_PlayerDriveToBrawlAEarly
+{
+	conditions
+	{
+		if module "BrawlCreature PlayerRange" <= 60.0 goto Chapter3_PlayerReachedBrawlA
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_2 QUIET Generic Play Action"
+		SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar"
+		SendToModule "#Ratchet" "#Script=FollowSplineTC" "#TransformForceCar" "#AddToRadarOff"
+		
+		
+		SendToModule "#BrawlCreature" "#SetPosition=#BrawlSpawn1" "#Script=TurnToShoot"
+		Idle 1.6 
+		SendToModule "#BrawlCreature" "#AddToRadar" "#SetEnergy=4000" "#SetEnergyMin=100"
+		
+		DestroyModule "#KeyLocation"
+		CreateModule "#Timer" "#Timer" "Time=45.0" "#Start"
+		CreateModule "#Speech" "#A5_ch3_obj2" "#speech=#A5_ch3_obj2" "#AutoDestroy" "#Start"
+
+	}
+}
+state Chapter3_PlayerDriveToBrawlA
+{
+	conditions
+	{
+		if module "BrawlCreature PlayerRange" <= 60.0 goto Chapter3_PlayerReachedBrawlA
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_2 QUIET Generic Play Action"
+		SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar"
+
+		
+
+		SendToModule "#BrawlCreature" "#AddToRadar" "#SetEnergy=4000" "#SetEnergyMin=100"
+		SendToModule "#Ratchet" "#Script=FollowSplineTC" "#TransformForceCar" "#AddToRadarOff"
+		DestroyModule "#KeyLocation"
+		CreateModule "#Timer" "#Timer" "Time=45.0" "#Start"
+		CreateModule "#Speech" "#A5_ch3_obj2" "#speech=#A5_ch3_obj2" "#AutoDestroy" "#Start"
+
+	}
+}
+state Chapter3_PlayerReachedBrawlA
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature IsEnergyAtMin" == 1.0 goto Chapter3_BrawlDriveAwayToB
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF2A
+	}
+	actions
+	{
+		DestroyModule "#Timer"
+		DestroyModule "#CreatureWaveA"
+		DestroyModule "#CreatureWaveB"
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		DestroyModule "#A5C3TriggerA"
+		SendToModule "#Ratchet" "#Script=Ratchet" "#TransformForceRobot" "#AddToRadar" "#SetPosition=#RatchetSpawn4"
+		DestroyModule "#KeyLocation"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A5C3KeyLocA" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#Optimus" "#Timeout=30"
+		SendToModule "#BrawlCreature" "#Script=Brawl" "#Stoppable" "#EnableBoss" 
+		SendToModule "#BrawlCreature" "#AddToRadar"
+		Idle 2.0 
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=Spawn3" "#count=80000" "#maxalive=3" "#Type=DroneDefault" "#SpawnAsVehicle" "#KeyLocation=On" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetHealth=1000"
+		
+	}
+}
+state Chapter3_HealF2A
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF2A
+		
+	}
+}
+state Chapter3_PostMedicProcessF2A
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature IsEnergyAtMin" == 1.0 goto Chapter3_BrawlDriveAwayToB
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF2A
+	}
+	
+}
+state Chapter3_HealF2B
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF2B
+		
+	}
+}
+state Chapter3_PostMedicProcessF2B
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtBEarly
+		;if module "CreatureWaveA GetPercentageComplete" > 0.75 goto Chapter3_ArmouredCarB
+		if module "CreatureWaveA Energy" <= 0.25 goto Chapter3_ArmouredCarB
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF2B
+	}
+	
+}
+state Chapter3_HealF2C
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF2C
+		
+	}
+}
+state Chapter3_PostMedicProcessF2C
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtB
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlBEarly
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF2C
+	}
+	
+}
+state Chapter3_HealF2D
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF2D
+		
+	}
+}
+state Chapter3_PostMedicProcessF2D
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlB
+		;if module "CreatureWaveA Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlB
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF2D
+	}
+	
+}
+state Chapter3_BrawlDriveAwayToB
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtBEarly
+		;if module "CreatureWaveA GetPercentageComplete" > 0.75 goto Chapter3_ArmouredCarB
+		if module "CreatureWaveA Energy" <= 0.25 goto Chapter3_ArmouredCarB
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF2B
+	}
+	actions
+	{
+		SendToModule "#BrawlCreature"  "#RemoveBoss" "#DirectSpline=A5C3BrawlRouteB" "#Script=FollowSplineVeh" "#Unstoppable" "#AddToRadarOff"
+		SendToModule "#CreatureWaveA" "#count=8"  
+		CreateModule "#Speech" "#A5_ch3_obj4" "#speech=#A5_ch3_obj4" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter3_ArmouredCarB
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtB
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlBEarly
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF2C
+	}
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=Spawn3" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar" "#SpawnAsCreature" "#IgnoreLOS" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetHealth=1200"
+		SendToModule "#Creature" "#CreatureWaveA" "#count=5"
+	}
+}
+state Chapter3_BrawlArrivedAtBEarly
+{
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=Spawn3" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar" "#SpawnAsCreature" "#IgnoreLOS" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetHealth=1200"
+		SendToModule "#Creature" "#CreatureWaveA" "#count=5"
+		SetState "Chapter3_BrawlArrivedAtB"
+	}
+}
+state Chapter3_BrawlArrivedAtB
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlB
+		;if module "CreatureWaveA Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlB
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF2D
+	}
+	actions
+	{
+		SendToModule "#BrawlCreature" "#Script=TurnToShoot" 
+		Idle 1.6 
+		
+	}
+}
+state Chapter3_PlayerDriveToBrawlBEarly
+{
+	conditions
+	{
+		if module "BrawlCreature PlayerRange" <= 60.0 goto Chapter3_PlayerReachedBrawlB
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_2 QUIET Generic Play Action"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#BG_LoadCreature=DroneTowTruck"
+
+		SendToModule "#Ratchet" "#Script=FollowSplineTC" "#TransformForceCar" "#AddToRadarOff"
+	
+		
+
+		SendToModule "#BrawlCreature" "#SetPosition=#BrawlSpawn2" "#Script=TurnToShoot" 
+		Idle 1.6 
+		CreateModule "#Timer" "#Timer" "Time=45.0" "#Start"
+		
+		SendToModule "#BrawlCreature" "#AddToRadar" "#SetEnergy=4000" "#SetEnergyMin=100"
+
+		SendToModule "#General" "#SetMessage=AC2" "#SetMessageTimer=7"
+		
+		DestroyModule "#KeyLocation"
+		
+		
+	}
+}
+state Chapter3_PlayerDriveToBrawlB
+{
+	conditions
+	{
+		if module "BrawlCreature PlayerRange" <= 60.0 goto Chapter3_PlayerReachedBrawlB
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_2 QUIET Generic Play Action"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#BG_LoadCreature=DroneTowTruck"
+
+		SendToModule "#Ratchet" "#Script=FollowSplineTC" "#TransformForceCar" "#AddToRadarOff"
+
+		
+
+
+		SendToModule "#BrawlCreature" "#AddToRadar" "#SetEnergy=4000" "#SetEnergyMin=100"
+		CreateModule "#Timer" "#Timer" "Time=45.0" "#Start"
+		SendToModule "#General" "#SetMessage=AC2" "#SetMessageTimer=7"
+		
+		DestroyModule "#KeyLocation"
+		
+		
+	}
+}
+state Chapter3_PlayerReachedBrawlB
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature IsEnergyAtMin" == 1.0 goto Chapter3_BrawlDriveAwayToC
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3A
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		DestroyModule "#Timer"
+		DestroyModule "#CreatureWaveA"
+		DestroyModule "#CreatureWaveB"
+
+		SendToModule "#Ratchet" "#Script=Ratchet" "#TransformForceRobot" "#AddToRadar" "#SetPosition=#RatchetSpawn5"
+		SendToModule "#General" "#SetMessageTimer=-1"
+		DestroyModule "#KeyLocation"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A5C3KeyLocB"  "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#Optimus" "#Timeout=30"
+		SendToModule "#BrawlCreature" "#Script=Brawl" "#Stoppable"  "#EnableBoss" 
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A5C3SpawnB" "#count=10000" "#maxalive=1" "#Type=DroneArmouredCar" "#SpawnAsCreature" "#IgnoreLOS" "#KeyLocation=On" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetHealth=1200"
+
+		
+	}
+}
+state Chapter3_HealF3A
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF3A
+		
+	}
+}
+state Chapter3_PostMedicProcessF3A
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature IsEnergyAtMin" == 1.0 goto Chapter3_BrawlDriveAwayToC
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3A
+	}
+	
+}
+state Chapter3_HealF3B
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF3B
+		
+	}
+}
+state Chapter3_PostMedicProcessF3B
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtCEarly
+		if module "CreatureWaveA Energy" <= 0.0 goto Chapter3_TowTruckC
+		if Timer > 10.0 goto Chapter3_TowTruckC
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3B2
+	}
+	actions
+	{
+		ResetTimer
+	}
+	
+}
+state Chapter3_HealF3B2
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_TowTruckC
+		
+	}
+}
+
+state Chapter3_HealF3C
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF3C
+		
+	}
+}
+state Chapter3_PostMedicProcessF3C
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "CreatureWaveA Energy" <= 0.0 goto Chapter3_TowTruckC2
+		if Timer > 10.0 goto Chapter3_TowTruckC2
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3C2
+	}
+	actions
+	{
+		ResetTimer
+	}
+	
+}
+state Chapter3_HealF3C2
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_TowTruckC2
+		
+	}
+}
+
+state Chapter3_HealF3D
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF3D
+		
+	}
+}
+state Chapter3_PostMedicProcessF3D
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtC
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlCEarly
+		
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3D
+	}
+	
+}
+state Chapter3_HealF3E
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF3E
+		
+	}
+}
+state Chapter3_PostMedicProcessF3E
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlC
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3E
+	}
+	
+}
+state Chapter3_HealF3F
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter3_PostMedicProcessF3F
+		
+	}
+}
+state Chapter3_PostMedicProcessF3F
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlC
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3F
+	}
+	
+}
+state Chapter3_BrawlDriveAwayToC
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtCEarly
+		if module "CreatureWaveA Energy" <= 0.0 goto Chapter3_TowTruckC
+		if Timer > 20.0 goto Chapter3_TowTruckC
+		
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3B
+		
+	}
+	actions
+	{
+		ResetTimer
+		
+		SendToModule "#BrawlCreature"  "#RemoveBoss" "#DirectSpline=A5C3BrawlRouteC" "#Script=FollowSplineVeh" "#Unstoppable" "#AddToRadarOff"
+		SendToModule "#CreatureWaveA" "#count=1"
+	}
+}
+state Chapter3_BrawlArrivedAtCEarly
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "CreatureWaveA Energy" <= 0.0 goto Chapter3_TowTruckC2
+		if Timer > 20.0 goto Chapter3_TowTruckC2
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3C
+	}
+	actions
+	{
+		SendToModule "#BrawlCreature" "#Script=TurnToShoot" 
+		Idle 1.6 
+		
+	}
+}
+state Chapter3_TowTruckC
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BrawlCreature Complete" == 1.0 goto Chapter3_BrawlArrivedAtC
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlCEarly
+		
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3D
+	}
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A5C3SpawnB" "#count=1" "#maxalive=1" "#Type=DroneTowTruck" "#SpawnAsCreature" "#IgnoreLOS" "#KeyLocation=On" "#Script=TowTruckDrone"
+	}
+}
+state Chapter3_TowTruckC2
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlC
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3E
+	}
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A5C3SpawnB" "#count=1" "#maxalive=1" "#Type=DroneTowTruck" "#SpawnAsCreature" "#IgnoreLOS" "#KeyLocation=On" "#Script=TowTruckDrone"
+	}
+}
+state Chapter3_BrawlArrivedAtC
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "CreatureWaveA Energy" <= 0.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter3_PlayerDriveToBrawlC
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter3_HealF3F
+	}
+	actions
+	{
+		SendToModule "#BrawlCreature" "#Script=TurnToShoot" 
+		Idle 1.6 
+		
+	}
+}
+state Chapter3_PlayerDriveToBrawlCEarly
+{
+	conditions
+	{
+		if module "BrawlCreature PlayerRange" <= 60.0 goto Chapter3_PlayerReachedBrawlC
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_2 QUIET Generic Play Action"
+		SendToModule "#Ratchet" "#Script=FollowSplineTC" "#TransformForceCar" "#AddToRadarOff"
+
+		
+
+		SendToModule "#BrawlCreature" "#SetPosition=#BrawlSpawn3" "#Script=TurnToShoot" 
+		Idle 1.6 
+		CreateModule "#Timer" "#Timer" "#Time=45" "#Start" 
+		
+		SendToModule "#BrawlCreature" "#AddToRadar" "#SetEnergy=4000" "#SetEnergyMin=-1"
+
+		SendToModule "#General" "#SetMessage=AC2" "#SetMessageTimer=7"
+		
+		DestroyModule "#KeyLocation"
+	}
+}
+state Chapter3_PlayerDriveToBrawlC
+{
+	conditions
+	{
+		if module "BrawlCreature PlayerRange" <= 60.0 goto Chapter3_PlayerReachedBrawlC
+		if module "Timer Timer" < 0.0 goto Chapter3_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter3_FailMission
+		
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_2 QUIET Generic Play Action"
+		SendToModule "#Ratchet" "#Script=FollowSplineTC" "#TransformForceCar" "#AddToRadarOff"
+		
+
+		CreateModule "#Timer" "#Timer" "#Time=45" "#Start" 
+		SendToModule "#BrawlCreature" "#AddToRadar" "#SetEnergy=4000" "#SetEnergyMin=-1"
+
+		SendToModule "#General" "#SetMessage=AC2" "#SetMessageTimer=7"
+		
+		DestroyModule "#KeyLocation"
+	}
+}
+
+state Chapter3_PlayerReachedBrawlC
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		;if module "BrawlCreature Complete" == 1.0 goto Chapter3_Complete
+		if module "BrawlCreature Dead" == 1.0 goto Chapter3_Complete
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		SendToModule "#General" "#SetMessageTimer=-1"
+		DestroyModule "#Timer"
+		DestroyModule "#Ratchet"
+		DestroyModule "#KeyLocation"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A5C3KeyLocC"  "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#Optimus" "#Timeout=30"
+		SendToModule "#BrawlCreature" "#Script=Brawl" "#Stoppable"  "#EnableBoss" 
+		
+	}
+}
+state Chapter3Alt_Enter
+{
+	
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#General" "#BG_UnLoadCreature=EnergonDrone"
+		;SendToModule "#General" "#BG_UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+		SetState Chapter3Alt_EnterInit
+	}
+}
+state Chapter3Alt_EnterInit
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3Alt_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A5C5Intro"
+	}
+}
+state Chapter3Alt_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3Alt_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+		SendToModule "#General" "#PlayerType=Jazz"
+		SendToModule "#General" "#LoadCreature=Brawl"
+		
+	}
+}
+state Chapter3Alt_Main
+{
+	conditions
+	{
+		;if module "A5C3BrawlRaceA TransformMeter" == 1.0 goto Chapter3Alt_MainFight
+		;if module "A5C3BrawlRaceA Complete" == 1.0 goto Chapter3Alt_BrawlArrivedAtA
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetDeathPoint "Chapter3_DeathFailMission"
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		
+		;CreateModule "#Speech" "#DefeatDrones" "#speech=#A5_ch3_obj1" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3AltStart" "#FadeUp"
+
+		CreateModule "#Goto" "#A5C3BrawlRaceA" "#SpawnSpline=A5C3BrawlA" "#DirectSpline=A5C3RaceA" "#Location=#GreenMediumDot" "#Object=#RedMediumDot" "#Boss" "#SpawnAsVehicle" "#type=Brawl" "#SplineStep=0"  "#Invulnerable" "#Unstoppable" "#BlockDeath"
+		CreateModule "#KeyLocation" "#A5C3KeyLocA" "#Creature=#A5C3BrawlRaceA" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#Optimus" "#Radius=100"
+		;SendToModule "#A5C3BrawlRaceA" "#Script=BrawlShoot"
+		SetState Chapter3Alt_BrawlArrivedAtA
+	}
+}
+state Chapter3Alt_BrawlArrivedAtA
+{
+	conditions
+	{
+		;if module "A5C3BrawlRaceA TransformMeter" == 1.0 goto Chapter3Alt_MainFight
+		if module "A5C3BrawlRaceA PlayerRange" < 15.0 goto Chapter3Alt_MainFight
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#A5C3BrawlRaceA" "#Script=TurnToShoot"
+		 
+		
+	}
+}
+state Chapter3Alt_MainFight
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA Health" < 0.80 goto Chapter3Alt_MainChase
+		if module "A5C3TimerA Finished" < 0.0 goto Chapter3Alt_MainChase
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		CreateModule "#Timer" "#A5C3TimerA" "#Time=20.0" "#NoRender"
+		SendToModule "#A5C3BrawlRaceA" "#Script=Brawl" "#Stoppable" "#Vulnerable" "#TransformForceRobot"
+	}
+}
+state Chapter3Alt_MainChase
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA Complete" == 1.0 goto Chapter3Alt_MainB
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyModule "#A5C3TimerA"
+		SendToModule "#A5C3BrawlRaceA" "#DirectSpline=A5C3RaceA" "#Script=FollowSplineVeh" "#Energy=0.80" "#Invulnerable"
+		SendToModule "#A5C3BrawlRaceA" "#Unstoppable"
+	}
+}
+state Chapter3Alt_MainB
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA PlayerRange" < 15.0 goto Chapter3Alt_MainBFight
+		
+		;if module "A5C3BrawlRaceA TransformMeter" == 1.0 goto Chapter3Alt_MainBFight
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#A5C3BrawlRaceA" "#Script=TurnToShoot" 
+	}
+}
+state Chapter3Alt_MainBFight
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA Health" < 0.60 goto Chapter3Alt_MainBChase
+		if module "A5C3TimerB Finished" < 0.0 goto Chapter3Alt_MainBChase
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		CreateModule "#Timer" "#A5C3TimerB" "#Time=20.0" "#NoRender"
+		SendToModule "#A5C3BrawlRaceA" "#Script=Brawl" "#Stoppable" "#Vulnerable" "#TransformForceRobot"
+	}
+}
+state Chapter3Alt_MainBChase
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA Complete" == 1.0 goto Chapter3Alt_MainC
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyModule "#A5C3TimerB"
+		SendToModule "#A5C3BrawlRaceA" "#DirectSpline=A5C3RaceB" "#Script=FollowSplineVeh" "#Energy=0.60" "#Invulnerable"
+		SendToModule "#A5C3BrawlRaceA" "#Unstoppable"
+	}
+}
+state Chapter3Alt_MainC
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA PlayerRange" < 15.0 goto Chapter3Alt_MainCFight
+		
+		;if module "A5C3BrawlRaceA TransformMeter" == 1.0 goto Chapter3Alt_MainCFight
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#A5C3BrawlRaceA" "#Script=TurnToShoot" 
+	}
+}
+state Chapter3Alt_MainCFight
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA Health" < 0.40 goto Chapter3Alt_MainCChase
+		if module "A5C3TimerC Finished" < 0.0 goto Chapter3Alt_MainCChase
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		CreateModule "#Timer" "#A5C3TimerC" "#Time=20.0" "#NoRender"
+		SendToModule "#A5C3BrawlRaceA" "#Script=Brawl" "#Vulnerable" "#TransformForceRobot" "#Stoppable" 
+	}
+}
+state Chapter3Alt_MainCChase
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA Complete" == 1.0 goto Chapter3Alt_MainD
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyModule "#A5C3TimerC"
+		SendToModule "#A5C3BrawlRaceA" "#DirectSpline=A5C3RaceC" "#Script=FollowSplineVeh" "#Energy=0.40" "#Invulnerable"
+		SendToModule "#A5C3BrawlRaceA" "#Unstoppable"
+	}
+}
+state Chapter3Alt_MainD
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA PlayerRange" < 15.0 goto Chapter3Alt_MainDFight
+		
+		;if module "A5C3BrawlRaceA TransformMeter" == 1.0 goto Chapter3Alt_MainDFight
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#A5C3BrawlRaceA" "#Script=TurnToShoot" 
+	}
+}
+state Chapter3Alt_MainDFight
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA Health" < 0.20 goto Chapter3Alt_MainDChase
+		
+		if module "A5C3BrawlRaceA Dead" == 1.0 goto Chapter3Alt_Complete
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#A5C3BrawlRaceA" "#Script=Brawl" "#Vulnerable" "#TransformForceRobot" "#Stoppable" 
+	}
+}
+state Chapter3Alt_MainDChase
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA Complete" == 1.0 goto Chapter3Alt_MainE
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyModule "#A5C3TimerC"
+		SendToModule "#A5C3BrawlRaceA" "#DirectSpline=A5C3RaceD" "#Script=FollowSplineVeh" "#Energy=0.20" "#Invulnerable"
+		SendToModule "#A5C3BrawlRaceA" "#Unstoppable"
+	}
+}
+state Chapter3Alt_MainE
+{
+	conditions
+	{
+		if module "A5C3BrawlRaceA PlayerRange" < 15.0 goto Chapter3Alt_MainEFight
+		
+		;if module "A5C3BrawlRaceA TransformMeter" == 1.0 goto Chapter3Alt_MainEFight
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#A5C3BrawlRaceA" "#Script=TurnToShoot" 
+	}
+}
+state Chapter3Alt_MainEFight
+{
+	conditions
+	{
+		
+		if module "A5C3BrawlRaceA Dead" == 1.0 goto Chapter3Alt_Complete
+		if module "A5C3KeyLocA FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#A5C3BrawlRaceA" "#Script=Brawl" "#Vulnerable" "#TransformForceRobot" "#Stoppable" 
+	}
+}
+state Chapter3_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission"  "#FailMission"
+	}
+}
+state Chapter3_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+		SendToModule "#General" "#UnLoadCreature=Brawl"
+		
+		SendToModule "#General" "#PlayerType=IronHide,Jazz,IronHide,BumbleBee07,IronHide"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter3Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission"  "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+		
+		CreateModule "#Speech" "#What" "#speech=#A5_ch3_cmplt" "#PlayDelay=1.2" "#AutoDestroy" "#Start"
+ 
+	}
+}
+state Chapter3Alt_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3Alt_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission"  "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+		
+		
+	}
+}
+state Chapter3Alt_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A5C5Outro"
+	}
+}
+state Chapter3_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A5C3Outro"
+	}
+}
+state Chapter3_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+		SendToModule "#General" "#UnLoadCreature=Brawl"
+		SendToModule "#General" "#PlayerType=IronHide,Jazz,IronHide,BumbleBee07,IronHide" "#SetVehicle=#COMPPOINT6" 
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter4"
+		SendToModule #General #ResetLevel
+		IncreasePlayerHealth max
+		SendToModule "#General" "#CountDSet=5"
+		setstate "PickGoto"
+	}
+}

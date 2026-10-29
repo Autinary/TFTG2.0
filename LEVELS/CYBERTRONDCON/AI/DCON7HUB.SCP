@@ -1,0 +1,515 @@
+state Base
+{
+	conditions
+	{
+		if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+	}
+}
+state StartLevelIntro
+{
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SetState "LevelIntro"
+	}
+}
+state LevelIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto StartD7  ;Chapter1_Enter
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		SendToModule "#General" "#SetPlayer=#StartMission" "#StartVideo=#D7LevelIntro"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#LoadCreature=DroneForklift_a"
+		CreateModule "#AreaRange" "#OutOfBoundsNorth" "#Trigger=#OOBN" "#AddToRadarOff" "#Protect"
+		CreateModule "#AreaRange" "#OutOfBoundsEast" "#Trigger=#OOBE" "#AddToRadarOff" "#Protect"
+		CreateModule "#AreaRange" "#OutOfBoundsSouth" "#Trigger=#OOBS" "#AddToRadarOff" "#Protect"
+		CreateModule "#AreaRange" "#OutOfBoundsWest" "#Trigger=#OOBW" "#AddToRadarOff" "#Protect"
+		
+		SendToModule "#General" "#CountASet=1" "#CountBSet=1" "#CountCSet=2"
+	}
+}
+
+state StartD7
+{
+	conditions
+	{
+		;if module "General ChapterProgress" >= 1.0 goto GlobalActionRing
+		;if module "General ChapterProgress" == 0.0 goto Chapter1PreAssault
+	}
+	actions
+	{
+		SetState Chapter1_Main
+	}
+}
+state Chapter1_PhaseComplete
+{
+	conditions
+	{
+		if module "General GetCountB" == 7.0 goto Chapter1_TraitorInit
+		
+		if module "General GetCountA" == 7.0 goto Chapter1_Complete
+		
+		if module "General FadeDown" == 1.0 goto Chapter1StartNextPhase
+	}
+	actions
+	{
+		DestroyAllModules 
+		ResetTimer
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#General" "#CountAInc" "#CountBInc" 
+		Idle 0.1
+		SendToModule "#General" "#FadeDown" 
+	}
+}
+state Chapter1_TraitorInit
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto Chapter1_TraitorLoadCre
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown" 
+	}
+}
+state Chapter1_TraitorLoadCre
+{
+	
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+		SendToModule "#General" "#UnLoadCreature=Bumblebee"
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=Jazz"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#UnLoadCreature=IronHide"
+		SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		SendToModule "#General" "#UnLoadCreature=Bumblebee07"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=Starscream"
+		
+		SendToModule "#General" "#PlayerType=Megatron" "#SetPlayer=#Chapter1Restart2" "#FadeUp"
+
+		CreateModule "#Creature" "#Traitor" "#SpawnSpline=SpawnLower" "#Type=Starscream" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Starscream" "#SetEnergyMax=4000.0" "#SetEnergy=4000.0" 
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=1" "#IconType=#Drone"
+		
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_FirstPhaseComplete
+{
+	
+	actions
+	{
+		DestroyAllModules 
+		ResetTimer
+		
+		SendToModule "#General" "#CountAInc" 
+		SetState Chapter1PreAssault
+	}
+}
+state Chapter1StartNextPhase
+{
+	conditions
+	{
+		if module "General GetCountA" == 3.0 and
+			if module "General GetCountC" == 0.0 goto Chapter1_Megatron
+
+		if timer > 0.2 goto Chapter1PreAssault
+	}
+	actions
+	{
+		DestroyAllModules 
+		ResetTimer
+		
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter1Restart2" 
+	}
+}
+state Chapter1_Megatron
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Megatron" "#SetPlayer=#Chapter1Restart2" "#CountCSet=2" "#CountBSet=1"
+		
+		Idle 0.2
+		SetState Chapter1PreAssault
+	}
+}
+state Chapter1PreAssault
+{
+	conditions
+	{
+		 if module "General GetCountA" == 2.0 goto Chapter1LoadCreaturesW2
+		 if module "General GetCountA" == 3.0 goto Chapter1LoadCreaturesW3
+		 if module "General GetCountA" == 4.0 goto Chapter1LoadCreaturesW4
+		 if module "General GetCountA" == 5.0 goto Chapter1LoadCreaturesW5
+		 if module "General GetCountA" == 6.0 goto Chapter1LoadCreaturesW6
+		 
+	}
+	actions
+	{
+		CreateModule "#Timer" "#Timer" "#Time=30" "#Start" "#Protect"
+		CreateModule "#AreaRange" "#CreatureSwap" "#Trigger=#CharSwap" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon" "#DontClampRadar"
+		
+		
+		
+	}
+}
+
+state Chapter1LoadCreaturesW2
+{
+	conditions
+	{
+		
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		;SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#LoadCreature=DroneCement_a"
+		SendToModule "#General" "#LoadCreature=DroneMig_a"
+		SendToModule "#General" "#LoadCreature=Bumblebee"
+		
+		
+
+		SendToModule "#General" "#SetMessage=CD1" "#SetMessageTimer=1000" "#FadeUp"
+		
+	}
+}
+state Chapter1LoadCreaturesW3
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+
+		
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+		SendToModule "#General" "#UnLoadCreature=Bumblebee"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		;SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+
+
+		SendToModule "#General" "#LoadCreature=Jazz"
+		SendToModule "#General" "#LoadCreature=Ironhide"
+
+		SendToModule "#General" "#SetMessage=CD2" "#SetMessageTimer=1000" "#FadeUp"
+		
+	}
+}
+state Chapter1LoadCreaturesW4
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+
+		
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=Jazz"
+		SendToModule "#General" "#UnLoadCreature=Ironhide"
+
+		SendToModule "#General" "#LoadCreature=DroneForklift_a"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+		
+		SendToModule "#General" "#LoadCreature=Bumblebee07"
+		
+		SendToModule "#General" "#SetMessage=CD3" "#SetMessageTimer=1000" "#FadeUp"
+		
+	}
+}
+state Chapter1LoadCreaturesW5
+{
+	conditions
+	{
+	
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+
+		
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		
+		SendToModule "#General" "#UnLoadCreature=Bumblebee07"
+
+		SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#LoadCreature=DroneCement_a"
+		SendToModule "#General" "#LoadCreature=DroneMig_a"
+
+		SendToModule "#General" "#SetMessage=CD4" "#SetMessageTimer=1000" "#FadeUp"
+		
+	}
+}
+state Chapter1LoadCreaturesW6
+{
+	conditions
+	{
+		
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+
+		
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+	}
+	actions
+	{
+		;SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		
+		;SendToModule "#General" "#LoadCreature=EnergonDrone" 
+		SendToModule "#General" "#LoadCreature=OptimusPrime"
+		SendToModule "#General" "#SetMessage=CD5" "#SetMessageTimer=1000" "#FadeUp"
+
+		
+		
+	}
+}
+state RespawnLoad
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto RespawnLoad2
+		if module "General GetCountC" == 0.0 goto Chapter1_WaitingRoom2
+	}
+	actions
+	{
+		Idle 0.1
+		SendToModule "#General" "#FadeDown" 
+	}
+}
+state RespawnLoad2
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetVehicle=#Respawn" "#FadeUp" 
+		SetState Chapter1_WaitingRoom2
+	}
+}
+
+
+state Chapter1_WaitingRoom
+{
+	conditions
+	{
+		 if module "General GetCountA" == 1.0 goto Chapter1_LoadMessageW1
+		 if module "General GetCountA" == 2.0 goto Chapter1_LoadMessageW2
+		 if module "General GetCountA" == 3.0 goto Chapter1_LoadMessageW3
+		 if module "General GetCountA" == 4.0 goto Chapter1_LoadMessageW4
+		 if module "General GetCountA" == 5.0 goto Chapter1_LoadMessageW5
+		 if module "General GetCountA" == 6.0 goto Chapter1_LoadMessageW6
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1" 
+		DestroyAllModules
+	}
+}
+state Chapter1_WaitingRoom2
+{
+	conditions
+	{
+		 if module "General GetCountA" == 1.0 goto Chapter1_LoadMessageW1
+		 if module "General GetCountA" == 2.0 goto Chapter1_LoadMessageW2
+		 if module "General GetCountA" == 3.0 goto Chapter1_LoadMessageW3
+		 if module "General GetCountA" == 4.0 goto Chapter1_LoadMessageW4
+		 if module "General GetCountA" == 5.0 goto Chapter1_LoadMessageW5
+		 if module "General GetCountA" == 6.0 goto Chapter1_LoadMessageW6
+	}
+	actions
+	{
+		
+	}
+}
+state Chapter1_LoadMessageW1
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		
+		
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+	}
+	actions
+	{
+		
+		
+		SendToModule "#General" "#SetMessage=CD1" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW2
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+		
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=CD1" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW3
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		
+		  
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=CD2" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW4
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		
+		
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=CD3" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW5
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		
+		  
+		
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=CD4" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW6
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		
+		 
+		 if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsEast InArea" == 1.0 goto RespawnLoad	
+		 if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnLoad
+		 if module "OutOfBoundsWest InArea" == 1.0 goto RespawnLoad
+		
+	}
+	actions
+	{
+		
+		
+		SendToModule "#General" "#SetMessage=CD5" "#SetMessageTimer=1000" 
+		
+	}
+}
+state FinishedLevel
+{
+}

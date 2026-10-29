@@ -1,0 +1,161 @@
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+
+ConditionMacro AttackPOI
+{
+	if HasActivePOI == 1.0 and
+	if GotOpponent == 0.0
+}
+
+ConditionMacro StuckJump
+{
+	if GetFlag "StuckByObstacle" == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Actions
+	{
+		SetState Alert
+	}
+}
+
+state Alert
+{
+   Conditions
+   {
+   
+      OnMacro AttackPOI goto AttackPOI
+      
+      OnMacro StuckJump goto StuckEscapeJump
+		
+	  if GotOpponent == 1.0 and
+	  if CanApproach == 1.0 goto AttackPlayerClose
+	  
+	  if GotOpponent == 1.0 and
+	  if CanApproach == 0.0 goto AttackPlayerFar
+	  
+;	  if GotOpponent == 0.0 and
+;	  if BeenStruckTime > 4.0 and
+	  
+   }
+   Actions
+   {
+		SetStrafe false
+   
+   }
+}
+
+state AttackPOI
+{
+	Conditions
+	{
+		if HasActivePOI == 0.0 goto Alert
+		
+		if GotOpponent == 1.0 goto Alert
+	}
+	Actions
+	{
+		SetStrafe true
+		AttackPOI goalrange=1.0 fireinterval=0.3 fireRange=1.5
+	}
+}
+
+
+state AttackPlayerFar
+{
+	Conditions
+	{
+	
+		OnMacro AttackPOI goto Alert
+	
+		OnMacro StuckJump goto StuckEscapeJump
+	
+		if GotOpponent == 0.0 goto Alert
+		
+		if CanApproach == 1.0 goto Alert
+		
+		if DistanceBetweenOpponent2D < 2.5 goto DontWantToGetSquished
+		
+	}
+
+	Actions
+	{
+		ResetTimer
+		EngageOpponent goalrange=20.0 fireinterval=99.0
+	}
+}
+
+state AttackPlayerClose
+{
+	Conditions
+	{
+	
+		OnMacro AttackPOI goto Alert
+		
+		OnMacro StuckJump goto StuckEscapeJump
+	
+		if GotOpponent == 0.0 goto Alert
+		
+		if CanApproach == 0.0 goto Alert
+		
+		if DistanceBetweenOpponent2D < 2.5 goto DontWantToGetSquished
+	}
+
+	Actions
+	{
+		ResetTimer
+		SetStrafe true
+		EngageOpponent goalrange=10.0 fireinterval=0.3
+	}
+}
+
+state DontWantToGetSquished
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto Alert
+		if DistanceBetweenOpponent2D > 7.0 goto Alert
+	}
+	Actions
+	{
+		Retreat "goalrange=1.0" "retreatrange=40.0"
+	}
+}
+
+state StuckEscapeRoll
+{
+	Actions
+	{
+		SetFlag "TempBlock=true"
+		SetStrafe false
+		MoveSideways "MinDist=8.0" "MaxDist=10.0" "RayTime=0.4" 
+		SetFlag "TempBlock=false"
+		SetState Alert
+	}
+}
+
+state StuckEscapeJump
+{
+	Actions
+	{
+		SetFlag "TempBlock=true"
+		SetStrafe false
+		DoAttack "jump"
+		SetFlag "TempBlock=false"
+		SetState Alert
+	}
+}

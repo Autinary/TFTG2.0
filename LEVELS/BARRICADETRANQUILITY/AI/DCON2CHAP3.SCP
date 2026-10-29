@@ -1,0 +1,454 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;used to be mission 3 		  ;
+;only chapters have been renamed  ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+state Chapter3_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D2_ch3_Goto" "#AutoDestroy" "#Start"
+		Idle 3.0
+		
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter2Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D2C3Intro"
+	}
+}
+state Chapter3_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro	
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=Barricade"
+	}
+}
+;;state Chapter3_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter3_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D2C3Intro"
+;;	}
+;;}
+state Chapter3_Main
+{
+	conditions
+	{
+		if module "D2C3BuildA FoundRand" == 1.0 goto Chapter3_MainBChaseStart
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter3_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D2_ch3_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#PhysObj" "#ResetLevel" "#SetPlayer=#Chapter3Start" "#FadeUp" "#CountASet=0"
+
+;		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=5" "#TrafficLv=1" "#PatrolLv=1" "#Protect"
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		CreateModule "#DriverDrone" "#D2C3Drones" "#Spline=D2C3Drones" "#FollowPlayer" "#MaxAlive=1" "#count=1" "#SpawnInLOSInit" "#type=suv" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire" "#Protect"
+		CreateModule "#DriverDrone" "#D2C3Drones" "#Spline=D2C4Spawn4" "#FollowPlayer" "#MaxAlive=1" "#count=2" "#SpawnInLOSInit" "#type=suv" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire" "#Protect"
+		CreateModule "#DriverDrone" "#D2C3Drones" "#Spline=D2C4SpawnD" "#FollowPlayer" "#MaxAlive=1" "#count=2" "#SpawnInLOSInit" "#type=suv" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire" "#Protect"
+		CreateModule "#DriverDrone" "#D2C3Drones" "#Spline=Spawn1" "#FollowPlayer" "#MaxAlive=1" "#count=1" "#SpawnInLOSInit" "#type=suv"  "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire" "#Protect"
+		CreateModule "#BuildingSecret" "#D2C3BuildA" "#Spline=D2C3BuildA" "#FuzzyRange=20" "#MinRand=0.2" "#MaxRand=0.3" "#DrawHealthBar"
+		CreateModule "#Timer" "#FrenzyHealth" "#HeadType=#Frenzy" "#DrawHealthBar" "#StartLoseHealth" "#Protect" "#Time=40.0" "#Random"
+	}
+}
+
+state Chapter3_MainBChaseStart
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_MainBChase
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C3Midtro1"
+	}
+}
+
+state Chapter3_MainBChase
+{
+	conditions
+	{
+		;if module "D2C3RaceB Finish" >= 1.0 goto Chapter3_MainBDestruction
+		;;;;if module "D2C3RaceB GetPercentage" == 1.0 goto Chapter3_MainBDestruction
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer FailMission" == 1.0 goto Chapter3_MainBDestruction
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Timer" "#Timer" "#Time=23" "#NoRender"
+		SendToModule "#FrenzyHealth" "#StopLoseHealth" "#NoDraw" 	
+		;CreateModule "#SplineExplode" "#D2C3RaceB" "#Spline=D2C3RaceB" "#MilesPerHour=85" "#AddToRadar=#MediumGreenDot" "#Start" "#ModuleTag=#FrenzyHealth" "#Param=#StartLoseHealth"
+
+		CreateModule "#DriverDrone" "#D2C3RaceB" #AddToRadarAlways "#Spline=D2C3RaceB" "#maxalive=1" "#count=#Infinite" "#FollowSpline=D2C3RaceB" "#WaitEnd" "#spacing=1.0" "#goalrange=4.0" "#type=suv" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#BeatPlayerToSplineDestination" "#ConfineToPath" "#Invulnerable"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D2_ch3_obj4" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetPlayer=#D2C3StartA"
+	}
+}
+state Chapter3_MainBDestruction
+{
+	conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter3_MainBDestructionStarted
+		if module "D2C3BuildB Found" > 0.0 goto Chapter3_MainBDestructionStarted
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyAllModules
+		SendToModule "#FrenzyHealth" "#Draw" "#StartLoseHealth" "#Time=70.0"
+		CreateModule "#BuildingSecret" "#D2C3BuildB" "#Spline=D2C3BuildB" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" "#DrawHealthBar"
+		CreateModule "#AreaRange" "#AreaRange" "#Trigger=#D2C3TriggerA"
+	}
+}
+
+state Chapter3_MainBDestructionStarted
+{
+	conditions
+	{
+		if module "D2C3BuildB FoundRand" == 1.0 goto Chapter3_MainCChaseStart
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D2_ch3_obj2" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter3_MainCChaseStart
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_MainCChase
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C3Midtro2"
+	}
+}
+state Chapter3_MainCChase
+{
+	conditions
+	{
+		if module "D2C3RaceC Finish" >= 1.0 goto Chapter3_MainCDestruction
+		;;;if module "D2C3RaceC GetPercentage" == 1.0 goto Chapter3_MainCDestruction
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		DestroyAllModules
+		SendToModule "#FrenzyHealth" "#StopLoseHealth" "#NoDraw"
+		;CreateModule "#SplineExplode" "#D2C3RaceC" "#Spline=D2C3RaceC" "#MilesPerHour=85" "#AddToRadar=#MediumGreenDot" "#Start" "#ModuleTag=#FrenzyHealth" "#Param=#StartLoseHealth"
+
+		CreateModule "#DriverDrone" "#D2C3RaceC" #AddToRadarAlways "#Spline=D2C3RaceC" "#maxalive=1" "#count=#Infinite" "#FollowSpline=D2C3RaceC" "#WaitEnd" "#spacing=1.0" "#goalrange=4.0" "#type=suv" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#BeatPlayerToSplineDestination" "#ConfineToPath" "#Invulnerable"
+
+		SendToModule "#General" "#SetPlayer=#D2C3StartB"
+	}
+}
+state Chapter3_MainCDestruction
+{
+	conditions
+	{
+		if module "D2C3BuildC Found" > 0.0 goto Chapter3_MainCDestructionStarted
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyAllModules
+
+		SendToModule "#FrenzyHealth" "#Draw" "#StartLoseHealth" "#Time=80.0"
+		CreateModule "#BuildingSecret" "#D2C3BuildC" "#Spline=D2C3BuildC" "#FuzzyRange=20" "#MinRand=0.4" "#MaxRand=0.5" "#DrawHealthBar"
+	}
+}
+
+state Chapter3_MainCDestructionStarted
+{
+	conditions
+	{
+		if module "D2C3BuildC FoundRand" == 1.0 goto Chapter3_MainDChaseStart
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+	}
+}
+state Chapter3_MainDChaseStart
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_MainDChase
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C3Midtro3"
+	}
+}
+state Chapter3_MainDChase
+{
+	conditions
+	{
+		;if module "D2C3RaceD Finish" >= 1.0 goto Chapter3_MainDDestruction
+		;;;if module "D2C3RaceD GetPercentage" == 1.0 goto Chapter3_MainDDestruction
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+		if module "Timer FailMission" == 1.0 goto Chapter3_MainDDestruction
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Timer" "#Timer" "#Time=8.7" "#NoRender"
+		SendToModule "#FrenzyHealth" "#StopLoseHealth" "#NoDraw"
+		;CreateModule "#SplineExplode" "#D2C3RaceD" "#Spline=D2C3RaceD" "#MilesPerHour=85" "#AddToRadar=#MediumGreenDot" "#Start" "#ModuleTag=#FrenzyHealth" "#Param=#StartLoseHealth"
+
+		CreateModule "#DriverDrone" "#D2C3RaceD" #AddToRadarAlways "#Spline=D2C3RaceD" "#maxalive=1" "#count=#Infinite" "#FollowSpline=D2C3RaceD" "#WaitEnd" "#spacing=1.0" "#goalrange=4.0" "#type=suv" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#BeatPlayerToSplineDestination" "#ConfineToPath" "#Invulnerable"
+
+		SendToModule "#General" "#SetPlayer=#D2C3StartC"
+	}
+}
+state Chapter3_MainDDestruction
+{
+	conditions
+	{
+		if module "D2C3BuildD Found" > 0.0 goto Chapter3_MainDDestructionStarted
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyAllModules
+
+		SendToModule "#FrenzyHealth" "#Draw" "#StartLoseHealth" "#Time=90.0"
+		CreateModule "#BuildingSecret" "#D2C3BuildD" "#Spline=D2C3BuildD" "#FuzzyRange=20" "#MinRand=0.5" "#MaxRand=0.6" "#DrawHealthBar"
+	}
+}
+state Chapter3_MainDDestructionStarted
+{
+	conditions
+	{
+		if module "D2C3BuildD FoundRand" == 1.0 goto Chapter3_MainEChaseStart
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+	}
+}
+state Chapter3_MainEChaseStart
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_MainEChase
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C3Midtro4"
+	}
+}
+state Chapter3_MainEChase
+{
+	conditions
+	{
+		if module "D2C3RaceE GetPercentage" == 1.0 goto Chapter3_MainEDestruction
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		DestroyAllModules 
+		SendToModule "#FrenzyHealth" "#StopLoseHealth" "#NoDraw"
+		CreateModule "#SplineExplode" "#D2C3RaceE" "#Spline=D2C3RaceE" "#MilesPerHour=85" "#AddToRadar=#MediumGreenDot" "#Start" "#ModuleTag=#FrenzyHealth" "#Param=#StartLoseHealth"
+		SendToModule "#General" "#SetPlayer=#D2C3StartD"
+	}
+}
+state Chapter3_MainEDestruction
+{
+	conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter3_MainEDestructionStarted
+		if module "D2C3BuildE Found" > 0.0 goto Chapter3_MainEDestructionStarted 
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyAllModules
+		SendToModule "#FrenzyHealth" "#Draw" "#StartLoseHealth" "#Time=90.0"
+		CreateModule "#BuildingSecret" "#D2C3BuildE" "#Spline=D2C3BuildE" "#FuzzyRange=20" "#MinRand=0.6" "#MaxRand=0.7" "#DrawHealthBar"
+		CreateModule "#AreaRange" "#AreaRange" "#Trigger=#D2C3TriggerE"
+	}
+}
+state Chapter3_MainEDestructionStarted
+{
+	conditions
+	{
+		if module "D2C3BuildE FoundRand" == 1.0 goto Chapter3_Complete
+		if module "FrenzyHealth FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#d2_ch3_obj3" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter3_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter3_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter3Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo1
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT2" "#Spline=COMCAM2" "#SetFocus=CAMFOCUS2"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+	}
+}
+state Chapter3_CompleteVideo1
+{
+	conditions
+	{
+			}
+	actions
+	{
+		SendToModule "#General" "#SetVehicle=#COMPPOINT2B" 
+
+		SetState Chapter3_CompleteVideo
+	}
+}
+state Chapter3_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D2C3Outro"
+	}
+}
+state Chapter3_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter4"
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT2" ; "#SetVehicle=#COMPPOINT2B" 
+		IncreasePlayerHealth max
+		setstate "PickGoto"
+	}
+}

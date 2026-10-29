@@ -1,0 +1,97 @@
+
+
+state PrepareSwap
+{
+	
+	actions
+	{
+		DestroyAllModules
+		SendToModule "#General" "#SetPlayer=#CSReset" 
+		;Idle 2.0
+		CreateModule "#KeyLocation" "#CreatureSwapArea" "#spline=D3C3_BONECRUSHER1" "#Radius=80" 
+		CreateModule "#AreaRange" "#SwapToBC" "#Trigger=#CSBoneCrusher" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBR" "#Trigger=#CSBrawl" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToSC" "#Trigger=#CSStarScream" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToM" "#Trigger=#CSMegatron" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#General" "#SetMessage=ACS" "#SetMessageTimer=1000" 
+		SetState CreatureSwapProcess
+	}
+}
+state CreatureSwapProcess
+{
+	conditions
+	{
+		if module "CreatureSwapArea InArea" == 0.0 goto LeftSwapArea
+		if module "SwapToBC InArea" == 1.0 goto SelectBC
+		if module "SwapToBR InArea" == 1.0 goto SelectBR
+		if module "SwapToSC InArea" == 1.0 goto SelectSC
+		if module "SwapToM InArea" == 1.0 goto SelectM
+		
+	}
+	actions
+	{
+		ResetTimer
+	}	
+	
+}
+state SelectBC
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Bonecrusher" "#SetPlayer=#CSReset" "#CountCSet=1"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectBR
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Brawl" "#SetPlayer=#CSReset"  "#CountCSet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectSC
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=StarScream" "#SetPlayer=#CSReset" "#CountCSet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+
+state SelectM
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Megatron" "#SetPlayer=#CSReset" "#CountCSet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state LeftSwapArea
+{
+	
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#SetMessageTimer=-1"
+		
+		SetState GlobalActionRing
+	}
+}

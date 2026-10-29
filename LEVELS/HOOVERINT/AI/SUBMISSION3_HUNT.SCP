@@ -1,0 +1,244 @@
+;hunt and destroy all the vehicles within the time limit
+
+;requires:
+;   Route spline 1		Route#a
+;   Route spline 2		Route#b
+;   Route spline 3		Route#c
+;   Route spline 4		Route#d
+
+;Changeable params:
+;	300		time in which to complete the mission
+;	Sector7Drone		vehicle type 1
+;	CommTruck			vehicle type 2
+;	Jeep				vehicle type 3
+;	Sector7Drone		vehicle type 4
+;						Jeep
+;						Sector7Drone
+;						CommTruck
+;						Shilka
+;						ShilkaTracer
+;						SUV
+
+state SubMission3_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission3_Death"
+		SetState "SubMission3_Init"
+	}
+}
+state SubMission3_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto LevelSpecialInit4
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission3"
+		CreateModule "#Timer" "#Timer" "#Time=120"
+	}
+}
+state SubMission3_InEarly
+{
+	conditions
+	{
+		
+		
+	}
+	actions
+	{
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+		
+		   
+		
+		SetState "SubMission3_Main"
+	}
+}
+state SubMission3_InReallyEarly
+{
+	conditions
+	{
+		if module "Timer1 FailMission" == 1.0 goto SubMission3_NoShow
+	}
+	actions
+	{
+		DestroyModule "#Timer"
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission3" "#FadeUp"
+		;SendToModule "#General" "#SetMessage=BBTranD1" "#SetMessageTimer=4"
+		CreateModule "#Timer" "#Timer1" "#Time=2" "#NoRender"
+	}
+}
+state SubMission3_NoShow
+{
+	conditions
+	{
+		if module "Timer2 FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		
+		
+		;SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission3" "#FadeUp"
+		SendToModule "#General" "#SetMessage=BBTranD1" "#SetMessageTimer=4"
+		CreateModule "#Timer" "#Timer2" "#Time=4" "#NoRender"
+	}
+}
+state SubMission3_Onslaught
+{
+	conditions
+	{
+		
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		CreateModule "#Creature" "#Drones" "#Type=DroneDefault" "#Spline=A3C1SS7Drone3" "#count=1000" "#maxalive=2" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=AdvDefault" 
+		CreateModule "#Creature" "#Drones2" "#Type=DroneDefault" "#Spline=Spawn4b" "#count=4000" "#maxalive=2" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones3" "#spline=Route3a" "#maxalive=1" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones4" "#spline=Route3b" "#maxalive=1" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones5" "#spline=Route3c" "#maxalive=1" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones6" "#spline=Route3d" "#maxalive=1" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#Script=AdvDefault"
+		   
+		
+		SetState "SubMission3_Main2"
+	}
+}
+state SubMission3_Main
+{
+	conditions
+	{
+		if module "GotoDroneA GetPercentageComplete" == 1.0 and
+			if module "GotoDroneB GetPercentageComplete" == 1.0 and
+				if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=Route3a" "#maxalive=1" "#count=1" "#FollowSpline=Route3a" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=Route3b" "#maxalive=1" "#count=1" "#FollowSpline=Route3b" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3d" "#maxalive=1" "#count=1" "#FollowSpline=Route3d" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+																																																						   
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission3_Main1
+{
+	conditions
+	{
+		;if module "GotoDroneA GetPercentageComplete" == 1.0 and
+		;	if module "GotoDroneB GetPercentageComplete" == 1.0 and
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 and
+						if module "GotoDroneE GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		;CreateModule "#DriverDrone" "#GotoDroneA" "#spline=Route1a" "#maxalive=1" "#count=1" "#FollowSpline=Route1a" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		;CreateModule "#DriverDrone" "#GotoDroneB" "#spline=Route1b" "#maxalive=1" "#count=1" "#FollowSpline=Route1b" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#Goto" "#GotoDroneA" "#SpawnSpline=Route1a" "#DirectSpline=Route1a" "#TransformBothWays=2.0" "#type=DroneDefault" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#Goto" "#GotoDroneB" "#SpawnSpline=Route1b" "#DirectSpline=Route1b" "#TransformBothWays=2.0" "#type=DroneDefault" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+		
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route1c" "#maxalive=1" "#count=1" "#FollowSpline=Route1c" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route1d" "#maxalive=1" "#count=1" "#FollowSpline=Route1d" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneE" "#spline=Route1e" "#maxalive=1" "#count=1" "#FollowSpline=Route1e" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=2" "#IconType=#Drone"
+																																																					   
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission3_Main2
+{
+	conditions
+	{
+		if module "GotoDroneA GetPercentageComplete" == 1.0 and
+			if module "GotoDroneB GetPercentageComplete" == 1.0 and
+				if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission2_1 PLAY ACTION"
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=Route3a" "#maxalive=1" "#count=1" "#FollowSpline=Route3a" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=Route3b" "#maxalive=1" "#count=1" "#FollowSpline=Route3b" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3d" "#maxalive=1" "#count=1" "#FollowSpline=Route3d" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+																																																						   
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+
+state SubMission3_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission3_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission3_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=3"
+		;SetState "SubMission3_Leave"
+	}
+}
+state SubMission3_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission3_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission3_Leave
+{
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission3" "#FadeUp"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#FadeUp"		
+		SetState "LevelSpecialInit6"
+	}
+}
+

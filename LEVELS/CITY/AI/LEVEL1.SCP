@@ -1,0 +1,12 @@
+include "Auto5Hub.scp"
+include "Auto5Chap1.scp"
+include "Auto5Chap2.scp"
+include "Auto5Chap3.scp"
+include "Auto5Chap4.scp"
+include "CreatureSwap.scp"
+include "RoofTopInit.scp"
+include "SubMission1_RACE.scp"
+include "SubMission2_SCAVENGER.scp"
+include "SubMission3_ATTACKMETEORITE.scp"
+include "SubMission4_SUMO.scp"
+

@@ -1,0 +1,41 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Actions
+	{
+		SetPhysicsState "static=true" "immunetomelee=true"
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false"
+		Transform Car UntilDone
+		SetPhysicsState "static=true" "immunetomelee=true"
+		SetState Alert
+	}
+}
+
+state Alert
+{
+	Conditions
+	{
+		if GotOpponent == 1.0 goto Attack
+	}
+}
+
+state Attack
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto Alert
+	}
+	Actions
+	{
+;		EngageOpponentBrawl "rapidshootrange=35.0" "firetimemin=3.0" "firetimemax=6.0"
+		EngageOpponentTC "rapidshootrange=35.0" "firetimemin=3.0" "firetimemax=6.0"
+	}
+}

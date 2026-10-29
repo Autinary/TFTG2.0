@@ -1,0 +1,1240 @@
+state Chapter2_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter2_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#LevelSpecialOff=1"
+		SetState "Chapter2_Goto"
+
+
+		SendToModule "#General" "#TrafficLv = 4"                       
+		SendToModule "#General" "#PatrolLv = 1"                        
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 3"            
+		SendToModule "#General" "#ResponseLv_Detection  = 0"    
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"      
+	}
+}
+state Chapter2_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter2Beacon" "#rangeoutside=75"
+        CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_BULLITS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=5.0" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch2_Goto2" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch2_Goto" "#AutoDestroy" 
+		Idle 3.0
+
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter2_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter2_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter2_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+	}
+}
+;;state Chapter2_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter2_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartVideo=#A3C2Intro1"
+;;	}
+;;}
+state Chapter2_Main
+{
+	;conditions
+	;{
+	;	if message "MissionMessage" == 1.0 goto Chapter2_Complete
+	;	if message "MissionMessage" == 2.0 goto Chapter2_FailMission 
+	;	if message "MissionMessage" == 3.0 goto Chapter2_FanAStart 
+	;	;if module "FanA GetPercentageComplete" == 1.0 goto Chapter2_FanAStart
+	;}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter3_DeathFailMission"
+		SendToModule "#General" "#ResetCounters"
+		
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter2Start" "#FadeUp" 
+		CreateModule "#DroneCounter" "#DroneCounter" "#IgnoreDroneKills" "#DronesToDefeat=6" "#IconType=#FanItem"  "#Protect
+		CreateModule "#SplineExplode" "#A3C2TunnelA" "#Spline=A3C2TunnelA" "#EnableSplineExplosions" "#Protect"
+		CreateModule "#SplineExplode" "#A3C2TunnelB" "#Spline=A3C2TunnelB" "#EnableSplineExplosions" "#Protect"
+		CreateModule "#SplineExplode" "#A3C2TunnelC" "#Spline=A3C2TunnelC" "#EnableSplineExplosions" "#Protect"
+		CreateModule "#SplineExplode" "#A3C2TunnelD" "#Spline=A3C2TunnelD" "#EnableSplineExplosions" "#Protect"
+		CreateModule "#SplineExplode" "#A3C2TunnelE" "#Spline=A3C2TunnelE" "#EnableSplineExplosions" "#Protect"
+		CreateModule "#SplineExplode" "#A3C2TunnelF" "#Spline=A3C2TunnelF" "#EnableSplineExplosions" "#Protect"
+	
+		;;CreateModule "#SpecialObj" "#FanA" "#Placement=A3C2A" "#Protect" "#AttachFanSpecial=fan1"
+		;CreateModule "#SpecialObj" "#FanB" "#Placement=A3C2B" "#Protect" "#AttachFanSpecial=fan2"
+		;CreateModule "#SpecialObj" "#FanC" "#Placement=A3C2C" "#Protect" "#AttachFanSpecial=fan3"
+		;CreateModule "#SpecialObj" "#FanD" "#Placement=A3C2D" "#Protect" "#AttachFanSpecial=fan4"
+		;CreateModule "#SpecialObj" "#FanE" "#Placement=A3C2E" "#Protect" "#AttachFanSpecial=fan5"
+		;CreateModule "#SpecialObj" "#FanF" "#Placement=A3C2F" "#Protect" "#AttachFanSpecial=fan6"
+
+		CreateModule "#SpecialObj" "#FanA" "#Spline=A3C2FanA" "#Radius=8.0" "#PhysObjGlow" "#Breakable" "#SetRadarType=#FanDot" "#NoWeaponDamage" "#Protect" "#AttachFanSpecial=fan1"
+		CreateModule "#SpecialObj" "#FanB" "#Spline=A3C2FanB" "#Radius=8.0" "#PhysObjGlow" "#Breakable" "#SetRadarType=#FanDot" "#NoWeaponDamage" "#Protect" "#AttachFanSpecial=fan2"
+		CreateModule "#SpecialObj" "#FanC" "#Spline=A3C2FanC" "#Radius=8.0" "#PhysObjGlow" "#Breakable" "#SetRadarType=#FanDot" "#NoWeaponDamage" "#Protect" "#AttachFanSpecial=fan3"
+		CreateModule "#SpecialObj" "#FanD" "#Spline=A3C2FanD" "#Radius=8.0" "#PhysObjGlow" "#Breakable" "#SetRadarType=#FanDot" "#NoWeaponDamage" "#Protect" "#AttachFanSpecial=fan4"
+		CreateModule "#SpecialObj" "#FanE" "#Spline=A3C2FanE" "#Radius=8.0" "#PhysObjGlow" "#Breakable" "#SetRadarType=#FanDot" "#NoWeaponDamage" "#Protect" "#AttachFanSpecial=fan5"
+		CreateModule "#SpecialObj" "#FanF" "#Spline=A3C2FanF" "#Radius=8.0" "#PhysObjGlow" "#Breakable" "#SetRadarType=#FanDot" "#NoWeaponDamage" "#Protect" "#AttachFanSpecial=fan6"
+		
+        CreateModule "#AAGun" "#AAGun" "#Protect"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_BULLITS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=5.0" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+
+		SendToModule "#General" "#TrafficLv = 0"                        ; lock traffic level (1-5) (0=OFF)
+		SendToModule "#General" "#PatrolLv = 0"                         ; patrol level (1=ON, 0=OFF)
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		SendToModule "#General" "#ClearPlayerChecks"
+
+
+		
+		CreateModule "#Speech" "#A3_ch2_obj5" "#speech=#A3_ch2_obj5" "#Protect"
+		CreateModule "#Speech" "#A3_ch2_obj3" "#speech=#A3_ch2_obj3" "#Protect"
+		CreateModule "#Speech" "#A3_ch2_obj4" "#speech=#A3_ch2_obj4" "#Protect"
+		CreateModule "#Speech" "#A3_ch2_obj1" "#speech=#A3_ch2_obj1" "#Protect"
+		CreateModule "#Speech" "#A3_ch2_obj2" "#speech=#A3_ch2_obj2" "#Protect"
+		CreateModule "#AreaRange" "#A3C2FanA2" "#Trigger=#A3C2FanA2" "#Protect"
+
+		CreateModule "#Timer" "#Timer" "Time=60.0" "#Protect"
+		
+		SetState "Chapter2_TunnelHub2"
+	}
+}
+state Chapter2_FanAStart
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraA
+		if module "A3C2FanA InArea" == 1.0 goto Chapter2_PlayCameraA
+		if module "A3C2TunnelA GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathA ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj1" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"		
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelA" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=9.0"		
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointA" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanA" "#Trigger=#A3C2FanA" "#SetRadarType=#critical"
+
+	}
+}
+state Chapter2_FanAStart2
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraA
+		if module "A3C2FanA InArea" == 1.0 goto Chapter2_PlayCameraA
+		if module "A3C2TunnelA GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathA ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj4" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelADust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"		
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelA" "#BitSpline=A3C2TunnelAExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelA" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=9.0"		
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointA" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanA" "#Trigger=#A3C2FanA" "#SetRadarType=#critical"
+
+	}
+}
+state Chapter2_PlayCameraA
+{
+	
+	Actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		SendToModule "#Timer" "#AddTime=90.0"
+		SendToModule "#A3C2TunnelA" "#EndExplosion"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A3C2CameraA" "#SetFocus=A3C2FocusA" "#CreatureMove=A3C2CreatureA" "#SetTime=3.5"
+		SetState Chapter2_WaitForCam
+	}
+}
+
+state Chapter2_FanBStart
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraB
+		if module "A3C2FanB InArea" == 1.0 goto Chapter2_PlayCameraB
+		if module "A3C2TunnelB GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathB ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj1" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"				
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"		
+		SendToModule "#A3C2TunnelB" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"		
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointB" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanB" "#Trigger=#A3C2FanB" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_FanBStart2
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraB
+		if module "A3C2FanB InArea" == 1.0 goto Chapter2_PlayCameraB
+		if module "A3C2TunnelB GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathB ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SendToModule "#DroneCounter" "#Increment=1"
+		DestroyModule "#A3C2FanA2"
+		SendToModule "#A3_ch2_obj4" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"		
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"				
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelB" "#BitSpline=A3C2TunnelBExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"		
+		SendToModule "#A3C2TunnelB" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"		
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointB" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanB" "#Trigger=#A3C2FanB" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_PlayCameraB
+{
+	
+	Actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		SendToModule "#Timer" "#AddTime=90.0"
+		SendToModule "#A3C2TunnelB" "#EndExplosion"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A3C2CameraB" "#SetFocus=A3C2FocusB" "#CreatureMove=A3C2CreatureB" "#SetTime=3.5"
+		SetState Chapter2_WaitForCam
+	}
+}
+
+state Chapter2_FanCStart
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraC
+		if module "A3C2FanC InArea" == 1.0 goto Chapter2_PlayCameraC
+		if module "A3C2TunnelC GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathC ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj1" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendToModule "#A3C2TunnelC" "#MilesPerHour=80" "#AddToRadar=#FlameDot" "#Start=5.0"	
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelC" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointC" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanC" "#Trigger=#A3C2FanC" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_FanCStart2
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraC
+		if module "A3C2FanC InArea" == 1.0 goto Chapter2_PlayCameraC
+		if module "A3C2TunnelC GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathC ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		DestroyModule "#A3C2FanA2"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj4" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendToModule "#A3C2TunnelC" "#MilesPerHour=80" "#AddToRadar=#FlameDot" "#Start=5.0"	
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelC" "#BitSpline=A3C2TunnelCExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelC" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointC" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanC" "#Trigger=#A3C2FanC" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_PlayCameraC
+{
+	
+	Actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		SendToModule "#Timer" "#AddTime=90.0"
+		SendToModule "#A3C2TunnelC" "#EndExplosion"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A3C2CameraC" "#SetFocus=A3C2FocusC" "#CreatureMove=A3C2CreatureC" "#SetTime=3.5"
+		SetState Chapter2_WaitForCam
+	}
+}
+
+state Chapter2_FanDStart
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraD
+		if module "A3C2FanD InArea" == 1.0 goto Chapter2_PlayCameraD
+		if module "A3C2TunnelD GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathD ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj1" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendToModule "#A3C2TunnelD" "#MilesPerHour=80" "#AddToRadar=#FlameDot" "#Start=5.0"		
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelD" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointD" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanD" "#Trigger=#A3C2FanD" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_FanDStart2
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraD
+		if module "A3C2FanD InArea" == 1.0 goto Chapter2_PlayCameraD
+		if module "A3C2TunnelD GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathD ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		DestroyModule "#A3C2FanA2"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj4" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendToModule "#A3C2TunnelD" "#MilesPerHour=80" "#AddToRadar=#FlameDot" "#Start=5.0"		
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelD" "#BitSpline=A3C2TunnelDExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelD" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointD" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanD" "#Trigger=#A3C2FanD" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_PlayCameraD
+{
+	
+	Actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		SendToModule "#Timer" "#AddTime=90.0"
+		SendToModule "#A3C2TunnelD" "#EndExplosion"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A3C2CameraD" "#SetFocus=A3C2FocusD" "#CreatureMove=A3C2CreatureD" "#SetTime=3.5"
+		SetState Chapter2_WaitForCam
+	}
+}
+
+state Chapter2_FanEStart
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraE
+		if module "A3C2FanE InArea" == 1.0 goto Chapter2_PlayCameraE
+		if module "A3C2TunnelE GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathE ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj1" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendToModule "#A3C2TunnelE" "#MilesPerHour=80" "#AddToRadar=#FlameDot" "#Start=5.0"		
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelE" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointE" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanE" "#Trigger=#A3C2FanE" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_FanEStart2
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraE
+		if module "A3C2FanE InArea" == 1.0 goto Chapter2_PlayCameraE
+		if module "A3C2TunnelE GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathE ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SendToModule "#DroneCounter" "#Increment=1"
+		DestroyModule "#A3C2FanA2"
+		SendToModule "#A3_ch2_obj4" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendToModule "#A3C2TunnelE" "#MilesPerHour=80" "#AddToRadar=#FlameDot" "#Start=5.0"		
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelE" "#BitSpline=A3C2TunnelEExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelE" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointE" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanE" "#Trigger=#A3C2FanE" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_PlayCameraE
+{
+	
+	Actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		SendToModule "#Timer" "#AddTime=90.0"
+		SendToModule "#A3C2TunnelE" "#EndExplosion"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A3C2CameraE" "#SetFocus=A3C2FocusE" "#CreatureMove=A3C2CreatureE" "#SetTime=3.5"	
+		SetState Chapter2_WaitForCam
+	}
+}
+
+state Chapter2_FanFStart
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraF
+		if module "A3C2FanF InArea" == 1.0 goto Chapter2_PlayCameraF
+		if module "A3C2TunnelF GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathF ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj1" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendToModule "#A3C2TunnelF" "#MilesPerHour=80" "#AddToRadar=#FlameDot" "#Start=5.0"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelF" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointF" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanF" "#Trigger=#A3C2FanF" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_FanFStart2
+{
+	conditions
+	{
+		;if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter2_PlayCameraF
+		if module "A3C2FanF InArea" == 1.0 goto Chapter2_PlayCameraF
+		if module "A3C2TunnelF GetPlayerRange" < 250.0 goto Chapter2_TunnelDeathF ; Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		DestroyModule "#A3C2FanA2"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#A3_ch2_obj4" "#StartOneShot"
+		DestroyModule "#Timer1"
+		SendToModule "#A3C2TunnelF" "#MilesPerHour=80" "#AddToRadar=#FlameDot" "#Start=5.0"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=330"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=300"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=270"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=350"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=320"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=280"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=250"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=230"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=210"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#DustSmall" "#SetBitRadius=245"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#DustMedium" "#SetBitRadius=225"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#DustLarge" "#SetBitRadius=205"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=190"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustSmall" "#SetBitRadius=125"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustMedium" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust1" "#SetSplineType=#DustLarge" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=170"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustSmall" "#SetBitRadius=110"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustMedium" "#SetBitRadius=80"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFDust2" "#SetSplineType=#DustLarge" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=150"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=110"		
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=108"		
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=100"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=98"		
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=90"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=88"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp1" "#SetSplineType=#ExplosionSmall" "#SetBitRadius=70"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp2" "#SetSplineType=#ExplosionMedium" "#SetBitRadius=50"
+		SendtoModule "#A3C2TunnelF" "#BitSpline=A3C2TunnelFExp3" "#SetSplineType=#ExplosionLarge" "#SetBitRadius=30"
+		SendToModule "#A3C2TunnelF" "#MilesPerHour=60" "#AddToRadar=#FlameDot" "#Start=7.0"
+		;CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A3C2RacePointF" "#Radius=10.0" "#Index=R"
+		CreateModule "#AreaRange" "#A3C2FanF" "#Trigger=#A3C2FanF" "#SetRadarType=#critical"
+	}
+}
+state Chapter2_PlayCameraF
+{
+	
+	Actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		SendToModule "#Timer" "#AddTime=90.0"
+		SendToModule "#A3C2TunnelF" "#EndExplosion"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A3C2CameraF" "#SetFocus=A3C2FocusF" "#CreatureMove=A3C2CreatureF" "#SetTime=3.5"
+		SetState Chapter2_WaitForCam
+	}
+}
+state Chapter2_WaitForCam
+{
+	conditions
+	{
+		if module "A3C2TunnelA GetPercentageComplete" == 1.0 and
+			if module "A3C2TunnelB GetPercentageComplete" == 1.0 and
+				if module "A3C2TunnelC GetPercentageComplete" == 1.0 and
+					if module "A3C2TunnelD GetPercentageComplete" == 1.0 and
+						if module "A3C2TunnelE GetPercentageComplete" == 1.0 and
+							if module "A3C2TunnelF GetPercentageComplete" == 1.0 goto Chapter2_Outro
+		if module "SplineCamera GetPercentageComplete" == 1.0 goto Chapter2_TunnelHubIntro
+
+	}
+}
+
+
+state Chapter2_TunnelHubIntro
+{
+	conditions
+	{
+		if module "DroneCounter DronesDefeated" == 1.0 goto Chapter2_TunnelHubSpeech1
+		if module "DroneCounter DronesDefeated" == 2.0 goto Chapter2_TunnelHubSpeech2
+		if module "DroneCounter DronesDefeated" == 3.0 goto Chapter2_TunnelHubSpeech3
+		if module "DroneCounter DronesDefeated" == 4.0 goto Chapter2_TunnelHubSpeech4
+		if module "DroneCounter DronesDefeated" == 5.0 goto Chapter2_TunnelHubSpeech5
+		if AlwaysTrue == 1.0 goto Chapter2_TunnelHub
+	}
+}
+state Chapter2_TunnelDeathA
+{
+	actions
+	{
+		SendToModule "A3C2TunnelA" "#TunnelDeath"
+		SetState "Chapter2_FailMission"
+	}
+}
+state Chapter2_TunnelDeathB
+{
+	actions
+	{
+		SendToModule "A3C2TunnelB" "#TunnelDeath"
+		SetState "Chapter2_FailMission"
+	}
+}
+state Chapter2_TunnelDeathC
+{
+	actions
+	{
+		SendToModule "A3C2TunnelC" "#TunnelDeath"
+		SetState "Chapter2_FailMission"
+	}
+}
+state Chapter2_TunnelDeathD
+{
+	actions
+	{
+		SendToModule "A3C2TunnelD" "#TunnelDeath"
+		SetState "Chapter2_FailMission"
+	}
+}
+state Chapter2_TunnelDeathE
+{
+	actions
+	{
+		SendToModule "A3C2TunnelE" "#TunnelDeath"
+		SetState "Chapter2_FailMission"
+	}
+}
+state Chapter2_TunnelDeathF
+{
+	actions
+	{
+		SendToModule "A3C2TunnelF" "#TunnelDeath"
+		SetState "Chapter2_FailMission"
+	}
+}
+state Chapter2_TunnelHubSpeech0
+{
+	actions
+	{
+		SendToModule "#A3_ch2_obj3" "#StartOneShot"
+		DestroyModule "#A3C2FanA2"
+		;CreateModule "#Speech" "#A3_ch2_obj3" "#speech=#A3_ch2_obj3" "#AutoDestroy" "#Start"
+		SetState "Chapter2_TunnelHub2"
+	}
+}
+state Chapter2_TunnelHubSpeech1
+{
+	actions
+	{
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch2_obj6" "#AutoDestroy" "#Start"
+		;CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch2_obj2" "#AutoDestroy" "#Protect"
+		;CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=20" "#times=1" "#Protect"
+		SetState "Chapter2_TunnelHub"
+	}
+}
+state Chapter2_TunnelHubSpeech2
+{
+	actions
+	{
+		CreateModule "#Speech" "#A3_ch2_obj7" "#speech=#A3_ch2_obj7" "#AutoDestroy" "#Start"
+		SetState "Chapter2_TunnelHub"
+	}
+}
+state Chapter2_TunnelHubSpeech3
+{
+	actions
+	{
+		CreateModule "#Speech" "#A3_ch2_obj8" "#speech=#A3_ch2_obj8" "#AutoDestroy" "#Start"
+		SetState "Chapter2_TunnelHub"
+	}
+}
+state Chapter2_TunnelHubSpeech4
+{
+	actions
+	{
+		CreateModule "#Speech" "#A3_ch2_obj9" "#speech=#A3_ch2_obj9" "#AutoDestroy" "#Start"
+		SetState "Chapter2_TunnelHub"
+	}
+}
+state Chapter2_TunnelHubSpeech5
+{
+	actions
+	{
+		CreateModule "#Speech" "#A3_ch2_obj0" "#speech=#A3_ch2_obj0" "#AutoDestroy" "#Start"
+		SetState "Chapter2_TunnelHub"
+	}
+}
+state Chapter2_TunnelHubSpeech6
+{
+	actions
+	{
+		SendToModule "#A3_ch2_obj2" "#StartOneShot"
+		SetState "Chapter2_TunnelHub"
+	}
+}
+state Chapter2_TunnelHubSpeech62
+{
+	actions
+	{
+		SendToModule "#A3_ch2_obj2" "#StartOneShot"
+		SetState "Chapter2_TunnelHub2"
+	}
+}
+state Chapter2_TunnelHub
+{
+	conditions
+	{
+		if module "A3C2TunnelA GetPercentageComplete" == 1.0 and
+			if module "A3C2TunnelB GetPercentageComplete" == 1.0 and
+				if module "A3C2TunnelC GetPercentageComplete" == 1.0 and
+					if module "A3C2TunnelD GetPercentageComplete" == 1.0 and
+						if module "A3C2TunnelE GetPercentageComplete" == 1.0 and
+							if module "A3C2TunnelF GetPercentageComplete" == 1.0 goto Chapter2_Outro
+		if module "A3C2TunnelA GetPercentageComplete" == 0.0 and
+			if module "FanA GetPercentageComplete" == 1.0 goto Chapter2_FanAStart	
+		if module "A3C2TunnelB GetPercentageComplete" == 0.0 and
+			if module "FanB GetPercentageComplete" == 1.0 goto Chapter2_FanBStart
+		if module "A3C2TunnelC GetPercentageComplete" == 0.0 and
+			if module "FanC GetPercentageComplete" == 1.0 goto Chapter2_FanCStart
+		if module "A3C2TunnelD GetPercentageComplete" == 0.0 and
+			if module "FanD GetPercentageComplete" == 1.0 goto Chapter2_FanDStart
+		if module "A3C2TunnelE GetPercentageComplete" == 0.0 and
+			if module "FanE GetPercentageComplete" == 1.0 goto Chapter2_FanEStart
+		if module "A3C2TunnelF GetPercentageComplete" == 0.0 and
+			if module "FanF GetPercentageComplete" == 1.0 goto Chapter2_FanFStart
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+		if module "A3C2FanA2 InArea" == 1.0 goto Chapter2_TunnelHubSpeech0
+		if module "Timer1 FailMission" == 1.0 goto Chapter2_TunnelHubSpeech6
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Timer" "#Timer1" "#Time=60" "#NoRender"
+		SendToModule "#A3C2TunnelA" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelB" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelC" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelD" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelE" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelF" "#DrawTunnelIcon"
+	}
+}
+state Chapter2_TunnelHub2
+{
+	conditions
+	{
+		if module "A3C2TunnelA GetPercentageComplete" == 1.0 and
+			if module "A3C2TunnelB GetPercentageComplete" == 1.0 and
+				if module "A3C2TunnelC GetPercentageComplete" == 1.0 and
+					if module "A3C2TunnelD GetPercentageComplete" == 1.0 and
+						if module "A3C2TunnelE GetPercentageComplete" == 1.0 and
+							if module "A3C2TunnelF GetPercentageComplete" == 1.0 goto Chapter2_Outro
+		if module "A3C2TunnelA GetPercentageComplete" == 0.0 and
+			if module "FanA GetPercentageComplete" == 1.0 goto Chapter2_FanAStart2	
+		if module "A3C2TunnelB GetPercentageComplete" == 0.0 and
+			if module "FanB GetPercentageComplete" == 1.0 goto Chapter2_FanBStart2
+		if module "A3C2TunnelC GetPercentageComplete" == 0.0 and
+			if module "FanC GetPercentageComplete" == 1.0 goto Chapter2_FanCStart2
+		if module "A3C2TunnelD GetPercentageComplete" == 0.0 and
+			if module "FanD GetPercentageComplete" == 1.0 goto Chapter2_FanDStart2
+		if module "A3C2TunnelE GetPercentageComplete" == 0.0 and
+			if module "FanE GetPercentageComplete" == 1.0 goto Chapter2_FanEStart2
+		if module "A3C2TunnelF GetPercentageComplete" == 0.0 and
+			if module "FanF GetPercentageComplete" == 1.0 goto Chapter2_FanFStart2
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+		if module "A3C2FanA2 InArea" == 1.0 goto Chapter2_TunnelHubSpeech0
+		if module "Timer1 FailMission" == 1.0 goto Chapter2_TunnelHubSpeech62
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Timer" "#Timer1" "#Time=60" "#NoRender"
+		SendToModule "#A3_ch2_obj5" "#StartOneShot"
+		SendToModule "#A3C2TunnelA" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelB" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelC" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelD" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelE" "#DrawTunnelIcon"
+		SendToModule "#A3C2TunnelF" "#DrawTunnelIcon"
+	}
+}
+state Chapter2_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter2_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission"  "#FailMission"
+	}
+}
+
+state Chapter2_Restart
+{
+	conditions
+	{
+		if timer > 0.2 goto Chapter2_Restart3
+		if module "General ChapterProgress" >= 3.0 goto GlobalActionRing
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing
+		
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter2Restart" "#FadeUp"
+		;SetState "GlobalActionRing"
+	
+		ResetTimer
+	}
+}
+
+state Chapter2_Restart3
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+			
+
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+
+
+		SetState "GlobalActionRing"
+	}
+}
+
+state Chapter2_Complete
+{
+	actions
+	{
+		SetState "Chapter2_CheckForAchievement"
+	}
+}
+state Chapter2_CheckForAchievement
+{
+	conditions
+	{
+		if module "General CheckNoBoost" == 1.0 goto Chapter2_DidAchievement
+		if AlwaysTrue == 1.0 goto Chapter2_Complete2
+	}
+}
+state Chapter2_DidAchievement
+{
+	actions
+	{
+		SendToModule "#General" "#TurboAchievementDone"
+		SetState "Chapter2_Complete2"
+	}
+}
+state Chapter2_Complete2
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#LevelSpecialOff=2"
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT2" "#Spline=COMCAM2" "#SetFocus=CAMFOCUS2"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch2_cmplt" "#PlayDelay=1.2" "#AutoDestroy" "#Start"
+		;SetState "Chapter2_CompleteVideo"
+	}
+}
+state Chapter2_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#StartOutroVideo=#A3C2Outro1"
+	}
+}
+state Chapter2_Outro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_PreComplete
+	}
+	actions
+	{
+	
+		SendToModule "#General" "#StartVideo=#A3C2Outro1"
+	}
+}
+state Chapter2_PreComplete
+{
+	actions
+	{
+		Idle 3.0 
+		SetState Chapter2_Complete
+	}
+	
+}
+state Chapter2_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter2_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter2_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter3"
+		IncreasePlayerHealth max
+		setstate "PickGoto"
+	}
+}

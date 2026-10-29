@@ -1,0 +1,503 @@
+state Chapter2_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D5_ch2_Goto"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter2_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D5_ch2_Goto" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D5_ch2_Goto2" "#AutoDestroy"
+		Idle 3.0
+		
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter2Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter2_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter2_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D5C2Intro1"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+	}
+}
+state Chapter2_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#PlayerType=Scorponok"
+		SendToModule "#General" "#LoadCreature=EnergonDrone"
+	}
+}
+;;state Chapter2_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter2_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D5C2Intro1"
+;;	}
+;;}
+state Chapter2_Main
+{
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter2_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D5_ch2_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chapter2Start" "#FadeUp"
+		CreateModule "#Creature" "#Creature" "#Count=0" "#MaxAlive=19" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadar" "#Script=EnergonDrone" ; "#SetEnergyMax=350"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D5C2EnergonStart" "#Wobble=2.0" "#Creature=#Creature" "#SpawnTime=0.0" "#Radar" "#NoDraw"
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone" "#DronesToDefeat=-1"
+		CreateModule "#Timer" "#Timer" "#Time=3.0" "#NoRender"
+		
+		SendToModule "#General" "#SetMaxOpponents=19" "#SetMaxApproachers=19" "#SetAttackRingSize=20"
+		SendToModule "#General" "#ForceHealthSpawnMin=0.8" "#ForceHealthSpawnMed=0.45" "#ForceHealthSpawnMax=0.1"
+		
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D5C2KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" 
+		
+		SetState Chapter2_SpawnPos1
+	}
+}
+state Chapter2_SpawnPos1
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj StopSpawn" == 1.0 goto Chapter2_Pos1toPos2
+	}
+	actions
+	{
+		;;SPAWN CREATURES
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=19" "#StartSpawn=7" "#SpawnSpline=D5C2SPAWNA" "#ForcePlayerAsOpp"
+	}
+}
+
+state Chapter2_Pos1toPos2
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj" == 1.0 goto Chapter2_SpawnPos2
+	}
+	actions
+	{
+		;;Move Energon Cube
+		SendToModule "#SplineObj" "#Spline=D5C2Pos1ToPos2" "#Time=0.3" "#Start" "#StopSpawn"
+	}
+}
+
+state Chapter2_SpawnPos2
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj StopSpawn" == 1.0 goto Chapter2_Pos2toPos3
+	}
+	actions
+	{
+		;;SPAWN CREATURES
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=19" "#StartSpawn=8" "#SpawnSpline=D5C2SPAWNB" "#ForcePlayerAsOpp"
+	}
+}
+
+state Chapter2_Pos2toPos3
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj" == 1.0 goto Chapter2_SpawnPos3
+	}
+	actions
+	{
+		;;Move Energon Cube
+		SendToModule "#SplineObj" "#Spline=D5C2Pos2ToPos3" "#Time=0.7" "#Start" "#StopSpawn" 
+	}
+}
+
+state Chapter2_SpawnPos3
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj StopSpawn" == 1.0 goto Chapter2_Pos3toPos4
+	}
+	actions
+	{
+		;;SPAWN CREATURES
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=19" "#SpawnTime=0.1" "#StartSpawn=10" "#SpawnSpline=D5C2SPAWNC" "#ForcePlayerAsOpp"
+	}
+}
+
+state Chapter2_Pos3toPos4
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj" == 1.0 goto Chapter2_SpawnPos4
+	}
+	actions
+	{
+		;;Move Energon Cube
+		SendToModule "#SplineObj" "#Spline=D5C2Pos3ToPos4" "#Time=1.0" "#Start" "#StopSpawn"
+	}
+}
+
+state Chapter2_SpawnPos4
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj StopSpawn" == 1.0 goto Chapter2_Pos4toPos5
+	}
+	actions
+	{
+		;;SPAWN CREATURES
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=19" "#StartSpawn=6"  "#SpawnSpline=D5C2SPAWND" "#ForcePlayerAsOpp"
+	}
+}
+
+state Chapter2_Pos4toPos5
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj" == 1.0 goto Chapter2_SpawnPos5
+	}
+	actions
+	{
+		;;Move Energon Cube
+		SendToModule "#SplineObj" "#Spline=D5C2Pos4ToPos1" "#Time=1.5" "#Start" "#StopSpawn" "#AddTime=1.0"
+	}
+}
+state Chapter2_SpawnPos5
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj StopSpawn" == 1.0 goto Chapter2_Pos5toPos6
+	}
+	actions
+	{
+		;;SPAWN CREATURES
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=19" "#SpawnTime=0.2"  "#StartSpawn=4" "#SpawnSpline=D5C2SPAWNA" "#ForcePlayerAsOpp"
+	}
+}
+
+state Chapter2_Pos5toPos6
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj" == 1.0 goto Chapter2_SpawnPos6
+	}
+	actions
+	{
+		;;Move Energon Cube
+		SendToModule "#SplineObj" "#Spline=D5C2Pos1ToPos2" "#Time=2.0" "#Start" "#StopSpawn"
+	}
+}
+
+state Chapter2_SpawnPos6
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj StopSpawn" == 1.0 goto Chapter2_Pos6toPos7
+	}
+	actions
+	{
+		;;SPAWN CREATURES
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=19" "#StartSpawn=4" "#SpawnSpline=D5C2SPAWNB" "#ForcePlayerAsOpp"
+	}
+}
+
+state Chapter2_Pos6toPos7
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj" == 1.0 goto Chapter2_SpawnPos7
+	}
+	actions
+	{
+		;;Move Energon Cube
+		SendToModule "#SplineObj" "#Spline=D5C2Pos2ToPos3" "#Time=3.0" "#Start" "#StopSpawn" 
+	}
+}
+
+state Chapter2_SpawnPos7
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj StopSpawn" == 1.0 goto Chapter2_Pos7toPos8
+	}
+	actions
+	{
+		;;SPAWN CREATURES
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=19" "#StartSpawn=4" "#SpawnSpline=D5C2SPAWNC" "#ForcePlayerAsOpp"
+	}
+}
+
+state Chapter2_Pos7toPos8
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj" == 1.0 goto Chapter2_SpawnPos8
+	}
+	actions
+	{
+		;;Move Energon Cube
+		SendToModule "#SplineObj" "#Spline=D5C2Pos3ToPos4" "#Time=3.5" "#Start" "#StopSpawn"
+	}
+}
+
+state Chapter2_SpawnPos8
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj StopSpawn" == 1.0 goto Chapter2_Pos8toPos5
+	}
+	actions
+	{
+		;;SPAWN CREATURES
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=19" "#StartSpawn=4"  "#SpawnSpline=D5C2SPAWND" "#ForcePlayerAsOpp"
+	}
+}
+
+state Chapter2_Pos8toPos5
+{
+	conditions
+	{
+		if module "Timer" <= 0.0 and
+		if module "Creature GetCountAlive" == 0.0 goto Chapter2_Complete
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "SplineObj" == 1.0 goto Chapter2_SpawnPos5
+	}
+	actions
+	{
+		;;Move Energon Cube
+		SendToModule "#SplineObj" "#Spline=D5C2Pos4ToPos1" "#Time=4.0" "#Start" "#StopSpawn" "#AddTime=1.0"
+	}
+}
+
+state Chapter2_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter2_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter2_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#UnloadCreature=EnergonDrone"
+		SendToModule "#General" "#PlayerType=Barricade,Scorponok,Blackout,Megatron,Barricade"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter2Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo
+	}
+	actions
+	{
+
+		SendToModule "#SplineObj" "#StopSpawn"
+		
+		SendToModule "#General" "#EndOfMission"  "#SetPosition=COMPPOINT2" "#Spline=COMCAM2" "#SetFocus=CAMFOCUS2"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+		
+	}
+}
+state Chapter2_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D5C2Outro1"
+	}
+}
+state Chapter2_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter2_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#UnloadCreature=EnergonDrone"
+		SendToModule "#General" "#PlayerType=Barricade,Scorponok,Blackout,Megatron,Barricade" "#SetPlayer=#SubMission4" 
+
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter2_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter3"
+		SendToModule #General #ResetLevel
+		IncreasePlayerHealth max
+		setstate "PickGoto"
+	}
+}

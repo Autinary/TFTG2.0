@@ -1,0 +1,65 @@
+
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRange			1.0
+CONST MeleeRangeMin				10.0
+CONST MeleeRangeMax				12.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Wait
+		if CarForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		  SetPhysicsState "static=false" 
+		
+		; SetState Alert
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Wait
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+
+
+
+
+state Wait
+{
+
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "static=false" "immunetoshots=false"
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		Idle
+	}
+}
+

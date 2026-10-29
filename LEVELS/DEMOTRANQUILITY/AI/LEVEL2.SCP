@@ -1,0 +1,143 @@
+state base
+{
+	actions {
+		DrawConditionsFromThisScript
+		CreateModule #General #General #ProtectSystem
+		SendToModule #General #AllowPlayerMovement
+		SetState Main
+	}
+}
+
+state Main
+{
+	actions
+	{
+		DestroyAllModules #IncludeProtected
+		SendToModule #General #FadeUp #ResetAll #SetPlayer=#StartMission
+		SetDeathPoint Death
+
+		SetState ChooseDrone
+	}
+}
+
+state ChooseDrone
+{
+	conditions {
+		if module "General GetFinishedOutro" == 1.0 goto SpawnForklift
+		if module "General GetFinishedOutro" == 1.0 goto SpawnCar
+		if module "General GetFinishedOutro" == 1.0 goto SpawnPickupTruck
+		if module "General GetFinishedOutro" == 1.0 goto SpawnTowTruck
+		if module "General GetFinishedOutro" == 1.0 goto SpawnArmouredCar
+		if module "General GetFinishedOutro" == 1.0 goto SpawnMigJet
+		if module "General GetFinishedOutro" == 1.0 goto SpawnCementTruck
+	}
+}
+
+state SpawnForklift
+{
+	conditions {
+		if module "General GetFinishedOutro" == 1.0 goto UnloadCreatures
+	}
+	actions {
+    	SendToModule #General #LoadCreature=DroneForkLift
+;;SendToModule "#General" "#PlayerType=DronePickupTruck"
+		CreateModule #Creature #Creature #Type=DroneForkLift #Spline=A1C1Spawn #count=10000 #maxalive=1 #addtoradar #SpawnInLosInit #SpawnAsCreature
+	}
+}
+
+state SpawnCar
+{
+	conditions {
+		if module "General GetFinishedOutro" == 1.0 goto UnloadCreatures
+	}
+	actions {
+    	SendToModule #General #LoadCreature=DroneDefault
+		CreateModule #Creature #Creature #Type=DroneDefault #Spline=A1C1Spawn #count=10000 #maxalive=1 #addtoradar #SpawnInLosInit #SpawnAsCreature
+	}
+}
+
+state SpawnPickupTruck
+{
+	conditions {
+		if module "General GetFinishedOutro" == 1.0 goto UnloadCreatures
+	}
+	actions {
+    	SendToModule #General #LoadCreature=DronePickupTruck
+		CreateModule #Creature #Creature #Type=DronePickupTruck #Spline=A1C1Spawn #count=10000 #maxalive=1 #addtoradar #SpawnInLosInit #SpawnAsCreature
+	}
+}
+
+state SpawnTowTruck
+{
+	conditions {
+		if module "General GetFinishedOutro" == 1.0 goto UnloadCreatures
+	}
+	actions {
+    	SendToModule #General #LoadCreature=DroneTowTruck
+		CreateModule #Creature #Creature #Type=DroneTowTruck #Spline=A1C1Spawn #count=10000 #maxalive=1 #addtoradar #SpawnInLosInit #SpawnAsCreature
+	}
+}
+
+state SpawnArmouredCar
+{
+	conditions {
+		if module "General GetFinishedOutro" == 1.0 goto UnloadCreatures
+	}
+	actions {
+    	SendToModule #General #LoadCreature=DroneArmouredCar
+		CreateModule #Creature #Creature #Type=DroneArmouredCar #Spline=A1C1Spawn #count=10000 #maxalive=1 #addtoradar #SpawnInLosInit #SpawnAsCreature
+	}
+}
+
+
+state SpawnMigJet
+{
+	conditions {
+		if module "General GetFinishedOutro" == 1.0 goto UnloadCreatures
+	}
+	actions {
+    	SendToModule #General #LoadCreature=DroneMig
+		CreateModule "#Creature" "#Creature" "#Type=DroneMig"   "#Spline=MigTest" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=TestLand"
+	}
+}
+
+state SpawnCementTruck
+{
+	conditions {
+		if module "General GetFinishedOutro" == 1.0 goto UnloadCreatures
+	}
+	actions {
+    	SendToModule #General #LoadCreature=DroneCement
+		CreateModule #Creature #Creature #Type=DroneCement #Spline=A1C1Spawn #count=10000 #maxalive=1 #addtoradar #SpawnInLosInit #SpawnAsCreature
+	}
+}
+
+state UnloadCreatures
+{
+	actions {
+		DestroyModule #Creature
+	
+		SendToModule #General #UnloadCreature=DroneForklift
+		SendToModule #General #UnloadCreature=DroneDefault
+		SendToModule #General #UnloadCreature=DronePickupTruck
+		SendToModule #General #UnloadCreature=DroneTowTruck
+		SendToModule #General #UnloadCreature=DroneArmouredCar
+		SendToModule #General #UnloadCreature=DroneMigJet
+		SendToModule #General #UnloadCreature=DroneCementTruck
+				
+		SetState ChooseDrone
+	}
+}
+
+state Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Main
+	}
+	actions
+	{
+		DestroyAllModules #IncludeProtected
+		SendToModule #General #DeathFailMission
+	}
+}

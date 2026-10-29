@@ -1,0 +1,26 @@
+state Base
+{
+	Actions
+	{
+		SetState Empty
+	}
+}
+
+state EmptyDeath
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll"
+		SetState "Empty"
+	}
+}
+state Empty
+{
+	Actions
+	{
+		CreateModule "#General" "#General" "#Protect"
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#StartMission"
+		SetDeathPoint "EmptyDeath"
+	}
+}

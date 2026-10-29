@@ -1,0 +1,182 @@
+state base
+{
+	conditions
+	{
+		if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+	}
+}
+state EmptyDeath
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Empty"
+	}
+}
+state Empty
+{
+	Actions
+	{
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#StartMission"
+		SetDeathPoint "EmptyDeath"
+	}
+}
+state StartLevelIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto PickGoto ;LevelIntro
+	}
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#ActionRing"  "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter1" "#placement=#Chapter1Beacon" "#Title=Auto6Chap1" "#Ring=ActionRing" 
+		;SendToModule "#ActionRing" "#CreateChapter=#Chapter2" "#placement=#Chapter2Beacon" "#Title=Auto6Chap2" "#Ring=ActionRing" 
+		;SendToModule "#ActionRing" "#CreateChapter=#Chapter3" "#placement=#Chapter3Beacon" "#Title=Auto6Chap3" "#Ring=ActionRing" 
+		;SendToModule "#ActionRing" "#CreateChapter=#Chapter4" "#placement=#Chapter4Beacon" "#Title=Auto6Chap4" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#TurnOff"
+		CreateModule "#General" "#General" "#ProtectSystem"
+
+		SendToModule "#General" "#StartIntroVideo=#A7LevelIntro" ;"#StartHUB"
+		
+		;SetState "LevelIntro"
+	}
+}
+state PickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" >= 1.0 goto SkipLevelIntro
+		if module "General ChapterProgress" == 0.0 goto LevelIntro
+		
+		
+	}
+	
+}
+state LevelIntro
+{
+	conditions
+	{
+		;if module "General GetFinishedMissionStart" == 1.0 goto GlobalActionRing
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SetDeathPoint "Chapter1_HubDeath" 
+		SendToModule "#General" "#StartMissionWithNoHub" "#SetVehicle=#StartMission" "#PlayerType=OptimusPrime" "#VEHICLEROLLINGSTART_MPH=120.0"
+		
+		Idle 0.5
+		SendToModule "#General" "#FadeUp"
+		Idle 2.5 
+		SendToModule "#General" "#AllowPlayerMovement" "#VEHICLEROLLINGSTART_MPH=-1.0"
+		
+		SetState GlobalActionRing
+
+	}
+}
+state SkipLevelIntro
+{
+	conditions
+	{
+		;if module "General GetFinishedMissionStart" == 1.0 goto GlobalActionRing
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SetDeathPoint "Chapter1_HubDeath" 
+		SendToModule "#General" "#StartMissionWithNoHub" "#SetPlayer=#StartMission2" "#PlayerType=OptimusPrime" 
+		
+		
+		SendToModule "#General" "#FadeUp"
+		
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter2" "#placement=#Chapter2Beacon" "#Title=Auto6Chap2" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter3" "#placement=#Chapter3Beacon" "#Title=Auto6Chap3" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter4" "#placement=#Chapter4Beacon" "#Title=Auto6Chap4" "#Ring=ActionRing" 
+		
+
+		Idle 0.1 
+
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4"		
+		
+		SetState GlobalActionRing
+
+	}
+}
+state GlobalActionRing
+{
+	conditions
+	{
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		if module "General ChapterProgress" >= 1.0 goto GlobalActionRing2
+	}
+	actions
+	{
+
+		
+		SetMusic "ACTION Generic QUIET Generic Play Action"
+		SendToModule "#General" "#AllowPlayerMovement" "#VEHICLEROLLINGSTART_MPH=-1.0"
+		SendToModule "#General" "#StartHUB" 
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#General" "#FadeUp"
+		
+		CreateModule "#Creature" "#Bumblebee" "#Spline=A6C1Spawn" "#count=1" "#maxalive=1" "#addtoradar" "#Type=Bumblebee07" "#SpawnInLosInit" "#SpawnAsCreature" "#BlockDeath"  "#Script=DummyRobot_I" "#SetPosition=#Bumblebee" "#Friend" "#AddToRadarOff"
+		CreateModule "#Creature" "#Ironhide" "#Spline=A6C1Spawn" "#count=1" "#maxalive=1" "#addtoradar" "#Type=Ironhide" "#SpawnInLosInit" "#SpawnAsCreature" "#BlockDeath"  "#Script=DummyRobot_I" "#SetPosition=#Ironhide" "#Friend" "#AddToRadarOff" 
+		CreateModule "#Creature" "#Ratchet" "#Spline=A6C1Spawn" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneArmouredCar_a" "#SpawnInLosInit" "#SpawnAsCreature" "#BlockDeath"  "#Script=DummyRobot_I" "#SetPosition=#Ratchet" "#Friend" "#AddToRadarOff"
+		
+		
+		
+	}
+}
+state GlobalActionRing2
+{
+	conditions
+	{
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		
+	}
+	actions
+	{
+
+		
+		DestroyAllModules "#IncludeProtected"
+		
+		
+	}
+}
+state GlobalStartChapter
+{
+	conditions
+	{
+		if module "General GetCountA" == 1.0 goto Chapter1_Phase3Enter
+
+		if module "ActionRing Chapter1"  == 1.0 goto Chapter1_Enter
+		if module "ActionRing Chapter2"  == 1.0 goto Chapter1_Phase2Enter
+		if module "ActionRing Chapter3"  == 1.0 goto Chapter1_Phase3Enter
+		if module "ActionRing Chapter4"  == 1.0 goto Chapter1_Phase4Enter
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		
+		
+	}
+}
+state FinishedLevel
+{
+}

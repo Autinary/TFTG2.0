@@ -1,0 +1,609 @@
+state Chapter1_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter1_InitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_GotoWaitSpeech
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetVehicle=#StartMission" "#VEHICLEROLLINGSTART_MPH=60.0" "#SetPlayerDeathPoint=#StartMission" 
+	}
+}
+state Chapter1_GotoWaitSpeech
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		
+		Idle 2.0
+		SendToModule "#General" "#SetMessage=BT1" "#SetMessageTimer=3"
+		Idle 1.7
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#D2_ch1_intro" "#AutoDestroy" "#Start"
+		;CreateModule "#Speech" "#MissionStartSpeech2" "#speech=#D2_ch1_Goto" "#PlayDelay=5" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D2_ch1_Goto2" "#AutoDestroy"
+		CreateModule "#Timer" "#StarScreamSpeech" "Time=11" "#NoRender" 
+		Idle 3.0
+		
+		setstate Chapter1_Goto
+	}
+}
+
+state Chapter1_Goto
+{
+
+	actions
+	{
+				
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter1Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter1_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter1_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+    	;SendToModule "#General" "#LoadCreature=DroneCement_a"
+	;SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+    	SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+    	SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#PlayerType=Barricade"
+    	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+	}
+}
+;;state Chapter1_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter1_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D2C1Intro"
+;;	}
+;;}
+state Chapter1_Main
+{
+	conditions
+	{
+		;if module "D2C1WaveA1 Complete" == 1.0 goto Chapter1_MainWave2
+		if module "D2C1Drone1 GetCountAlive" == 0.0 and
+			if module "D2C1Drone2 GetCountAlive" == 0.0 and
+				if module "D2C1Drone3 GetCountAlive" == 0.0 and
+					if module "D2C1Drone4 GetCountAlive" == 0.0 goto Chapter1_MainWave2
+		if module "D2C1KeyLocationA FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D2_ch1_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+			
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter1Start" "#FadeUp" "#CountASet=0"
+
+		CreateModule "#KeyLocation" "#D2C1KeyLocationA" "#Spline=D2C1KeyLocA" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#Protect"
+		
+
+		;;AGC - THE CACHE COMMENTS MAY BE INCORRECT
+
+		;;;;;;;;; Cache - [Default, TowTruck, Pickup]
+		;CreateModule "#AttackWave" "#D2C1WaveA1" "#NoRender"
+		;SendToModule "#D2C1WaveA1" "#CreateWave=#Wave1"
+		;SendToModule "#D2C1WaveA1" "#Creature=DroneDefault_a"		"#Spline=D2C1WaveA" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveA1" "#Creature=DroneDefault_a"		"#Spline=D2C1WaveA" "#SplineStep=2" "#KeyLocation=On"
+		;SendToModule "#D2C1WaveA1" "#Creature=DroneTowTruck_a"		"#Spline=D2C1WaveA" "#SplineStep=4" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveA1" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveA" "#SplineStep=6" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveA1" "#WaitEmpty" "#NoRender"
+
+		CreateModule "#Creature" "#D2C1Drone1" "#Type=DroneDefault_a" "#Spline=D2C1WaveA" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementA" 
+		CreateModule "#Creature" "#D2C1Drone2" "#Type=DroneDefault_a" "#Spline=D2C1WaveA" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementD" "#SpawnAsVehicle" 
+		CreateModule "#Creature" "#D2C1Drone3" "#Type=DroneTowTruck_a" "#Spline=D2C1WaveA" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementB" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone4" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveA" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementC" "#SpawnAsVehicle"
+
+		Idle 0.1 
+		SendToModule "#D2C1Drone2" "#ForcePlayerAsOpp"
+
+		
+		;;;;;;;;; Cache - [TowTruck, Pickup, Pickup]
+		
+	}
+}
+state Chapter1_MainWave2
+{
+	conditions
+	{
+		;if module "D2C1WaveA2 Complete" == 1.0 goto Chapter1_MainBWaitTrigger
+		if module "D2C1Drone1 GetCountAlive" == 0.0 and
+			if module "D2C1Drone2 GetCountAlive" == 0.0 and
+				if module "D2C1Drone3 GetCountAlive" == 0.0 and
+					if module "D2C1Drone4 GetCountAlive" == 0.0 goto Chapter1_MainBWaitTrigger		
+
+		if module "D2C1KeyLocationA FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#D2C1WaveA1"
+		DestroyAllModules
+		
+		CreateModule "#Speech" "#DefeatDrones2" "#speech=#D2_ch1_obj4" "#AutoDestroy" "#Start"
+		
+		
+		
+		;CreateModule "#AttackWave" "#D2C1WaveA2" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveA2" "#Delay=2.0"
+		;SendToModule "#D2C1WaveA2" "#CreateWave=#Wave1"
+		;SendToModule "#D2C1WaveA2" "#Creature=DroneTowTruck_a"		"#Spline=D2C1WaveA" "#SplineStep=8" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveA2" "#Creature=DroneDefault_a"		"#Spline=D2C1WaveA" "#SplineStep=10" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveA2" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveA" "#SplineStep=12" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveA2" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveA" "#SplineStep=14" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveA2" "#WaitEmpty" "#NoRender" "#RemoveBoss"
+		
+		CreateModule "#Creature" "#D2C1Drone1" "#Type=DroneDefault_a" "#Spline=D2C1WaveA" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementE" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone2" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveA" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementF" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone3" "#Type=DroneTowTruck_a" "#Spline=D2C1WaveA" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementH" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone4" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveA" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementG" "#SpawnAsVehicle"
+
+		;Idle 0.1
+		;CreateModule "#Timer" "#Destruction" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Index=2" "#Random"
+		;CreateModule "#Timer" "#Destruction2" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Random"
+		;DestroyModule "#Destruction"
+		;DestroyModule "#Destruction2"
+		
+		
+		
+	}
+}
+state Chapter1_MainBWaitTrigger
+{
+	conditions
+	{
+		;if module "D2C1TriggerB InArea" == 1.0 goto Chapter1_MainB
+		if timer > 5.0 and
+			if module "D2C1KeyLocationB InArea" == 1.0 goto Chapter1_MainB
+		if module "D2C1KeyLocationB FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar_a"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D2_ch1_obj2" "#AutoDestroy" "#Start"
+		CreateModule "#AreaRange" "#D2C1TriggerB" "#Trigger=#D2C1TriggerB" "#Beacon"
+		CreateModule "#KeyLocation" "#D2C1KeyLocationB" "#Spline=D2C1KeyLocB" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#StarScream" "#Protect" "#NoProcess"
+		CreateModule "#DelayedSend" "#DelayedSend" "#moduletag=#D2C1KeyLocationB" "#param=#Process" "#delay=10"
+	}
+}
+
+state Chapter1_MainB
+{
+	conditions
+	{
+		;if module "D2C1WaveB1 Complete" == 1.0 goto Chapter1_MainBWave1
+		if module "D2C1Drone1 GetCountAlive" == 0.0 and
+			if module "D2C1Drone2 GetCountAlive" == 0.0 and
+				if module "D2C1Drone3 GetCountAlive" == 0.0 and
+					if module "D2C1Drone4 GetCountAlive" == 0.0 goto Chapter1_MainBWave1
+		if module "D2C1KeyLocationB FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#D2C1TriggerB"
+		CreateModule "#Speech" "#DefeatDrones2" "#speech=#D2_ch1_obj6" "#AutoDestroy" "#Start"
+		
+	
+		
+		;;;;;;;;; Cache - [TowTruck, Pickup, Pickup]
+	
+		;CreateModule "#AttackWave" "#D2C1WaveB1"
+		
+		;SendToModule "#D2C1WaveB1" "#CreateWave=#Wave1" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveB1" "#Creature=DronePickupTruck_a"		"#Spline=D2C1WaveB" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveB1" "#Creature=DronePickupTruck_a"		"#Spline=D2C1WaveB" "#SplineStep=2" "#KeyLocation=On" 
+    		;SendToModule "#D2C1WaveB1" "#Creature=DronePickupTruck_a"		"#Spline=D2C1WaveB" "#SplineStep=4" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveB1" "#Creature=DroneTowTruck_a"			"#Spline=D2C1WaveB" "#SplineStep=6" "#KeyLocation=On" 		;;Carpark drone
+		;SendToModule "#D2C1WaveB1" "#WaitEmpty" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveB1" "#WaitLoaded" "#NoRender" "#RemoveBoss"
+		
+		CreateModule "#Creature" "#D2C1Drone1" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementJ" "#SpawnAsVehicle" 
+		CreateModule "#Creature" "#D2C1Drone2" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementK" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone3" "#Type=DroneTowTruck_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementI" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone4" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementL" "#SpawnAsVehicle"
+
+		Idle 0.1
+		SendToModule "#D2C1Drone1" "#ForcePlayerAsOpp" "#Script=Combat"
+		SendToModule "#D2C1Drone2" "#ForcePlayerAsOpp" "#Script=Combat"
+		SendToModule "#D2C1Drone3" "#ForcePlayerAsOpp" "#Script=Combat"
+		SendToModule "#D2C1Drone4" "#ForcePlayerAsOpp" "#Script=Combat"
+	}
+}
+state Chapter1_MainBWave1
+{
+	conditions
+	{
+		;if module "D2C1WaveB2 Complete" == 1.0 goto Chapter1_MainBWave2
+		if module "D2C1Drone1 GetCountAlive" == 0.0 and
+			if module "D2C1Drone2 GetCountAlive" == 0.0 and
+				if module "D2C1Drone3 GetCountAlive" == 0.0 and
+					if module "D2C1Drone4 GetCountAlive" == 0.0 goto Chapter1_MainBWave2
+		if module "D2C1KeyLocationB FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck_a"
+		
+	
+		
+		DestroyModule "#D2C1WaveB1"
+		DestroyAllModules 
+		CreateModule "#Speech" "#DefeatDrones3" "#speech=#D2_ch1_obj5" "#AutoDestroy" "#Start"
+		
+		CreateModule "#Creature" "#D2C1Drone1" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementO" "#Script=Combat" 
+		CreateModule "#Creature" "#D2C1Drone2" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementN" "#Script=Combat" 
+		CreateModule "#Creature" "#D2C1Drone3" "#Type=DroneArmouredCar_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementM" "#Script=Combat" 
+		CreateModule "#Creature" "#D2C1Drone4" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementP" "#Script=Combat" 
+
+		Idle 0.1
+		SendToModule "#D2C1Drone1" "#ForcePlayerAsOpp"
+		SendToModule "#D2C1Drone2" "#ForcePlayerAsOpp"
+		SendToModule "#D2C1Drone3" "#ForcePlayerAsOpp"
+		SendToModule "#D2C1Drone4" "#ForcePlayerAsOpp"
+
+		;CreateModule "#AttackWave" "#D2C1WaveB2" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveB2" "#CreateWave=#Wave1"
+		;SendToModule "#D2C1WaveB2" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveB" "#SplineStep=8" "#KeyLocation=On"  "#Script=Combat"
+		;SendToModule "#D2C1WaveB2" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveB" "#SplineStep=10" "#KeyLocation=On"  "#Script=Combat"
+		;SendToModule "#D2C1WaveB2" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveB" "#SplineStep=12" "#KeyLocation=On"  "#Script=Combat"
+		;SendToModule "#D2C1WaveB2" "#Creature=DroneArmouredCar_a"	"#Spline=D2C1WaveB" "#SplineStep=14" "#KeyLocation=On"  "#Script=Combat"
+		;SendToModule "#D2C1WaveB2" "#WaitEmpty" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveB2" "#WaitLoaded" "#NoRender" "#RemoveBoss"
+		;Idle 0.1
+		;CreateModule "#Timer" "#Destruction" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Index=2" "#Random"
+		;CreateModule "#Timer" "#Destruction2" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Random"
+		;DestroyModule "#Destruction"
+		;DestroyModule "#Destruction2"
+		
+	}
+}
+state Chapter1_MainBWave2
+{
+	conditions
+	{
+		;if module "D2C1WaveB3 Complete" == 1.0 goto Chapter1_MainCWaitTrigger
+		if module "D2C1Drone1 GetCountAlive" == 0.0 and
+			if module "D2C1Drone2 GetCountAlive" == 0.0 and
+				if module "D2C1Drone3 GetCountAlive" == 0.0 and
+					if module "D2C1Drone4 GetCountAlive" == 0.0 goto Chapter1_MainCWaitTrigger
+		if module "D2C1KeyLocationB FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault_a"
+		DestroyModule "#D2C1WaveB2"
+		DestroyAllModules
+		CreateModule "#Creature" "#D2C1Drone1" "#Type=DroneDefault_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementM" "#SpawnAsVehicle" 
+		CreateModule "#Creature" "#D2C1Drone2" "#Type=DroneDefault_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementN" "#SpawnAsVehicle" 
+		CreateModule "#Creature" "#D2C1Drone3" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementO" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone4" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveB" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementP" "#SpawnAsVehicle"
+
+		Idle 0.1
+		SendToModule "#D2C1Drone1" "#ForcePlayerAsOpp"
+		SendToModule "#D2C1Drone2" "#ForcePlayerAsOpp"
+		SendToModule "#D2C1Drone3" "#ForcePlayerAsOpp"
+		SendToModule "#D2C1Drone4" "#ForcePlayerAsOpp"
+
+		;CreateModule "#AttackWave" "#D2C1WaveB3" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveB3" "#CreateWave=#Wave1"
+		;SendToModule "#D2C1WaveB3" "#Creature=DroneDefault_a"	"#Spline=D2C1WaveB" "#SplineStep=8" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveB3" "#Creature=DroneDefault_a"	"#Spline=D2C1WaveB" "#SplineStep=10" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveB3" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveB" "#SplineStep=12" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveB3" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveB" "#SplineStep=14" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveB3" "#WaitEmpty" "#NoRender" "#RemoveBoss"
+		;Idle 0.1
+		;CreateModule "#Timer" "#Destruction" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Index=2" "#Random"
+		;CreateModule "#Timer" "#Destruction2" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Random"
+		;DestroyModule "#Destruction"
+		;DestroyModule "#Destruction2"
+		
+	}
+}
+
+
+state Chapter1_MainCWaitTrigger
+{
+	conditions
+	{
+		if module "D2C1KeyLocationC InArea" == 1.0 goto Chapter1_MainC
+		if module "D2C1KeyLocationC FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D2_ch1_obj3" "#AutoDestroy" "#Start"
+		CreateModule "#AreaRange" "#D2C1TriggerC" "#Trigger=#D2C1TriggerC" "#Beacon" 
+		CreateModule "#KeyLocation" "#D2C1KeyLocationC" "#Spline=D2C1KeyLocC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#StarScream" "#Protect" "#NoProcess"
+		CreateModule "#DelayedSend" "#DelayedSend" "#moduletag=#D2C1KeyLocationC" "#param=#Process" "#delay=4"
+	}
+}
+
+state Chapter1_MainC
+{
+	conditions
+	{
+		;if module "D2C1WaveC1 Complete" == 1.0 goto Chapter1_MainCWave1
+		if module "D2C1Drone1 GetCountAlive" == 0.0 and
+			if module "D2C1Drone2 GetCountAlive" == 0.0 and
+				if module "D2C1Drone3 GetCountAlive" == 0.0 and
+					if module "D2C1Drone4 GetCountAlive" == 0.0 goto Chapter1_MainCWave1
+		if module "D2C1KeyLocationC FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#D2C1TriggerC"
+		CreateModule "#Speech" "#DefeatDrones2" "#speech=#D2_ch1_obj7" "#AutoDestroy" "#Start"
+		
+		
+		;;AGC - THE CACHE COMMENTS MAY BE INCORRECT
+	
+		;;;;;;;;; Cache - [Pickup, Pickup, Default]
+		CreateModule "#Creature" "#D2C1Drone1" "#Type=DroneDefault_a" "#Spline=D2C1WaveC" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementQ" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone2" "#Type=DroneDefault_a" "#Spline=D2C1WaveC" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementS" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone3" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveC" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementR" "#SpawnAsVehicle"
+		CreateModule "#Creature" "#D2C1Drone4" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveC" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementT" "#SpawnAsVehicle"
+
+
+		
+
+		;CreateModule "#AttackWave" "#D2C1WaveC1" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveC1" "#CreateWave=#Wave1"
+		;SendToModule "#D2C1WaveC1" "#Creature=DroneDefault_a"		"#Spline=D2C1WaveC" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveC1" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveC" "#SplineStep=2" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveC1" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveC" "#SplineStep=4" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveC1" "#Creature=DroneDefault_a"		"#Spline=D2C1WaveC" "#SplineStep=6" "#KeyLocation=On" 
+		;SendToModule "#D2C1WaveC1" "#WaitEmpty" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveC1" "#WaitLoaded" "#NoRender" "#RemoveBoss"
+		
+		
+	}
+}
+state Chapter1_MainCWave1
+{
+	conditions
+	{
+		;if module "D2C1WaveC2 Complete" == 1.0 goto Chapter1_Wait
+		if module "D2C1Drone1 GetCountAlive" == 0.0 and
+			if module "D2C1Drone2 GetCountAlive" == 0.0 and
+				if module "D2C1Drone3 GetCountAlive" == 0.0 and
+					if module "D2C1Drone4 GetCountAlive" == 0.0 goto Chapter1_Wait
+		if module "D2C1KeyLocationC FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneTowTruck_a"
+		
+		DestroyModule "#D2C1WaveC1"
+		DestroyAllModules
+
+		CreateModule "#Creature" "#D2C1Drone1" "#Type=DroneArmouredCar_a" "#Spline=D2C1WaveC" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementV" "#Script=Combat"  
+		CreateModule "#Creature" "#D2C1Drone2" "#Type=DroneTowTruck_a" "#Spline=D2C1WaveC" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementX" "#Script=Combat" 
+		CreateModule "#Creature" "#D2C1Drone3" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveC" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementU" "#Script=Combat" 
+		CreateModule "#Creature" "#D2C1Drone4" "#Type=DronePickupTruck_a" "#Spline=D2C1WaveC" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementW" "#Script=Combat" 
+
+		Idle 0.1
+		SendToModule "#D2C1Drone1" "#ForcePlayerAsOpp"
+		SendToModule "#D2C1Drone2" "#ForcePlayerAsOpp"
+		SendToModule "#D2C1Drone3" "#ForcePlayerAsOpp"
+		SendToModule "#D2C1Drone4" "#ForcePlayerAsOpp"
+
+
+		;CreateModule "#AttackWave" "#D2C1WaveC2" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveC2" "#CreateWave=#Wave1"
+		;SendToModule "#D2C1WaveC2" "#Creature=DroneArmouredCar_a"	"#Spline=D2C1WaveC" "#SplineStep=8" "#KeyLocation=On"  "#Script=Combat" 
+		;SendToModule "#D2C1WaveC2" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveC" "#SplineStep=10" "#KeyLocation=On"  "#Script=Combat" 
+		;SendToModule "#D2C1WaveC2" "#Creature=DroneTowTruck_a"		"#Spline=D2C1WaveC" "#SplineStep=12" "#KeyLocation=On"   "#Script=Combat" 
+		;SendToModule "#D2C1WaveC2" "#Creature=DronePickupTruck_a"	"#Spline=D2C1WaveC" "#SplineStep=14" "#KeyLocation=On"  "#Script=Combat" 
+		;SendToModule "#D2C1WaveC2" "#WaitEmpty" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveC2" "#WaitLoaded" "#NoRender" "#RemoveBoss"
+		;Idle 0.1
+		;CreateModule "#Timer" "#Destruction" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Index=2" "#Random"
+		;CreateModule "#Timer" "#Destruction2" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Random"
+		;DestroyModule "#Destruction"
+		;DestroyModule "#Destruction2"
+		
+	}
+}
+state Chapter1_Wait
+{
+	conditions
+	{
+		
+		if module "Timer FailMission" == 1.0 goto Chapter1_MainCWave2
+	}
+	actions
+	{
+		DestroyAllModules
+		;SendToModule "#General" "#BG_LoadCreature=DroneCement_a"
+		SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck_a"
+    		SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck_a"
+    		SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"	
+		SendToModule "#General" "#BG_LoadCreature=DroneCement_a"	
+		CreateModule "#Timer" "#Timer" "#Time=4.0" "#NoRender" "#Start"
+                
+	}
+}
+state Chapter1_MainCWave2
+{
+	conditions
+	{
+		if module "D2C1WaveC3 GetPercentageComplete" == 1.0 goto Chapter1_Complete
+		if module "D2C1Drone1 GetCountAlive" == 0.0 goto Chapter1_Complete
+		if module "D2C1KeyLocationC FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#D2C1WaveC2"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+    		SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+    		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"	
+		SendToModule "#General" "#LoadCreature=DroneCement_a"
+
+		CreateModule "#Creature" "#D2C1Drone1" "#Type=DroneCement_a" "#Spline=D2C1WaveC" "#MaxAlive=1" "#Count=1" "#SpawnInLOSInit" "#KeyLocation=On" "#SetPosition=#D2C1PlacementY" "#Script=CACCombat"
+
+		Idle 0.1
+		SendToModule "#D2C1Drone1" "#ForcePlayerAsOpp"
+		
+
+
+		;CreateModule "#AttackWave" "#D2C1WaveC3" "#NoRender" "#RemoveBoss"
+		;SendToModule "#D2C1WaveC3" "#CreateWave=#Wave1"
+		;SendToModule "#D2C1WaveC3" "#Creature=DroneCement_a"    "#Spline=D2C1WaveC" "#SplineStep=16" "#KeyLocation=On" "#Script=CACCombat"
+		;SendToModule "#D2C1WaveC3" "#WaitEmpty" "#NoRender" "#RemoveBoss"
+		;Idle 0.1
+		;CreateModule "#Timer" "#Destruction" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Index=2" "#Random"
+		;CreateModule "#Timer" "#Destruction2" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Random"
+		;DestroyModule "#Destruction"
+		;DestroyModule "#Destruction2"
+	
+	}
+}
+state Chapter1_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter1_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter1_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+    	SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+    	SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+    	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter2"
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		;if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#StartOutroVideo=#D2C1Outro"
+		SetState "Chapter1_CompleteVideoFinished"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+    	SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+    	SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+    	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter2"
+		IncreasePlayerHealth max
+		setstate "PickGoto" ;goto next chapter
+	}
+}

@@ -1,0 +1,132 @@
+;push all drones out of key location within time limit
+;player and drones are invincible
+;if anyone leaves area instant death
+
+;requires:
+;	Keylocation spline 				KeyLoc#
+;	Spawn spline for type 1 creatures		Spawn#a
+;	Spawn spline for type 2 creatures		Spawn#b
+
+;Changeable params:
+;	300		time in which to complete the mission
+;	6	total number of creature type 1 that need to be killed
+;	2	total number of creature type 2 that need to be killed
+;	2		total creature type 1 that are simultaneously active 
+;	1		total creature type 2 that are simultaneously active 
+;	DroneDefault_a	type of creature one to fight against
+;	DroneCement_a	type of creature two to fight against
+;						DroneForkLift
+;						DroneTowTruck
+;						DroneArmouredCar
+;						DroneCement
+;						DronePickupTruck
+;						DroneMig
+;						BumbleBee
+;						Barricade
+
+
+state SubMission4_Enter_Alt
+{
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission4_Death_Alt"
+		SetState "SubMission4_Init_Alt"
+	}
+}
+state SubMission4_Init_Alt
+{
+	conditions
+	{
+		if timer > 1.0 goto SubMission4_Main_Alt
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission4"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#LoadCreature=DroneCement_a"
+		CreateModule "#Timer" "#Timer" "#Time=300"
+	}
+}
+state SubMission4_Main_Alt
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+			if module "CreatureWaveB GetCountAlive" == 0.0 goto SubMission4_Finish_Alt
+		if module "Timer FailMission" == 1.0 goto SubMission4_Fail_Alt
+		if module "General SumoCheck" == 1.0 goto SubMission4_Fail_Alt
+	}
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveA" "#Type=DroneDefault_a" "#Spline=Spawn4a" "#count=16" "#maxalive=3" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		CreateModule "#Creature" "#CreatureWaveB" "#Type=DroneCement_a" "#Spline=Spawn4b" "#count=2" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=CACCombat"
+		SendToModule "#General" "#SumoKeyLoc=KeyLoc4" "#SumoCreatureModule=#CreatureWaveA"  "#SumoCreatureModule=#CreatureWaveB"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=18" "#IconType=#Drone"
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission4_Finish_Alt
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission4_FinishWait_Alt
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission4_FinishWait_Alt
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission4_Leave_Alt
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=4"
+		;SetState "SubMission4_Leave"
+	}
+}
+state SubMission4_Death_Alt
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission4_Leave_Alt
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission4_Fail_Alt
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission4_Leave_Alt
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission4_Leave_Alt
+{
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		;
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission4"
+	   	SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+	   	SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+		SendToModule "#General" "#FadeUp"
+		SendToModule "#General" "#CountCSet=1"		
+		SetState "Exit"
+	}
+}
+

@@ -1,0 +1,380 @@
+         
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;used to be mission 2 		  ;
+;only chapters have been renamed  ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+state Chapter2_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter2_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D2_ch2_Goto" "#AutoDestroy" "#Start"	
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D2_ch2_Goto2" "#AutoDestroy" "#Start"
+
+		Idle 3.0
+
+		SendToModule "#ActionRing" "#maxalive=1" "#spline=D2C1WaveA" "#type=DroneDefault_a" "#rangemax=300" "#rangemin=200"
+		
+		
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter2_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter2_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D2C2Intro"
+	}
+}
+state Chapter2_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+  	  	;SendToModule "#General" "#UNLoadCreature=DroneDefault_a"
+    	SendToModule "#General" "#LoadCreature=BumbleBee"
+    	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#PlayerType=Barricade"
+	}
+}
+;;state Chapter2_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter2_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D2C2Intro"
+;;	}
+;;}
+
+state Chapter2_Main
+{
+	conditions
+	{
+		if module "D2C2DefeatBumbleBee Complete" == 1.0 goto Chapter2_FailMission 
+		if module "D2C2DefeatBumbleBee TransformMeter" == 1.0 goto Chapter2_AIsRobot
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_3 QUIET Generic Play Action"
+		SetDeathPoint "Chapter2_DeathFailMission"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D2_ch2_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		;CreateModule "#Speech" "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch2_obj2" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D2_ch2_obj2" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D2_ch2_obj3" "#AutoDestroy" 
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=25" "#times=2"
+
+		CreateModule "#Goto" "#D2C2DefeatBumbleBee" "#SpawnSpline=D2C2RouteA" "#DirectSpline=D2C2RouteA" "#TransformBothWays=15.0" "#Location=#GreenMediumDot" "#Object=#RedMediumDot" "#Warning=D2C2HurryReachedPolice" "#type=BumbleBee" "#splinestep=0" "#speed=120" "#DontClampRadar" "#SuppressShield" "#InhibitRubble" "#HeadType=#Starscream"
+		SendToModule "#D2C2DefeatBumbleBee" "#SetEnergyMin=2.0"
+		SendToModule "#General" "#PhysObj" "#SetVehicle=#Chapter2Start" "#FadeUp" "#CountASet=0"
+	}
+}
+
+state Chapter2_AIsRobot
+{
+	conditions
+	{
+		if module "D2C2DefeatBumbleBee Complete" == 1.0 goto Chapter2_FailMission 
+		if module "D2C2DefeatBumbleBee IsEnergyAtMin" == 1.0 goto Chapter2_MainBEnter
+		;if Timer > 10 goto Chapter2_AIsCar
+	}
+	Actions
+	{
+		;ResetTimer 
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		DestroyModule "#DelayedSend"
+		DestroyModule "#DelayedSendReminder"
+
+		SendToModule #D2C2DefeatBumbleBee #Boss #Type=BumbleBee #SuppressShieldOff 
+	}
+}
+;state Chapter2_AIsCar
+;{
+;	conditions
+;	{
+;		if module "D2C2DefeatBumbleBee Complete" == 1.0 goto Chapter2_FailMission 
+;		if module "D2C2DefeatBumbleBee TransformMeter" == 1.0 goto Chapter2_AIsRobot
+;	}
+;	actions
+;	{
+;
+;		SetMusic "ACTION Mission2_3 QUIET Generic Play Action"
+;		
+;		SendToModule "#D2C2DefeatBumbleBee" "#TransformMeterReset" "#SuppressShield" "#RemoveBoss"
+;		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=25" "#times=2"
+;
+;	}
+;}
+
+state Chapter2_MainBEnter
+{
+	Conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_MainB
+	}
+	Actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C2Midtro1"
+	}
+}
+
+state Chapter2_MainB
+{
+	Conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter2_MaincLoadCreature
+		;if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Timer Timer" < 0.0 goto Chapter2_FailMission
+	}
+	Actions
+	{
+		SetMusic "ACTION Mission2_3 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Speech" "#Speech" "#speech=#D2_ch2_obj4" "#AutoDestroy" "#Start"
+		
+	    	DestroyModule "#D2C2DefeatBumbleBee"
+    		SendToModule "#General" "#BG_UnLoadCreature=BumbleBee"
+	    	SendToModule "#General" "#BG_LoadCreature=DronePickupTruck_a"
+		;SendToModule "#General" "#BG_LoadCreature=DronePickupTruck"
+		SendToModule "#General" "#BG_LoadCreature=DroneMig_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneForkLift_a"
+		
+
+		SendToModule "#General" "#SetMessage=Key3Goto" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+
+		;CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D2C2KeyLocB" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#StarScream" "#Protect" "#NoProcess"
+		;CreateModule "#DelayedSend" "#DelayedSend" "#moduletag=#KeyLocation" "#param=#Process" "#delay=10"
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#D2C2TriggerB" "#SetRadarType=#AutobotRadarIcon"
+		SendToModule "#General" "#SetPlayer=#D2C3Repos1"
+	}
+}
+
+state Chapter2_MaincLoadCreature
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_MainC
+	}
+	Actions
+	{
+    	;SendToModule "#General" "#UNLoadCreature=BumbleBee"
+    	;SendToModule "#General" "#LoadCreature=DroneDefault_a"
+	
+		SendToModule "#General" "#StartVideo=#D2C2Midtro2"
+    }
+}
+
+state Chapter2_MainC
+{
+	Conditions
+	{
+		if module "CreatureWaveA Complete" == 1.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter2_MainWave2
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+	}
+	Actions
+	{
+
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Speech" "#Speech" "#speech=#D2_ch2_obj5" "#AutoDestroy" "#Start"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=D2C2SpawnC2StartA" "#count=2" "#maxalive=2" "#addtoradar" "#Type=DroneDefault_a" "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On"
+		;CreateModule "#Creature" "#CreatureWaveB" "#Spline=D2C2SpawnC2StartB" "#count=2" "#maxalive=2" "#addtoRadarOff" "#Type=DronePickupTruck" "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#SuppressShield" 
+		;CreateModule "#Creature" "#CreatureWaveB" "#Spline=D2C2SpawnC2StartB" "#count=2" "#maxalive=2" "#addtoRadar" "#Type=DroneMig_a" "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#Script=MigSuppress" "#SetEnergyMax=600" "#SetEnergy=600"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=D2C2SpawnC2" "#count=4" "#maxalive=2" "#addtoradar" "#Type=DronePickupTruck_a" "#SpawnAsCreature" "#KeyLocation=On"
+		
+
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D2C2KeyLocB" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#StarScream" "#Protect"
+		SendToModule "#General" "#SetPlayer=#D2C3Repos2"
+	}
+}
+
+state Chapter2_MainWave2
+{
+	Conditions
+	{
+		if module "CreatureWaveA Complete" == 1.0 and
+			if module "CreatureWaveB Complete" == 1.0 goto Chapter2_Chatter
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+	}
+	Actions
+	{
+		DestroyAllModules
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=D2C2SpawnC2" "#count=4" "#maxalive=2" "#addtoradar" "#Type=DroneForkLift_a" "#SpawnAsCreature" "#KeyLocation=On"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=D2C2SpawnC2StartB" "#count=2" "#maxalive=2" "#addtoRadar" "#Type=DroneMig_a" "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#Script=MigSuppress" "#SetEnergyMax=600" "#SetEnergy=600"
+		
+		;CreateModule "#Creature" "#CreatureWaveB" "#Spline=D2C2SpawnC2" "#count=4" "#maxalive=2" "#addtoradar" "#Type=DronePickupTruck_a" "#SpawnAsCreature" "#KeyLocation=On"
+	}
+}
+
+state Chapter2_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter2_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General" "#EndOfMission"  "#FailMission"
+	}
+}
+state Chapter2_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=BumbleBee"
+    	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+	    SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DroneForkLift_a"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter2Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Chatter
+{
+	conditions
+	{
+		
+		if module "Timer FailMission" == 1.0 goto Chapter2_Complete
+	}
+	actions
+	{
+		DestroyAllModules
+
+		
+		CreateModule "#Timer" "#Timer" "#Time=10.0" "#NoRender" "#Start"
+                CreateModule "#Speech"  "#DefeatDrones" "#speech=#D2_ch2_cmplt" "#AutoDestroy" "#Start"
+		Idle 0.1 
+		SetMusic "ACTION Mission2_4 Play Action"
+	}
+}
+state Chapter2_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#EndOfMission"  "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+		
+	}
+}
+state Chapter2_CompleteVideo
+{
+	conditions
+	{
+		;if module "General VideoFinished" == 1.0 goto Chapter2_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#StartOutroVideo=#D2C2Outro"
+		SetState "Chapter2_CompleteVideoFinished"
+	}
+}
+state Chapter2_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter2_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=BumbleBee"
+   		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+	    SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		
+		SendToModule "#General" "#UnLoadCreature=DroneForkLift_a"
+		SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter2_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter3"
+		IncreasePlayerHealth max
+		setstate "PickGoto"
+	}
+}

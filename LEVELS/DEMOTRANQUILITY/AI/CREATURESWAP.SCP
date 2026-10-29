@@ -1,0 +1,97 @@
+
+
+state PrepareSwap
+{
+	
+	actions
+	{
+		DestroyAllModules
+		SendToModule "#General" "#SetPlayer=#CSReset" 
+		;Idle 2.0
+		CreateModule "#KeyLocation" "#CreatureSwapArea" "#spline=A1C3SpawnB" "#Radius=80" 
+		CreateModule "#AreaRange" "#SwapToOP" "#Trigger=#CSOptimusPrime" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon"
+		CreateModule "#AreaRange" "#SwapToIH" "#Trigger=#CSIronHide" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon"
+		CreateModule "#AreaRange" "#SwapToJ" "#Trigger=#CSJazz" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBB" "#Trigger=#CSBumblebee" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon"
+		SendToModule "#General" "#SetMessage=DTCS" "#SetMessageTimer=1000" 
+		SetState CreatureSwapProcess
+	}
+}
+state CreatureSwapProcess
+{
+	conditions
+	{
+		if module "CreatureSwapArea InArea" == 0.0 goto LeftSwapArea
+		if module "SwapToOP InArea" == 1.0 goto SelectOP
+		if module "SwapToIH InArea" == 1.0 goto SelectIH
+		if module "SwapToJ InArea" == 1.0 goto SelectJ
+		if module "SwapToBB InArea" == 1.0 goto SelectBB
+		
+	}
+	actions
+	{
+		ResetTimer
+	}	
+	
+}
+state SelectOP
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=OptimusPrime" "#SetPlayer=#CSReset" 
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectIH
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=IronHide" "#SetPlayer=#CSReset" 
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectJ
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Jazz" "#SetPlayer=#CSReset" 
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectBB
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Bumblebee07" "#SetPlayer=#CSReset" 
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+
+state LeftSwapArea
+{
+	
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#SetMessageTimer=-1"
+		
+		 
+		SetState GlobalActionRing
+	}
+}

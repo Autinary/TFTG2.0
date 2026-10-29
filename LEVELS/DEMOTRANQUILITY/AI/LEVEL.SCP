@@ -1,0 +1,65 @@
+
+state Base
+{
+	Conditions
+	{
+		;if CurrentUser "grichards" == 1.0 goto Wait
+		;if CurrentUser "popdam" == 1.0 goto Wait
+		;if CurrentUser "challiday" == 1.0 goto Wait
+	}
+}
+
+state Wait
+{
+	Actions
+	{
+		DrawConditionsFromThisScript
+		SetState Pause
+	}
+}
+
+state Pause
+{
+	Conditions
+	{
+		if Timer > 5.0 goto MissionStage1
+	}
+	Actions
+	{
+		ResetTimer
+	}
+}
+
+state MissionStage1
+{
+	Conditions
+	{
+	}
+	Actions
+	{
+		;CreateModule "#SplineVehicle" "#encounter1" "#spline=Mall1" "#type=bumblebeeveryweak" \
+		;			"#DirecSpline=Mall1" "#addtoradar" "#speed=1000" ; \
+		;			"#speedradiusmin=10" "#speedradiusmax=50" "#speedvaluemin=40" "#speedvaluemax=90"
+
+		;CreateModule "#SplineVehicle" "#encounter1" "#spline=TestIntro" "#type=bumblebee" \
+		;			"#addtoradar" "#speed=1000" \
+		;			"#IntroSpline=TestIntro" "#LoopSpline=TestLoop" "#OutroSpline=TestOutro" \
+		;			"#LoopCount=1" "#Count=2"
+
+		;CreateModule "#Creature" "#encounter2" "#type=bumblebee" "#count=3" "#maxalive=2" "#addtoradar" "#TransformMixed" "#spline=Mall1"
+
+		;CreateModule "#Creature" "#encounter3" "#type=bumblebee" "#spline=Mall1" \
+		;			"#count=2" "#maxalive=2" "#addtoradar"
+
+		;CreateModule "#AttackVehicle" "#encounter3" "#generator=#ATTVEH" "#type=bumblebeeveryweak" \
+		;			"#addtoradar" "#killradius=240.0" "#speed=90.0" "#ignorelights" "#maxalive=2"
+
+		;CreateModule "#Goto" "#Unstoppable" "#SpawnSpline=Mall1" "#DirectSpline=Mall2" "#Transform=1.0" \ 
+		;			"#Location=#GreenMediumDot" "#Object=#GreenMediumDot" "#Warning=A1C2HurryCarLot" "#type=DroneDefault" "#splinestep=0"
+
+		;CreateModule "#BossVehicle" "#encounter4" "#spline=Brawl" "#type=bumblebee" \
+		;			"#addtoradar" "#speed=90.0" "#script=Brawl"
+
+		CreateModule "#Creature" "#Unstoppable" "#type=DroneDefault" "#spline=A1C2Spawn" "#count=1" "#script=TripleChanger" "#SpawnInLOSInit"
+	}
+}

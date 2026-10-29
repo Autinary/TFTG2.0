@@ -1,0 +1,888 @@
+state Chapter1_Enter
+{
+	Conditions
+	{
+		if timer > 1.0 goto Chapter1_Main
+	}
+	actions
+	{
+		ResetTimer
+		DestroyAllModules
+		SendToModule "#General" "#StartMissionWithNoHub"
+	}
+}
+
+
+
+
+state Chapter1_Main
+{
+	conditions
+	{
+		if Timer > 2.2 goto Chapter1_MainDelay
+	}
+	actions
+	{
+		ResetTimer
+		SetDeathPoint "Chapter1_DeathFailMission"
+		CreateModule "#Speech" "#D7_ch1_obj1" "#speech=#D7_ch1_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" 
+	}
+}
+state Chapter1_MainDelay
+{
+	
+	actions
+	{
+		SetDeathPoint "Chapter1_DeathFailMission"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=SpawnLower" "#Type=DroneDefault_a"  "#count=4" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#TransformForceRobot" "#Script=Early_Combat"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=Spawn" "#Type=DroneDefault_a"  "#count=4" "#maxalive=4" "#addtoradar" "#SpawnInLosInit" "#TransformForceRobot" "#Script=Early_Combat"
+		CreateModule "#Creature" "#Creature"      "#Spline=SpawnLower" "#Type=DroneForkLift_a" "#count=5" "#maxalive=3" "#addtoradar" "#SpawnInLosInit" "#TransformForceRobot" "#Script=Early_Combat"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#Creature" "#ForcePlayerAsOpp"
+		SendToModule "#General" "#SetMaxOpponents=18" "#SetMaxApproachers=18" "#SetAttackRingSize=20"
+		SendToModule "#General" "#InhibitCreatureDWRespawn"
+		
+		;SendToModule "#General" ;"#CountBSet=1"
+		Idle 1.0
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=13" "#IconType=#Drone"
+		SendToModule "#General" "#SetMessage=D7_Ch1_Obj1" "#SetMessageTimer=3"
+		SetState Chapter1_Process
+	}
+}
+
+state Chapter1_Phase2
+{
+	
+	actions
+	{
+		DestroyModule "#Meteorite"
+		DestroyModule "#Creature"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=9" "#IconType=#Drone"
+		
+		CreateModule "#Creature" "#CreatureWaveA" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneForkLift_a" "#TransformForceRobot" "#KeyLocation=On"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveA" "#Spline=MeteorSpawnMid" "#Time=1" "#Time=6,DronePickupTruck_a" "#Time=7,DronePickupTruck_a" "#Time=8,DroneDefault_a"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#General" ;;"#CountBSet=2"
+
+		SetState Chapter1_Phase2Wave2
+	}
+}
+state Chapter1_Phase2Wave2
+{
+	
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveB" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneCement_a" "#TransformForceRobot" "#KeyLocation=On"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#CreatureWaveB" "#Spline=MeteorSpawnMid" "#Time=2" "#Time=5,DroneDefault_a" "#Time=5,DroneArmouredCar_a" "#Time=9,DroneMig_a"
+		CreateModule "#Creature" "#Boss"          "#Spline=Spawn" "#Type=Bumblebee" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#TransformForceRobot" "#Script=Bumblebee" "#SetPosition=#BossEntrance_T1"
+		
+		SendToModule "#Boss" "#ForcePlayerAsOpp"
+
+		;CreateModule "#Timer" "#TimerD" "#Time=9.0" "#NoRender" "#Start"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		
+		SendToModule "#General" ;"#CountBSet=3"
+
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_Phase3
+{
+	
+	actions
+	{
+		
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=28" "#IconType=#Drone"
+		
+		CreateModule "#Creature" "#CreatureWaveE" "#count=0" "#maxalive=5" "#addtoradaralways" "#Type=DroneDefault_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=AdvDefault" 
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveE" "#Spline=MeteorSpawnUpper" "#Time=1,DroneDefault_a" "#Time=2,DronePickupTruck_a" "#Time=5,DroneDefault_a" "#Time=6,DronePickupTruck_a" "#Time=8,DroneDefault_a" 
+		
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=Spawn" "#Type=DroneDefault_a"  "#count=2" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=AdvDefault" 
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=Spawn" "#Type=DronePickupTruck_a"  "#count=2" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=AdvDefault" 
+		CreateModule "#Creature" "#Boss"          "#Spline=SpawnLower" "#Type=Jazz" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#TransformForceRobot" "#Script=Jazz" "#SetPosition=#BossEntrance_T2"
+		CreateModule "#Creature" "#IronHide"          "#Spline=Spawn" "#Type=Ironhide" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Ironhide" "#AntinodeRadius=75.0" "#SetEnergyMax=4500" "#SetEnergy=4500"  "#SetPosition=#BossEntrance_T3" 
+		SendToModule "#CreatureWaveE" "#ForcePlayerAsOpp"
+		
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveD" "#ForcePlayerAsOpp"
+		SendToModule "#Boss" "#ForcePlayerAsOpp"
+		SendToModule "#IronHide" "#ForcePlayerAsOpp"
+		Idle 0.1
+		SendToModule "#IronHide" "#IronhideToCharge"
+		;Idle 8.0
+		CreateModule "#Timer" "#TimerA" "#Time=8.0" "#NoRender" "#Start"
+		
+
+		SendToModule "#General" "#CountSet=0" "#CountDSet=2"
+
+		SetState Chapter1_Process
+		
+	}
+}
+state Chapter1_IronCombat
+{
+	conditions
+	{
+		if AlwaysTrue < 0.5 goto Chapter1_IronStatic
+		if Timer > 0.1 goto Chapter1_IronCharge
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter1_IronCharge
+{
+	actions
+	{
+		DestroyModule "#TimerI"
+		SendToModule "#IronHide" "#IronHideToCharge" 
+		SendToModule "#General" "#CountSet=1"
+		
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_IronStatic
+{
+	actions
+	{
+		DestroyModule "#TimerI"
+		
+		CreateModule "#Timer" "#TimerI" "#Time=15" "#NoRender" "#Start"
+		SendToModule "#General" "#CountSet=2"
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_IronHideDead
+{
+	actions
+	{
+		SendToModule "#General" "#CountSet=4"
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_IronCombatReset
+{
+	actions
+	{
+		SendToModule "#General" "#CounASet=1"
+		SetState Chapter1_Process
+	}
+}
+
+
+state Chapter1_Phase4
+{
+	
+	actions
+	{
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=20" "#IconType=#Drone"
+		
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=SpawnLower" "#Type=DroneForklift_a"  "#count=12" "#maxalive=3" "#addtoradar" "#TransformForceRobot" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800" 
+		;;CreateModule "#Creature" "#CreatureWaveC" "#Spline=Spawn" "#Type=DronePickupTruck_a"  "#count=2" "#maxalive=2" "#addtoradar" "#TransformForceRobot" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+
+		CreateModule "#Creature" "#CreatureWaveB" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneDefault_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000" 
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveB" "#Spline=MeteorSpawnMid" "#Time=1,DroneDefault_a"  "#Time=6,DroneDefault_a" 
+		CreateModule "#Creature" "#CreatureWaveC" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DronePickupTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" 
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#CreatureWaveC" "#Spline=MeteorSpawnMid" "#Time=2,DronePickupTruck_a" ;"#Time=3,DronePickupTruck_a" 
+		
+		CreateModule "#Creature" "#Ratchet"          "#Spline=SpawnLower" "#Type=DroneArmouredCar" "#count=1" "#maxalive=1" "#addtoradaroff" "#SpawnInLosInit" "#Script=RatchetInit" "#SetEnergyMax=1500.0" "#SetEnergy=1500.0" "#SetPosition=#BossEntrance_R" "#SuppressShield"
+		CreateModule "#Creature" "#Boss2"          "#Spline=SpawnLower" "#Type=Bumblebee07" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#Script=Bumblebee" "#SetPosition=#BossEntrance_T1"
+		CreateModule "#Creature" "#BodyGuard" "#Spline=SpawnLower" "#Type=DronePickupTruck_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#SpawnInLosInit" "#Script=StandAndWait" "#SetEnergyMax=1200" "#SetEnergy=1200" "#SetPosition=#BossEntrance_R2" 
+		;CreateModule "#AreaRange" "#RatArea" "#Trigger=#Ratchet" "#AddToRadarOff" "#SetRadarType=#AutoBotRadarIcon"
+		
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		SendToModule "#Ratchet" "#ForcePlayerAsOpp"
+		SendToModule "#Boss2" "#ForcePlayerAsOpp"
+		;Idle 7.0 
+		CreateModule "#Timer" "#TimerB" "#Time=7.0" "#NoRender" "#Start"
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#General" "#SetMessage=ITC1" "#SetMessageTimer=3.0"
+		
+		
+		SendToModule "#General" "#CountSet=1"
+
+		SetState Chapter1_Process
+		
+	}
+}
+state Chapter1_Phase5
+{
+	
+	actions
+	{
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=7" "#IconType=#Drone"
+		
+		;CreateModule "#Creature" "#CreatureWaveA" "#Spline=SpawnLower" "#Type=DroneForklift_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800" 
+		;CreateModule "#Creature" "#CreatureWaveB" "#Spline=SpawnLower" "#Type=DroneDefault_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000"
+		;CreateModule "#Creature" "#CreatureWaveC" "#Spline=Spawn" "#Type=DronePickupTruck_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		
+		CreateModule "#Creature" "#CreatureWaveA" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneForkLift_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800" 
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveA" "#Spline=MeteorSpawnLower" "#Time=1" 
+		CreateModule "#Creature" "#CreatureWaveB" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneDefault_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000" 
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#CreatureWaveB" "#Spline=MeteorSpawnLower" "#Time=4,DroneDefault_a" 
+		CreateModule "#Creature" "#CreatureWaveC" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DronePickupTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" 
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#CreatureWaveC" "#Spline=MeteorSpawnLower" "#Time=6,DronePickupTruck_a" 
+		
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=SpawnLower" "#Type=DroneTowTruck_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=TowTruckDrone" 
+		CreateModule "#Creature" "#CreatureWaveE" "#Spline=SpawnLower" "#Type=DroneArmouredCar_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		CreateModule "#Creature" "#CreatureWaveF" "#Spline=SpawnLower" "#Type=DroneCement_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=MixerDrone" "#SetEnergyMax=400" "#SetEnergy=400"
+		CreateModule "#Creature" "#CreatureWaveG" "#Spline=SpawnLower" "#Type=DroneMig_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=Mig29Drone" "#SetEnergyMax=1500" "#SetEnergy=1500" 
+		
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveD" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveE" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveF" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveG" "#ForcePlayerAsOpp"
+
+		SendToModule "#General" ;"#CountBSet=6"
+
+		SetState Chapter1_Process
+		
+	}
+}
+state Chapter1_Phase6
+{
+	
+	actions
+	{	
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=18" "#IconType=#Drone"
+		
+		;CreateModule "#Creature" "#CreatureWaveA" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneTowTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800" 
+		;CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveA" "#Spline=MeteorSpawnUpper" "#Time=1" 
+		CreateModule "#Creature" "#CreatureWaveB" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneDefault_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000" 
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#CreatureWaveB" "#Spline=MeteorSpawnUpper" "#Time=4,DroneDefault_a" 
+		CreateModule "#Creature" "#CreatureWaveC" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DronePickupTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" 
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#CreatureWaveC" "#Spline=MeteorSpawnUpper" "#Time=2,DronePickupTruck_a" "#Time=3,DronePickupTruck_a" "#Time=15,DronePickupTruck_a" "#Time=16,DronePickupTruck_a" 
+		CreateModule "#Creature" "#CreatureWaveD" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneArmouredCar_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" 
+		CreateModule "#Meteorite" "#Meteorite4" "#ModuleTag=#CreatureWaveD" "#Spline=MeteorSpawnUpper" "#Time=17,DroneArmouredCar_a"
+
+		CreateModule "#Creature" "#Boss"          "#Spline=SpawnLower" "#Type=OptimusPrime" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#Script=Optimus_PrimeM" "#SetEnergyMax=10000.0" "#SetEnergy=10000.0" "#SetPosition=#BossEntrance_T4"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveD" "#ForcePlayerAsOpp"
+		SendToModule "#Boss" "#ForcePlayerAsOpp"
+
+		;Idle 17.0
+		CreateModule "#Timer" "#TimerC" "#Time=17.0" "#NoRender" "#Start"
+		
+		
+
+		SendToModule "#General" ;"#CountBSet=7"
+		
+		SetState Chapter1_Process
+	}
+}
+
+state Chapter1_Process
+{
+	conditions
+	{
+		if module "General GetCountA" == 3.0 and
+			if module "General GetCount" < 3.0 goto Chapter1_IronHideFight		
+
+		if module "TimerA FailMission" == 1.0 goto Chapter1_TimerA
+
+		if module "TimerB FailMission" == 1.0 goto Chapter1_TimerB
+
+		if module "TimerC FailMission" == 1.0 goto Chapter1_TimerC
+
+		if module "TimerD FailMission" == 1.0 goto Chapter1_TimerD
+
+		if module "TimerI FailMission" == 1.0 goto Chapter1_IronCharge
+
+		if module "TimerR FailMission" == 1.0 goto Chapter1_TimerR
+
+		if module "General GetCountD" == 1.0 goto CreatureSwapProcess
+
+
+		if module "OutOfBoundsNorth InArea" == 1.0 goto Respawn
+		if module "OutOfBoundsEast InArea" == 1.0 goto Respawn	
+		if module "OutOfBoundsSouth InArea" == 1.0 goto Respawn
+		if module "OutOfBoundsWest InArea" == 1.0 goto Respawn
+
+		if module "Ratchet GetCountAlive" == 0.0 and
+			if module "General GetCountA" == 4.0 and
+				if module "General GetCount" == 1.0 goto Chapter1_RatchetDead
+
+		if module "Ratchet PlayerRange" < 90 and
+			if module "General GetCountA" == 4.0 goto Chapter1_ClearTheRadar
+	
+		
+		
+		if module "IronHide IronHideIsCombat" == 0.0 and
+			if module "General GetCountA" == 3.0 and
+				if module "IronHide GetCountAlive" == 1.0 goto Chapter1_IronCombat
+
+		if module "Traitor GetCountAlive" == 0.0 and
+			if module "General GetCountA" == 7.0 goto Chapter1_Complete
+
+		if module "DroneCounter Complete" == 1.0 goto Chapter1_PhaseComplete
+
+
+		
+
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter1_IronHideFight
+{
+	conditions
+	{
+		
+		if module "IronHide GetCountAlive" == 0.0 goto Chapter1_IronHideDead
+
+
+		if module "TimerA FailMission" == 1.0 goto Chapter1_TimerA
+
+	
+		if module "TimerI FailMission" == 1.0 goto Chapter1_IronCharge
+
+
+		
+		if module "General GetCountD" == 1.0 goto CreatureSwapProcess
+
+
+		if module "OutOfBoundsNorth InArea" == 1.0 goto Respawn
+		if module "OutOfBoundsEast InArea" == 1.0 goto Respawn	
+		if module "OutOfBoundsSouth InArea" == 1.0 goto Respawn
+		if module "OutOfBoundsWest InArea" == 1.0 goto Respawn
+
+		
+		
+		if module "IronHide IronHideIsCombat" == 0.0 and
+			if module "General GetCountA" == 3.0 and
+				if module "General GetCount" == 1.0 and
+					if module "IronHide GetCountAlive" == 1.0 goto Chapter1_IronCharge
+
+		if module "DroneCounter Complete" == 1.0 goto Chapter1_PhaseComplete
+
+
+		
+		if Timer > 0.2 goto Chapter1_IronHideFight2
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter1_IronHideFight2
+{
+	conditions
+	{
+		
+		if module "IronHide GetCountAlive" == 0.0 goto Chapter1_IronHideDead
+
+
+		if module "TimerA FailMission" == 1.0 goto Chapter1_TimerA
+
+	
+		if module "TimerI FailMission" == 1.0 goto Chapter1_IronCharge
+
+
+		
+		if module "General GetCountD" == 1.0 goto CreatureSwapProcess
+
+
+		if module "OutOfBoundsNorth InArea" == 1.0 goto Respawn
+		if module "OutOfBoundsEast InArea" == 1.0 goto Respawn	
+		if module "OutOfBoundsSouth InArea" == 1.0 goto Respawn
+		if module "OutOfBoundsWest InArea" == 1.0 goto Respawn
+
+		
+		
+		if module "IronHide IronHideIsCombat" == 0.0 and
+			if module "General GetCountA" == 3.0 and
+				if module "General GetCount" == 1.0 and
+					if module "IronHide GetCountAlive" == 1.0 goto Chapter1_IronStatic
+
+		if module "DroneCounter Complete" == 1.0 goto Chapter1_PhaseComplete
+
+
+		
+		if Timer > 0.2 goto Chapter1_IronHideFight
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter1_RatchetDead
+{
+	actions
+	{
+		DestroyModule "#TimerR"
+		SendToModule "#General" "#SetRadarInterference=0" "#CountSet=2"
+		
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_Scorponok
+{
+	conditions
+	{
+		if module "General GetCountA" == 2.0 goto Chapter1_LoadNormalDrones
+		if module "General GetCountA" == 3.0 goto Chapter1_LoadAdvancedDrones
+		if module "General GetCountA" >= 4.0 goto Chapter1_LoadEliteDrones
+		
+
+		if module "DroneCounter Complete" == 1.0 goto Chapter1_ScorponokComplete
+
+		
+	
+	}
+	actions
+	{
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=15" "#IconType=#Drone"
+
+		SendToModule "#General" "#SetMessage=CD7" "#SetMessageTimer=3.0"
+
+		Idle 0.2
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=SpawnLower" "#Type=DroneDefault_a"  "#count=15" "#maxalive=6" "#addtoradar" "#SpawnInLosInit" "#TransformForceRobot" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		
+		;SetState Chapter1_Process
+	}
+}
+state Chapter1_LoadNormalDrones
+{
+	conditions
+	{
+		
+
+		if module "DroneCounter Complete" == 1.0 goto Chapter1_ScorponokComplete
+
+		
+	
+	}
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=SpawnLower" "#Type=DroneDefault_a"  "#count=15" "#maxalive=6" "#addtoradar" "#SpawnInLosInit" "#TransformForceRobot" "#Script=Combat" 
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		
+		
+		
+	}
+}
+state Chapter1_LoadAdvancedDrones
+{
+	conditions
+	{
+		
+
+		if module "DroneCounter Complete" == 1.0 goto Chapter1_ScorponokComplete
+
+		
+	
+	}
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=SpawnLower" "#Type=DroneDefault_a"  "#count=15" "#maxalive=6" "#addtoradar" "#SpawnInLosInit" "#TransformForceRobot" "#Script=AdvDefault" 
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		
+		
+		
+	}
+}
+state Chapter1_LoadEliteDrones
+{
+	conditions
+	{
+		
+
+		if module "DroneCounter Complete" == 1.0 goto Chapter1_ScorponokComplete
+
+		
+	
+	}
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=SpawnLower" "#Type=DroneDefault_a"  "#count=15" "#maxalive=6" "#addtoradar" "#SpawnInLosInit" "#TransformForceRobot" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		
+		
+		
+	}
+}
+state Chapter1_ScorponokComplete
+{
+	conditions
+	{
+		
+		if module "General FadeDown" == 1.0 goto Chapter1_Blackout
+	}
+	actions
+	{
+		DestroyAllModules 
+		ResetTimer
+		SendToModule "#General" "#SetRadarInterference=0"
+		Idle 0.1
+		SendToModule "#General" "#FadeDown" 
+	}
+}
+state Chapter1_Blackout
+{
+	conditions
+	{
+		if module "OutOfBoundsNorth InArea" == 1.0 goto Respawn3
+		if module "OutOfBoundsEast InArea" == 1.0 goto Respawn3
+		if module "OutOfBoundsSouth InArea" == 1.0 goto Respawn3
+		if module "OutOfBoundsWest InArea" == 1.0 goto Respawn3
+
+	}
+	actions
+	{
+		DestroyAllModules 
+		ResetTimer
+		
+		SendToModule "#General" "#PhysObj" "#PlayerType=Blackout" "#SetPlayer=#Chapter1Restart2" "#CountCSet=2" 
+		SendToModule "#General" "#SetMessage=CD6" "#SetMessageTimer=3" "#FadeUp"
+		Idle 3.0 
+		SetState LeftSwapArea
+	}
+}
+state Chapter1_TimerD
+{
+	actions
+	{
+		
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_TimerA
+{
+	actions
+	{
+		DestroyModule "#TimerA"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=SpawnLower" "#Type=DroneDefault_a"  "#count=8" "#maxalive=3" "#addtoradar" "#TransformForceRobot" "#Script=AdvDefault" 
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=SpawnLower" "#Type=DronePickupTruck_a"  "#count=9" "#maxalive=2" "#addtoradar" "#TransformForceRobot" "#Script=AdvDefault" 
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#General" "#CountSet=1"
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_TimerB
+{
+	actions
+	{
+		DestroyModule "#TimerB"
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=Spawn" "#Type=DroneDefault_a"  "#count=2" "#maxalive=2" "#addtoradar" "#TransformForceRobot" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000"
+		SendToModule "#CreatureWaveD" "#ForcePlayerAsOpp"
+		CreateModule "#Timer" "#TimerR" "#Time=3" "#NoRender" "#Start"
+		SetState Chapter1_Process
+
+	}
+}
+state Chapter1_TimerC
+{
+	actions
+	{
+		DestroyModule "#TimerC"
+		CreateModule "#Creature" "#CreatureWaveE" "#Spline=SpawnLower" "#Type=DroneCement_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=MixerDrone" "#SetEnergyMax=400" "#SetEnergy=400"
+		CreateModule "#Creature" "#CreatureWaveF" "#Spline=SpawnLower" "#Type=DroneMig_a"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=Mig29Drone" "#SetEnergyMax=1500" "#SetEnergy=1500" 
+		;CreateModule "#Creature" "#CreatureWaveG" "#Spline=SpawnLower" "#Type=EnergonDrone"  "#count=8" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=MixerDrone" "#SetEnergyMax=400" "#SetEnergy=400"
+		CreateModule "#Creature" "#CreatureWaveG" "#Spline=SpawnLower" "#Type=DroneDefault_a"  "#count=3" "#maxalive=2" "#addtoradar" "#TransformForceRobot" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000"
+		CreateModule "#Creature" "#CreatureWaveH" "#Spline=SpawnLower" "#Type=DroneForklift_a"  "#count=6" "#maxalive=3" "#addtoradar" "#TransformForceRobot" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800"
+		
+		
+		SendToModule "#CreatureWaveE" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveF" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveG" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveH" "#ForcePlayerAsOpp"
+
+		SetState Chapter1_Process
+
+	}
+}
+state Chapter1_TimerR
+{
+	conditions
+	{
+		if module "OutOfBoundsNorth InArea" == 1.0 goto Respawn5
+		if module "OutOfBoundsEast InArea" == 1.0 goto Respawn5
+		if module "OutOfBoundsSouth InArea" == 1.0 goto Respawn5
+		if module "OutOfBoundsWest InArea" == 1.0 goto Respawn5
+
+	}
+	actions
+	{
+		DestroyModule "#TimerR"
+		CreateModule "#Timer" "#TimerR" "#Time=10" "#NoRender" "#Start"
+
+		SendToModule "#CreatureWaveA" "#SetEnergy=800"
+		SendToModule "#CreatureWaveB" "#SetEnergy=1000"
+		SendToModule "#CreatureWaveC" "#SetEnergy=1200"
+		SendToModule "#CreatureWaveD" "#SetEnergy=1000"
+		SendToModule "#Boss2" "#SetEnergy=1500"
+		SendToModule "#Ratchet" "#Script=Heal"
+
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#General" "#SetMessage=ITC2" "#SetMessageTimer=3.0"
+		SendToModule "#RatArea" "#AddToRadar"
+		Idle 1.4
+		
+		SetState Chapter1_RadarIsStillJammed
+
+
+	}
+}
+
+
+state Chapter1_RadarIsStillJammed
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#Ratchet" "#Script=RatchetInit"
+		Idle 0.6
+		 
+		SetState Chapter1_Process
+	}
+}
+
+
+state Chapter1_ClearTheRadar
+{
+	conditions
+	{
+		if module "TimerA FailMission" == 1.0 goto Chapter1_TimerA
+
+		if module "TimerB FailMission" == 1.0 goto Chapter1_TimerB
+
+		if module "TimerC FailMission" == 1.0 goto Chapter1_TimerC
+
+		if module "TimerR FailMission" == 1.0 goto Chapter1_TimerR
+
+		
+		
+
+		if module "OutOfBoundsNorth InArea" == 1.0 goto Respawn
+		if module "OutOfBoundsEast InArea" == 1.0 goto Respawn	
+		if module "OutOfBoundsSouth InArea" == 1.0 goto Respawn
+		if module "OutOfBoundsWest InArea" == 1.0 goto Respawn
+
+		if module "Ratchet GetCountAlive" == 0.0 and
+			if module "General GetCountA" == 4.0 and
+				if module "General GetCount" == 1.0 goto Chapter1_RatchetDead
+
+
+		if module "Ratchet PlayerRange" > 95 goto Chapter1_RadarIsStillJammed
+		
+
+		if module "DroneCounter Complete" == 1.0 goto Chapter1_PhaseComplete
+
+		
+		
+
+
+		
+
+
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#Ratchet" "#Script=RatchetCombat" 
+		SendToModule "#BodyGuard" "#Script=TruckDrone"
+		SendToModule "#RatArea" "#AddToRadar"
+		
+	}
+}
+state Respawn
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto Respawn2
+		if module "General GetCountC" == 0.0 goto Chapter1_Process
+	}
+	actions
+	{
+		Idle 0.1
+		SendToModule "#General" "#FadeDown" 
+	}
+}
+state Respawn2
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetVehicle=#Respawn" "#FadeUp" 
+		SetState Chapter1_Process
+	}
+}
+state Respawn3
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto Respawn4
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown" 
+	}
+}
+state Respawn4
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetVehicle=#Respawn" "#FadeUp" 
+		SetState LeftSwapArea
+	}
+}
+state Respawn5
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto Respawn6
+		if module "General GetCountC" == 0.0 goto Chapter1_RadarIsStillJammed
+	}
+	actions
+	{
+		Idle 0.1
+		SendToModule "#General" "#FadeDown" 
+	}
+}
+state Respawn6
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetVehicle=#Respawn" "#FadeUp" 
+		SetState Chapter1_RadarIsStillJammed
+	}
+}
+state Chapter1_DeathFailMission
+{
+	
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"
+		
+		SetState Chapter1_DeathFailMission2
+	}
+}
+state Chapter1_DeathFailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter1_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter1_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+		SendToModule "#General" "#UnLoadCreature=Bumblebee"
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=Jazz"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#UnLoadCreature=IronHide"
+		SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		SendToModule "#General" "#UnLoadCreature=Bumblebee07"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=OptimusPrime"
+		SendToModule "#General" "#UnLoadCreature=Starscream"
+		
+		SendToModule "#General" "#ResetAll" "#PlayerType=Megatron" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+		SetState "LevelIntro"
+	}
+}
+state Chapter1_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		SendToModule #General #UnlockBonus=Mission_CybertronDCon
+		SendToModule #General #UnlockBonus=Character_CyberMega
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartVideo=#A7C1Outro"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		SetState Chapter1_Leave
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SetState "FinishedLevel"
+	}
+}

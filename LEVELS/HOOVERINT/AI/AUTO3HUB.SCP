@@ -1,0 +1,922 @@
+state base
+{
+	conditions
+	{
+		;if CurrentUser "grichards" == 1.0 goto Empty
+		;if CurrentUser "sharding" == 1.0 goto Empty
+		;if CurrentUser "awhite" == 1.0 goto MainWithDebug
+		;if CurrentUser "challiday" == 1.0 goto Empty
+		;if CurrentUser "popdam" == 1.0 goto Empty
+		;if CurrentUser "DWalker" == 1.0 goto MainWithDebug
+		if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+	}
+}
+state EmptyDeath
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Empty"
+	}
+}
+state Empty
+{
+	Actions
+	{
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#StartMission"
+		SetDeathPoint "EmptyDeath"
+	}
+}
+state StartLevelIntro
+{
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#ActionRing"  "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter1" "#placement=#Chapter1Beacon" "#Title=Auto3Chap1" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter2" "#placement=#Chapter2Beacon" "#Title=Auto3Chap2" "#Ring=ActionRing"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter3" "#placement=#Chapter3Beacon" "#Title=Auto3Chap3" "#Ring=ActionRing"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter4" "#placement=#Chapter4Beacon" "#Title=Auto3Chap4" "#Ring=ActionRing"
+		;SendToModule "#ActionRing" "#maxalive=3" "#spline=RandomDronesA" "#type=DroneDefault" "#rangemax=300" "#rangemin=200"
+		;SendToModule "#ActionRing" "#Unlock=#Chapter1"
+		SendToModule "#ActionRing" "#TurnOff"
+		CreateModule "#General" "#General" "#ProtectSystem"
+		
+		CreateModule "#SubMissions" "#SubMissions" "#NodeSpline=SubMissionNodes" "#SubmissionSpline=SubMissionGates" "#ProtectSystem"
+		SendToModule "#SubMissions" "#SetTitle=#Race"
+		SendToModule "#SubMissions" "#SetTitle=#Scavenger"
+		SendToModule "#SubMissions" "#SetTitle=#Hunt"
+		SendToModule "#SubMissions" "#SetTitle=#Sumo"
+
+		
+		SendToModule "#General" "#LevelSpecial1=LASERBEAM_01" "#LevelSpecial2=LASERBEAM_02" "#LevelSpecial3=LASERBEAM_03"
+
+		;CreateModule "#SubMissions" "#SubMissions" "#Spline=SubMissions" "#ProtectSystem"
+		;SendToModule "#SubMissions" "#SetTitle=#Attack"
+		;SendToModule "#SubMissions" "#SetTitle=#Race"
+		;SendToModule "#SubMissions" "#SetTitle=#Collection"
+		;SendToModule "#SubMissions" "#SetTitle=#Race"
+
+		SendToModule "#General" "#LevelSpecialOn=1" "#LevelSpecialOn=2" "#LevelSpecialOn=3" 
+
+		SetState "LevelSpecialInit"
+	}
+}
+
+state LevelSpecialInit
+{
+	conditions
+	{
+		if module "General ChapterProgress" >= 3.0 goto LevelSpecialClear3
+		if module "General ChapterProgress" >= 2.0 goto LevelSpecialClear2
+		if module "General ChapterProgress" >= 1.0 goto LevelSpecialClear1
+		if AlwaysTrue == 1.0 goto DoorDestroyInit
+	}
+}
+state LevelSpecialClear3
+{
+	actions
+	{
+		SendToModule "#General" "#LevelSpecialOff=3" 
+		SetState LevelSpecialClear2
+	}
+}
+state LevelSpecialClear2
+{
+	actions
+	{
+		SendToModule "#General" "#LevelSpecialOff=2" 
+		SetState LevelSpecialClear1
+	}
+}
+state LevelSpecialClear1
+{
+	actions
+	{
+		SendToModule "#General" "#LevelSpecialOff=1" 
+		SetState DoorDestroyInit
+	}
+}
+state DoorDestroyInit
+{
+	conditions
+	{
+		if module "General ChapterProgress" >= 1.0 goto DoorDestroyDo
+		if AlwaysTrue == 1.0 goto LevelIntro
+	}
+}
+state DoorDestroyDo
+{
+	actions
+	{
+		CreateModule "#SpecialObj" "#DoorA" "#Spline=A3C1A" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorB" "#Spline=A3C1B" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorC" "#Spline=A3C1C" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+
+		Idle "frames=3"
+
+		DestroyModule "#DoorA"
+		DestroyModule "#DoorB"
+		DestroyModule "#DoorC"
+
+		SetState LevelIntro
+	}
+}
+state LevelSpecialInit2
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission1_InEarly
+		if module "General ChapterProgress" >= 1.0 goto DoorDestroyInit2
+		if module "General ChapterProgress" >= 2.0 goto DoorDestroyInit2
+		if module "General ChapterProgress" >= 3.0 goto DoorDestroyInit2
+		if module "General ChapterProgress" >= 4.0 goto DoorDestroyInit2
+		;if AlwaysTrue == 1.0 goto DoorDestroyInit2
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state DoorDestroyInit2
+{
+	conditions
+	{
+		;if module "General ChapterProgress" >= 1.0 goto DoorDestroyDo2
+		if AlwaysTrue == 1.0 goto DoorDestroyDo2
+	}
+}
+state DoorDestroyDo2
+{
+	actions
+	{
+		CreateModule "#SpecialObj" "#DoorA" "#Spline=A3C1A" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorB" "#Spline=A3C1B" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorC" "#Spline=A3C1C" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+
+		Idle "frames=3"
+
+		DestroyModule "#DoorA"
+		DestroyModule "#DoorB"
+		DestroyModule "#DoorC"
+
+		SetState WhereTo
+	}
+}
+state WhereTo
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereToB
+		if module "General ChapterProgress" >= 4.0 goto SubMission1_Main1
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereToB
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereToC
+		if module "General ChapterProgress" >= 3.0 goto SubMission1_Onslaught
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereToC
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereToD
+		if module "General ChapterProgress" >= 2.0 goto SubMission1_InEarly
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereToD
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" >= 1.0 goto SubMission1_InEarly
+		
+		
+		
+	}
+	actions
+	{
+		
+	}
+}
+state LevelSpecialInit3
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission2_InReallyEarly
+		if module "General ChapterProgress" >= 1.0 goto DoorDestroyInit3
+		if module "General ChapterProgress" >= 2.0 goto DoorDestroyInit3
+		if module "General ChapterProgress" >= 3.0 goto DoorDestroyInit3
+		if module "General ChapterProgress" >= 4.0 goto DoorDestroyInit3
+		;if AlwaysTrue == 1.0 goto DoorDestroyInit2
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state DoorDestroyInit3
+{
+	conditions
+	{
+		if AlwaysTrue == 1.0 goto DoorDestroyDo3
+	}
+}
+state DoorDestroyDo3
+{
+	actions
+	{
+		CreateModule "#SpecialObj" "#DoorA" "#Spline=A3C1A" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorB" "#Spline=A3C1B" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorC" "#Spline=A3C1C" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+
+		Idle "frames=3"
+
+		DestroyModule "#DoorA"
+		DestroyModule "#DoorB"
+		DestroyModule "#DoorC"
+
+		SetState WhereTo2
+	}
+}
+state WhereTo2
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo2B
+		if module "General ChapterProgress" >= 4.0 goto SubMission2_MainDefault
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo2B
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo2C
+		if module "General ChapterProgress" >= 3.0 goto SubMission2_Onslaught
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo2C
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo2D
+		if module "General ChapterProgress" >= 2.0 goto SubMission2_InEarly
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo2D
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" >= 1.0 goto SubMission2_InEarly
+		
+		
+		
+	}
+	actions
+	{
+		
+	}
+}
+state LevelSpecialInit4
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission3_InReallyEarly
+		if module "General ChapterProgress" >= 1.0 goto DoorDestroyInit4
+		if module "General ChapterProgress" >= 2.0 goto DoorDestroyInit4
+		if module "General ChapterProgress" >= 3.0 goto DoorDestroyInit4
+		if module "General ChapterProgress" >= 4.0 goto DoorDestroyInit4
+		;if AlwaysTrue == 1.0 goto DoorDestroyInit2
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state DoorDestroyInit4
+{
+	conditions
+	{
+		if AlwaysTrue == 1.0 goto DoorDestroyDo4
+	}
+}
+state DoorDestroyDo4
+{
+	
+	actions
+	{
+		CreateModule "#SpecialObj" "#DoorA" "#Spline=A3C1A" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorB" "#Spline=A3C1B" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorC" "#Spline=A3C1C" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+
+		Idle "frames=3"
+
+		DestroyModule "#DoorA"
+		DestroyModule "#DoorB"
+		DestroyModule "#DoorC"
+
+		SetState WhereTo3
+	}
+}
+state WhereTo3
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo3B
+		if module "General ChapterProgress" >= 4.0 goto SubMission3_Main1
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo3B
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo3C
+		if module "General ChapterProgress" >= 3.0 goto SubMission3_Onslaught
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo3C
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo3D
+		if module "General ChapterProgress" >= 2.0 goto SubMission3_InEarly
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo3D
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" >= 1.0 goto SubMission3_InEarly
+		
+		
+		
+	}
+	actions
+	{
+		
+	}
+}
+state LevelSpecialInit5
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission4_InReallyEarly
+		if module "General ChapterProgress" >= 1.0 goto DoorDestroyInit5
+		if module "General ChapterProgress" >= 2.0 goto DoorDestroyInit5
+		if module "General ChapterProgress" >= 3.0 goto DoorDestroyInit5
+		if module "General ChapterProgress" >= 4.0 goto DoorDestroyInit5
+		;if AlwaysTrue == 1.0 goto DoorDestroyInit2
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state DoorDestroyInit5
+{
+	conditions
+	{
+		if AlwaysTrue == 1.0 goto DoorDestroyDo5
+	}
+}
+state DoorDestroyDo5
+{
+	
+	actions
+	{
+		CreateModule "#SpecialObj" "#DoorA" "#Spline=A3C1A" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorB" "#Spline=A3C1B" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorC" "#Spline=A3C1C" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+
+		Idle "frames=3"
+
+		DestroyModule "#DoorA"
+		DestroyModule "#DoorB"
+		DestroyModule "#DoorC"
+
+		SetState WhereTo4
+	}
+}
+state WhereTo4
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo4B
+		if module "General ChapterProgress" >= 4.0 goto SubMission4_Main1
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo4B
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo4C
+		if module "General ChapterProgress" >= 3.0 goto SubMission4_Main4
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo4C
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo4D
+		if module "General ChapterProgress" >= 2.0 goto SubMission4_InEarly
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo4D
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" >= 1.0 goto SubMission4_InEarly
+		
+		
+		
+	}
+	actions
+	{
+		
+	}
+}
+state LevelSpecialTune
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto GlobalActionRing2
+				
+	}
+	actions
+	{
+		
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+
+
+		SendToModule "#General" "#TrafficLv = 0"                       
+		SendToModule "#General" "#PatrolLv = 0"                        
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 1"          
+		SendToModule "#General" "#ResponseLv_Detection  = 0"  
+		SendToModule "#General" "#ResponseLv_FreeRoamSet" 
+
+		CreateModule "#Timer" "#Timer" "#Time=8.7" "#NoRender" 
+		;SetState "GlobalActionRing2"   
+	}
+}
+state LevelSpecialTune2
+{
+	conditions
+	{
+		if timer > 0.2 goto GlobalActionRing
+				
+	}
+	actions
+	{
+		ResetTimer
+		
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+
+
+	}
+}
+state LevelSpecialInit6
+{
+	conditions
+	{
+		if timer > 0.2 goto LevelSpecialTune
+		if module "General ChapterProgress" >= 1.0 goto DoorDestroyInit6
+		if module "General ChapterProgress" >= 2.0 goto DoorDestroyInit6
+		if module "General ChapterProgress" >= 3.0 goto DoorDestroyInit6
+		if module "General ChapterProgress" >= 4.0 goto DoorDestroyInit6
+		;if AlwaysTrue == 1.0 goto DoorDestroyInit2
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state DoorDestroyInit6
+{
+	conditions
+	{
+		if AlwaysTrue == 1.0 goto DoorDestroyDo6
+	}
+}
+state DoorDestroyDo6
+{
+	
+	actions
+	{
+		CreateModule "#SpecialObj" "#DoorA" "#Spline=A3C1A" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorB" "#Spline=A3C1B" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+		CreateModule "#SpecialObj" "#DoorC" "#Spline=A3C1C" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage"
+
+		Idle "frames=3"
+
+		DestroyModule "#DoorA"
+		DestroyModule "#DoorB"
+		DestroyModule "#DoorC"
+
+		SetState "WhereTo5"
+	}
+}
+state WhereTo5
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo5B
+		;if module "General ChapterProgress" >= 1.0 goto LevelSpecialTune2
+		;if module "General ChapterProgress" >= 2.0 goto LevelSpecialTune2
+		;if module "General ChapterProgress" >= 3.0 goto GlobalActionRing
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+
+state WhereTo5B
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo5C
+		if module "General ChapterProgress" >= 3.0 goto GlobalActionRing
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo5C
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo5D
+		if module "General ChapterProgress" >= 2.0 goto LevelSpecialTune2
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo5D
+{
+	conditions
+	{
+		if timer > 0.2 goto LevelSpecialTune
+		if module "General ChapterProgress" >= 1.0 goto LevelSpecialTune2
+		
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+
+state LevelIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto PrePickGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Chapter1_HubDeath"
+		SendToModule "#General" "#StartIntroVideo=#A3LevelIntro" "#PlayerType=BumbleBee07"
+		SendToModule						"#General" "#StartHUB"
+	}
+}
+
+state PrePickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_PreInitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_PreInitGoto
+		if module "General ChapterProgress" == 3.0 goto Chapter4_PreInitGoto
+		if module "General ChapterProgress" == 4.0 goto Chapter1_PreInitGoto
+	}
+}
+
+state PickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_InitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_InitGoto
+		if module "General ChapterProgress" == 3.0 goto Chapter4_InitGoto
+		if module "General ChapterProgress" == 4.0 goto FinishedLevel
+	}
+	actions
+	{
+		SendToModule "#General" "#StartHUB"
+	}
+}
+
+state Chapter1_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_Goto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		;CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch1_Goto"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#StartMission" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+
+state Chapter2_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter2_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#COMPPOINT1" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter3_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter3_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#COMPPOINT2" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter4_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter4_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#COMPPOINT3" "#SetPlayerDeathPoint=#Chapter4Restart"
+	}
+}
+state FinishedLevel
+{
+	conditions
+	{
+	}
+	actions
+	{
+		
+		SetState GlobalActionRing
+	}
+}
+state GlobalActionRing
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		if module "General ChapterProgress" >= 3.0 goto Onslaught_AreYouSure?
+	}
+	actions
+	{
+		SendToModule "#General" "#StartHUB"
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#AllowCreatures"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#SubMissions" "#TurnOn"
+	}
+}
+state Onslaught_AreYouSure?
+{
+	conditions
+	{
+		if Timer > 0.1 goto Onslaught 
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing3
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Onslaught
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter4_HubDeath"
+		
+		SendToModule "#General" "#SetMaxOpponents=29" "#SetMaxApproachers=29" "#SetAttackRingSize=20"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		SendToModule "#General" "#BG_LoadCreature=DroneCement"
+		CreateModule "#Creature" "#Drones" "#Type=DroneDefault" "#Spline=A3C1SS7Drone3" "#count=1000" "#maxalive=3" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsCreature" "#rangemax=200" "#rangemin=150" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones0" "#Type=DroneDefault" "#Spline=A3C1SS7Drone3" "#count=1000" "#maxalive=2" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsCreature" "#rangemax=200" "#rangemin=150" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones1" "#Type=DroneCement" "#Spline=A3C1SS7Drone3" "#count=1000" "#maxalive=2" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsCreature" "#rangemax=200" "#rangemin=150" "#Script=CAgile"
+		CreateModule "#Creature" "#Drones2" "#Type=DroneDefault" "#Spline=Spawn4b" "#count=4000" "#maxalive=4" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsCreature" "#rangemax=200" "#rangemin=150" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones3" "#spline=Route3a" "#maxalive=2" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#rangemax=200" "#rangemin=150" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones4" "#spline=Route3b" "#maxalive=2" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#rangemax=200" "#rangemin=150" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones5" "#spline=Route3c" "#maxalive=2" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#rangemax=200" "#rangemin=150" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones6" "#spline=Route3d" "#maxalive=2" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#rangemax=200" "#rangemin=150" "#Script=AdvDefault"
+		
+		
+	}
+}
+
+state GlobalActionRing2
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+	}
+	actions
+	{
+		SendToModule "#General" "#StartHUB"
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#AllowCreatures"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#SubMissions" "#TurnOn"
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+	}
+}
+state GlobalActionRing3
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		if module "SubRace InArea" == 1.0 goto SubMissionEX_Init
+		
+	}
+	actions
+	{
+		CreateModule "#AreaRange" "#SubRace" "#Trigger=#ExtraRace" "#AddToRadar" "#ParticleRing" 
+		
+	}
+}
+state GlobalStartChapter
+{
+	conditions
+	{
+		if module "ActionRing Chapter1"  == 1.0 goto Chapter1_Enter
+		if module "ActionRing Chapter2"  == 1.0 goto Chapter2_Enter
+		if module "ActionRing Chapter3"  == 1.0 goto Chapter3_Enter
+		if module "ActionRing Chapter4"  == 1.0 goto Chapter4_Enter
+	}
+	actions
+	{
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneCement"
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#SubMissions" "#TurnOff"
+	}
+}
+state SubMission_Init
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission_Start
+	}
+	actions
+	{
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneCement"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#FadeDown"
+	}
+}
+State SubMission_StartTest
+{
+	actions
+	{
+		SendToModule "#General" "#FadeUp" "#AllowPlayerMovement"
+		SetState "SubMission_Start"
+	}
+}
+state SubMission_Start
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionTriggered" == 1.0 goto SubMission1_Enter
+		if module "SubMissions GetSubMissionTriggered" == 2.0 goto SubMission2_Enter
+		if module "SubMissions GetSubMissionTriggered" == 3.0 goto SubMission3_Enter
+		if module "SubMissions GetSubMissionTriggered" == 4.0 goto SubMission4_Enter
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		SendToModule "#ActionRing" "#TurnOff"
+	}
+}
+state SkipLevel
+{
+	conditions
+	{
+		if message "MissionMessage" == 1.0 goto Chapter1_InitGoto 
+		if message "MissionMessage" == 2.0 goto Chapter2_InitGoto
+		if message "MissionMessage" == 3.0 goto Chapter3_InitGoto
+		if message "MissionMessage" == 4.0 goto Chapter4_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Start"
+		SendToModule "#General" "#FadeDown"
+	}
+}

@@ -1,0 +1,120 @@
+state Chapter4_HubRestart_Alt
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "Chapter4_Goto_Alt"
+	}
+}
+state Chapter4_HubDeath_Alt
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart_Alt
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto_Alt
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		CreateModule "#VehicleLevels" "#VehicleLevels" 
+		SendToModule "#VehicleLevels" "#TrafficLv=0" "#PatrolLv=0"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+
+
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		SetState "Chapter4_Goto_Alt"
+	}
+}
+state Chapter4_Goto_Alt
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		
+		Idle 2.0
+		CreateModule "#Speech" "#PlayDelay=1.3" "#speech=#D1_ch4_Goto" "#Start"
+		Idle 3.0
+		
+		
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing_Alt"
+	}
+}
+state Chapter4_Enter_Alt
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures_Alt
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#Protect"
+		SendToModule "#VehicleLevels" "#TrafficLv=0" "#PatrolLv=0"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		SendToModule "#General" "#StartMissionIntro=#D1C4Intro2" "#SetPlayerDeathPoint=#Chapter4Restart"
+	}
+}
+state Chapter4_LoadCreatures_Alt
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=Blackout"
+	}
+}

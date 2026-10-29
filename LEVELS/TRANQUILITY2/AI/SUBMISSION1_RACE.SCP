@@ -1,0 +1,233 @@
+;race to the end of the path within the time limit
+
+;requires:
+;race spline		Race#
+
+;Changeable params:
+;	300		time in which to complete the mission
+;   15			distance to each point
+
+
+state SubMission1_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission1_Death"
+		;SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		SetState "SubMission1_Init"
+	}
+}
+state SubMission1_Enter2
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" >= 2.0 goto SubMission1_Enter3
+		if timer > 0.1 goto SubMission1_Main3
+	}
+	actions
+	{
+		
+	}
+}
+state SubMission1_Enter3
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" >= 4.0 goto SubMission1_Init2
+		if timer > 0.1 goto SubMission1_Init3
+	}
+	actions
+	{
+		
+	}
+}
+
+state SubMission1_Init
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" >= 1.0 goto SubMission1_Enter2
+		if timer > 0.1 goto SubMission1_Main2
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetVehicle=#SubMission1"
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Race1" "#Range=25"
+
+	}
+}
+state SubMission1_Init2
+{
+	conditions
+	{
+		
+		if timer > 0.1 goto SubMission1_Main
+	}
+	actions
+	{
+		ResetTimer
+		DestroyAllModules
+		SendToModule "#General" "#ResetLevel" "#SetVehicle=#SubMissionEX1"
+		CreateModule "#Timer" "#Timer" "#Time=180"
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Race2" "#Range=25"
+
+	}
+}
+state SubMission1_Init3
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main4
+	}
+	actions
+	{
+		ResetTimer
+		DestroyAllModules
+		SendToModule "#General" "#ResetLevel" "#SetVehicle=#Chapter3Start"
+		CreateModule "#Timer" "#Timer" "#Time=120" 
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=A2C3racepoints" "#Range=25"
+	}
+
+
+}
+state SubMission1_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		DestroyModule "#VehicleLevels"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_Main2
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission1_1 PLAY ACTION"
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=5" "#TrafficLv=1" "#PatrolLv=1" "#RoadBlocks=A2C1RoadBlocks"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_Main3
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission2_1 PLAY ACTION"	
+		SendToModule "#General" "#PlayerType=IronHide" "#SetVehicle=#SubMission1"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_Main4
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+		if module "General ChapterProgress" >= 3.0 goto SubMission1_Main
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission3_1 PLAY ACTION"	
+		SendToModule "#General" "#PlayerType=OptimusPrime" ; "#SetVehicle=#SubMission1"
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=0" "#TrafficLv=5" "#PatrolLv=1" "#RoadBlocks=RoadBlock1"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+
+state SubMission1_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission1_FinishWait
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission1_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=1"
+		;SetState "SubMission1_Leave"
+	}
+}
+state SubMission1_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission1_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		;
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission1" "#FadeUp"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#FadeUp"		
+		SetState "Exit"
+	}
+}
+

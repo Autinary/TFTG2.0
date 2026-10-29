@@ -1,0 +1,27 @@
+
+; Heal script
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Main
+	}
+}
+
+state Main
+{
+	Actions
+	{
+		SetBlocking "time=2.1" "attackatend" "faceopp"
+
+	}
+
+	
+
+
+
+	
+}
+
+	

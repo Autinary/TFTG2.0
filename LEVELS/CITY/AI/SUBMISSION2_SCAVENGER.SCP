@@ -1,0 +1,218 @@
+;scavenger hunt, find all the nodes within the time limit
+
+;requires:
+;Scavenger spline		Scavenger#	;maximum 80 points
+;KeyLocation spline		KeyLoc#
+
+;Changeable params:
+;	300		time in which to complete the mission
+;	15			keylocation timeout
+;	75		distance in which points are added to radar (75)
+
+state SubMission2_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission2_Death"
+		;SendToModule "#General" "#PlayerType=BumbleBee07"
+		SendToModule "#General" "#ResetAll"
+		SetState "SubMission2_Init"
+	}
+}
+state SubMission2_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_MainInit
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#SetPlayer=#SubMission2" "#ResetLevel"
+		CreateModule "#Timer" "#Timer" "#Time=150"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Scavenger2" "#MultiNode" "#RadarRange=75"
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#RaceNodes" "#GetPercentageComplete" "#IgnoreDroneKills" "#DronesToDefeat=10" "#BackwardsCount"
+		SendToModule "#RaceNodes" "#SetupDroneCounter=#DroneCounter"
+	}
+}
+state SubMission2_MainInit
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" == 0.0 goto SubMission2_MainEnergonDrone
+		if module "General ChapterProgress" == 1.0 goto SubMission2_MainJazz
+		if module "General ChapterProgress" == 2.0 goto SubMission2_MainIronhide
+		if module "General ChapterProgress" == 3.0 goto SubMission2_MainBumblebee
+		if module "General ChapterProgress" == 4.0 goto SubMission2_Main
+	}
+	
+}
+state SubMission2_MainEnergonDrone
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=EnergonDrone"
+		SendToModule "#General" "#SetMaxOpponents=20" "#SetMaxApproachers=20" "#SetAttackRingSize=20"
+		
+		CreateModule "#Creature" "#EnergonDrones" "#Spline=Scavenger2" "#Count=10000" "#MaxAlive=19" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=EnergonDrone"
+		
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp" "#PlayerType=Jazz" "#CountASet=1"
+	}
+}
+state SubMission2_MainJazz
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneMig"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=Starscream"
+
+		CreateModule "#Creature" "#Drones" "#Spline=KeyLoc2" "#Count=10000" "#MaxAlive=1" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Mig29Drone" "#SetEnergyMax=1500" "#SetEnergy=1500"
+		CreateModule "#Creature" "#Drones2" "#Spline=Scavenger2" "#Count=10000" "#MaxAlive=2" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=CarDrone"  "#SetEnergyMax=1000" "#SetEnergy=1000" 
+		CreateModule "#Creature" "#MiniBoss" "#Spline=KeyLoc2" "#Count=10000" "#MaxAlive=1" "#Type=Starscream" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Starscream"  "#SetEnergyMax=15000" "#SetEnergy=15000"
+		
+
+		SetMusic "STOP INMISSION ACTION Mission2_4 PLAY ACTION"
+		SendToModule "#General" "#FadeUp" "#CountASet=0"	
+	}
+}
+state SubMission2_MainIronhide
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneForklift"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck"
+
+		CreateModule "#Creature" "#Drones" "#Spline=KeyLoc2" "#Count=10000" "#MaxAlive=1" "#Type=DronePickupTruck" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		CreateModule "#Creature" "#Drones2" "#Spline=Scavenger2" "#Count=10000" "#MaxAlive=2" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=CarDrone"  "#SetEnergyMax=1000" "#SetEnergy=1000" 
+		CreateModule "#Creature" "#Drones3" "#Spline=Scavenger2" "#Count=10000" "#MaxAlive=1" "#Type=DroneForklift" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=ForkliftDrone"  "#SetEnergyMax=800" "#SetEnergy=800"
+		
+		SetMusic "STOP INMISSION ACTION Mission1_2 PLAY ACTION"
+		SendToModule "#General" "#FadeUp" "#CountASet=0"	
+	}
+}
+state SubMission2_MainBumblebee
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		
+		CreateModule "#Creature" "#Drones2" "#Spline=Scavenger2" "#Count=10000" "#MaxAlive=4" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=CarDrone"  "#SetEnergyMax=1000" "#SetEnergy=1000" 
+		
+		SetMusic "STOP INMISSION ACTION Mission3_2 PLAY ACTION"
+		SendToModule "#General" "#FadeUp" "#CountASet=0"			
+	}
+}
+state SubMission2_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp" "#CountASet=0"		
+	}
+}
+state SubMission2_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission2_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission2_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission2_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=2"
+		;SetState "SubMission2_Leave"
+	}
+}
+state SubMission2_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission2_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission2_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission2_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission2_Leave
+{
+	conditions
+	{
+		if module "General GetCountA" == 1.0 goto RevertCreature
+		if module "General GetCountA" == 0.0 goto GlobalActionRing
+	}
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=Starscream"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission2" "#FadeUp"
+		;SendToModule "#General" "#FadeUp" "#RevertPlayerType"
+		;SetState "GlobalActionRing"
+	}
+}
+

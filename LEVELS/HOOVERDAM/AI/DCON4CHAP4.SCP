@@ -1,0 +1,181 @@
+state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D4_ch4_Goto"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D4_ch4_Goto" "#Start"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.4 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+		SendToModule "#General" "#PlayerType=Megatron"
+	}
+}
+state Chapter4_VideoIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D4C4Intro1"
+	}
+}
+state Chapter4_Main
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_Complete
+	}
+	actions
+	{
+		SetDeathPoint "Chapter4_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D4_ch4_obj1" "#AutoDestroy" "#Start"
+
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter4Start" "#FadeUp"
+		
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=10" "#TrafficLv=0" "#PatrolLv=1"
+		CreateModule "#GABIChange" "Destruction" "#GABIChange=-10000"
+	}
+}
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#RevertPlayerType"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D4C4Outro1"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#PlayerType=Megatron"
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		SetState Chapter1_Leave
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		;SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule #General #AllowPlayerMovement
+		SetState GlobalActionRing
+	}
+}

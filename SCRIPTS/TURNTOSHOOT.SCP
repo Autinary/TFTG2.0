@@ -1,0 +1,79 @@
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Alert
+	}
+}
+
+state NoOpponent
+{
+	conditions
+	{
+		if GotOpponent == 1.0 goto Alert
+	}
+}
+
+state Alert
+{
+	conditions
+	{
+		if GotOpponent == 0.0 goto NoOpponent
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if CarForm == 1.0 goto TransformInit
+		if RobotForm == 1.0 goto Turn
+	}
+}
+
+state TransformInit
+{
+	actions
+	{
+		Transform UntilDone
+		SetState Turn
+	}
+}
+
+state Turn
+{
+	conditions
+	{
+		if GotOpponent == 0.0 goto NoOpponent
+		if Timer > 1.5 goto ToVeh
+	}
+	actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponent "firerange=-1" "goalrange=max"
+	}
+}
+
+state ToVeh
+{
+	actions
+	{
+		Transform Car UntilDone
+		SetState Bombard
+	}
+}
+
+state Bombard
+{
+	conditions
+	{
+		if GotOpponent == 0.0 goto NoOpponent
+	}
+	actions
+	{
+		CarDrive park shootatopp
+		;EngageOpponent "firerange=max" "goalrange=max"
+	}
+}

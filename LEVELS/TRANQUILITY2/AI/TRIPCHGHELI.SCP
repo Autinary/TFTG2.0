@@ -1,0 +1,69 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto RobotInit
+		if SecondaryForm == 1.0 goto RobotInit
+		if CarForm == 1.0 goto Wait
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Wait
+	}
+}
+
+state RobotInit
+{
+	Actions
+	{
+		Transform Car UntilDone
+		SetState Wait
+	}
+}
+
+state Wait
+{
+	Conditions
+	{
+		if GotOpponent == 1.0 goto Attack
+		if BeenStruck == 1.0 goto BeenStruck
+	}
+	Actions
+	{
+		CarDrive "park"
+	}
+}
+
+state BeenStruck
+{
+	Actions
+	{
+		; This should force the parent script to change script
+		; Only needs to be long enough for the next script to take control
+		;  after which, it locks the state
+		SetWalkToLocatorTimer 5.0
+		SetLocator "strikesource=20.0"
+	}
+}
+
+state Attack
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto Wait
+	}
+	Actions
+	{
+		CarDrive "gotoopponent" "overshoot=55.0" "speed=90" "ignorelights"
+	}
+}

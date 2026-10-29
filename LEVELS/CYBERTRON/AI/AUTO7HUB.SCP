@@ -1,0 +1,438 @@
+state Base
+{
+	conditions
+	{
+		if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+	}
+}
+state StartLevelIntro
+{
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#General" "#General" "#ProtectSystem"
+		
+		SetState "LevelIntro"
+	}
+}
+state LevelIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto StartA7 ;Chapter1_Enter
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		
+		CreateModule "#Creature" "#Ratchet" "#Spline=MeteorSpawn" "#Type=DroneArmouredCar_a" "#count=1" "#maxalive=1" "#AddToRadar" "#SpawnAsCreature" "#Script=Ratchet"  "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#SetPosition=#Ratchet" "#Protect"
+		
+		SendToModule "#General" "#SetPlayer=#StartMission" "#StartVideo=#A7LevelIntro" 
+		SendToModule "#General" "#CountASet=1" "#CountDSet=1"
+		
+	}
+}
+state StartA7
+{
+	conditions
+	{
+		;if module "General ChapterProgress" >= 1.0 goto GlobalActionRing
+		;if module "General ChapterProgress" == 0.0 goto Chapter1PreAssault
+	}
+	actions
+	{
+		SetState Chapter1PreAssault
+	}
+}
+state Chapter1_PhaseComplete
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto Chapter1StartNextPhase
+	}
+	actions
+	{
+		DestroyAllModules 
+		ResetTimer
+		
+		SendToModule "#General" "#CountAInc" "#FadeDown" 
+	}
+}
+state Chapter1StartNextPhase
+{
+	conditions
+	{
+		if timer > 0.2 goto Chapter1PreAssault
+	}
+	actions
+	{
+		DestroyAllModules 
+		ResetTimer
+		
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter1Restart" 
+	}
+}
+state Chapter1PreAssault
+{
+	conditions
+	{
+		 if module "General GetCountA" == 1.0 goto Chapter1LoadCreaturesW1
+		 if module "General GetCountA" == 2.0 goto Chapter1LoadCreaturesW2
+		 if module "General GetCountA" == 3.0 goto Chapter1LoadCreaturesW3
+		 if module "General GetCountA" == 4.0 goto Chapter1LoadCreaturesW4
+		 if module "General GetCountA" == 5.0 goto Chapter1LoadCreaturesW5
+		 if module "General GetCountA" == 6.0 goto Chapter1LoadCreaturesW6
+		
+	}
+	actions
+	{
+		CreateModule "#Timer" "#Timer" "#Time=30" "#Start" "#Protect"
+		CreateModule "#AreaRange" "#CreatureSwap" "#Trigger=#CharSwap" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon" "#DontClampRadar"
+		
+		
+		
+	}
+}
+state Chapter1LoadCreaturesW1
+{
+	conditions
+	{
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+	}
+	actions
+	{
+		
+		
+
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=DroneCement"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck"
+		SendToModule "#General" "#LoadCreature=DroneTowTruck"
+		SendToModule "#General" "#LoadCreature=DroneMig"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#LoadCreature=Barricade"
+		
+		SendToModule "#General" "#SetMessage=CA1" "#SetMessageTimer=1000" "#FadeUp"
+
+		
+		
+	}
+}
+
+state Chapter1LoadCreaturesW2
+{
+	conditions
+	{
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#UnLoadCreature=Barricade"
+
+		SendToModule "#General" "#LoadCreature=DroneForklift"
+		SendToModule "#General" "#LoadCreature=TripleC"
+		SendToModule "#General" "#SetMessage=CA2" "#SetMessageTimer=1000" "#FadeUp"
+		
+	}
+}
+state Chapter1LoadCreaturesW3
+{
+	conditions
+	{
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+	}
+	actions
+	{
+		
+		
+		SendToModule "#General" "#UnLoadCreature=TripleC"
+		
+		SendToModule "#General" "#LoadCreature=Brawl"
+		SendToModule "#General" "#SetMessage=CA3" "#SetMessageTimer=1000" "#FadeUp"
+		
+	}
+}
+state Chapter1LoadCreaturesW4
+{
+	conditions
+	{
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+	}
+	actions
+	{
+		;SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneCement"
+		;SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		;SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		
+		SendToModule "#General" "#UnLoadCreature=Brawl"
+		
+		SendToModule "#General" "#LoadCreature=DroneMig"
+		
+		SendToModule "#General" "#LoadCreature=Bonecrusher"
+		SendToModule "#General" "#LoadCreature=Starscream"
+		SendToModule "#General" "#SetMessage=CA4" "#SetMessageTimer=1000" "#FadeUp"
+		
+	}
+}
+state Chapter1LoadCreaturesW5
+{
+	conditions
+	{
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=Bonecrusher"
+		SendToModule "#General" "#UnLoadCreature=Starscream"
+		
+		SendToModule "#General" "#LoadCreature=EnergonDrone"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		
+		SendToModule "#General" "#LoadCreature=Blackout"
+		SendToModule "#General" "#LoadCreature=Scorponok"
+		SendToModule "#General" "#SetMessage=CA5" "#SetMessageTimer=1000" "#FadeUp"
+		
+	}
+}
+state Chapter1LoadCreaturesW6
+{
+	conditions
+	{
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#UnLoadCreature=Blackout"
+		SendToModule "#General" "#UnLoadCreature=Scorponok"
+		
+		;SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		
+		SendToModule "#General" "#LoadCreature=DroneCement"
+		;SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=DroneForklift"
+		
+		SendToModule "#General" "#LoadCreature=DronePickupTruck"
+
+		SendToModule "#General" "#LoadCreature=Megatron"
+		
+		
+		
+		SendToModule "#General" "#SetMessage=CA6" "#SetMessageTimer=1000" "#FadeUp"
+
+		
+		
+	}
+}
+ActionMacro AutoHeal
+{
+	IncreasePlayerHealth 65.0
+	SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+	SendToModule "#General" "#CountDSet=0"
+	Idle 2.8
+	SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+	Idle 7.0
+	SendToModule "#Ratchet" "#AddToRadar"	
+	SendToModule "#General" "#CountDSet=1"	
+
+}
+state Chapter1_HealHub
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		
+	}
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_WaitingRoom2
+	}
+}
+state Chapter1_WaitingRoom
+{
+	conditions
+	{
+		 if module "General GetCountA" == 1.0 goto Chapter1_LoadMessageW1
+		 if module "General GetCountA" == 2.0 goto Chapter1_LoadMessageW2
+		 if module "General GetCountA" == 3.0 goto Chapter1_LoadMessageW3
+		 if module "General GetCountA" == 4.0 goto Chapter1_LoadMessageW4
+		 if module "General GetCountA" == 5.0 goto Chapter1_LoadMessageW5
+		 if module "General GetCountA" == 6.0 goto Chapter1_LoadMessageW6
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1" 
+		DestroyAllModules
+	}
+}
+state Chapter1_WaitingRoom2
+{
+	conditions
+	{
+		 if module "General GetCountA" == 1.0 goto Chapter1_LoadMessageW1
+		 if module "General GetCountA" == 2.0 goto Chapter1_LoadMessageW2
+		 if module "General GetCountA" == 3.0 goto Chapter1_LoadMessageW3
+		 if module "General GetCountA" == 4.0 goto Chapter1_LoadMessageW4
+		 if module "General GetCountA" == 5.0 goto Chapter1_LoadMessageW5
+		 if module "General GetCountA" == 6.0 goto Chapter1_LoadMessageW6
+	}
+	actions
+	{
+		
+	}
+}
+state Chapter1_LoadMessageW1
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		
+	}
+	actions
+	{
+		
+		
+		SendToModule "#General" "#SetMessage=CA1" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW2
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		 
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=CA2" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW3
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		  
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=CA3" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW4
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=CA4" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW5
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		  
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=CA5" "#SetMessageTimer=1000" 
+		
+	}
+}
+state Chapter1_LoadMessageW6
+{
+	conditions
+	{
+		 if module "Timer FailMission" == 1.0 goto LeftSwapArea
+		 if module "CreatureSwap InArea" == 1.0 goto PrepareSwap
+		 if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_HealHub
+		 
+		
+	}
+	actions
+	{
+		
+		
+		SendToModule "#General" "#SetMessage=CA6" "#SetMessageTimer=1000" 
+		
+	}
+}
+state FinishedLevel
+{
+}

@@ -1,0 +1,76 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if CarForm == 1.0 goto SpawnIntro
+		if RobotForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		  SetPhysicsState "static=false"
+		; SetState Alert
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if CarForm == 1.0 goto SpawnIntro
+	}
+	Actions
+	{
+		Transform Car Instant
+		SetState SpawnIntro
+	}
+}
+
+state SpawnIntro
+{
+	Conditions {
+		if PlayerRange < 20 goto TransformCombat
+	}
+	Actions
+	{
+		FollowPlayer Run
+	}
+}
+
+state TransformCombat
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Main
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+
+state Main
+{
+    ReferenceScript {
+        Script=Combat
+        Source=Global
+        ReturnState=Main
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+

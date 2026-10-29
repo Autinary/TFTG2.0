@@ -1,0 +1,49 @@
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRangeMin				1.0
+CONST AutoMeleeRangeMax				2.0
+CONST ClosestApproachRangedMin		30.0
+CONST ClosestApproachRangedMax		32.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+ConditionMacro StuckJump
+{
+	if GetFlag "StuckByObstacle" == 1.0
+}
+
+ConditionMacro StuckRoll
+{
+	if GetFlag "StuckByObstacle" == 2.0
+}
+
+ConditionMacro AttackPOI
+{
+	if BeenStruckTime > 5.0 and
+	if HasActivePOI == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto StuckEscapeJump
+	}
+}
+
+state StuckEscapeJump
+{
+	Actions
+	{
+		
+		SetStrafe false
+		DoAttack "Kick"
+		
+		SetState Base
+	}
+}

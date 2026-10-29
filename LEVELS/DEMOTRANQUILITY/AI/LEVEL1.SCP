@@ -1,0 +1,16 @@
+;include "TestMain.scp"
+
+include "AdvancedCombat_Tutorial.scp"
+include "Auto1Hub.scp"
+include "Auto1Chap1.scp"
+include "Auto1Chap2.scp"
+include "Auto1Chap3.scp"
+include "Auto1Chap4.scp"
+include "CreatureSwap.scp"
+include "SubMission_Extra.scp"
+include "SubMission1_RACE.scp"
+include "SubMission2_SCAVENGER.scp"
+include "SubMission3_HUNT.scp"
+include "SubMission4_SUMO.scp"
+
+

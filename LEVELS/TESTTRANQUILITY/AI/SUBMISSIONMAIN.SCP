@@ -1,0 +1,514 @@
+state base
+{
+	conditions
+	{
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+		CreateModule "#General" "#General" "#ProtectSystem"
+		;CreateModule "#SubMissions" "#SubMissions" "#Spline=SubMissions" "#ProtectSystem"
+		SendToModule "#General" "#AllowPlayerMovement"
+		SetState "Main"
+	}
+}
+
+state Main
+{
+	conditions
+	{
+;		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+	}
+	actions
+	{
+		;SendToModule "#General" "#FadeUp"
+		;SendToModule "#SubMissions" "#TurnON"
+		;SendToModule "#General" "#FadeUp" "#ResetAll" "#SetPlayer=#StartMission" "#AllowPlayerMovement"
+		
+		SendToModule "#General" "#FadeUp" "#ResetAll" "#SetPlayer=#StartMission"
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Death"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;choose opponent
+		;SetState "Wait"
+		SetState "DroneArmouredCarTest"
+		;SetState "BarricadeTest"
+		;SetState "MegatronTest"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	}
+}
+
+
+state SubMission_Init
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission_Start
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#FadeDown"
+	}
+}
+
+state SubMission_Start
+{
+	conditions
+	{
+		;if module "SubMissions GetSubMissionTriggered" == 1.0 goto SubMission1_Enter
+		;if module "SubMissions GetSubMissionTriggered" == 2.0 goto SubMission2_Enter
+		;if module "SubMissions GetSubMissionTriggered" == 3.0 goto SubMission3_Enter
+		;if module "SubMissions GetSubMissionTriggered" == 4.0 goto SubMission4_Enter
+		;if module "SubMissions GetSubMissionTriggered" == 5.0 goto SubMission5_Enter
+		;if module "SubMissions GetSubMissionTriggered" == 6.0 goto SubMission6_Enter
+	}
+}
+
+state Wait
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto DroneArmouredCarTest
+	}
+}
+
+state DroneArmouredCarTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto BarricadeTest
+		if Timer > 20.0 goto BarricadeTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=DroneArmouredCar" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state BarricadeTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto BlackoutTest
+		if Timer > 20.0 goto BlackoutTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=DroneArmouredCar"
+		SendToModule "#General" "#LoadCreature=Barricade"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=Barricade" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state BlackoutTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto BonecrusherTest
+		if Timer > 20.0 goto BrawlTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=Barricade"
+		SendToModule "#General" "#LoadCreature=Blackout"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=Blackout" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state BonecrusherTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto BrawlTest
+		if Timer > 20.0 goto BrawlTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=Blackout"
+		SendToModule "#General" "#LoadCreature=Bonecrusher"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=Bonecrusher" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state BrawlTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto BumbleBee07Test
+		if Timer > 20.0 goto BumbleBeeTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=Blackout"
+		SendToModule "#General" "#LoadCreature=Brawl"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=Brawl" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state BumbleBeeTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto BumbleBee07Test
+		if Timer > 20.0 goto BumbleBee07Test
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=Brawl"
+		SendToModule "#General" "#LoadCreature=BumbleBee"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=BumbleBee" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state BumbleBee07Test
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto DroneCementTest
+		if Timer > 20.0 goto DroneCementTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=BumbleBee"
+		SendToModule "#General" "#LoadCreature=BumbleBee07"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=BumbleBee07" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state DroneCementTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto DroneDefaultTest
+		if Timer > 20.0 goto DroneDefaultTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=BumbleBee07"
+		SendToModule "#General" "#LoadCreature=DroneCement"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=DroneCement" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state DroneDefaultTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto DroneMigTest
+		if Timer > 20.0 goto DroneForkliftTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=DroneCement"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=DroneDefault" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state DroneMigTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto EnergonDroneTest
+		if Timer > 20.0 goto DroneForkliftTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=DroneMig"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=DroneMig" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state EnergonDroneTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto DroneForkliftTest
+		if Timer > 20.0 goto DroneForkliftTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=DroneMig"
+		SendToModule "#General" "#LoadCreature=EnergonDrone"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=EnergonDrone" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state DroneForkliftTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto IronHideTest
+		if Timer > 20.0 goto IronHideTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=DroneForklift"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=DroneForklift" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state IronHideTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto JazzTest
+		if Timer > 20.0 goto MegatronTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=DroneForklift"
+		SendToModule "#General" "#LoadCreature=IronHide"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=IronHide" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state JazzTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto MegatronTest
+		if Timer > 20.0 goto MegatronTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=IronHide"
+		SendToModule "#General" "#LoadCreature=Jazz"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=Jazz" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state MegatronTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto OptimusPrimeTest
+		if Timer > 20.0 goto OptimusPrimeTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=IronHide"
+		SendToModule "#General" "#LoadCreature=Megatron"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=Megatron" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state OptimusPrimeTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto DronePickupTruckTest
+		if Timer > 20.0 goto DronePickupTruckTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		;SendToModule "#General" "#UnloadCreature=Megatron"
+		SendToModule "#General" "#LoadCreature=OptimusPrime"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=OptimusPrime" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state DronePickupTruckTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto SkorponokTest
+		if Timer > 20.0 goto SkorponokTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=DronePickupTruck" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state SkorponokTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto StarscreamTest
+		if Timer > 20.0 goto StarscreamTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=DronePickupTruck"
+		SendToModule "#General" "#LoadCreature=Scorponok"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=Scorponok" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state StarscreamTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto DroneTowTruckTest
+		if Timer > 20.0 goto DroneTowTruckTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=Scorponok"
+		SendToModule "#General" "#LoadCreature=Starscream"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=Starscream" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state DroneTowTruckTest
+{
+	conditions
+	{
+		if message MissionMessage == 1.0 goto TripleChangerTest
+		if Timer > 20.0 goto TripleChangerTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=Starscream"
+		SendToModule "#General" "#LoadCreature=DroneTowTruck"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=DroneTowTruck" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+
+state TripleChangerTest
+{
+	conditions
+	{
+;		if message MissionMessage == 1.0 goto BumbleBeeTest
+		if Timer > 20.0 goto DroneArmouredCarTestPrelude
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=DroneTowTruck"
+		SendToModule "#General" "#LoadCreature=TripleC"
+		CreateModule "#Creature" "#Creature" "#Script=Default" "#Type=TripleC" "#Spline=test33" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit"  "#ForcePlayerAsOpp" "#SpawnInLOS"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayer=#StartMission"
+	}
+}
+
+state DroneArmouredCarTestPrelude
+{
+	conditions
+	{
+;		if message MissionMessage == 1.0 goto BumbleBeeTest
+		if Timer > 20.0 goto DroneArmouredCarTest
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#Creature"
+		SendToModule "#General" "#UnloadCreature=TripleC"
+	}
+}
+
+
+state Death
+{
+}

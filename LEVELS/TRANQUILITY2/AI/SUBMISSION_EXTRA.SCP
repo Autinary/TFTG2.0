@@ -1,0 +1,235 @@
+
+
+
+state SubMissionEX_Main
+{
+	conditions
+	{
+		
+		if module "SubTest1 GetCountAlive" == 0.0 and
+			if module "SubTest2 GetCountAlive" == 0.0 and
+				if module "SubTest3 GetCountAlive" == 0.0 goto SubMissionEX_Finish
+		if module "SubKey FailMission" == 1.0 Goto SubMission3_Fail
+		if Module "Destruction FailMission" == 1.0 Goto SubMissionEX_Fail
+
+	}
+	actions
+	{
+			SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+			
+			SendToModule "#SubMissions" "#TurnOff"
+			SendToModule "#ActionRing" "#RemoveCreatures"
+			SetDeathPoint "SubMissionEX_Death"
+			SendToModule "#General" "#LoadCreature=DroneDefault"
+			CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=3" "#IconType=#Drone"
+				
+			CreateModule "#KeyLocation" "#SubKey" "#spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15"
+			CreateModule "#Creature" "#SubTest1" "#Type=DroneDefault" "#spline=Spawn1a" "#count=1" "#maxalive=1" "#SpawnInLOSInit" "#Script=Shooty" "#ShootSpline=Spawn1b" 
+			CreateModule "#Creature" "#SubTest2" "#Type=DroneDefault" "#spline=Spawn1b" "#count=1" "#maxalive=1" "#SpawnInLOSInit" "#Script=Shooty" "#ShootSpline=Spawn1c" 
+			CreateModule "#Creature" "#SubTest3" "#Type=DroneDefault" "#spline=Spawn1c" "#count=1" "#maxalive=1" "#SpawnInLOSInit" "#Script=Shooty" "#ShootSpline=Spawn1a" ;"#Script=Destroy" "#FollowSpline=
+			SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" 
+			CreateModule "#Timer" "#Destruction" "#Time=60.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Random"
+			SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission6" "#FadeUp"
+		
+		
+	}
+}
+state SubMissionEX_Part2
+{
+	conditions
+	{
+		if module "SubKey InArea" == 1.0 goto SubMissionEX_Part2Fight
+		if module "SubKey FailMission" == 1.0 Goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+
+
+	}
+	actions
+	{
+			DestroyAllModules
+			SendToModule "#General" "#BG_UnLoadCreature=Barricade"
+			SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+			
+			SendToModule "#General" "#BG_LoadCreature=Brawl"
+			SendToModule "#General" "#BG_LoadCreature=DronePickupTruck_a"
+			CreateModule "#KeyLocation" "#SubKey" "#spline=KeyLoc7" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=30" 
+			
+	}
+}
+state SubMissionEX_Part2Fight
+{
+	conditions
+	{
+		if module "MeteoriteEX GetPercentage" == 1.0 and
+			if module "CreatureEX GetCountAlive" == 0.0 and
+				if module "MeteoriteEX2 GetPercentage" == 1.0 and
+					if module "CreatureEX2 GetCountAlive" == 0.0 goto SubMissionEX_Part2Wave2
+		if module "SubKey FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+
+	}
+	actions
+	{
+			SendToModule "#General" "#SetRadarInterference=1"
+		
+			CreateModule "#Creature" "#CreatureEX" "#count=0" "#maxalive=2" "#addtoradaroff" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On"
+			CreateModule "#Meteorite" "#MeteoriteEX" "#ModuleTag=#CreatureEX" "#Spline=Spawn7" "#Time=6,DronePickupTruck" "#Time=9,DroneArmouredCar"
+			CreateModule "#Creature" "#CreatureEX2" "#count=0" "#maxalive=2" "#addtoradaroff" "#Type=DronePickupTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=AdvDefault" "#SetEnergyMax=3000" "#SetEnergyMax=3000" "#SuppressShield"
+			CreateModule "#Meteorite" "#MeteoriteEX2" "#ModuleTag=#CreatureEX2" "#Spline=Spawn7" "#Time=3" "#Time=5" 
+
+	}
+}
+state SubMissionEX_Part2Wave2
+{
+	conditions
+	{
+
+		if module "EvilBumblebee Dead" == 1.0 goto SubMissionEX_Part2BossDead
+
+		if module "MeteoriteEX GetPercentage" == 1.0 and
+			if module "CreatureEX GetCountAlive" == 0.0 and
+				if module "MeteoriteEX2 GetPercentage" == 1.0 and
+					if module "CreatureEX2 GetCountAlive" == 0.0 and
+						if module "DroneCounter Complete" == 1.0 goto SubMission3_Finish
+
+		
+		if module "SubKey FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+
+	}
+	actions
+	{
+			DestroyModule "#CreatureEX"
+			DestroyModule "#MeteoriteEX"
+			DestroyModule "#CreatureEX2"
+			DestroyModule "#MeteoriteEX2"
+			CreateModule "#Goto" "#EvilBumblebee" "#Spline=Spawn7" "#count=1" "#maxalive=1" "#addtoradaralways" "#Type=Brawl" "#KeyLocation=On" "#BlockDeath" "#Protect" "#Script=Combat" "#SetEnergyMax=4500" "#SetEnergyMax=4500"
+		
+			CreateModule "#Creature" "#CreatureEX" "#count=0" "#maxalive=3" "#addtoradaralways" "#Type=DroneArmouredCar" "#TransformForceRobot" "#KeyLocation=On" 
+			CreateModule "#Meteorite" "#MeteoriteEX" "#ModuleTag=#CreatureEX" "#Spline=Spawn7" "#Time=5,DronePickupTruck"  "#Time=6,DronePickupTruck" "#Time=9,DroneArmouredCar"
+			CreateModule "#Creature" "#CreatureEX2" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DronePickupTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=AdvDefault" "#SetEnergyMax=3000" "#SetEnergyMax=3000" "#SuppressShield"
+			CreateModule "#Meteorite" "#MeteoriteEX2" "#ModuleTag=#CreatureEX2" "#Spline=Spawn7" "#Time=3" 
+
+	}
+}
+state SubMissionEX_Part2BossDead
+{
+	conditions
+	{
+
+		
+		if module "MeteoriteEX GetPercentage" == 1.0 and
+			if module "CreatureEX GetCountAlive" == 0.0 and
+				if module "MeteoriteEX2 GetPercentage" == 1.0 and
+					if module "CreatureEX2 GetCountAlive" == 0.0 and
+						if module "DroneCounter Complete" == 1.0 goto SubMission3_Finish
+
+		
+		if module "SubKey FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+
+	}
+	actions
+	{
+			SendToModule "#DroneCounter" "#Increment=1"
+
+	}
+}
+state SubMissionEX_Part3
+{
+	conditions
+	{
+		
+	
+		if module "DroneCounter Complete" == 1.0 goto SubMissionEX_Finish
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	
+
+	}
+	actions
+	{
+			SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+			SetDeathPoint "SubMissionEX_Death"
+			SendToModule "#SubMissions" "#TurnOff"
+			SendToModule "#ActionRing" "#RemoveCreatures"
+			CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=4" "#IconType=#Drone"
+			SendToModule "#General" "#LoadCreature=DronePickupTruck"	
+			SendToModule "#General" "#LoadCreature=DroneTowTruck"	
+			
+			
+			CreateModule "#Timer" "#Timer" "#Time=300"
+			CreateModule "#Goto" "#GotoDroneA" "#spline=Route6a" "#DirectSpline=Route6a" "#TransformBothWays=2.0" "#type=DroneDefault" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+			CreateModule "#Goto" "#GotoDroneB" "#spline=Route6b" "#DirectSpline=Route6b" "#TransformBothWays=2.0" "#type=DroneDefault" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline"  ;"#DrawHealthBar"
+			CreateModule "#Goto" "#GotoDroneC" "#spline=Route6c" "#DirectSpline=Route6c" "#TransformBothWays=4.0" "#type=DronePickupTruck" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+			CreateModule "#Goto" "#GotoDroneD" "#spline=Route6d" "#DirectSpline=Route6d" "#TransformBothWays=5.0" "#type=DroneTowTruck" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+			SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission5" "#FadeUp" 
+	}
+}
+
+state SubMissionEX_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionEX_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMissionEX_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=5"
+		;SetState "SubMissionEX_Leave"
+	}
+}
+state SubMissionEX_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMissionEX_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMissionEX_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"	
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+		;
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission3" "#FadeUp"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#FadeUp"		
+		SetState "Exit"
+	}
+}
+

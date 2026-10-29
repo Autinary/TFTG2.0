@@ -1,0 +1,977 @@
+state Chapter1_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "Exit"
+	}
+}
+
+state Chapter1_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter1_InitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_GotoWaitSpeech
+                
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+	
+;		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=0" "#TrafficLv=1" "#PatrolLv=1" 
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 4"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+
+
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+		
+               	SendToModule "#General" "#StartMission" "#SetVehicle=#StartMission" "#SetPlayerDeathPoint=#StartMission" "#PlayerType=Blackout"
+	}
+}
+state Chapter1_GotoWaitSpeech
+{
+	actions
+	{
+               
+		SendToModule "#General" "#AllowPlayerMovement"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#D1_ch1_Goto" "#Start" "#AutoDestroy"
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_Goto2" "#AutoDestroy"           
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_Goto3" "#AutoDestroy"
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_Goto4" "#AutoDestroy"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=3" 
+
+   		Idle 3.0
+		SetState Chapter1_Goto
+	}
+}
+state Chapter1_Goto
+{
+	
+	actions
+	{
+              	CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter1Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+		
+	}
+}
+state Chapter1_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter1_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		
+		;SendToModule "#VehicleLevels" "#ResponseLv=10" "#TrafficLv=10" "#PatrolLv=1" 
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+		
+		SendToModule "#General" "#StartMissionIntro=#D1C1Intro1" "#SetPlayerDeathPoint=#Chapter1Restart"
+	}
+}
+state Chapter1_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=Blackout"
+
+		SendToModule "#General" "#LoadCreature=DroneForklift"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+	}
+}
+;;state Chapter1_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter1_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D1C1Intro1"
+;;	}
+;;}
+state Chapter1_Main
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter1_Complete
+		
+		
+		if module "DestructTime FailMission" == 1.0 goto Chapter1_FailMission
+		if message "MissionMessage" == 2.0 goto Chapter1_FailMission 
+
+		
+        }
+	actions
+	{
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+
+		CreateModule "#Goto" "#Gunship" "#Spline=DVCreateV" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnInLOSInit" "#AddToRadarOff" "#Script=StandAndWait" "#Unstoppable" "#SetPosition=#ObjSet1c"
+		CreateModule "#Goto" "#ArtilleryTurret" "#Spline=DVCreateV" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnInLOSInit" "#AddToRadarOff" "#Script=StandAndWait" "#Unstoppable" "#SetPosition=#ObjSet2a"
+		
+
+		CreateModule "#Speech" "#DefeatDrones" "#GotoReminderSpeech"  "#PlayDelay=2" "#speech=#D1_ch1_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+                CreateModule "#Speech" "#PlayDelay=5" "#GotoReminderSpeech" "#speech=#D1_ch1_obj2" "#AutoDestroy" "#Start"
+              ;  CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj3" "#AutoDestroy" "#Start"
+		;CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj4" "#AutoDestroy" "#Start"
+		;CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj5" "#AutoDestroy" "#Start"
+		;CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj6" "#AutoDestroy" "#Start"
+                ;CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj7" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#PhysObj" "#Building" "#SetPlayer=#Chapter1Start" "#FadeUp" "#DangerZoneOn" "#CountSet=0" "#CountASet=2" "#CountBSet=0" "#CountDSet=0"
+		
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-25000"
+		CreateModule "#Timer" "#DestructTime" "#Time=210" #ShowHundredths
+
+		CreateModule "#DriverDrone" "#CreatureWaveA" "#spline=A1C1TankA" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		CreateModule "#DriverDrone" "#CreatureWaveB" "#spline=A1C1TankB" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		CreateModule "#DriverDrone" "#CreatureWaveC" "#spline=A1C1TankC" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		CreateModule "#DriverDrone" "#CreatureWaveD" "#spline=A1C1TankD" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		CreateModule "#DriverDrone" "#CreatureWaveE" "#spline=A1C1TankE" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		CreateModule "#DriverDrone" "#CreatureWaveF" "#spline=A1C1TankF" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		CreateModule "#DriverDrone" "#CreatureWaveG" "#spline=A1C1TankG" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		CreateModule "#DriverDrone" "#CreatureWaveH" "#spline=A1C1TankH" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		CreateModule "#DriverDrone" "#CreatureWaveI" "#spline=A1C1TankI" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+
+		;CreateModule "#DriverDrone" "#CreatureWaveJ" "#spline=DVCreateV" "#maxalive=5" "#count=5000" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		;CreateModule "#DriverDrone" "#CreatureWaveK" "#spline=DSGuns" "#maxalive=8" "#count=5000" "#SpawnInLOSInit" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire" #IgnorePaths #WaitEnd
+		;CreateModule "#DriverDrone" "#CreatureWaveL" "#spline=DSCreateV" "#maxalive=5" "#count=5000" "#SpawnInLOSInit" "#FollowPlayer" "#type=ShilkaTracer" "#GoalRange=40.0" "#CullRange=150.0" "#NoShibby" "#RapidInitFire"
+		
+
+		;CreateModule "#Bombing" "#Bombing" "#RangeMin=0.0" "#RangeMax=40.0" "#Delay=0.2" "#RandomDelay=0.2" "#VFXmode=VFX_BLITZ"
+
+         ;CreateModule "#AirAttack" "#AirAttack" "NumWaves=1" 
+         ;SendToModule "#AirAttack" "#Total=3" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C1_Patrol1" "#SplinePos=1500" "#HeightOffset=60.0" "#CruiseSpd=100" "#AttackSpd=75" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#Energy=150.0" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+
+	 ;CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=30" "#times=7" 
+		
+
+		SendToModule "#CreatureWaveI" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveH" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveG" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveF" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveE" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveD" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveC" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveB" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveA" "#Object=#RedSmallDot" "#AddToRadarAlways"
+
+		Idle 1.0
+		SendToModule "#General" "#SetMessage=QS3" "#SetMessageTimer=3.0" 
+
+
+		SetState Chapter1_Process
+
+	}
+}
+state Chapter1_Process
+{
+	conditions
+	{
+		
+
+
+
+		if module "AirAttack WaveDestroyed" == 1.0 and
+			if module "General GetCount" == 5.0 goto Chapter1_AirAttackWave2
+		if module "AirAttack WaveDestroyed" == 2.0 and
+			if module "General GetCount" == 6.0 goto Chapter1_AirAttackWave3
+		if module "AirAttack WaveDestroyed" == 3.0 and
+			if module "General GetCount" == 7.0 goto Chapter1_AirAttackWave4
+		if module "AirAttack WaveDestroyed" == 4.0 and
+			if module "General GetCount" == 8.0 goto Chapter1_AirAttackWave5
+		if module "AirAttack WaveDestroyed" == 7.0 goto Chapter1_DestroyComServerEarly
+		
+
+
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter1_Complete
+		
+		
+		if module "DestructTime FailMission" == 1.0 goto Chapter1_FailMission
+		if message "MissionMessage" == 2.0 goto Chapter1_FailMission 
+
+
+
+		
+
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter1_CullA
+		if module "CreatureWaveB GetPercentageComplete" == 1.0 goto Chapter1_CullB
+		if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter1_CullC
+		if module "CreatureWaveD GetPercentageComplete" == 1.0 goto Chapter1_CullD
+		if module "CreatureWaveE GetPercentageComplete" == 1.0 goto Chapter1_CullE
+		if module "CreatureWaveF GetPercentageComplete" == 1.0 goto Chapter1_CullF
+		if module "CreatureWaveG GetPercentageComplete" == 1.0 goto Chapter1_CullG
+		if module "CreatureWaveH GetPercentageComplete" == 1.0 goto Chapter1_CullH
+		if module "CreatureWaveI GetPercentageComplete" == 1.0 goto Chapter1_CullI
+		if module "CreatureWaveJ GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveK GetPercentageComplete" == 1.0 goto Chapter1_CullJK
+
+		
+		if module "General GetCountD" >= 6.0 and
+			if module "General GetCount" == 0.0 goto Chapter1_TankDeploymentA
+
+		if module "General GetCountD" >= 9.0 and
+			if module "General GetCount" == 1.0 goto Chapter1_TankDeploymentB
+
+		;if module "General GetCountD" == 7.0 and
+		;	if module "General GetCount" == 2.0 goto Chapter1_TankDeploymentC
+
+		if module "General GetCountD" == 9.0 and
+			if module "General GetCount" == 3.0 goto Chapter1_JetDeployment
+
+	
+
+
+		if module "General GetCount" == 4.0 goto Chapter1_EnhanceBanter
+
+		
+
+		if Timer > 30 and
+			if module "General GetCountA" <= 6.0 and
+				if module "General GetCountD" == 9.0 goto Chapter1_Banter
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter1_EnhanceBanter
+{
+	conditions
+	{
+		if module "General GetCountA" == 2.0 goto Chapter1_SetBanterA
+		if module "General GetCountA" == 3.0 goto Chapter1_SetBanterB
+		if module "General GetCountA" == 4.0 goto Chapter1_SetBanterC
+		if module "General GetCountA" == 5.0 goto Chapter1_SetBanterD
+		if module "General GetCountA" == 6.0 goto Chapter1_SetBanterE
+
+	}
+		
+}
+state Chapter1_SetBanterA
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc" "#CountASet=9"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj3" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj4" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj5" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj6" "#AutoDestroy" 
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj7" "#AutoDestroy" 
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=30" "#times=5" 
+	
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_SetBanterB
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc" "#CountASet=9"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj4" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj5" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj6" "#AutoDestroy" 
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj7" "#AutoDestroy" 
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=30" "#times=4" 
+	
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_SetBanterC
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc" "#CountASet=9"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj5" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj6" "#AutoDestroy" 
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj7" "#AutoDestroy" 
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=30" "#times=3" 
+	
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_SetBanterD
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc" "#CountASet=9"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj6" "#AutoDestroy" 
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj7" "#AutoDestroy" 
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=30" "#times=2" 
+	
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_SetBanterE
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc" "#CountASet=9"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj7" "#AutoDestroy" 
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=30" "#times=1" 
+	
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_Banter
+{
+	conditions
+	{
+		;if module "DestructTime" <= 180.0 and
+			if module "General GetCountA" == 2.0 goto Chapter1_BanterA
+		;if module "DestructTime" <= 150.0 and
+			if module "General GetCountA" == 3.0 goto Chapter1_BanterB
+		;if module "DestructTime" <= 120.0 and
+			if module "General GetCountA" == 4.0 goto Chapter1_BanterC
+		;if module "DestructTime" <= 90.0 and
+			if module "General GetCountA" == 5.0 goto Chapter1_BanterD
+		;if module "DestructTime" <= 60.0 and
+			if module "General GetCountA" == 6.0 goto Chapter1_BanterE
+
+	}
+}
+
+state Chapter1_TankDeploymentA
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc"
+		CreateModule "#DriverDrone" "#CreatureWaveJ" "#spline=DVCreateV" "#maxalive=8" "#count=8" "#FollowPlayer" "#type=ShilkaTracer" "#spacing=20.0"  "#GoalRange=40.0" "#RapidInitFire" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SetState Chapter1_Process
+	}
+}
+
+state Chapter1_TankDeploymentB
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc"
+		
+		SendToModule "#CreatureWaveJ" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveI" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveH" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveG" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveF" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveE" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveD" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveC" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveB" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		SendToModule "#CreatureWaveA" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		CreateModule "#DriverDrone" "#CreatureWaveK" "#spline=DSCreateV" "#maxalive=8" "#count=8" "#FollowPlayer" "#type=ShilkaTracer" "#spacing=20.0" "#GoalRange=40.0" "#RapidInitFire" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		;SendToModule "#General" "#SetMessage=QS3" "#SetMessageTimer=3.0" 
+
+		SetState Chapter1_Process
+	}
+}
+
+state Chapter1_TankDeploymentC
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc"
+		CreateModule "#DriverDrone" "#CreatureWaveL" "#spline=DSGuns" "#maxalive=8" "#count=5000" "#SpawnInLOSInit" "#type=ShilkaTracer" "#GoalRange=40.0" "#NoShibby" "#RapidInitFire" #IgnorePaths #WaitEnd
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_JetDeployment
+{
+	actions
+	{
+
+		DestroyModule "#CreatureWaveL"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 4"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 4"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		SendToModule "#General" "#CountInc"
+		SendToModule "#General" ;"#CountDSet=0"
+		CreateModule "#AirAttack" "#AirAttack" "NumWaves=7" 
+	        SendToModule "#AirAttack" "#Total=3" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C1_Patrol1" "#SplinePos=0.0"  "#HeightOffset=50.0" "#CruiseSpd=150" "#AttackSpd=100" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=0.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#CreateWave=1"
+		SendToModule "#General" "#SetMessage=QS4" "#SetMessageTimer=3.0" 
+		SendToModule "#DestructTime" "#AddTime=40.0"
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_AirAttackWave2
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountInc"
+		
+		SendToModule "#AirAttack" "#Total=2" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C1_Patrol2" "#SplinePos=0.0"  "#HeightOffset=50.0" "#CruiseSpd=150" "#AttackSpd=100" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=0.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#CreateWave=1"
+		SendToModule "#AirAttack" "#Total=1" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C1Patrol3" "#SplinePos=0.0"  "#HeightOffset=50.0" "#CruiseSpd=150" "#AttackSpd=100" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=0.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#CreateWave=1"
+		SendToModule "#DestructTime" "#AddTime=15.0"
+		
+		SetState Chapter1_Process
+	}
+}
+
+state Chapter1_AirAttackWave3
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountInc"
+		
+		SendToModule "#AirAttack" "#Total=1" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C1Patrol4" "#SplinePos=0.0"  "#HeightOffset=50.0" "#CruiseSpd=150" "#AttackSpd=100" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=0.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#CreateWave=1"
+		SendToModule "#AirAttack" "#Total=1" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C1Patrol5" "#SplinePos=0.0"  "#HeightOffset=50.0" "#CruiseSpd=150" "#AttackSpd=100" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=0.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#CreateWave=1"
+		SendToModule "#DestructTime" "#AddTime=15.0"
+		
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_AirAttackWave4
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountInc"
+		
+		SendToModule "#AirAttack" "#Total=2" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C1_Patrol11" "#SplinePos=0.0"  "#HeightOffset=50.0" "#CruiseSpd=150" "#AttackSpd=100" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=0.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#CreateWave=1"
+		SendToModule "#DestructTime" "#AddTime=15.0"
+		
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_AirAttackWave5
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountSet=0" "#CountDSet=0"
+		
+		SendToModule "#AirAttack" "#Total=1" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C1_Patrol21" "#SplinePos=0.0"  "#HeightOffset=50.0" "#CruiseSpd=150" "#AttackSpd=100" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=0.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#CreateWave=1"
+		SendToModule "#DestructTime" "#AddTime=15.0"
+		
+		SetState Chapter1_Process
+	}
+}
+
+state Chapter1_CullA
+{
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+		DestroyModule "#CreatureWaveA" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_CullB
+{
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+		DestroyModule "#CreatureWaveB" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_CullC
+{
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+		DestroyModule "#CreatureWaveC" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_CullD
+{
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+		DestroyModule "#CreatureWaveD" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_CullE
+{
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+		DestroyModule "#CreatureWaveE" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_CullF
+{
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+		DestroyModule "#CreatureWaveF" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_CullG
+{
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+		DestroyModule "#CreatureWaveG" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_CullH
+{
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+		DestroyModule "#CreatureWaveH" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_CullI
+{
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+		DestroyModule "#CreatureWaveI" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_CullJK
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc"
+		DestroyModule "#CreatureWaveJ" 
+		DestroyModule "#CreatureWaveK" 
+		SetState Chapter1_Process
+	}
+}
+state Chapter1_BanterA
+{
+	actions
+	{
+		SendToModule "#General" "#CountAInc"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj3" "#AutoDestroy" "#Start"
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_BanterB
+{
+	actions
+	{
+		SendToModule "#General" "#CountAInc"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj4" "#AutoDestroy" "#Start"
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_BanterC
+{
+	actions
+	{
+		SendToModule "#General" "#CountAInc"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj5" "#AutoDestroy" "#Start"
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_BanterD
+{
+	actions
+	{
+		SendToModule "#General" "#CountAInc"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj6" "#AutoDestroy" "#Start"
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_BanterE
+{
+	actions
+	{
+		SendToModule "#General" "#CountAInc"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D1_ch1_obj7" "#AutoDestroy" "#Start"
+		SetState Chapter1_Process
+	}
+
+
+}
+state Chapter1_ComServer
+{
+	conditions
+	{
+		if module "ComServer FoundRand" == 1.0 goto Chapter1_Complete
+
+
+		if module "DestructTime FailMission" == 1.0 goto Chapter1_FailMission
+		if message "MissionMessage" == 2.0 goto Chapter1_FailMission 
+	}
+	actions
+	{
+		
+		CreateModule "#BuildingSecret" "#ComServer" "#Spline=DestroyServer" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		Idle 2.5
+		DestroyModule "#Destruction"
+		CreateModule "#AreaRange" "#Server" "#Trigger=#ServerBuilding" "#Beacon"
+		CreateModule "#SplineExplode" "#ComServer2" "#Spline=DSSecrets" "#AddToRadar=#RedMediumDot"
+		;CreateModule "#DriverDrone" "#CreatureWaveL" "#spline=DSGuns" "#maxalive=4" "#count=4" "#SpawnInLOSInit" "#type=ShilkaTracer" "#spacing=20.0" "#GoalRange=40.0" "#RapidInitFire" #IgnorePaths #WaitEnd
+		
+		SendToModule "#General" "#SetMessage=QS2" "#SetMessageTimer=3.0" 
+		
+		
+	}
+}
+state Chapter1_DestroyComServerEarly
+{
+	conditions
+	{
+		if module "ComServer FoundRand" == 1.0 goto Chapter1_FinishDestruction
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter1_Complete
+
+		if module "DestructTime FailMission" == 1.0 goto Chapter1_FailMission
+		if message "MissionMessage" == 2.0 goto Chapter1_FailMission 
+	}
+	actions
+	{
+		DestroyModule "#AirAttack"
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 3"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 3"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		CreateModule "#BuildingSecret" "#ComServer" "#Spline=DestroyServer" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		Idle 2.5
+		CreateModule "#AreaRange" "#Server" "#Trigger=#ServerBuilding" "#Beacon"
+		CreateModule "#SplineExplode" "#ComServer2" "#Spline=DSSecrets" "#AddToRadar=#RedMediumDot"
+		CreateModule "#DriverDrone" "#CreatureWaveL" "#spline=DSGuns" "#maxalive=4" "#count=4" "#FollowPlayer" "#type=ShilkaTracer" "#spacing=20.0" "#GoalRange=40.0" "#RapidInitFire" 
+		
+		SendToModule "#General" "#SetMessage=QS2" "#SetMessageTimer=3.0" 
+		
+		SendToModule "#DestructTime" "#AddTime=30.0"
+		
+	}
+}
+state Chapter1_FinishDestruction
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter1_Complete
+
+		if module "CreatureWaveL GetPercentageComplete" == 1.0 goto Chapter1_AllObjectivesComplete
+		
+		if module "DestructTime FailMission" == 1.0 goto Chapter1_FailMission
+		if message "MissionMessage" == 2.0 goto Chapter1_FailMission 
+	}
+	actions
+	{
+		
+		DestroyModule "#Server"
+		DestroyModule "#ComServer"
+		DestroyModule "#ComServer2"
+
+		;SendToModule "#General" "#DangerZoneOff"
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+
+		
+		SendToModule "#CreatureWaveL" "#Object=#RedSmallDot" "#AddToRadarAlways"
+		
+		Idle 1.0 
+		SendToModule "#General" "#SetMessage=QS5" "#SetMessageTimer=3.0" 
+		SendToModule "#DestructTime" "#AddTime=90.0"
+		
+	}
+}
+state Chapter1_AllObjectivesComplete
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter1_Complete
+
+		;if module "DestructTime FailMission" == 1.0 goto Chapter1_FailMission
+		if message "MissionMessage" == 2.0 goto Chapter1_FailMission 
+	}
+	actions
+	{
+		;SendToModule "#General" "#DangerZoneOff"
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 1"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		SendToModule "#General" "#SetMessage=QS6" "#SetMessageTimer=3.0" 
+		SendToModule "#DestructTime"  "#AddTime=10.0"
+		
+	}
+}
+state Chapter1_Chatter
+{
+	conditions
+	{
+		
+		if module "Timer FailMission" == 1.0 goto Chapter1_Complete
+	}
+	actions
+	{
+		DestroyAllModules
+
+		
+		;CreateModule "#Timer" "#Timer" "#Time=3.0" "#NoRender" "#Start"
+                CreateModule "#Speech" "#PlayDelay=1.3" "#speech=#D1_ch1_cmplt" "#AutoDestroy"
+	}
+}
+state Chapter1_Death_LowResponseLevel
+{
+	Actions 
+	{
+		SendToModule "#VehicleLevels" "#ResponseLv=0" "#TrafficLv=1" "#PatrolLv=1" 
+		SetState "Chapter1_Restart"
+	}
+}
+
+state Chapter1_Death_HighResponseLevel
+{
+	Actions 
+	{
+		SendToModule "#VehicleLevels" "#ResponseLv=4" "#TrafficLv=5" "#PatrolLv=1" 
+		SetState "Chapter1_Restart"
+	}
+}
+
+
+
+state Chapter1_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 and 
+		if module "General ChapterProgress" == 0.0 goto Chapter1_Death_LowResponseLevel
+		
+		if module "General GetFinishedMissionDeathFail" == 1.0 and 
+		if module "General ChapterProgress" > 0.0 goto Chapter1_Death_LowResponseLevel
+ 
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+
+state Chapter1_FailMission
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_LowResponseLevel
+		if module "General ChapterProgress" > 0.0 goto Chapter1_HighResponseLevel
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" 
+	}
+
+}
+
+state Chapter1_LowResponseLevel
+{
+	Actions 
+	{
+		SendToModule "#VehicleLevels" "#ResponseLv=0" "#TrafficLv=1" "#PatrolLv=1" 
+		SetState Chapter1_FailMissionPartB
+	}
+}
+
+state Chapter1_HighResponseLevel
+{
+	Actions 
+	{
+		SendToModule "#VehicleLevels" "#ResponseLv=4" "#TrafficLv=5" "#PatrolLv=1" 
+		SetState Chapter1_FailMissionPartB
+	}
+}
+
+state Chapter1_FailMissionPartB
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#FailMission"
+	}
+}
+
+
+state Chapter1_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		
+		SendToModule "#General" "#PlayerType=Blackout,Blackout,Scorponok,Blackout"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+
+		SetState "Exit"
+	}
+}
+
+state Chapter1_Complete
+{
+	
+	actions
+	{       
+		DestroyModule "#Destruction"
+		DestroyModule "#DestructTime"
+		DestroyModule "#DelayedSend"
+		DestroyModule "#DelayedSendReminder"
+		DestroyModule "#Server"
+		DestroyModule "#ComServer"
+		DestroyModule "#ComServer2"
+		SetMusic "ACTION Mission1_3 QUIET Generic Play Action"
+		Idle 0.1
+		SetState Chapter1_CompleteStart
+		
+		
+	}
+}
+state Chapter1_CompleteStart
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{       
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		SendToModule "#General" "#CompleteMission" "#DangerZoneOff"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter2"
+		
+ 		CreateModule "#Speech" "#PlayDelay=1.2" "#speech=#D1_ch1_cmplt" "#AutoDestroy" "#Start"
+		
+		
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D1C2Outro1" ;#D1C1Outro1"
+		;SetState "Chapter1_CompleteVideoFinished"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#PlayerType=Blackout,Blackout,Scorponok,Blackout"
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter2"
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT1"
+		IncreasePlayerHealth max
+		setstate "PickGoto" ;goto next chapter		
+	}
+}

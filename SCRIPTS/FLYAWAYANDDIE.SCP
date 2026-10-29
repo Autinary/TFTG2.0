@@ -1,0 +1,27 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Actions
+	{
+		SetState FlyAwayAndDie
+	}
+}
+
+state FlyAwayAndDie
+{
+	Actions
+	{
+		Transform Car UntilDone
+		FlyAway goalrange=10.0 speed=60.0 distance=200.0
+		FlyAway goalrange=10.0 speed=100.0 distance=2000.0
+		Kill
+	}
+}

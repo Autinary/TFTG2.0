@@ -1,0 +1,1083 @@
+state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		;CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch4_Goto"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#LevelSpecialOff=1" "#LevelSpecialOff=2" "#LevelSpecialOff=3" 
+		SetState "Chapter4_Goto"
+
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch4_Goto" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch4_Goto2" "#AutoDestroy"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch4_Goto3" "#AutoDestroy"
+		Idle 5.0
+		SendToModule "#General" "#SetMessage=HIntD5" "#SetMessageTimer=4"
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=2" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+
+		SendToModule "#General" "#SetPlayerDeathPoint=#Chapter4Restart"
+
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A3C4Intro1"
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#LoadCreature=Barricade"
+		;SendToModule "#General" "#LoadCreature=Megatron"
+		SendToModule "#General" "#LoadCreature=Brawl"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+	}
+}
+
+state Chapter4_Main
+{
+	conditions
+	{
+		if message "MissionMessage" == 1.0 goto Chapter4_Complete
+		if message "MissionMessage" == 2.0 goto Chapter4_FailMission 
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter4_DeathFailMission"
+		SendToModule "#General" "#ResetCounters"
+		
+		Idle 0.1
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch4_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch4_obj2" "#AutoDestroy"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=20" "#times=1" 
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter4Start" "#FadeUp" "#CountSet=0" "#CountBSet=0" "#CountCSet=0" "#ResetLevel"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C4KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key5Return" "#HeadType=#Optimus" 
+		CreateModule "#SpecialObj" "#A3C4ClaspA" "#Spline=A3C4_CLAMPA" "#Breakable" "#PhysObjGlow" "#Pinned" "#AddToRadar" "#NoPickUp"
+		CreateModule "#SpecialObj" "#A3C4ClaspB" "#Spline=A3C4_CLAMPB" "#Breakable" "#PhysObjGlow" "#Pinned" "#AddToRadar" "#NoPickUp"
+		CreateModule "#SpecialObj" "#A3C4ClaspC" "#Spline=A3C4_CLAMPC" "#Breakable" "#PhysObjGlow" "#Pinned" "#AddToRadar" "#NoPickUp"
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=0" "#Type=EnergonDrone" "#SpawnAsCreature" "#Script=EnergonDrone" "#AddToRadarOff"
+		SendToModule "#General" "#SetMaxOpponents=16" "#SetMaxApproachers=15" "#SetAttackRingSize=15"
+		CreateModule "#Container" "#Container" "#ConnectModule=#A3C4ClaspA" "#ConnectModule=#A3C4ClaspB" "#ConnectModule=#A3C4ClaspC"
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Container" "#DronesToDefeat=6" "#IconType=#Clasp" "#GetPercentageComplete" "#BackwardsCount"
+		;CreateModule "#MegatronArm" "#MegatronArm" "#Spline=MegatronArm" "#String=Smegatron_arm"  
+		CreateModule "#HardBuildings" "#HardBuildings" "#Spline=A3C4_NITROBUILD" "#Scale=0.0" "#SetSize=1" "#TurnOff=-1" "#DrawHealthBar"  "#AddToRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=A3C4EnergonShrink"  "#Creature=#Creature" "#SpawnTime=3.0" "#Time=180.0" "#Random" "#Continous" "#NoDraw"
+		;CreateModule "#SpecialObj" "#SpecialObj" "#String=LASERBEAMS" "#Pinned" 
+		SendToModule "#General" "#ForceHealthSpawnMin=0.8" "#ForceHealthSpawnMed=0.45" "#ForceHealthSpawnMax=0.1"
+		SendToModule "#General" "#TrafficLv = 4"                        ; lock traffic level (1-5) (0=OFF)
+		SendToModule "#General" "#PatrolLv = 0"                         ; patrol level (1=ON, 0=OFF)
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 3"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 3"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		CreateModule "#Timer" "#TimerS" "#Time=160" "#NoRender"
+		CreateModule "#Timer" "#TimerM" "#Time=17" "#NoRender"
+		SetState Chapter4_FreeTheEnergonCube
+	}
+}
+
+state Chapter4_FreeTheEnergonCube
+{
+	conditions
+	{
+		if module "A3C4ClaspA JustDestroyed" == 1.0 goto Chapter4_SpawnCreatureA
+		if module "A3C4ClaspB JustDestroyed" == 1.0 goto Chapter4_SpawnCreatureB
+		if module "A3C4ClaspC JustDestroyed" == 1.0 goto Chapter4_SpawnCreatureC
+		
+		if module "A3C4ClaspA Complete" == 1.0 and
+			if module "A3C4ClaspB Complete" == 1.0 and
+				if module "A3C4ClaspC Complete" == 1.0 goto Chapter4_EnergonCubeIsFreeMidtro
+				
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "TimerS FailMission" == 1.0 goto Chapter4_FailMission2
+		if module "TimerM FailMission" == 1.0 goto Chapter4_TroublesBrewing
+	}
+	actions
+	{
+		
+
+	}
+}
+state Chapter4_TroublesBrewing
+{
+	conditions
+	{
+		if module "A3C4ClaspA JustDestroyed" == 1.0 goto Chapter4_SpawnCreatureA
+		if module "A3C4ClaspB JustDestroyed" == 1.0 goto Chapter4_SpawnCreatureB
+		if module "A3C4ClaspC JustDestroyed" == 1.0 goto Chapter4_SpawnCreatureC
+		
+		if module "A3C4ClaspA Complete" == 1.0 and
+			if module "A3C4ClaspB Complete" == 1.0 and
+				if module "A3C4ClaspC Complete" == 1.0 goto Chapter4_EnergonCubeIsFreeMidtro
+				
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "TimerS FailMission" == 1.0 goto Chapter4_FailMission2
+		
+	}
+	actions
+	{
+		DestroyModule "#TimerM"
+		SendToModule "#General" "#SetMessage=HIntD6" "#SetMessageTimer=4"
+
+	}
+}
+state Chapter4_FreeTheEnergonCube2
+{
+	conditions
+	{
+		if module "A3C4ClaspA JustDestroyed" == 1.0 goto Chapter4_SpawnCreatureA
+		if module "A3C4ClaspB JustDestroyed" == 1.0 goto Chapter4_SpawnCreatureB
+		if module "A3C4ClaspC JustDestroyed" == 1.0 goto Chapter4_SpawnCreatureC
+		
+		if module "A3C4ClaspA Complete" == 1.0 and
+			if module "A3C4ClaspB Complete" == 1.0 and
+				if module "A3C4ClaspC Complete" == 1.0 goto Chapter4_EnergonCubeIsFreeMidtro
+				
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "TimerS FailMission" == 1.0 goto Chapter4_FailMission2
+		if module "TimerM FailMission" == 1.0 goto Chapter4_TroublesBrewing
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+
+	}
+}
+state Chapter4_SpawnCreatureA
+{	
+	conditions
+	{
+		if module "General GetCount" == 0.0 goto Chapter4_IncCreature1
+		if module "General GetCount" == 1.0 goto Chapter4_IncCreature2
+		if module "General GetCount" >= 2.0 goto Chapter4_IncCreature3
+	
+	}
+	actions
+	{
+		SendToModule "#A3C4ClaspA" "#ClearTriggeredComplete"
+		DestroyModule "#DelayedSendReminder"
+	}
+}
+
+state Chapter4_SpawnCreatureB
+{
+	conditions
+	{
+		if module "General GetCount" == 0.0 goto Chapter4_IncCreature1
+		if module "General GetCount" == 1.0 goto Chapter4_IncCreature2
+		if module "General GetCount" >= 2.0 goto Chapter4_IncCreature3	
+	}
+	actions
+	{
+		SendToModule "#A3C4ClaspB" "#ClearTriggeredComplete"
+		DestroyModule "#DelayedSendReminder"
+	}
+}
+
+state Chapter4_SpawnCreatureC
+{
+	conditions
+	{
+		if module "General GetCount" == 0.0 goto Chapter4_IncCreature1
+		if module "General GetCount" == 1.0 goto Chapter4_IncCreature2
+		if module "General GetCount" >= 2.0 goto Chapter4_IncCreature3	
+	}
+	actions
+	{
+		SendToModule "#A3C4ClaspC" "#ClearTriggeredComplete"
+		DestroyModule "#DelayedSendReminder"
+	}
+}
+
+state Chapter4_IncCreature1
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc" 
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=5" "#StartSpawn=5000" "#SpawnSpline=A3C4SPAWNENERGON"
+		SetState Chapter4_FreeTheEnergonCube
+	}
+}
+
+state Chapter4_IncCreature2
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc" 	
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=10" "#StartSpawn=5000" "#SpawnSpline=A3C4SPAWNENERGON"
+		SetState Chapter4_FreeTheEnergonCube
+	}
+}
+
+state Chapter4_IncCreature3
+{
+	actions
+	{
+		SendToModule "#General" "#CountInc" 
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=13" "#StartSpawn=5000" "#SpawnSpline=A3C4SPAWNENERGON"
+		SetState Chapter4_FreeTheEnergonCube
+	}
+}
+
+state Chapter4_EnergonCubeIsFreeMidtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_EnergonCubeIsFreeInit
+	}
+	actions
+	{
+	
+		SendToModule "#General" "#StartVideo=#A3C4midtro1"
+	}
+}
+state Chapter4_Midtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+	
+		SendToModule "#General" "#StartVideo=#A3C4Midtro3"
+	}
+}
+state Chapter4_EnergonCubeIsFreeInit
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_TimerBegins
+	}
+	actions
+	{
+		
+		DestroyModule "#A3C4ClaspA" 
+		DestroyModule "#A3C4ClaspB" 
+		DestroyModule "#A3C4ClaspC" 
+		DestroyModule "#DroneCounter"
+		
+		SendToModule "#SplineObj" "#Draw" "#StartShrink=190" "#TimeToComplete=180" "#Start" "#SetMessage=6.5"
+		
+	}
+}
+
+
+state Chapter4_TimerBegins
+{
+	conditions
+	{
+		;if module "Timer" <= 150.0 goto Chapter4_MegaTronAwakesMidtro
+		if Timer > 10.0 goto Chapter4_Onslaught
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer 
+		CreateModule "#Timer" "#Timer"  "#Time=180.0" "#NoRender"
+		CreateModule "#Timer" "#TimerC"  "#Time=60.0" "#NoRender"
+		CreateModule "#Timer" "#TimerB" "#Stop" "#Time=5.0" "#NoRender"
+		
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch4_obj3" "#AutoDestroy" "#Start"
+		;CreateModule "#Creature" "#CreatureWaveD" "#Spline=A3C4SpawnA" "#count=9000" "#maxalive=2" "#Type=DroneDefault" "#AddToRadarOff" "#SpawnAsCreature" 
+		CreateModule "#DriverDrone" "#CreatureWaveE" "#spline=A3C4SpawnC" "#maxalive=6" "#count=9000" "#FollowPlayer" "#spacing=20.0" "#goalrange=30.0" 
+	}
+}
+state Chapter4_Onslaught
+{
+	conditions
+	{
+		;if module "Timer" <= 150.0 goto Chapter4_MegaTronAwakesMidtro
+		if module "Timer" <= 151.0 goto Chapter4_MegaTronAwakesMidtroStart
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A3C4SpawnA" "#count=9000" "#maxalive=1" "#Type=DroneDefault" "#AddToRadarOff" "#SpawnAsCreature" "#Script=AdvDefault"
+		CreateModule "#Creature" "#CreatureWaveF" "#spline=A3C4SpawnC" "#maxalive=1" "#count=9000" "#Type=DroneDefault" "#AddToRadarOff" "#SpawnAsCreature"  "#Script=AdvDefault"
+		SendToModule "#General" "#SetMessage=HIntD8" "#SetMessageTimer=3.0"
+	}
+}
+state Chapter4_MegaTronAwakesMidtroStart
+{
+	conditions
+	{
+		;if module "Timer" <= 150.0 goto Chapter4_MegaTronAwakesMidtro
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		
+	}
+	actions
+	{
+		
+		
+		CreateModule "#Speech" "#HereWeGo" "#speech=#A3_ch4_obj5" "#AutoDestroy" 
+		
+		CreateModule "#Goto" "#MegatronThawTime" "#SpawnSpline=A3C4SpawnA" "#Type=DroneDefault" "#SetPosition=#Chapter1Start"  "#Protect"  "#SetEnergyMax=100" "#SetEnergy=0.1" "#SetEnergyMin=0.1" "#AddToRadarOff" "#Script=StandAndWait"
+		Idle 0.3
+		SendToModule "#MegatronThawTime" "#Boss" "#Type=Megatron"
+		Idle 0.2
+		;SendToModule "#General" "#BG_UnLoadCreature=Megatron" 
+		;SendToModule "#General" "#BG_LoadCreature=Brawl"
+		SendToModule "#General" "#SetMessage=HIntD7" "#SetMessageTimer=1.5" "#CountASet=1"
+		CreateModule "#Timer" "#A3C4RespawnTimer" "#Time=0.0" "#NoDraw"
+		SendToModule "#TimerB" "#Start" "#NoRender"
+		
+		SendToModule "#General" "#CountSet=0" 
+		SetState Chapter4_MegaTronAwakes
+		
+	}
+}
+
+state Chapter4_MegaTronAwakesMidtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_MegaTronAwakesInit
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#StartVideo=#A3C4midtro2"
+	}
+}
+
+state Chapter4_MegaTronAwakesInit
+{
+	actions
+	{
+		DestroyModule "#TimerB"
+		DestroyModule "#KeyLocation"
+		DestroyModule "#MegatronThawTime"
+		
+		CreateModule "#MegatronArm" "#MegatronArm" "#Spline=MegatronArm" "#String=Smegatron_arm" "#InstantThaw" "#Boss=#Megatron" "#Delay=15.0"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C4KeyLoc" "#String=Key6Return" "#ReEnterMsg=Key6Return" "#HeadType=#Optimus" 
+		SendToModule "#General" "#CountASet=2"
+		SendToModule "#General" "#SetMessage=HIntD13" "#SetMessageTimer=2.0" 
+		CreateModule "#Speech" "#A3_ch4_obj6" "#speech=#A3_ch4_obj6" "#AutoDestroy" "#Start"
+		SetState Chapter4_MegaTronAwakes
+	}
+
+}
+
+state Chapter4_MegaTronAwakes
+{
+	conditions
+	{
+		if module "HardBuildings IndexBeenTriggered" == 1.0 and
+			if module "General GetCountA" == 1.0 goto Chapter4_KeepMegaTronFrozenA
+		if module "HardBuildings IndexBeenTriggered" == 2.0 and
+			if module "General GetCountA" == 1.0 goto Chapter4_KeepMegaTronFrozenB
+		if module "HardBuildings IndexBeenTriggered" == 3.0 and
+			if module "General GetCountA" == 1.0 goto Chapter4_KeepMegaTronFrozenC
+		if module "HardBuildings IndexBeenTriggered" == 4.0 and
+			if module "General GetCountA" == 1.0 goto Chapter4_KeepMegaTronFrozenD
+
+		if module "HardBuildings IndexBeenTriggered" == 1.0 and
+			if module "General GetCountA" == 2.0 goto Chapter4_FreezeMegaTronA
+		if module "HardBuildings IndexBeenTriggered" == 2.0 and
+			if module "General GetCountA" == 2.0 goto Chapter4_FreezeMegaTronB
+		if module "HardBuildings IndexBeenTriggered" == 3.0 and
+			if module "General GetCountA" == 2.0 goto Chapter4_FreezeMegaTronC
+		if module "HardBuildings IndexBeenTriggered" == 4.0 and
+			if module "General GetCountA" == 2.0 goto Chapter4_FreezeMegaTronD
+
+		if module "TimerC FailMission" == 1.0 goto Chapter4_Barricade
+		if module "TimerD FailMission" == 1.0 goto Chapter4_???
+		;if module "TimerU FailMission" == 1.0 goto Chapter4_AlmostThere
+		
+		;activate canisters
+			
+		if module "MegaTronArm CompleteTrigger" == 1.0 goto StartCriticalTimer
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		
+		;if module "TimerB" <= 0.0 goto Chapter4_FailMission ; don't want fail mission for megatron being critical anymore
+		
+		if module "Timer" <= 0.0 goto Chapter4_Escaped 
+
+		if module "Timer" <= 60.0 and
+			if module "General GetCountB" == 0.0 goto Chapter4_JustAlittleLonger
+
+		if module "TimerB FailMission" == 1.0 and
+			if module "General GetCountA" == 1.0 goto FillMegaHealth
+		;if module "MegatronThawTime Energy" >= 100 goto Chapter4_MegaTronAwakesMidtro
+		;if module "MegatronThawTime Energy" == 60 goto ActivateCanister
+	}
+	actions 
+	{
+		ResetTimer
+		
+		
+	}
+}
+state FillMegaHealth
+{
+	conditions
+	{
+		if module "General GetCountC" == 0.0 goto MegatronPowerAt10
+		if module "General GetCountC" == 1.0 goto MegatronPowerAt20
+		if module "General GetCountC" == 2.0 goto MegatronPowerAt30	
+		if module "General GetCountC" == 3.0 goto MegatronPowerAt40
+		if module "General GetCountC" == 4.0 goto MegatronPowerAt50
+		if module "General GetCountC" == 5.0 goto MegatronPowerAt60
+		if module "General GetCountC" == 6.0 goto MegatronPowerAt70
+		if module "General GetCountC" == 7.0 goto MegatronPowerAt80	
+		if module "General GetCountC" == 8.0 goto MegatronPowerAt90
+		if module "General GetCountC" == 9.0 goto MegatronPowerAt100
+	}
+
+}
+state MegatronPowerAt10
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime"  "#SetEnergy=10.0" "#SetEnergyMin=10.0"
+		SendToModule "#TimerB" "#NoRender" "#Time=5.0"
+		SendToModule "#General" "#CountCInc"
+		SetState Chapter4_MegaTronAwakes
+	}
+}
+state MegatronPowerAt20
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime"  "#SetEnergy=20.0" "#SetEnergyMin=20.0"
+		SendToModule "#TimerB" "#NoRender" "#Time=5.0"
+		SendToModule "#General" "#CountCInc"
+		SetState Chapter4_MegaTronAwakes
+	}
+}
+state MegatronPowerAt30
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime" "#SetEnergy=30.0" "#SetEnergyMin=30.0"
+		SendToModule "#TimerB" "#NoRender" "#Time=5.0"
+		SendToModule "#General" "#CountCInc"
+		SetState Chapter4_MegaTronAwakes
+	}
+}
+state MegatronPowerAt40
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime" "#SetEnergy=40.0" "#SetEnergyMin=40.0"
+		SendToModule "#TimerB" "#NoRender" "#Time=5.0"
+		SendToModule "#General" "#CountCInc"
+		SetState Chapter4_MegaTronAwakes
+	}
+}
+
+state MegatronPowerAt50
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime" "#SetEnergy=50.0" "#SetEnergyMin=50.0"
+		SendToModule "#TimerB" "#NoRender" "#Time=5.0"
+		SendToModule "#General" "#CountCInc"
+		SetState Chapter4_MegaTronAwakes
+	}
+}
+state MegatronPowerAt60
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime"  "#SetEnergy=60.0" "#SetEnergyMin=60.0"
+		SendToModule "#TimerB" "#NoRender" "#Time=5.0"
+		SendToModule "#General" "#CountCInc"
+		SetState ActivateCanister
+	}
+}
+state MegatronPowerAt70
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime" "#SetEnergy=70.0" "#SetEnergyMin=70.0"
+		SendToModule "#General" "#CountCInc"
+		SendToModule "#TimerB" "#NoRender" "#Time=5.0"
+		SetState Chapter4_MegaTronAwakes
+	}
+}
+state MegatronPowerAt80
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime" "#SetEnergy=80.0" "#SetEnergyMin=80.0"
+		SendToModule "#TimerB" "#NoRender" "#Time=5.0"
+		SendToModule "#General" "#CountCInc"
+		SetState Chapter4_MegaTronAwakes
+	}
+}
+state MegatronPowerAt90
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime" "#SetEnergy=90.0" "#SetEnergyMin=90.0"
+		SendToModule "#TimerB" "#NoRender" "#Time=5.0"
+		SendToModule "#General" "#CountCInc"
+		SetState Chapter4_MegaTronAwakes
+	}
+}
+
+state MegatronPowerAt100
+{
+	actions
+	{
+		SendToModule "#MegatronThawTime" "#SetEnergy=100.0" "#SetEnergyMin=100.0"
+		
+		SendToModule "#General" "#CountCInc"
+		SetState Chapter4_MegaTronAwakesMidtro
+	}
+}
+state Chapter4_Barricade
+{
+	conditions
+	{
+		;if Timer > 3.0 goto Chapter4_MegaTronAwakes3
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions 
+	{
+		;ResetTimer 
+		DestroyModule "#TimerC"
+		CreateModule "#Timer" "#TimerD" "#Time=30" "#NoRender"
+		CreateModule "#Creature" "#Barricade" "#spline=A3C4SpawnA" "#Type=Barricade" "#maxalive=1" "#count=1" "#FollowPlayer" "#SpawnInLOSInit" "#SpawnAsVehicle" "#SpawnAsleep" "#BlockDeath" "#SetEnergyMax=600" "#SetEnergy=600" "#AddToRadarOff" "#Script=LeapPunch"
+		SendToModule "#CreatureWaveD" "#maxalive=2" "#SetEnergyMax=500" "#Script=Advanced"
+		SendToModule "#CreatureWaveF" "#SetEnergyMax=500" "#Script=Advanced"
+		Idle 3.0 
+		SendToModule "#General" "#SetMessage=HIntD9" "#SetMessageTimer=3.0"
+		SendToModule "#Barricade" "#ForceTransformRobot" ; "#Script=TripleChanger"
+		
+		SetState "Chapter4_MegaTronAwakes"
+	}
+}
+state Chapter4_???
+{
+	conditions
+	{
+		
+	}
+	actions 
+	{
+		DestroyModule "#TimerD"
+		;SendToModule "#General" "#SetMessage=HIntD10" "#SetMessageTimer=3.0" 
+		CreateModule "#Creature" "#???" "#Type=Brawl" "#Spline=A3C4SPAWNENERGON" "#SetPosition=#???" "#maxalive=1" "#count=1" "#SpawnInLOSInit" "#SpawnAsVehicle" "#BlockDeath" "#Script=EvilBumblebee" "#AddToRadarOff" "#SetEnergyMax=900" "#SetEnergy=900"
+		SendToModule "#CreatureWaveD" "#Script=Combat" "#SetEnergyMax=400"
+		SendToModule "#CreatureWaveF" "#maxalive=2" "#Script=Combat" "#SetEnergyMax=400"
+		SetState "Chapter4_MegaTronAwakes"
+	}
+}
+
+state Chapter4_JustAlittleLonger
+{	
+	actions {
+		CreateModule "#Speech" "#HereWeGo2" "#speech=#A3_ch4_obj4" 
+		SendToModule "#HereWeGo2" "#StartOneShot=2.0"
+		SendToModule "#CreatureWaveD" "#maxalive=3" "#SetEnergyMax=300"
+		SendToModule "#CreatureWaveF" "#SetEnergyMax=300"
+		SendToModule "#General" "#CountBSet=1"
+		SetState Chapter4_MegaTronAwakes
+	}
+}
+state Chapter4_AlmostThere
+{	
+	actions {
+		
+		
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+state Chapter4_KeepMegaTronFrozenA
+{	
+	actions {
+		
+		SendToModule "#MegatronThawTime" "#SetEnergy=20.0" "#SetEnergyMin=20.0"
+		SendToModule "#A3C4RespawnTimer" "#Start"
+		SendToModule "#TimerB" "#NoRender" "#Time=10.0"
+		SendToModule "#HardBuildings" "#ClearAnyBeenTriggered"
+		SendToModule "#General" "#LevelEffectOn=1" "#CountCSet=1"
+		SendToModule "#General" "#CountInc"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+state Chapter4_KeepMegaTronFrozenB
+{	
+	actions {
+		
+		SendToModule "#MegatronThawTime" "#SetEnergy=40.0" "#SetEnergyMin=40.0"
+		SendToModule "#A3C4RespawnTimer" "#Start"
+		SendToModule "#TimerB" "#NoRender" "#Time=10.0"
+		SendToModule "#HardBuildings" "#ClearAnyBeenTriggered"
+		SendToModule "#General" "#LevelEffectOn=2" "#CountCSet=3"
+		SendToModule "#General" "#CountInc"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+state Chapter4_KeepMegaTronFrozenC
+{	
+	actions {
+		
+		SendToModule "#MegatronThawTime" "#SetEnergy=60.0" "#SetEnergyMin=60.0"
+		SendToModule "#A3C4RespawnTimer" "#Start"
+		SendToModule "#TimerB" "#NoRender" "#Time=10.0"
+		SendToModule "#HardBuildings" "#ClearAnyBeenTriggered"
+		SendToModule "#General" "#LevelEffectOn=3""#CountCSet=5"
+		SendToModule "#General" "#CountInc"
+		SetState ActivateCanister 
+	}
+}
+state Chapter4_KeepMegaTronFrozenD
+{	
+	actions {
+		
+		SendToModule "#MegatronThawTime" "#SetEnergy=70.0" "#SetEnergyMin=20.0"
+		SendToModule "#A3C4RespawnTimer" "#Start"
+		SendToModule "#TimerB" "#NoRender" "#Time=10.0"
+		SendToModule "#HardBuildings" "#ClearAnyBeenTriggered"
+		SendToModule "#General" "#LevelEffectOn=4" "#CountCSet=6"
+		SendToModule "#General" "#CountInc"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+state Chapter4_FreezeMegaTronA
+{	
+	actions {
+		SendToModule "#MegatronArm" "#Freeze=30.0"
+		SendToModule "#A3C4RespawnTimer" "#Start"
+		SendToModule "#TimerB" "#Stop" "#NoRender" "#Time=30.0"
+		SendToModule "#HardBuildings" "#ClearAnyBeenTriggered"
+		SendToModule "#General" "#LevelEffectOn=1"
+		SendToModule "#General" "#CountInc"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+
+state Chapter4_FreezeMegaTronB
+{
+	actions {
+		SendToModule "#MegatronArm" "#Freeze=25.0"
+		SendToModule "#A3C4RespawnTimer" "#Start"
+		SendToModule "#TimerB" "#Stop" "#NoRender" "#Time=30.0" 
+		SendToModule "#HardBuildings" "#ClearAnyBeenTriggered"
+		SendToModule "#General" "#LevelEffectOn=2"
+		SendToModule "#General" "#CountInc"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+
+state Chapter4_FreezeMegaTronC
+{
+	actions {
+		SendToModule "#MegatronArm" "#Freeze=20.0"
+		SendToModule "#A3C4RespawnTimer" "#Start"
+		SendToModule "#TimerB" "#Stop" "#NoRender" "#Time=30.0" 
+		SendToModule "#HardBuildings" "#ClearAnyBeenTriggered"
+		SendToModule "#General" "#LevelEffectOn=3"
+		SendToModule "#General" "#CountInc"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+
+state Chapter4_FreezeMegaTronD
+{
+	actions {
+		SendToModule "#MegatronArm" "#Freeze=20.0"
+		SendToModule "#A3C4RespawnTimer" "#Start"
+		SendToModule "#TimerB" "#Stop" "#NoRender" "#Time=30.0" 
+		SendToModule "#HardBuildings" "#ClearAnyBeenTriggered"
+		SendToModule "#General" "#LevelEffectOn=4" 
+		SendToModule "#General" "#CountInc"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+
+state Chapter4_FreezeMegaTronE
+{
+	actions {
+		SendToModule "#MegatronArm" "#Freeze=5.0"
+		SendToModule "#A3C4RespawnTimer" "#Start"
+		SendToModule "#TimerB" "#Stop" "#NoRender" "#Time=30.0" 
+		SendToModule "#A3C4ObjectE" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountInc"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+
+state StartCriticalTimer
+{
+	actions {
+		SendToModule "#TimerB" "#Start" ;"#Render"
+		SendToModule "#MegatronArm" "#CLEARTRIGGEREDCOMPLETE"
+		SetState ActivateCanister 
+	}
+}
+
+state ActivateCanister
+{
+	Conditions
+	{
+			if module "General GetCount" == 0.0 goto Chapter4_ActivateCanister1
+			if module "General GetCount" == 1.0 goto Chapter4_ActivateCanister2
+			if module "General GetCount" == 2.0 goto Chapter4_ActivateCanister3
+			if module "General GetCount" == 3.0 goto Chapter4_ActivateCanister4
+			if module "General GetCount" > 3.0 goto Chapter4_MegaTronAwakes
+	}
+	
+
+}
+
+state Chapter4_ActivateCanister1
+{
+	
+	actions 
+	{
+		;turn on effect...
+		;SendToModule "#A3C4ObjectA" "#PhysObjGlow" "#ResetDamageFlags" "#Breakable" 
+		SendToModule "#MegatronThawTime" "#SetEnergy=61.0" 
+		SendToModule "#A3C4RespawnTimer" "#ClearTriggeredComplete" "#Time=30.0" "#Stop"
+		SendToModule "#HardBuildings" "#Scale=0.5" 
+		SendToModule "#Hardbuildings" "#TurnOn=0"
+		SendToModule "#General" "#SetMessage=HIntD13" "#SetMessageTimer=2.0" 
+		SendToModule "#HereWeGo" "#StartOneShot"
+		
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+
+state Chapter4_ActivateCanister2
+{
+	actions {
+		;SendToModule "#A3C4ObjectB" "#PhysObjGlow" "#ResetDamageFlags" "#Breakable" 
+		SendToModule "#MegatronThawTime" "#SetEnergy=61.0" 
+		SendToModule "#A3C4RespawnTimer" "#ClearTriggeredComplete" "#Time=30.0" "#Stop"
+		SendToModule "#General" "#SetMessage=HIntD13" "#SetMessageTimer=2.0" 
+		SendToModule "#Hardbuildings" "#TurnOn=1"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+
+state Chapter4_ActivateCanister3
+{
+	actions {
+		;SendToModule "#A3C4ObjectC" "#PhysObjGlow" "#ResetDamageFlags" "#Breakable" 
+		SendToModule "#MegatronThawTime" "#SetEnergy=61.0" 
+		SendToModule "#A3C4RespawnTimer" "#ClearTriggeredComplete" "#Time=30.0" "#Stop"
+		SendToModule "#General" "#SetMessage=HIntD13" "#SetMessageTimer=2.0" 
+		SendToModule "#Hardbuildings" "#TurnOn=2"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+
+state Chapter4_ActivateCanister4
+{
+	actions {
+		;SendToModule "#A3C4ObjectD" "#PhysObjGlow" "#ResetDamageFlags" "#Breakable" 
+		SendToModule "#A3C4RespawnTimer" "#ClearTriggeredComplete" "#Time=30.0" "#Stop"
+		SendToModule "#MegatronThawTime" "#SetEnergy=61.0" 
+		SendToModule "#General" "#SetMessage=HIntD13" "#SetMessageTimer=2.0" 
+		SendToModule "#Hardbuildings" "#TurnOn=3" ;4"
+		SetState Chapter4_MegaTronAwakes 
+	}
+}
+
+
+state Chapter4_Escaped
+{
+	conditions
+	{
+		if module "AllSpark InArea" == 1.0 goto Chapter4_PreFinishThis
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions 
+	{
+		
+		CreateModule "#AreaRange" "#AllSpark" "#Trigger=#AllSpark"  "#AddToRadar" "#Beacon"
+		SendToModule "#General" "#SetMessage=HIntD11" "#SetMessageTimer=3.0"
+		;SetState Chapter4_Complete
+	}
+}
+state Chapter4_PreFinishThis
+{
+	conditions
+	{
+		
+		if Timer > 1.0 goto Chapter4_FinishThis
+	}
+	actions 
+	{
+		ResetTimer
+		DestroyModule "#AllSpark"
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=0"
+		;SetState Chapter4_Complete
+	}
+}
+state Chapter4_FinishThis
+{
+	conditions
+	{
+		;if module "Barricade Dead" == 1.0 and
+			;if module "Creature GetCountAlive" == 0.0 and
+				;if module "CreatureWaveD GetCountAlive" == 0.0 goto Chapter4_Escaped2
+		if Timer > 0.7 goto Chapter4_FinishThis1
+	}
+	actions 
+	{
+		ResetTimer
+		;SendToModule "#General" "#SetMessage=HIntD12" "#SetMessageTimer=3.0"
+		;CreateModule "#Speech" "#HereWeGo5" "#speech=#A3_ch4_obj9" 
+		;SendToModule "#HereWeGo5" "#StartOneShot"
+		SendToModule "#CreatureWaveD" "#SetEnergy=0.0" "#count=0"
+		SendToModule "#CreatureWaveE" "#SetEnergy=0.0" "#count=0"
+		SendToModule "#CreatureWaveF" "#SetEnergy=0.0" "#count=0"
+		SendToModule "#???" "#SetEnergy=0.0"
+		SendToModule "#Barricade" "#SetEnergy=0.1"
+		SendToModule "#MegatronArm" "#Freeze=920.0"
+		SendToModule "#Creature" "#SetEnergy=0.0"
+		SendToModule "#SplineObj" "#Creature=#Creature" "#MaxAlive=0"
+		;SetState Chapter4_Complete
+	}
+}
+state Chapter4_FinishThis1
+{
+	conditions
+	{
+		if module "Barricade Dead" == 1.0 and
+			if module "??? Dead" == 1.0 and
+				if module "Creature Energy" <= 0.0 and
+					if module "CreatureWaveD Energy" <= 0.0 and
+						if module "CreatureWaveF Energy" <= 0.0 goto Chapter4_Escaped2
+		if Timer > 2.0 goto Chapter4_FinishThis2
+	}
+	actions 
+	{
+		ResetTimer
+		;SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		;SendToModule "#General" "#SetMessage=HIntD12" "#SetMessageTimer=3.0"
+		CreateModule "#Speech" "#HereWeGo5" "#speech=#A3_ch4_obj9"
+		SendToModule "#HereWeGo5" "#StartOneShot"
+		;SetState Chapter4_Complete
+	}
+}
+state Chapter4_FinishThis2
+{
+	conditions
+	{
+		if module "Barricade Dead" == 1.0 and
+			if module "??? Dead" == 1.0 and
+				if module "Creature Energy" <= 0.0 and
+					if module "CreatureWaveD Energy" <= 0.0 and
+						if module "CreatureWaveF Energy" <= 0.0 goto Chapter4_Escaped2
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		
+	}
+	actions 
+	{
+		;SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		SendToModule "#General" "#SetMessage=HIntD12" "#SetMessageTimer=3.0"
+		DestroyModule "#KeyLocation"
+		SendToModule "#CreatureWaveD" "#AddToRadar"
+		SendToModule "#CreatureWaveE" "#AddToRadar"
+		SendToModule "#CreatureWaveF" "#AddToRadar"
+		SendToModule "#???" "#AddToRadar"
+		SendToModule "#Barricade" "#AddToRadar"
+		SendToModule "#Creature" "#AddToRadar"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C4KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#Optimus" 
+		
+	}
+}
+state Chapter4_Escaped2
+{
+	conditions
+	{
+		if Timer > 5.0 goto Chapter4_Complete
+	}
+	actions 
+	{
+		ResetTimer	
+		
+		;SetState Chapter4_Complete
+	}
+}
+
+
+
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission"  "#FailMission"
+	}
+}
+state Chapter4_FailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Midtro
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission"  "#FailMission"
+		CreateModule "#MegatronArm" "#MegatronArm" "#Spline=MegatronArm" "#String=Smegatron_arm" "#InstantThaw" ; "#Boss=#Megatron" 
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#UnLoadCreature=Barricade"
+		SendToModule "#General" "#UnLoadCreature=Brawl"
+		SendToModule "#General" "#UnLoadCreature=Megatron" 
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		SendToModule #General #UnlockBonus=Mission_ThirdMission
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+		;CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch4_cmplt" "#PlayDelay=1.2" "#AutoDestroy" "#Start"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoLink
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A3C4Outro1"
+	}
+}
+state Chapter4_CompleteVideoLink
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#StartOutroVideo=#A3C4Outro2"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		SetState Chapter4_Leave
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule "#General" "#UnLoadCreature=Barricade"
+		SendToModule "#General" "#UnLoadCreature=Brawl"
+		SendToModule "#General" "#UnLoadCreature=Megatron" 
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule #General #ResetAll #AllowPlayerMovement
+		SetState PickGoto
+	}
+}

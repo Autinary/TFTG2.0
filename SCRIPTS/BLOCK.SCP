@@ -1,0 +1,25 @@
+state Base {
+	Conditions {
+		if RobotForm == 0.0 goto DoRobotTransform
+		if AlwaysTrue == 1.0 goto DoBlock
+	}
+}
+
+state DoRobotTransform {
+	Actions {
+		Transform UntilDone
+		SetState DoBlock
+	}
+}
+
+state DoBlock {
+	Conditions {
+		if RobotForm == 0.0 goto DoRobotTransform
+	}
+	Actions {
+		SetPhysicsState Static=1
+		StandStill
+		SetBlocking Time=3
+		SetState DoBlock
+	}
+}

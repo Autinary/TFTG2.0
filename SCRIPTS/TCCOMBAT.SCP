@@ -1,0 +1,413 @@
+
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRange			1.0
+CONST MeleeRangeMin				10.0
+CONST MeleeRangeMax				12.0
+CONST HomeRangeMax				75.0
+CONST HomeRangeMin				45.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Alert
+		if CarForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=true" "TakeHit=false" "StuckEscape=true" 
+		SetPhysicsState "static=false" "immunetoshots=true"
+		; SetState Alert
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Alert
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+
+state NoOpponent
+{
+	Conditions
+	{
+		if GotOpponent == 1.0 goto Alert
+		if BeenStruckTime < 2.0 goto BeenStruck
+		if WalkToLocatorTime > 0.0 goto BeenStruck
+
+		if DistanceToOrigin > HomeRangeMax goto RunHome
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		SetStrafe false
+		SetFlag "TakeHitPhysics=true"
+		GoToOrigin "xz_rangecheck" "goalrange=2.0" "turntime=5.0"
+	}
+}
+
+state Alert
+{
+	Conditions
+	{
+		if DistanceToOrigin > HomeRangeMax goto RunHome
+		
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if HasPickup "Pole" == 1.0 AND
+		if MoodForMelee == 1.0 goto MeleeApproach
+
+		if HasPickup == 1.0 goto PickupAttack
+		if MoodForMelee == 1.0 goto MeleeApproach
+		if OpponentRange < AutoMeleeRange goto MeleeAttack
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false"
+		SetState AttackRanged
+	}
+}
+
+state AttackRanged
+{
+	Conditions
+	{
+		if DistanceToOrigin > HomeRangeMax goto RunHome
+		
+		if GotOpponent == 0.0 goto NoOpponent
+		
+
+		if MoodForMelee == 1.0 goto Alert
+		if OpponentRange < AutoMeleeRange goto MeleeAttack
+
+		if PickupAvailable == 1.0 AND
+		if OpponentRange < 35 AND
+		if OpponentRange > 22 AND
+		if Timer > "(5.0+(RAND*5.0))" AND
+		if AlwaysTrue 0.8 > "ThrashedPhys" goto PickupAttack
+
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponent "goalrange=30.0" "fireinterval=1.7" "firerange=70.0" "dodgeiftarget=0.2"
+	}
+}
+
+
+state PickupAttack
+{
+	Conditions
+	{
+		if StuckTime > 1.0 goto Alert
+		if Timer > 4.0 goto Alert
+
+		if PickupAvailable == 0.0 AND
+		if HasPickup == 0.0 goto Alert
+
+		if HasPickup == 0.0 AND
+		if MoodForMelee == 1.0 goto Alert
+
+		if HasPickup == 0.0 AND
+		if OpponentRange < 15 goto Alert
+
+		if OpponentRange > 45 goto PickupForceThrow
+		if PickupHot == 1.0 goto PickupForceThrow
+		
+		if DistanceToOrigin > HomeRangeMax goto RunHome
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe false
+		EngageOpponentWithPickup "acquirerange=1.0" "throwrange=30.0"
+		SetState Alert
+	}
+}
+
+state PickupForceThrow
+{
+	Conditions
+	{
+		if HasPickup == 0.0 goto Alert
+	}
+	Actions
+	{
+		EngageOpponentWithPickup "throwrange=1000000.0"
+	}
+}
+
+state MeleeApproach
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if OpponentRange < AutoMeleeRange goto MeleeAttack
+
+		if MoodForMelee == 0.0 goto Alert
+
+		if OpponentRange < MeleeRangeMin goto MeleeAttack
+		
+		if DistanceToOrigin > HomeRangeMax goto RunHome
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponent "goalrange=1.0" "fireinterval=1.7" "firerange=40.0" "spread=0.1"
+	}
+}
+
+state MeleeAttack
+{
+	Conditions
+	{
+	
+		if DistanceToOrigin > HomeRangeMax goto RunHome
+		
+		if GotOpponent == 0 goto NoOpponent
+
+		if MoodForMelee == 0.0 AND
+		if OpponentRange > AutoMeleeRange goto Alert
+
+		if OpponentRange > MeleeRangeMax goto MeleeApproach
+
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		SetStrafe false
+		EngageOpponent "goalrange=1.0" "firerange=2.0" "instant" "chainwithdelay=0.8" "numshots=1"
+		SetState AttackCloseInit
+	}
+}
+
+state AttackCloseInit
+{
+	Conditions
+	{
+	
+		if DistanceToOrigin > HomeRangeMax goto RunHome
+		
+		if GotOpponent == 0 goto NoOpponent
+
+		if MoodForMelee == 0.0 AND
+		if OpponentRange > AutoMeleeRange goto Alert
+
+		if Timer > 2.0 goto AttackCloseWait
+
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		MoveAwayFromPlayer "face" "100.0"
+	}
+}
+
+state AttackCloseWait
+{
+	Conditions
+	{
+		
+		if DistanceToOrigin > HomeRangeMax goto RunHome
+		
+		if GotOpponent == 0 goto NoOpponent
+
+		if MoodForMelee == 0.0 AND
+		if OpponentRange > AutoMeleeRange goto Alert
+
+		if Timer > 2.0 goto MeleeApproach
+
+		if OpponentRange < AutoMeleeRange goto MeleeAttack
+		
+		OnMacro StuckTime goto StuckEscape
+	}
+
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponent "goalrange=15.0" "firerange=20.0" "spread=0.1" "retreat"
+	}
+}
+
+state TakenHitMelee
+{
+	Conditions
+	{
+		if AlwaysTrue 0.75 < "ThrashedMelee" AND
+		if Ability "Block" == 1.0 AND
+		if Param "Aggression" < 0.1 goto BlockAttackBegin
+
+		if AlwaysTrue == 1.0 goto Alert
+	}
+}
+
+state TakenHitPhysics
+{
+	Conditions
+	{
+		if BeenStruck == 1.0 goto BeenStruck
+
+		if AlwaysTrue == 1.0 goto Alert
+	}
+	Actions
+	{
+		SetLocator "strikesource=20.0"
+	}
+}
+
+state BlockAttackBegin
+{
+	Conditions
+	{
+		if OpponentRange > 6.0 goto BlockAttackEnd
+	}
+	Actions
+	{
+		SetBlocking "time=2.0"
+		SetState BlockAttackDo
+	}
+}
+
+state BlockAttackDo
+{
+	Actions
+	{
+		Idle "frames=1"		; As SetStrafe cannot be easily undone
+		SetStrafe false
+		DoAttack "slammove"
+		SetState BlockAttackEnd
+	}
+}
+
+state BlockAttackEnd
+{
+	Actions
+	{
+		SetState Alert
+	}
+}
+
+state BeenStruck
+{
+	Conditions
+	{
+		if StuckTime > 1.0 goto BeenStruckExit
+		if GotOpponent == 1.0 goto BeenStruckExit
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=true"
+		SetWalkToLocatorTimer Max
+		GoToLocator "run" "goalrange=3.0" "xz_rangecheck"
+		SetState BeenStruckExit
+	}
+}
+
+state BeenStruckExit
+{
+	Conditions
+	{
+		if GotOpponent == 1.0 goto Alert
+	}
+	Actions
+	{
+		Idle 3.0
+		SetWalkToLocatorTimer 0.0
+		SetFlag "TakeHitPhysics=false"
+		SetState NoOpponent
+	}
+}
+
+state StuckEscape
+{
+	Actions
+	{
+		SetFlag "TempBlock=true"
+		SetStrafe false
+		DoAttack "kickmove"
+		SetFlag "TempBlock=false"
+		SetState Alert
+	}
+}
+
+state RunHome
+{
+	Conditions
+	{
+		if DistanceToOrigin < HomeRangeMin goto WaitAndShoot
+		
+		if Timer > 4.0 goto Alert
+	
+	}
+
+	Actions
+	{
+		ResetTimer
+		GoToOrigin "goalrange=15.0"
+		SetState Alert
+	
+	}
+
+
+
+}
+
+state WaitAndShoot
+{
+	Conditions
+	{
+		
+		if GotOpponent == 0 goto NoOpponent
+
+		if Timer > 4.0 goto Alert
+
+		if OpponentRange < AutoMeleeRange goto MeleeAttack
+		
+		OnMacro StuckTime goto StuckEscape
+	}
+
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponent "goalrange=15.0" "firerange=20.0" "spread=0.1" "static" "fireinterval=0.5" "numshots=4" "instant"
+	}
+}

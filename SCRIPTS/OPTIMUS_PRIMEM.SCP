@@ -1,0 +1,108 @@
+
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Randomizer
+	}
+}
+state Randomizer
+{
+	conditions
+	{
+
+		if AlwaysTrue > "RAND*5.0" goto PrimeSlam
+
+		;if AlwaysTrue > "RAND*4.0" goto PrimeTruck 
+
+		if AlwaysTrue > "RAND*3.0" goto PrimeRange
+
+		if AlwaysTrue > "RAND*2.0" goto PrimeAgile
+
+
+		
+		if AlwaysTrue == 1.0 goto Prime
+
+		
+		
+	}
+}
+
+state Prime
+{
+    	ReferenceScript {
+        Script=Optimus_Prime
+        Source=Global
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+state PrimeAgile
+{
+    	ReferenceScript {
+        Script=Optimus_PrimeA
+        Source=Global
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+
+state PrimeRange
+{
+    ReferenceScript {
+        Script=Optimus_PrimeR
+        Source=Global
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+state PrimeTruck
+{
+    	ReferenceScript {
+        Script=Optimus_PrimeT
+        Source=Global
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+
+state PrimeSlam
+{
+    ReferenceScript {
+        Script=Optimus_PrimeS
+        Source=Global
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+

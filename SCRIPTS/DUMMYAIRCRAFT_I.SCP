@@ -1,0 +1,62 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto RobotInit
+		if CarForm == 1.0 goto Wait
+	}
+}
+
+state RobotInit
+{
+	Conditions
+	{
+		
+	}
+	Actions
+	{
+		Transform Car UntilDone
+		SetPhysicsState "immunetoshots=true" "immunetomelee=true" "immunetothrown=false"
+		SetState Wait
+	}
+}
+
+state Wait
+{
+	Conditions
+	{
+
+		if Timer > 0.1 goto Wait2
+	}
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "immunetoshots=true" "immunetomelee=true" "immunetothrown=false"
+		
+	}
+}
+state Wait
+{
+	Conditions
+	{
+
+		if Timer > 0.1 goto Wait
+	}
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "immunetoshots=true" "immunetomelee=true" "immunetothrown=false"
+		
+	}
+}
+
+

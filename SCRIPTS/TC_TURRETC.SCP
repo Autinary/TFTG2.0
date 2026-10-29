@@ -1,0 +1,37 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Actions
+	{
+		;Transform Secondary UntilDone
+		Transform "Car" "Instant"
+		SetPhysicsState "static=true" 
+		
+		SetState AnnhilatePlayer
+	}
+}
+
+
+state AnnhilatePlayer
+{
+	Conditions
+	{
+				
+	}
+	Actions
+	{
+		ResetTimer
+		EngageOpponentTC "RapidShootRange=1.0" "fireId=0" "firetimemin=0.1" "firetimemax=0.3" 
+	}
+
+}
+
+

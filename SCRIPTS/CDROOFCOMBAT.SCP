@@ -1,0 +1,238 @@
+
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRange			7.0
+CONST MeleeRangeMin				10.0
+CONST MeleeRangeMax				12.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Alert
+		if CarForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		  SetPhysicsState "static=false"
+		; SetState Alert
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Alert
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+
+
+state Alert
+{
+	Conditions
+	{
+		if BeenStruckTime < 2.0 AND
+		if DistanceBetweenOpponent < 30 goto PrepareAI
+
+		if OpponentRange < AutoMeleeRange goto PrepareAI
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=true" "TakeHit=false" "StuckEscape=true"
+		SetPhysicsState "immunetomelee=false"
+
+		SetState AttackRanged
+	}
+}
+
+state AttackRanged
+{
+	Conditions
+	{
+		
+		if AlwaysTrue > "RAND*4.0" goto AttackRangedSecondary
+		if Timer > 2.0 goto WeaponCycle
+
+		if BeenStruckTime < 2.0 AND
+		if DistanceBetweenOpponent < 30 goto PrepareAI
+
+		if OpponentRange < AutoMeleeRange goto PrepareAI
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		
+		EngageOpponent "goalrange=30.0" "fireinterval=0.7" "firerange=300.0" "dodgeiftarget=0.2" "static"
+	}
+}
+state WeaponCycle
+{
+	
+	Actions
+	{
+		SetState AttackRanged
+	}
+}
+state AttackRangedSecondary
+{
+	Conditions
+	{
+		
+		if BeenStruckTime < 2.0 AND
+		if DistanceBetweenOpponent < 30 goto PrepareAI
+
+		if OpponentRange < AutoMeleeRange goto PrepareAI
+
+		OnMacro StuckTime goto StuckEscape
+
+		if Timer > 0.7 goto AttackRanged
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponentTC "goalrange=1.0" "firerange=10.0" "RapidShootRange=10.0" "fireId=0" "firetimemin=0.3" "firetimemax=0.5"
+		
+	}
+}
+
+state PrepareAI
+{
+    	ReferenceScript {
+        Script=CarDrone
+        Source=Global
+        ReturnState=PrepareAI
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+
+state TakenHitMelee
+{
+	Conditions
+	{
+		if AlwaysTrue 0.75 < "ThrashedMelee" AND
+		if Ability "Block" == 1.0 AND
+		if BlockRequest == 1.0 AND
+		if Param "Aggression" < 0.1 goto Alert
+
+		if Ability "Block" == 1.0 AND
+		if BlockRequest "forceonmelee" == 1.0 goto ForceBlock
+		
+		
+		
+		if AlwaysTrue == 1.0 goto Alert
+	}
+	Actions
+	{
+		ResetTimer
+	}
+}
+
+state TakenHitPhysics
+{
+	Conditions
+	{
+		if BeenStruck == 1.0 goto BeenStruck
+		if AlwaysTrue == 1.0 goto Alert
+	}
+	Actions
+	{
+		SetLocator "strikesource=20.0"
+	}
+}
+
+state TakenHitReflect
+{
+	Conditions
+	{
+		if Ability "Block" == 0.0 goto Alert
+		if AlwaysTrue == 1.0 goto ForceBlock
+	}
+}
+
+state ForceBlock
+{
+	
+	Actions
+	{
+		SetState StuckEscape
+	}
+}
+state BeenStruck
+{
+	Conditions
+	{
+		if StuckTime > 1.0 goto BeenStruckExit
+		if GotOpponent == 1.0 goto BeenStruckExit
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=true"
+		SetWalkToLocatorTimer Max
+		GoToLocator "run" "goalrange=3.0" "xz_rangecheck"
+		SetState BeenStruckExit
+	}
+}
+
+state BeenStruckExit
+{
+	Conditions
+	{
+		if AlwaysTrue > "RAND*4.0" goto StuckEscape
+
+		if GotOpponent == 1.0 goto Alert
+	}
+	Actions
+	{
+		Idle 3.0
+		SetWalkToLocatorTimer 0.0
+		SetFlag "TakeHitPhysics=false"
+		SetState Alert
+	}
+}
+
+state StuckEscape
+{
+	Actions
+	{
+		SetFlag "TempBlock=true"
+		SetStrafe false
+		DoAttack "jump"
+		SetFlag "TempBlock=false"
+		SetState Alert
+	}
+}

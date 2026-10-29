@@ -1,0 +1,326 @@
+state Chapter3_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A4_ch3_Goto"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A4_ch3_Goto" "#Start"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter3_LoadCreatures
+{
+	conditions
+	{
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=OptimusPrime"
+    	SendToModule "#General" "#LoadCreature=MegaTron"
+    	SendToModule "#General" "#UnLoadCreature=DroneDefault"
+	}
+}
+state Chapter3_VideoIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_Main
+	}
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#A4C3Intro"
+	}
+}
+state Chapter3_Main
+{
+	actions
+	{
+		SetDeathPoint "Chapter3_DeathFailMission"
+		CreateModule "#Speech" "#A4C3KnockMegatron" "#speech=#A4_ch3_obj1" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3Start" "#FadeUp"
+
+		CreateModule "#BombingRun" "#Megatron" \
+			"#CentreSpline=A4C3MegaCentre" \
+			"#LoopSpline=A4C3MegaLoopA" \
+			"#LoopSpline=A4C3MegaLoopB" \
+			"#LoopSpline=A4C3MegaLoopC" \
+			"#LoopSpline=A4C3MegaLoopD" \
+			"#LoopSpline=A4C3MegaLoopE" \
+			"#LoopSpline=A4C3MegaLoopF" \
+			"#Boss=#Megatron" "#Type=Megatron" "#Speed=55.0" "#Invulnerable" "#BombLimit=1" "#AddToRadarAlways" "#FlyHeight=-12.0" "#NoCast" "#ForceHoverHeight=4.0"
+
+		CreateModule "#KeyLocation" "#A4C3KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#Optimus"
+		SendToModule "#Megatron" "#SetPosition=#A4C3MegaStart"
+		CreateModule "#AreaRange" "#A4C3PlayerArea" "#Trigger=#A4C3TriggerA"
+		CreateModule "#AreaRange" "#A4C3AnyArea" "#Trigger=#A4C3TriggerA" "#AllCreatures"
+
+		SetState Chapter3_MegaMelee
+	}
+}
+state Chapter3_MegaMelee
+{
+	conditions
+	{
+		if module "Megatron HealthDiff" > 0.1 goto Chapter3_PlayMidtro
+		if module "Megatron GetHealth" == 0.0 goto Chapter3_Complete
+		if module "A4C3PlayerArea InArea" == 1.0 goto Chapter3_FailMission
+		if module "A4C3AnyArea InArea" == 1.0 goto Chapter3_PlayMidtro
+		if module "A4C3KeyLoc FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#Path=None" "#Script=Combat" "#Vulnerable" "#ResetDamageFlags" "#TransformForceRobot" "#ResetHealthDiff"
+;		SendToModule "#Megatron" "#NoMeleeDamage" "#NoWeaponDamage"
+		SendToModule "#A4C3KeyLoc" "#Creature=#Megatron" "#Radius=100.0"
+	}
+}
+state Chapter3_PlayMidtro
+{
+	conditions
+	{
+		if module "General CountDGet" <= 1.0 goto Chapter3_PlayMidtroDo
+		if AlwaysTrue == 1.0 goto Chapter3_MegaJetAttack
+	}
+	actions
+	{
+		SendToModule "#General" "#CountDInc"
+	}
+}
+state Chapter3_PlayMidtroDo
+{
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A4C3Midtro1"
+		SetState Chapter3_MegaJetAttack
+	}
+}
+state Chapter3_MegaJetAttack
+{
+	conditions
+	{
+		if module "General CountAGet" <= 1.0 goto Chapter3_MegaJetAttackA
+		if module "General CountAGet" <= 2.0 goto Chapter3_MegaJetAttackB
+		if module "General CountAGet" <= 3.0 goto Chapter3_MegaJetAttackC
+		if AlwaysTrue == 1.0 goto Chapter3_Complete
+	}
+	actions
+	{
+		SendToModule "#General" "#CountAInc"
+	}
+}
+state Chapter3_MegaJetAttackReset
+{
+	actions
+	{
+		SendToModule "#General" "#CountASet=0"
+		SetState Chapter3_MegaJetAttack
+	}
+}
+state Chapter3_MegaJetAttackA
+{
+	conditions
+	{
+		if module "Megatron Complete" == 1.0 goto Chapter3_MegaJetAttackExit
+		if module "A4C3KeyLoc FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#Reset" "#Invulnerable" "#Script=DummyCar" "#TransformForceRobot"
+		SendToModule "#A4C3KeyLoc" "#Spline=A4C3KeyLoc"
+	}
+}
+state Chapter3_MegaJetAttackB
+{
+	conditions
+	{
+		if module "Megatron BeenHitHard" >= 3.0 goto Chapter3_MegaJetAttackExit
+		if module "A4C3KeyLoc FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#Path=Special_Hover" "#Script=HoverAttack" "#Invulnerable" "#BeenHitHard=0" "#TransformForceCar" "#ResetDamageFlags"
+		SendToModule "#A4C3KeyLoc" "#Spline=A4C3KeyLoc"
+	}
+}
+state Chapter3_MegaJetAttackC
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0"
+		SetState Chapter3_MegaJetAttackCHover
+	}
+}
+state Chapter3_MegaJetAttackCHover
+{
+	conditions
+	{
+		if module "Megatron BeenHitHard" >= 3.0 goto Chapter3_MegaJetAttackCBomb
+		if module "A4C3KeyLoc FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#Path=Special_Hover" "#Script=HoverAttack" "#Invulnerable" "#BeenHitHard=0" "#TransformForceCar" "#ResetDamageFlags"
+		SendToModule "#A4C3KeyLoc" "#Spline=A4C3KeyLoc"
+	}
+}
+state Chapter3_MegaJetAttackCBomb
+{
+	conditions
+	{
+		if module "General CountBGet" >= 3.0 goto Chapter3_MegaJetAttackExit
+		if module "Megatron Complete" == 1.0 goto Chapter3_MegaJetAttackCHover
+		if module "A4C3KeyLoc FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#Reset" "#Invulnerable" "#Script=DummyCar" "#TransformForceRobot"
+		SendToModule "#A4C3KeyLoc" "#Spline=A4C3KeyLoc"
+		SendToModule "#General" "#CountBInc"
+	}
+}
+state Chapter3_MegaJetAttackExit
+{
+	conditions
+	{
+		if module "Megatron Complete" == 1.0 goto Chapter3_MegaMelee
+		if module "A4C3KeyLoc FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#DoEntry=A4C3MegaInitA" "#ForceEntry=2.0" "#Script=DummyCar" "#TransformForceRobot"
+	}
+}
+state Chapter3_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter3_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=MegaTron"
+    	SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#RevertPlayerType"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter3Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+	}
+}
+state Chapter3_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A4C3Outro"
+	}
+}
+state Chapter3_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=MegaTron"
+    	SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#PlayerType=OptimusPrime"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter4"
+		IncreasePlayerHealth max
+		setstate "Chapter4_InitGoto"
+	}
+}

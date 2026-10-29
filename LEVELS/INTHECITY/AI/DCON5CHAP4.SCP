@@ -1,0 +1,1009 @@
+state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#StarScream" "#speech=#D5_ch4_Goto" "#AutoDestroy" "#Start"
+		Idle 3.0
+		
+		
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D5C4Intro1"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_MainIntro
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+	
+	SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+    	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+    	SendToModule "#General" "#LoadCreature=DroneForkLift_a"  ;load initial creatures here as bg loading is very slow
+		SendToModule "#General" "#PlayerType=Megatron"
+	}
+}
+;;state Chapter4_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter4_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D5C4Intro1"
+;;	}
+;;}
+state Chapter4_MainIntro
+{
+	conditions
+	{
+		if Timer > 5.4 goto Chapter4_Main
+	}
+	actions
+	{
+		ResetTimer
+		SetDeathPoint "Chapter4_DeathFailMission"
+		DestroyModule "#DefeatDrones"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D5_ch4_obj0" "#AutoDestroy" "#Start" 
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chapter4Start"
+		
+	}
+}
+
+state Chapter4_Main
+{
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		
+		SendToModule "#General" "#FadeUp"
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-75000"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D5_ch4_obj02" "#AutoDestroy" "#Start" 
+		
+		SetState Chapter4_LevelCity
+	}
+}
+
+state Chapter4_LevelCity
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter4_GotoArea2
+		if module "Timer Timer" < 0.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=90.0"
+
+		SendToModule "#General" "#CountASet=0" "#CountCSet=1"
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=0" "#TrafficLv=0" "#PatrolLv=0"
+    	;SendToModule "#General" "#BG_LoadCreature=DroneDefault_a"
+    	;SendToModule "#General" "#BG_LoadCreature=DroneForkLift_a" ;as bg loading creatures is extremly slow 
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		Idle 10.0 
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D5_ch4_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+
+		SetState Chapter4_RatchetRandomizer
+		
+	}
+}
+state Chapter4_RatchetRandomizer
+{
+	actions
+	{
+		SendToModule "#General" "#CountAInc" 
+		SetState Chapter4_CityDestroy1Process
+	}
+}
+state Chapter4_CityDestroy1Process
+{
+	conditions
+	{
+
+		if module "General GetCountA" == 9.0 goto Chapter4_RandomizerReset
+		
+		
+		if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter4_GotoArea2
+		if module "Timer Timer" < 0.0 goto Chapter4_FailMission
+
+		
+		
+
+		if Timer > 0.2 goto Chapter4_RatchetRandomizer
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+
+state Chapter4_RandomizerReset
+{
+	actions
+	{
+		SendToModule "#General" "#CountASet=0" 
+		SetState Chapter4_CityDestroy1Process
+	}
+}
+state Chapter4_GotoArea2
+{
+	conditions
+	{
+		if module "D5C4Trigger2 InArea" == 1.0 goto Chapter4_EnterArea2
+		if module "Timer Timer" < 0.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#DefeatDrones"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D5_ch4_obj4" "#AutoDestroy" "#Start"
+		DestroyModule "#Destruction"
+		DestroyModule "#Timer"
+		Idle 4.0 
+		SendToModule "#General" "#SetMessage=ITC5" "#SetMessageTimer=10"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+		CreateModule "#AreaRange" "#D5C4Trigger2" "#Trigger=#D5C4Trigger2" "#SetRadarType=#AutoBotRadarIcon"
+	}
+}
+
+state Chapter4_EnterArea2
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "CreatureWaveA Energy" <= 0.0 goto Chapter4_EnterArea2Wave2Sync
+	}
+	actions
+	{
+		DestroyModule "#CreatureWaveA"
+		DestroyModule "#CreatureWaveB"
+		DestroyModule "#CreatureWaveC"
+		DestroyModule "#CreatureWaveD"
+		DestroyModule "#CreatureWaveE"
+		DestroyModule "#CreatureWaveF"
+
+		DestroyModule "#Timer"
+		DestroyModule "#KeyLocation"
+		SendToModule "#General" "#SetMessageTimer=-1"
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D5C4KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#StarScream"
+		DestroyModule "#D5C4Trigger2"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=D5C4Spawn2A" "#count=4" "#maxalive=4" "#Type=DroneForkLift_a" "#SpawnAsCreature" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800" ;"#AddToRadarOff"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=D5C4Spawn2A" "#count=1" "#maxalive=1" "#Type=DroneDefault_a" "#SpawnAsCreature" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000" ;"#AddToRadarOff"
+	}
+}
+state Chapter4_EnterArea2Wave2Sync
+{
+	actions
+	{
+		;CreatureBGLoadSync
+		SetState Chapter4_EnterArea2Wave2
+	}
+}
+state Chapter4_EnterArea2Wave2
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if Timer > 30.0 goto Chapter4_EnterArea2Wave2a  ;time for pickuptruck to be loaded
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#CreatureWaveA"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneForkLift_a"
+		SendToModule "#General" "#BG_LoadCreature=DronePickupTruck_a"
+		SendToModule "#CreatureWaveB" "#count=2000" "#maxalive=2"
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=D5C4Spawn2A" "#count=2000" "#maxalive=1" "#Type=DronePickupTruck_a" "#SpawnAsCreature" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200";"#AddToRadarOff"
+	}
+}
+state Chapter4_EnterArea2Wave2a
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "CreatureWaveB Energy" <= 0.0 goto Chapter4_EnterArea2Wave3Sync
+	}
+	actions
+	{
+		SendToModule "#CreatureWaveB" "#count=4" "#maxalive=4"
+	}
+}
+state Chapter4_EnterArea2Wave3Sync
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SetState Chapter4_EnterArea2Wave3
+	}
+}
+state Chapter4_EnterArea2Wave3
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if Timer > 30.0 and
+			if module "CreatureWaveD Energy" <= 0.0 goto Chapter4_EnterArea2Wave4Sync
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#CreatureWaveB"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneMig_a"
+		SendToModule "#CreatureWaveC" "#count=2000" "#maxalive=2"
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=D5C4Spawn2A" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#SpawnAsCreature" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200";"#AddToRadarOff"
+	}
+}
+state Chapter4_EnterArea2Wave4Sync
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SetState Chapter4_EnterArea2Wave4
+	}
+}
+state Chapter4_EnterArea2Wave4
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if Timer > 30.0 and
+			if module "CreatureWaveE Energy" <= 0.0 and
+				if module "CreatureWaveH Energy" <= 0.0 goto Chapter4_EnterArea2Wave5Sync
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#CreatureWaveD"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneTowTruck_a"
+		
+		SendToModule "#CreatureWaveC" "#count=2000" "#maxalive=3"
+		CreateModule "#Creature" "#CreatureWaveE" "#Spline=D5C4Spawn2A" "#count=1" "#maxalive=1" "#Type=DroneTowTruck_a" "#SpawnAsCreature" "#Script=TowTruckDrone" ;"#AddToRadarOff"
+		CreateModule "#Creature" "#CreatureWaveH" "#Spline=D5C4Spawn2A" "#count=1" "#maxalive=1" "#Type=DroneMig_a" "#SpawnAsCreature" "#Script=TruckFlameDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" ;"#AddToRadarOff"
+
+	}
+}
+state Chapter4_EnterArea2Wave5Sync
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SetState Chapter4_EnterArea2Wave5
+	}
+}
+state Chapter4_EnterArea2Wave5
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if Timer > 30.0 and
+			if module "CreatureWaveF Energy" <= 0.0 and
+				if module "CreatureWaveG Energy" <= 0.0 goto Chapter4_EnterArea2Wave6
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#CreatureWaveE"
+		DestroyModule "#CreatureWaveH"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar_a"
+		SendToModule "#CreatureWaveC" "#count=2000" "#maxalive=4"
+		CreateModule "#Creature" "#CreatureWaveF" "#Spline=D5C4Spawn2A" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#SpawnAsCreature" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" ;"#AddToRadarOff"
+		CreateModule "#Creature" "#CreatureWaveG" "#Spline=D5C4Spawn2A" "#count=2" "#maxalive=2" "#Type=DroneMig_a" "#SpawnAsCreature" "#Script=TruckFlameDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" ;"#AddToRadarOff"
+
+	}
+}
+state Chapter4_EnterArea2Wave6
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		If Timer > 2.0 goto Chapter4_EnterArea2Wave6a
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#CreatureWaveF"
+		DestroyModule "#CreatureWaveG"
+		
+		SendToModule "#CreatureWaveC" "#count=4" "#maxalive=4"
+	}
+}
+state Chapter4_EnterArea2Wave6a
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "CreatureWaveC Energy" <= 0.0 goto Chapter4_UnloadArea2Sync
+	}
+	actions
+	{
+;		DestroyModule "#CreatureWaveE"
+	}
+}
+state Chapter4_UnloadArea2Sync
+{
+	conditions
+	{
+		If Timer > 1.5 goto Chapter4_UnloadArea2SyncA
+	}
+	actions
+	{
+		ResetTimer
+		
+	}
+}
+
+state Chapter4_UnloadArea2SyncA
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SetState Chapter4_UnloadArea2
+	}
+}
+state Chapter4_UnloadArea2
+{
+	actions
+	{
+		DestroyAllModules
+    	;SendToModule "#General" "#BG_UnLoadCreature=DroneForkLift_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneDefault_a"
+	SendToModule "#General" "#BG_UnLoadCreature=DroneMig_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+	SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar"
+    	SendToModule "#General" "#BG_LoadCreature=DroneForkLift_a"
+    	SetState "Chapter4_DestroyArea2"
+	}
+}
+state Chapter4_DestroyArea2
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter4_GotoArea3
+		if module "Timer Timer" < 0.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#Timer"
+;		DestroyModule "#CreatureWaveE"
+		CreateModule "#Timer" "#Timer" "Time=75.0"
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-75000"
+	}
+}
+state Chapter4_GotoArea3
+{
+	conditions
+	{
+		if module "D5C4Trigger3 InArea" == 1.0 goto Chapter4_EnterArea3
+		if module "Timer Timer" < 0.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#DefeatDrones"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D5_ch4_obj2" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetMessage=ITC5" "#SetMessageTimer=10"
+		DestroyModule "#Destruction"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+		CreateModule "#AreaRange" "#D5C4Trigger3" "#Trigger=#D5C4Trigger3" "#SetRadarType=#AutoBotRadarIcon"
+	}
+}
+state Chapter4_EnterArea3
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "CreatureWaveB Energy" <= 0.0 goto Chapter4_Area3Wave2Sync
+	}
+	actions
+	{
+		DestroyModule "#CreatureWaveA"
+		DestroyModule "#CreatureWaveB"
+		DestroyModule "#CreatureWaveC"
+		DestroyModule "#CreatureWaveD"
+		DestroyModule "#CreatureWaveE"
+		DestroyModule "#CreatureWaveF"
+		DestroyModule "#Timer"
+		DestroyModule "#KeyLocation"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D5C4KeyLoc3" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#StarScream"
+		DestroyModule "#D5C4Trigger3"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=D5C4Spawn3A" "#count=2000" "#maxalive=4" "#Type=DroneForkLift_a" "#SpawnAsCreature" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800" ;"#AddToRadarOff"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=D5C4Spawn3A" "#count=6" "#maxalive=3" "#Type=DronePickupTruck_a" "#SpawnAsCreature" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" ;"#AddToRadarOff"
+	}
+}
+state Chapter4_Area3Wave2Sync
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SetState Chapter4_RatchetSpawnInit
+	}
+}
+state Chapter4_RatchetSpawnInit
+{
+	actions
+	{
+		CreateModule "#Creature" "#Ratchet" "#Spline=Spawn1" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneArmouredCar" "#SpawnAsCreature" "#SuppressShield" "#Script=RatchetInit" "#SetEnergyMax=1500" "#SetEnergy=500" 
+				
+		CreateModule "Timer" "#HealTheTroops" "#Time=15" "#NoRender" 
+		
+		
+		SetState Chapter4_RatchetPosition
+	}
+}
+state Chapter4_RatchetPosition
+{
+	conditions
+	{
+		if module "General GetCountA" <= 2.0 goto Chapter4_SetRatchetPosition1
+		if module "General GetCountA" <= 5.0 goto Chapter4_SetRatchetPosition2
+		if module "General GetCountA" <= 9.0 goto Chapter4_SetRatchetPosition3
+		
+
+		
+	}
+	
+}
+state Chapter4_SetRatchetPosition1
+{
+	actions
+	{
+		SendToModule "#Ratchet" "#SetPosition=#RatchetSpawn10" 
+		CreateModule "#AreaRange" "#RatchetMarker" "#Trigger=#RatchetC4A"  
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#General" "#SetMessage=ITC1" "#SetMessageTimer=3.0"
+
+		
+		
+		SetState Chapter4_Area3Wave2
+	}
+}
+state Chapter4_SetRatchetPosition2
+{
+	actions
+	{
+		SendToModule "#Ratchet" "#SetPosition=#RatchetSpawn11" 
+		CreateModule "#AreaRange" "#RatchetMarker" "#Trigger=#RatchetC4B"  
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#General" "#SetMessage=ITC1" "#SetMessageTimer=3.0"
+
+		
+		
+		SetState Chapter4_Area3Wave2
+	}
+}
+state Chapter4_SetRatchetPosition3
+{
+	actions
+	{
+		SendToModule "#Ratchet" "#SetPosition=#RatchetSpawn12" 
+		CreateModule "#AreaRange" "#RatchetMarker" "#Trigger=#RatchetC4C"  
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#General" "#SetMessage=ITC1" "#SetMessageTimer=3.0"
+
+		
+		
+		SetState Chapter4_Area3Wave2
+	}
+}
+
+state Chapter4_Area3Wave2
+{
+	
+	actions
+	{
+    	SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck_a"
+    	SendToModule "#General" "#BG_LoadCreature=DroneTowTruck_a"
+		SendToModule "#CreatureWaveA" "#count=20" "#maxalive=9"
+		SetState Chapter4_Area3Wave2Process
+	}
+}
+state Chapter4_Area3Wave2Process
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+
+		;;;Ratchet 
+		if module "HealTheTroops Timer" < 0.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_RatchetHeal1
+		
+		if module "Ratchet Energy" <= 0.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_RatchetDead1
+		if module "Ratchet PlayerRange" < 65 and
+			if module "General GetCountC" == 1.0 goto Chapter4_ClearTheRadar1
+
+		if module "CreatureWaveA Energy" <= 0.0 goto Chapter4_Area3Wave3Sync
+	}
+}
+state Chapter4_RatchetHeal1
+{
+	
+	actions
+	{
+		ResetTimer
+		SendToModule "#HealTheTroops" "#Time=15"
+		SendToModule "#Ratchet" "#Script=Heal" 
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		SendToModule "#CreatureWaveA" "#SetEnergy=800" 
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#General" "#SetMessage=ITC2" "#SetMessageTimer=3.0"
+		;CreateModule "#Speech" "#EWave" "#speech=#D5_ch3_obj7" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		Idle 1.4
+		
+		SetState Chapter4_RadarIsStillJammed1
+	}
+}
+
+
+state Chapter4_RadarIsStillJammed1
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#Ratchet" "#Script=RatchetInit"
+		Idle 0.6
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		
+		SetState Chapter4_Area3Wave2Process
+	}
+}
+state Chapter4_RatchetDead1
+{
+	
+	actions
+	{
+		DestroyModule "#HealTheTroops"
+		DestroyModule "#RatchetMarker" 
+		SendToModule "#General" "#SetRadarInterference=0" "#CountCSet=2"
+		
+		
+
+		SetState Chapter4_Area3Wave2Process
+		
+	}
+}
+
+state Chapter4_ClearTheRadar1
+{
+	conditions
+	{
+
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+
+		;;;Ratchet 
+		if module "HealTheTroops Timer" < 0.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_RatchetHeal1
+		
+		if module "Ratchet Energy" <= 0.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_RatchetDead1
+		
+
+		if module "CreatureWaveA Energy" <= 0.0 goto Chapter4_Area3Wave3Sync
+
+		if module "Ratchet PlayerRange" > 65 goto Chapter4_RadarIsStillJammed1
+		
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#Ratchet" "#Script=RatchetCombat" 
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		
+	}
+}
+
+state Chapter4_Area3Wave3Sync
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SetState Chapter4_Area3Wave3
+	}
+}
+state Chapter4_Area3Wave3
+{
+	
+	actions
+	{
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneForkLift_a"
+    	SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar_a"
+		DestroyModule "#CreatureWaveB"
+		DestroyModule "#CreatureWaveA"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=D5C4Spawn3A" "#count=2" "#maxalive=2" "#Type=DroneTowTruck_a"  "#SpawnAsCreature" "#Script=TowTruckDrone" ;"#AddToRadarOff"
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=D5C4Spawn3A" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#SpawnAsCreature" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" ;"#AddToRadarOff"
+		SetState Chapter4_Area3Wave3Process
+	}
+}
+state Chapter4_Area3Wave3Process
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+
+		;;;Ratchet 
+		if module "HealTheTroops Timer" < 0.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_RatchetHeal2
+		
+		if module "Ratchet Energy" <= 0.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_RatchetDead2
+		if module "Ratchet PlayerRange" < 65 and
+			if module "General GetCountC" == 1.0 goto Chapter4_ClearTheRadar2
+
+		if module "CreatureWaveB Energy" <= 0.0 and
+			if module "CreatureWaveC Energy" <= 0.0 and
+				if module "General GetCountC" == 2.0 goto Chapter4_UnloadArea3Sync
+	}
+}
+state Chapter4_RatchetHeal2
+{
+	
+	actions
+	{
+		ResetTimer
+		SendToModule "#HealTheTroops" "#Time=15"
+		SendToModule "#Ratchet" "#Script=Heal" 
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		SendToModule "#CreatureWaveB" "#SetEnergy=900" 
+		SendToModule "#CreatureWaveC" "#SetEnergy=1200" 
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#General" "#SetMessage=ITC2" "#SetMessageTimer=3.0"
+		;CreateModule "#Speech" "#EWave" "#speech=#D5_ch3_obj7" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		Idle 1.4
+		
+		SetState Chapter4_RadarIsStillJammed2
+	}
+}
+
+
+state Chapter4_RadarIsStillJammed2
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#Ratchet" "#Script=RatchetInit"
+		Idle 0.6
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		
+		SetState Chapter4_Area3Wave3Process
+	}
+}
+state Chapter4_RatchetDead2
+{
+	
+	actions
+	{
+		DestroyModule "#HealTheTroops"
+		DestroyModule "#RatchetMarker" 
+		SendToModule "#General" "#SetRadarInterference=0" "#CountCSet=2"
+		
+		
+
+		SetState Chapter4_Area3Wave3Process
+		
+	}
+}
+
+state Chapter4_ClearTheRadar2
+{
+	conditions
+	{
+
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+
+		;;;Ratchet 
+		if module "HealTheTroops Timer" < 0.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_RatchetHeal2
+		
+		if module "Ratchet Energy" <= 0.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_RatchetDead2
+		
+		
+		if module "Ratchet PlayerRange" > 65 goto Chapter4_RadarIsStillJammed2
+
+		if module "CreatureWaveB Energy" <= 0.0 and
+			if module "CreatureWaveC Energy" <= 0.0 and
+				if module "General GetCountC" == 2.0 goto Chapter4_UnloadArea3Sync
+		
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#Ratchet" "#Script=RatchetCombat" 
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		
+	}
+}
+state Chapter4_UnloadArea3Sync
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SetState Chapter4_UnloadArea3
+	}
+}
+state Chapter4_UnloadArea3
+{
+	actions
+	{
+		DestroyAllModules
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneForkLift_a"
+    	SendToModule "#General" "#BG_LoadCreature=DroneDefault_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck_a"
+    	;SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+	;SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar"
+    	SetState "Chapter4_DestroyArea3"
+	}
+}
+state Chapter4_DestroyArea3
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter4_GotoArea4
+		if module "Timer Timer" < 0.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+		CreateModule "#Creature"    "#Creature"    "#Spline=D5C4SPAWNA" "#count=50000" "#maxalive=6" "#addtoradar" "#Type=DroneDefault_a" "#SpawnAsCreature" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000" "#AddToRadarOff"
+		CreateModule "#DriverDrone" "#DriverDrone" "#Spline=D5C4DRIVER" "#FollowPlayer" "#Count=50000" "#MaxAlive=4" "#spacing=20.0" "#goalrange=3.0" "#SpawnMinRange=50.0" "#CullRange=200.0"
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-75000"
+	}
+}
+state Chapter4_GotoArea4
+{
+	conditions
+	{
+		if module "D5C4Trigger4 InArea" == 1.0 goto Chapter4_Complete
+		if module "Timer Timer" < 0.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#DefeatDrones"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D5_ch4_obj5" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetMessage=ITC6" "#SetMessageTimer=10"
+		SendToModule "#Creature" "#AddToRadarOff"
+		DestroyModule "#Destruction"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=90.0"
+		CreateModule "#AreaRange" "#D5C4Trigger4" "#Trigger=#D5C4Trigger4" "#SetRadarType=#AutoBotRadarIcon"
+	}
+}
+
+
+state Chapter4_DeathFailMission
+{
+	
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"
+
+		SetState Chapter4_DeathFailMission2
+	}
+}
+state Chapter4_DeathFailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" 
+		CreatureBGLoadSync
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneForkLift_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneDefault_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck_a"
+	SendToModule "#General" "#BG_UnLoadCreature=DroneMig_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+	SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"
+
+		SetState Chapter4_FailMission2
+	}
+}
+state Chapter4_FailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		CreatureBGLoadSync
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneForkLift_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneDefault_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck_a"
+	SendToModule "#General" "#BG_UnLoadCreature=DroneMig_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+	SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar"
+
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#PlayerType=Barricade,Scorponok,Blackout,Megatron,Barricade"
+
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		SendToModule #General #UnlockBonus=Mission_FourthMission
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D5_ch4_obj3" "#PlayDelay=1.2" "#AutoDestroy" "#Start"
+		
+		
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideo2
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D5C4Midtro1"
+	}
+}
+state Chapter4_CompleteVideo2
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		SendToModule "#General" "#StartOutroVideo=#D5C4Outro1"
+	}
+}
+
+
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#PlayerType=Barricade,Scorponok,Blackout,Megatron,Barricade"
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		;SetState Chapter1_Leave
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule #General #AllowPlayerMovement
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+    		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SetState PickGoto
+	}
+}

@@ -1,0 +1,168 @@
+;race to the end of the path within the time limit
+
+;requires:
+;race spline		Race#
+
+;Changeable params:
+;	300		time in which to complete the mission
+;   15			distance to each point
+
+
+state SubMission1_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission1_Death"
+		SetState "SubMission1_Init"
+	}
+}
+state SubMission1_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto LevelSpecialInit2
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetVehicle=#SubMission1"
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Race1" "#Range=25"
+
+	}
+}
+state SubMission1_InEarly
+{
+	conditions
+	{
+		
+		
+	}
+	actions
+	{
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+		
+
+		SetState "SubMission1_Main"
+	}
+}
+state SubMission1_Onslaught
+{
+	conditions
+	{
+		
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		CreateModule "#Creature" "#Drones" "#Type=DroneDefault" "#Spline=A3C1SS7Drone3" "#count=1000" "#maxalive=2" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=AdvDefault"  
+		CreateModule "#Creature" "#Drones2" "#Type=DroneDefault" "#Spline=Spawn4b" "#count=4000" "#maxalive=2" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones3" "#spline=Route3a" "#maxalive=1" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones4" "#spline=Route3b" "#maxalive=1" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones5" "#spline=Route3c" "#maxalive=1" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#Script=AdvDefault"
+		CreateModule "#Creature" "#Drones6" "#spline=Route3d" "#maxalive=1" "#count=1000" "#type=DroneDefault" "#SpawnInLOSInit" "#addtoradaroff" "#Script=AdvDefault"
+
+		SetState "SubMission1_Main2"
+	}
+}
+state SubMission1_Main2
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission2_1 PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_Main1
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission1_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission1_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=1"
+		;SetState "SubMission1_Leave"
+	}
+}
+state SubMission1_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission1_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission1" "#FadeUp"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#FadeUp"		
+		SetState "LevelSpecialInit6"
+	}
+}
+

@@ -1,0 +1,93 @@
+
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Randomizer
+	}
+}
+state Randomizer
+{
+	conditions
+	{
+
+		if AlwaysTrue > "RAND*4.0" goto ASlammerAreYouSure
+
+		if AlwaysTrue > "RAND*3.0" goto AAgile
+
+
+		
+		if AlwaysTrue == 1.0 goto Main
+
+		
+		
+	}
+}
+state ASlammerAreYouSure
+{
+	conditions
+	{
+
+		if AlwaysTrue > "RAND*4.0" goto ASlammer
+
+		if AlwaysTrue > "RAND*3.0" goto AAgile
+
+
+		
+		if AlwaysTrue == 1.0 goto Main
+
+		
+		
+	}
+}
+
+state Main
+{
+    	ReferenceScript {
+        Script=Advanced
+        Source=Global
+        ReturnState=Main
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+state AAgile
+{
+    	ReferenceScript {
+        Script=Agile
+        Source=Global
+        ReturnState=AAgile
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+
+state ASlammer
+{
+    ReferenceScript {
+        Script=ShotGunner
+        Source=Global
+        ReturnState=ASlammer
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+

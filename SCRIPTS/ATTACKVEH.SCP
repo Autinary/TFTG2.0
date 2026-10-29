@@ -1,0 +1,49 @@
+
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Main
+	}
+}
+
+state Main
+{
+	Conditions
+	{
+		if GetFlag "ForceDummy" == 0.0 goto RollOut
+	}
+	Actions
+	{
+		SetFlag "ForceDummy=true"
+		Transform Car Instant
+		CarDrive "park"
+	}
+}
+
+state RollOut
+{
+	Conditions
+	{
+		;if GotOpponent == 1.0 AND
+		;if Timer > 1.0 goto Attack
+
+		if Timer > 2.0 goto Attack
+	}
+	Actions
+	{
+		; CarDrive params may get overridden by module
+		ResetTimer
+		CarDrive "gotogenerator" "range=5.0" "overshoot=55.0" "speed=90" "ignorelights"
+		SetState Attack
+	}
+}
+
+state Attack
+{
+	Actions
+	{
+		CarDrive "gotoplayer" "overshoot=55.0" "speed=90" "ignorelights"
+	}
+}

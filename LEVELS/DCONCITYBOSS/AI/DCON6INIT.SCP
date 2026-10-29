@@ -1,0 +1,212 @@
+state base
+{
+	conditions
+	{
+		;if CurrentUser "grichards" == 1.0 goto Empty
+		;if CurrentUser "sharding" == 1.0 goto Empty
+		;if CurrentUser "awhite" == 1.0 goto MainWithDebug
+		;if CurrentUser "challiday" == 1.0 goto Empty
+		;if CurrentUser "popdam" == 1.0 goto Empty
+		;if CurrentUser "DWalker" == 1.0 goto MainWithDebug
+		if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+	}
+}
+state EmptyDeath
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Empty"
+	}
+}
+state Empty
+{
+	Actions
+	{
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#StartMission"
+		SetDeathPoint "EmptyDeath"
+	}
+}
+state StartLevelIntro
+{
+	conditions
+	{
+		;if module "General VideoFinished" == 1.0 goto PickGoto ;LevelIntro
+	}
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+
+		CreateModule "#General" "#General" "#ProtectSystem" "#FadeDown"
+
+		CreateModule "#ActionRing"  "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter1" "#placement=#Chapter1Beacon" "#Title=DCon6Chap1" "#Ring=ActionRing" 
+		
+		SendToModule "#ActionRing" "#TurnOff"
+
+		SendToModule "#General" "#StartIntroVideo=#D7LevelIntro" ;"#StartHUB"
+		
+		SetState "PickGoto"
+	}
+}
+state PickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" >= 1.0 goto SkipLevelIntro
+		if module "General ChapterProgress" == 0.0 goto LevelIntro ;Chapter1_Enter ;Instantly
+		
+		
+	}
+	
+}
+state LevelIntro
+{
+	conditions
+	{
+		;if module "General VideoFinished" == 1.0 goto Chapter1_Enter
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Chapter1_HubDeath" 
+
+
+		SendToModule "#General" "#StartMissionWithNoHub" "#SetPlayer=#StartMission2" "#PlayerType=Starscream" 
+		
+		SendToModule "#General" "#FadeUp"
+		
+		SendToModule "#General" "#AllowPlayerMovement" 		
+
+		CreateModule "#AreaRange" "#Chapter1" "#Trigger=#Chapter1Beacon" "#AddToRadarOff" "#ParticleRing" 
+
+		;SendToModule "#General" "#StartIntroVideo=#D6C1LevelIntro"
+
+		CreateModule "#Speech" "#D6_ch1_goto" "#speech=#D6_ch1_goto" "#PlayDelay=2.0" "#AutoDestroy" "#Start"
+		
+
+		SetState GlobalActionRingStarscream
+	
+	}
+}
+state SkipLevelIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto GlobalActionRing
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SetDeathPoint "Chapter1_HubDeath" 
+		SendToModule "#General" "#StartMissionWithNoHub" "#SetPlayer=#StartMission" "#PlayerType=Megatron" 
+
+		
+		SendToModule "#General" "#FadeUp"
+		
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" ;"#Unlock=#Chapter4"
+
+		;SendToModule "#General" "#StartIntroVideo=#D7LevelIntro" ;"#StartHUB"
+		
+		;SetState GlobalActionRing
+
+	}
+}
+state GlobalActionRing
+{
+	conditions
+	{
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		
+	}
+	actions
+	{
+
+		
+		SetMusic "ACTION Generic QUIET Generic Play Action"
+		SendToModule "#General" "#AllowPlayerMovement" 
+		SendToModule "#General" "#StartHUB" 
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#General" "#FadeUp"
+
+		
+	}
+}
+state GlobalActionRingStarscream
+{
+	conditions
+	{
+		if module "Chapter1 InArea"  == 1.0 goto GlobalStartChapterS
+		
+	}
+	actions
+	{
+
+		
+		SetMusic "ACTION Generic QUIET Generic Play Action"
+		SendToModule "#General" "#AllowPlayerMovement" 
+		SendToModule "#General" "#StartHUB" 
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#FadeUp"
+		Idle 2.0 
+		SendToModule "#Chapter1" "#AddToRadar"
+
+		
+	}
+}
+state GlobalStartChapterS
+{
+	
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SetState Chapter1_Enter
+		
+	}
+}
+state GlobalStartChapter
+{
+	conditions
+	{
+		if module "ActionRing Chapter1"  == 1.0 goto Chapter1_Enter
+		if module "ActionRing Chapter2"  == 1.0 goto Chapter1_Part2Enter
+		if module "ActionRing Chapter3"  == 1.0 goto Chapter1_Part3Enter
+		if module "ActionRing Chapter4"  == 1.0 goto Chapter1_Part4Enter
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		
+	}
+}
+state FinishedLevel
+{
+	conditions
+	{
+	}
+	actions
+	{
+	}
+}
+

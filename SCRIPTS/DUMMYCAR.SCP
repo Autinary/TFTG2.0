@@ -1,0 +1,9 @@
+
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		Transform Car UntilDone
+	}
+}

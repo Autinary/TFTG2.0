@@ -1,0 +1,150 @@
+
+state SubMissionEX_Start
+{
+	conditions
+	{
+			
+		if module "General FadeDown" == 1.0 goto SubMissionEX_Init
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#FadeDown"
+		
+
+	}
+}
+state SubMissionEX_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMissionEX_Main
+		
+	
+		
+	}
+	actions
+	{
+		
+		
+		ResetTimer
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SetDeathPoint "SubMissionEX_Death"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMissionAttack"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+    		SendToModule "#General" "#LoadCreature=DroneForkLift"
+		SendToModule "#General" "#LoadCreature=Brawl"
+		CreateModule "#Creature" "#Creature" "#Type=DroneForkLift" "#Spline=Spawn3" "#count=6" "#maxalive=4" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat"
+		CreateModule "#Creature" "#BossCreature" "#Type=Brawl" "#Spline=Spawn3" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#BlockDeath" "#Script=EvilBeeEarly"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc3" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=30" 
+		
+		CreateModule "#Timer" "#Timer" "#Time=90.0"
+
+		Idle 0.1
+
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=6" "#IconType=#Drone"
+	}
+}
+state SubMissionEX_Main
+{
+	conditions
+	{
+		;if module "creature getpercentagecomplete" == 1.0 and
+			;if module "BossCreature Dead" == 1.0 goto SubMissionEX_Finish
+		if module "BossCreature Dead" == 1.0 goto SubMissionEX_EBDead
+		if module "KeyLocation FailMission" == 1.0 goto SubMissionEX_Fail
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	}
+	actions
+	{
+
+		SendToModule "#General" "#FadeUp"
+		
+	}
+}
+state SubMissionEX_EBDead
+{
+	conditions
+	{
+		if module "creature getpercentagecomplete" == 1.0 and
+			if module "BossCreature Dead" == 1.0 goto SubMissionEX_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMissionEX_Fail
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	}
+	actions
+	{
+
+		SendToModule "#DroneCounter" "#Increment=1"
+		
+	}
+}
+state SubMissionEX_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionEX_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" "#FadeDown" 
+	}
+}
+state SubMissionEX_FinishWait
+{
+	conditions
+	{ 
+		if module "General GetSubMissionComplete" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=5"
+		
+	}
+}
+state SubMissionEX_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMissionEX_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMissionEX_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+	    	SendToModule "#General" "#UnLoadCreature=DroneForkLift"
+		SendToModule "#General" "#UnLoadCreature=Brawl"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission1" 
+		SetState "GlobalActionRing"
+	}
+}
+
+

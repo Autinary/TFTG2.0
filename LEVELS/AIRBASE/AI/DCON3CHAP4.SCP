@@ -1,0 +1,966 @@
+state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#SetRadarInterference=0"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D3_ch4_Goto" "#Start"
+		SendToModule "#General" "#SetMessage=Frenzy7" "#SetMessageTimer=5"
+		Idle 3.0
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+
+		
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 4"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 4"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		
+		SendToModule "#General" "#PlayerType=StarScream" "#ResetLevelCharacters"
+
+		SendToModule "#General" "#LoadCreature=Brawl"
+		SendToModule "#General" "#LoadCreature=BoneCrusher"
+		
+		
+	}
+}
+state Chapter4_Main
+{
+	actions
+	{                                                                                                                                                       
+;;;;;;;;;;;;;;;;SendToModule "#General" "#SetRadarInterference=0" 
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter4_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#SetMessage=Frenzy8" "#SetMessageTimer=5"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter4Start" "#FadeUp"
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#TrafficLv=0" "#PatrolLv=1"
+		;; Set up Brawl
+		SendToModule "#General" "#CountSet=0" "#CountASet=1" "#CountBset=1" "#CountCSet=0" "#CountDSet=0"
+		CreateModule "#Timer" "#BrawlHealth" "#HeadType=#Brawl" "#Time=30.0" "#DrawHealthBar" "#Protect" "#Index=1.7725" "#Random" ;"#CreatureRecoil=#BrawlEscape"		; "#StopLoseHealth"
+		CreateModule "#Goto" "#BrawlEscape" "#Script=Block" "#SpawnSpline=D3C4_Brawl1" "#Range=15.0" "#Object=#GreenMediumDot" "#type=Brawl" "#SplineStep=0" "#Invulnerable" "#Speed=40" "#Health=#BrawlHealth" "#SpawnAsCreature" "#SuppressShield" "#Unstoppable" ;  "#DirectSpline=D3C4_Brawl1" 
+		CreateModule #KeyLocation #D3C4KeyLocBrawl #NoProcess #NoRender #Creature=#BrawlEscape #Radius=123 "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key9Return"
+        CreateModule "#AAGun" "#AAGunBrawl"
+		SendToModule "#AAGunBrawl" #AddToRadarOff "#Type=AAGUNTYPE_LASER" "#Placement=D3C4BR1" "#Range=100.0" "#Delay=0.0" "#Energy=250.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BrawlEscape" "#IgnorePlayer" "#Create=Shilka" 
+		SendToModule "#AAGunBrawl" "#Vulnerable"
+		;; Set up BoneCrusher
+		CreateModule "#Goto" "#BoneCrusherEscape" "#Script=D3Follow" "#SpawnSpline=D3C4_BoneCrusher1" "#Range=15.0" "#DirectSpline=D3C4_BoneCrusher1" "#Object=#GreenMediumDot" "#type=BoneCrusher" "#SplineStep=0" "#Invulnerable" "#Speed=40"  "#SpawnAsVehicle" "#SuppressShield" "#Unstoppable" "#AddToRadarOff"
+		CreateModule #KeyLocation #D3C4KeyLocBoney #NoProcess #NoRender #Creature=#BoneCrusherEscape #Radius=123 "#String=Key8Goto" "#ReEnterMsg=Key8Return"
+        CreateModule "#AAGun" "#AAGunBoneCrusher"
+		SendToModule "#AAGunBoneCrusher" #AddToRadarOff "#Type=AAGUNTYPE_LASER" "#Placement=D3C4BC1" "#Range=100.0" "#Delay=0.0" "#Energy=250.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusherEscape" "#IgnorePlayer" "#Create=Shilka"
+		SendToModule "#AAGunBoneCrusher" "#InVulnerable"
+		SendToModule #D3C4KeyLocBrawl #Process #Render
+		SendToModule #AAGunBrawl #AddToRadarAlways
+		
+		SendToModule "#General" "#ClearStateBits"
+		SetState Chapter4_Escaping
+	}
+}
+
+state Chapter4_Escaping 
+{
+	conditions 
+	{
+		if module "General GetCount" == 2.0 goto Chapter4_BoneyEscaping
+
+		if module "D3C4KeyLocBrawl FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D3C4KeyLocBoney FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "BrawlHealth FailMission" == 1 goto Chapter4_FailMission
+		if module "BoneCrusherHealth FailMission" == 1 goto Chapter4_FailMission
+
+		if module "General GetStateBit3" == 0.0 and
+			if module "General GetCountA" == 4 and
+				if module "General GetCountB" == 3 goto Chapter4_AtFinalSection
+
+		if module "General GetStateBit4" == 0.0 and
+			if module "General GetCountA" == 4 and
+				if module "General GetCountB" == 4 goto Chapter4_AtFinalSection2
+
+		if module "General GetStateBit5" == 0.0 and
+			if module "General GetCountA" == 3 and
+				if module "General GetCountB" == 4 goto Chapter4_AtFinalSection3
+	
+
+		if module "General GetCountA" > 3 and
+			if module "General GetCountB" > 4 and
+				if module "General GetCount" == 1 goto Chapter4_AltIntoComplete
+		
+		if module "General GetCountA" > 4 and
+			if module "General GetCountB" > 3 goto Chapter4_IntoComplete
+
+		if module "BrawlEscape CompleteTrigger" == 1.0 and
+			if module "General GetCountA" <= 4.0 and
+			if module "BoneCrusherEscape Complete" < 1.0 goto Chapter4_BrawlNextCheckpoint
+	
+		
+		if module "BoneCrusherEscape CompleteTrigger" == 1.0 and
+			if module "General GetCountA" > 1.0 and
+			if module "BrawlEscape Complete" < 1.0 and
+			if module "General GetCountC" == 0.0 goto Chapter4_SetUpBoney
+
+		if module "BoneCrusherEscape CompleteTrigger" == 1.0 and
+			if module "General GetCountA" > 1.0 and
+			if module "General GetCountB" <= 4.0 and
+			if module "BrawlEscape Complete" < 1.0 goto Chapter4_BoneCrusherNextCheckpoint
+
+
+			
+		if module "AAGunBrawl GetPercentageComplete" == 1 and
+			if module "General GetCountA" == 1 goto Chapter4_BrawlCP2
+
+		if module "AAGunBrawl GetPercentageComplete" == 1 and
+			if module "BrawlEscape Complete" == 1.0 and 
+				if module "General GetCountA" == 2 goto Chapter4_BrawlCP3
+
+		if module "AAGunBrawl GetPercentageComplete" == 1 and
+			if module "BrawlEscape Complete" == 1.0 and 
+				if module "General GetCountA" == 3 goto Chapter4_BrawlCP4
+
+		if module "AAGunBrawl GetPercentageComplete" == 1 and
+			if module "BrawlEscape Complete" == 1.0 and 
+				if module "General GetCountA" == 4 goto Chapter4_BrawlCP5
+
+		
+
+		if module "AAGunBoneCrusher GetPercentageComplete" == 1 and
+			if module "BoneCrusherEscape Complete" == 1.0 and 
+				if module "General GetCountB" == 1 goto Chapter4_BoneCrusherCP2
+
+		if module "AAGunBoneCrusher GetPercentageComplete" == 1 and
+			if module "BoneCrusherEscape Complete" == 1.0 and 
+				if module "General GetCountB" == 2 goto Chapter4_BoneCrusherCP3
+
+		if module "AAGunBoneCrusher GetPercentageComplete" == 1 and
+			if module "BoneCrusherEscape Complete" == 1.0 and 
+				if module "General GetCountB" == 3 goto Chapter4_BoneCrusherCP4
+
+		if module "AAGunBoneCrusher GetPercentageComplete" == 1 and
+			if module "BoneCrusherEscape Complete" == 1.0 and 
+				if module "General GetCountB" == 4 and
+					if module "General GetCount" == 1.0 goto Chapter4_BoneCrusherCP5
+
+
+				
+		;i.e. bonecrusher is waiting for Brawl to do the last blockade...
+		if module "General GetCountB" == 4 and
+			if module "General GetCountA" < 5 and
+				if module "BoneCrusherEscape CompleteTrigger" == 1.0 goto Chapter4_ForceBoneyRobot
+
+		if module "General GetCountA" == 4 and
+			if module "General GetCountB" < 5 and
+				if module "BrawlEscape CompleteTrigger" == 1.0 goto Chapter4_ForceBrawlRobot
+	}
+}
+state Chapter4_BoneyEscaping
+{
+	conditions 
+	{
+		
+		if module "D3C4KeyLocBoney FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "BoneCrusherHealth FailMission" == 1 goto Chapter4_FailMission
+
+		if module "General GetStateBit3" == 0.0 and
+			if module "General GetCountA" == 4 and
+				if module "General GetCountB" == 3 goto Chapter4_AtFinalSection
+
+		if module "General GetStateBit4" == 0.0 and
+			if module "General GetCountA" == 4 and
+				if module "General GetCountB" == 4 goto Chapter4_AtFinalSection2
+
+		if module "General GetStateBit5" == 0.0 and
+			if module "General GetCountA" == 3 and
+				if module "General GetCountB" == 4 goto Chapter4_AtFinalSection3
+	
+
+		if module "General GetCountA" > 3 and
+			if module "General GetCountB" > 4 and
+				if module "General GetCount" == 1 goto Chapter4_AltIntoComplete
+		
+		if module "General GetCountA" > 4 and
+			if module "General GetCountB" > 3 goto Chapter4_IntoComplete
+
+		
+		if module "BoneCrusherEscape CompleteTrigger" == 1.0 goto Chapter4_BoneCrusherNextCheckpoint
+
+
+
+		if module "AAGunBoneCrusher GetPercentageComplete" == 1 and
+			if module "BoneCrusherEscape Complete" == 1.0 and 
+				if module "General GetCountB" == 1 goto Chapter4_BoneCrusherCP2
+
+		if module "AAGunBoneCrusher GetPercentageComplete" == 1 and
+			if module "BoneCrusherEscape Complete" == 1.0 and 
+				if module "General GetCountB" == 2 goto Chapter4_BoneCrusherCP3
+
+		if module "AAGunBoneCrusher GetPercentageComplete" == 1 and
+			if module "BoneCrusherEscape Complete" == 1.0 and 
+				if module "General GetCountB" == 3 goto Chapter4_BoneCrusherCP4
+
+		if module "AAGunBoneCrusher GetPercentageComplete" == 1 and
+			if module "BoneCrusherEscape Complete" == 1.0 and 
+				if module "General GetCountB" == 4 and
+					if module "General GetCount" == 1.0 goto Chapter4_BoneCrusherCP5
+
+
+	}
+}
+state Chapter4_PrepareBoneySpeech
+{
+	conditions
+	{
+		if module "General GetCountC" == 4.0 goto Chapter4_BoneyOnComm4
+		if module "General GetCountC" == 3.0 and
+			if module "General GetCountD" == 3.0 goto Chapter4_BoneyOnComm35
+		if module "General GetCountC" == 3.0 goto Chapter4_BoneyOnComm3
+		if module "General GetCountC" == 2.0 goto Chapter4_BoneyOnComm2
+		if module "General GetCountC" == 1.0 goto Chapter4_BoneyOnComm1
+		
+	}
+	actions
+	{
+		Idle 0.1
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_BoneyOnComm4
+{
+	actions
+	{
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch3_obj9" "#AutoDestroy" "#Start"
+		
+		
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_BoneyOnComm35
+{
+	actions
+	{
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_obj4" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch3_obj9" "#AutoDestroy" "#Start"
+
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_BoneyOnComm3
+{
+	actions
+	{
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_obj4" "#AutoDestroy" "#Start"
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_BoneyOnComm2
+{
+	actions
+	{
+		
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_obj3" "#AutoDestroy" "#Start"
+
+		
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_BoneyOnComm1
+{
+	actions
+	{
+		
+		
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_obj2" "#AutoDestroy" "#Start" 
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch3_obj8" "#AutoDestroy" "#Start"
+	
+
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_SetUpBoney
+{
+	actions
+	{
+		CreateModule "#Timer" "#BoneCrusherHealth" "#HeadType=#BoneCrusher" "#Time=30.0" "#DrawHealthBar" "#Protect" "#StopLoseHealth" "#Index=14.921" "#Random" ;"#CreatureRecoil=#BoneCrusherEscape"
+		SendToModule "#BoneCrusherEscape" "#Health=#BoneCrusherHealth" "#AddToRadarAlways"
+		
+		SetState Chapter4_BoneCrusherNextCheckpoint
+	}
+}
+state Chapter4_PrepareBrawlSpeech
+{
+	conditions
+	{
+		
+		if module "General GetCountD" == 3.0 and 
+			if module "General GetCountC" == 3.0 goto Chapter4_BrawlOnComm3
+		if module "General GetCountD" == 3.0 goto Chapter4_BrawlOnComm35
+		if module "General GetCountD" == 2.0 goto Chapter4_BrawlOnComm2
+		if module "General GetCountD" == 1.0 goto Chapter4_BrawlOnComm1
+	}
+	actions
+	{
+		Idle 0.1
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_BrawlOnComm35
+{
+	actions
+	{
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_obj7" "#AutoDestroy" "#Start"
+
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_BrawlOnComm3
+{
+	actions
+	{
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_obj7" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch3_obj9" "#AutoDestroy" "#Start"
+
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_BrawlOnComm2
+{
+	actions
+	{
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_obj6" "#AutoDestroy" "#Start"
+		
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_BrawlOnComm1
+{
+	actions
+	{
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_obj5" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch3_obj10" "#AutoDestroy" "#Start"
+
+		
+		SetState Chapter4_SetRespLV
+	}
+}
+state Chapter4_SetRespLV
+{
+	conditions
+	{
+		if module "General GetCountC" == 2.0 and
+			if module "General GetCountD" == 3.0 goto ResponseLVSet0
+
+		if module "General GetCountC" == 3.0 and
+			if module "General GetCountD" == 2.0 goto ResponseLVSet0
+
+		if module "General GetCountC" == 2.0 and
+			if module "General GetCountD" == 2.0 goto ResponseLVSet1
+
+		if module "General GetCountC" == 1.0 and
+			if module "General GetCountD" == 1.0 goto ResponseLVSet2
+
+		if module "General GetCountC" == 1.0 goto ResponseLVSet3
+
+		if module "General GetCountD" == 1.0 goto ResponseLVSet3
+
+
+
+	}
+	actions
+	{
+		Idle 0.2	
+		SetState Chapter4_Escaping
+	}
+}
+state ResponseLVSet3
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#ResponseLv_Mission"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 3"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 3"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"               ; update/set the scripted values for freeroaming
+		
+		SetState Chapter4_Escaping
+	}
+
+}
+state ResponseLVSet2
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#ResponseLv_Mission"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"               ; update/set the scripted values for freeroaming
+		
+		SetState Chapter4_Escaping
+	}
+
+}
+state ResponseLVSet1
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#ResponseLv_Mission"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 1"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"               ; update/set the scripted values for freeroaming
+		
+		SetState Chapter4_Escaping
+	}
+
+}
+state ResponseLVSet0
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		
+		SendToModule "#VehicleLevels" "#TrafficLv=0" "#PatrolLv=0"
+
+		SendToModule "#General" "#ResponseLv_Mission"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"               ; update/set the scripted values for freeroaming
+		
+		SetState Chapter4_Escaping
+	}
+
+}
+state Chapter4_AtFinalSection
+{
+	actions
+	{
+		SendToModule "#General" "#SetStateBit=2"
+		SendToModule "#AAGunBoneCrusher" "#Vulnerable"
+		SendToModule "#AAGunBrawl" "#Vulnerable"
+		SetState "Chapter4_Escaping"
+	}
+}
+state Chapter4_AtFinalSection2
+{
+	actions
+	{
+		SendToModule "#General" "#SetStateBit=3"
+		SendToModule "#AAGunBoneCrusher" "#Vulnerable"
+		SendToModule "#AAGunBrawl" "#Vulnerable"
+		SetState "Chapter4_Escaping"
+	}
+}
+state Chapter4_AtFinalSection3
+{
+	actions
+	{
+		SendToModule "#General" "#SetStateBit=4"
+		SendToModule "#AAGunBoneCrusher" "#Vulnerable"
+		SendToModule "#AAGunBrawl" "#Vulnerable"
+		SetState "Chapter4_Escaping"
+	}
+}
+
+state TurnOnBrawlKeyLoc 
+{
+	conditions
+	{
+		if module "D3C4KeyLocBrawl InArea" == 1.0 goto Chapter4_SetRespLV
+	}
+	actions 
+	{
+		SendToModule #D3C4KeyLocBrawl #Process #Render
+		SendToModule #AAGunBrawl #AddToRadarAlways
+		SendToModule #BrawlEscape #ClearTriggeredComplete
+		SendToModule "#General" "#CountDInc"
+		Idle 0.1
+		SetState Chapter4_PrepareBrawlSpeech
+	}
+}
+
+state TurnOnBoneyKeyLoc 
+{	
+	conditions
+	{
+		if module "D3C4KeyLocBoney InArea" == 1.0 and
+			if module "General GetCountC" >= 2.0 goto Chapter4_SetRespLV
+		if module "General GetCountC" == 1.0 and 
+			if module "BoneCrusherEscape PlayerRange" < 120 goto Chapter4_SetRespLV
+	}
+	actions 
+	{
+		SendToModule #D3C4KeyLocBoney #Process #Render
+		SendToModule #AAGunBoneCrusher #AddToRadarAlways
+		SendToModule #BoneCrusherEscape #ClearTriggeredComplete
+		SendToModule "#General" "#CountCInc"
+		Idle 0.1
+		SetState Chapter4_PrepareBoneySpeech
+	}
+}
+
+state Chapter4_BoneCrusherNextCheckpoint
+{
+	conditions
+	{
+		;if module "General GetCountA" == 4.0 goto Chapter4_BrawlTanksAreActiveAtWrongTime
+	}	
+	actions 
+	{
+		SendToModule "#BoneCrusherEscape" "#ClearTriggeredComplete"
+		SendToModule "#BoneCrusherEscape" "#TransformForceRobot"
+		SendToModule "#General" "#ClearStateBit=1"
+		
+		SendToModule "#BoneCrusherEscape" "#Object=#RedMediumDot"
+		SendToModule "#AAGunBoneCrusher" "#Vulnerable"
+		
+		
+		SendToModule "#BoneCrusherHealth" "#StartLoseHealth"
+		SetState TurnOnBoneyKeyLoc
+	}
+}
+state Chapter4_BrawlTanksAreActiveAtWrongTime
+{
+		
+	actions 
+	{
+		SendToModule "#AAGunBrawl" "#Vulnerable"
+		
+		SetState TurnOnBoneyKeyLoc
+	}
+}
+
+state Chapter4_BoneCrusherCP2 
+{
+	actions 
+	{
+		SendToModule #D3C4KeyLocBoney #NoProcess #NoRender
+		DestroyModule "#AAGunBoneCrusher"
+        CreateModule "#AAGun" "#AAGunBoneCrusher"
+		SendToModule "#AAGunBoneCrusher" #AddToRadarOff "#Type=AAGUNTYPE_LASER" "#Placement=D3C4BC2" "#Range=100.0" "#Delay=0.0" "#Energy=250.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusherEscape" "#IgnorePlayer" "#Create=Shilka"
+		SendToModule "#AAGunBoneCrusher" "#InVulnerable"
+		SendToModule "#BoneCrusherEscape" "#TransformForceCar"
+		SendToModule "#General" "#SetStateBit=1"
+		SendToModule "#BoneCrusherEscape" #RegenHealth=3 
+		SendToModule "#BoneCrusherEscape" "#DirectSpline=D3C4_BoneCrusher2" "#Object=#GreenMediumDot" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+		SendToModule "#General" "#CountBSet=2"
+		SetState Chapter4_Escaping
+	}
+}
+
+state Chapter4_BoneCrusherCP3 
+{
+	actions 
+	{
+		SendToModule #D3C4KeyLocBoney #NoProcess #NoRender
+	
+		DestroyModule "#AAGunBoneCrusher"
+        CreateModule "#AAGun" "#AAGunBoneCrusher"
+		SendToModule "#AAGunBoneCrusher" #AddToRadarOff "#Type=AAGUNTYPE_LASER" "#Placement=D3C4BC3" "#Range=100.0" "#Delay=0.0" "#Energy=250.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusherEscape"  "#IgnorePlayer" "#Create=Shilka" 
+		SendToModule "#AAGunBoneCrusher" "#InVulnerable"
+		SendToModule "#BoneCrusherEscape" "#TransformForceCar"
+		SendToModule "#General" "#SetStateBit=1"
+		SendToModule "#BoneCrusherEscape" #RegenHealth=3
+		SendToModule "#BoneCrusherEscape" "#DirectSpline=D3C4_BoneCrusher3" "Range=21.0" "#Object=#GreenMediumDot" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+		SendToModule "#General" "#CountBSet=3"
+		SetState Chapter4_Escaping
+	}
+}
+
+state Chapter4_BoneCrusherCP4 
+{
+	conditions
+	{
+		if module "General GetCountA" <= 3.0 goto Chapter4_BoneyArrivedAtEndFirst
+	}
+	actions 
+	{
+		SendToModule #D3C4KeyLocBoney #NoProcess #NoRender
+		SendToModule "#BoneCrusherEscape" "#TransformForceCar"
+		SendToModule "#General" "#SetStateBit=1" 
+		SendToModule "#BoneCrusherEscape" #RegenHealth=3
+		SendToModule "#BoneCrusherEscape" "#DirectSpline=D3C4_BoneCrusher4" "Range=10.0" "#Object=#GreenMediumDot" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+		SendToModule "#General" "#CountBSet=4"
+		Idle 0.1
+		SetState Chapter4_Escaping
+	}
+}
+
+state Chapter4_BoneCrusherCP5
+{
+	actions 
+	{
+		SendToModule #D3C4KeyLocBoney #NoProcess #NoRender
+		SendToModule "#BoneCrusherEscape" "#TransformForceCar"
+		SendToModule "#General" "#SetStateBit=1"
+		SendToModule "#BoneCrusherEscape" #RegenHealth=3
+		SendToModule "#BoneCrusherEscape" "#DirectSpline=D3C4_BC5" "Range=5.0" "#Object=#GreenMediumDot" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+		SendToModule "#General" "#CountBSet=5"
+		SetState Chapter4_Escaping
+	}
+}
+state Chapter4_BoneyArrivedAtEndFirst
+{
+	
+	actions 
+	{
+		SendToModule "#General" "#CountSet=1"
+		DestroyModule "#AAGunBoneCrusher"
+      		CreateModule "#AAGun" "#AAGunBoneCrusher"
+		SendToModule "#AAGunBoneCrusher" #AddToRadarOff "#Type=AAGUNTYPE_LASER" "#Placement=D3C4BR4" "#Range=100.0" "#Delay=0.0" "#Energy=250.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusherEscape"  "#IgnorePlayer" "#Create=Shilka"  
+		SendToModule "#AAGunBoneCrusher" "#InVulnerable"
+		SetState Chapter4_Escaping
+	}
+}
+
+state Chapter4_ForceBoneyRobot 
+{
+	actions 
+	{
+		SendToModule "#BoneCrusherEscape" "#TransformForceRobot"
+		SendToModule "#BoneCrusherHealth" "#StartLoseHealth"
+		SetState Chapter4_Escaping
+	}
+}
+state Chapter4_ForceBrawlRobot 
+{
+	actions 
+	{
+		SendToModule "#BrawlEscape" "#TransformForceRobot"
+		SendToModule "#BrawlHealth" "#StartLoseHealth"
+		SetState Chapter4_Escaping
+	}
+}
+state Chapter4_BrawlNextCheckpoint 
+{
+	conditions
+	{
+		;if module "General GetCountB" == 4.0 goto Chapter4_BoneyTanksAreActiveAtWrongTime
+	}
+	actions 
+	{
+		SendToModule "#BrawlEscape" "#ClearTriggeredComplete"
+		SendToModule "#BrawlEscape" "#TransformForceRobot"
+		SendToModule "#General" "#ClearStateBit=0"
+		SendToModule "#BrawlHealth" "#StartLoseHealth"
+		SendToModule "#BrawlEscape" "#Object=#RedMediumDot"
+		SendToModule "#AAGunBrawl" "#Vulnerable"
+		SetState TurnOnBrawlKeyLoc
+	}
+}
+state Chapter4_BoneyTanksAreActiveAtWrongTime
+{
+		
+	actions 
+	{
+		SendToModule "#AAGunBoneCrusher" "#Vulnerable"
+		
+		SetState TurnOnBrawlKeyLoc
+	}
+}
+
+state Chapter4_BrawlCP2 
+{
+	actions 
+	{
+ 		SendToModule #D3C4KeyLocBrawl #NoProcess #NoRender
+		DestroyModule "#AAGunBrawl"
+        CreateModule "#AAGun" "#AAGunBrawl"
+		SendToModule "#AAGunBrawl" #AddToRadarOff "#Type=AAGUNTYPE_LASER" "#Placement=D3C4BR2" "#Range=100.0" "#Delay=0.0" "#Energy=250.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BrawlEscape" "#IgnorePlayer" "#Create=Shilka" 
+		SendToModule "#AAGunBrawl" "#InVulnerable"
+		SendToModule "#BrawlEscape"  "#Script=D3Follow" "#TransformForceCar" 
+		SendToModule "#General" "#SetStateBit=0"
+		SendToModule "#BrawlEscape" #RegenHealth=3
+		SendToModule "#BrawlEscape" "#DirectSpline=D3C4_Brawl2" "#Object=#GreenMediumDot" "#type=Brawl" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+		SendToModule "#General" "#CountASet=2"
+		SetState Chapter4_Escaping
+	}
+}
+state Chapter4_BrawlCP3 
+{
+	actions 
+	{
+ 		SendToModule #D3C4KeyLocBrawl #NoProcess #NoRender
+		DestroyModule "#AAGunBrawl"
+        CreateModule "#AAGun" "#AAGunBrawl"
+		SendToModule "#AAGunBrawl" #AddToRadarOff "#Type=AAGUNTYPE_LASER" "#Placement=D3C4BR3" "#Range=100.0" "#Delay=0.0" "#Energy=250.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BrawlEscape" "#IgnorePlayer" "#Create=Shilka"
+		SendToModule "#AAGunBrawl" "#InVulnerable"
+		SendToModule "#BrawlEscape" "#TransformForceCar"
+		SendToModule "#General" "#SetStateBit=0"
+		SendToModule "#BrawlEscape" #RegenHealth=3
+		SendToModule "#BrawlEscape" "#DirectSpline=D3C4_Brawl3" "#Object=#GreenMediumDot" "#type=Brawl" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+		SendToModule "#General" "#CountASet=3"
+		SetState Chapter4_Escaping
+	}
+}
+state Chapter4_BrawlCP4 
+{
+	conditions
+	{
+		if module "General GetCount" == 1.0 goto Chapter4_Escaping
+	}
+	actions 
+	{
+ 		SendToModule #D3C4KeyLocBrawl #NoProcess #NoRender
+		DestroyModule "#AAGunBrawl"
+       
+		SendToModule "#BrawlEscape" "#TransformForceCar"
+		SendToModule "#General" "#SetStateBit=0"
+		SendToModule "#BrawlEscape" #RegenHealth=3
+		SendToModule "#BrawlEscape" "#DirectSpline=D3C4_Brawl4" "#Object=#GreenMediumDot" "#type=Brawl" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+		SendToModule "#General" "#CountASet=4"
+		Idle 0.1
+		CreateModule "#AAGun" "#AAGunBrawl"
+		SendToModule "#AAGunBrawl" #AddToRadarOff "#Type=AAGUNTYPE_LASER" "#Placement=D3C4BR4" "#Range=100.0" "#Delay=0.0" "#Energy=250.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BrawlEscape" "#IgnorePlayer" "#Create=Shilka"  
+		SendToModule "#AAGunBrawl" "#InVulnerable"
+		SetState Chapter4_Escaping
+	}
+}
+state Chapter4_BrawlArrivedAtEndFirst
+{
+	
+	actions 
+	{
+		SendToModule "#General" "#CountSet=2"
+		
+		SetState Chapter4_Escaping
+	}
+}
+
+state Chapter4_BrawlCP5 
+{
+	conditions
+	{
+		if module "General GetCountB" <= 3.0 goto Chapter4_BrawlArrivedAtEndFirst
+		if module "General GetCount" == 1.0 goto Chapter4_Escaping
+	}
+	actions 
+	{
+ 		SendToModule #D3C4KeyLocBrawl #NoProcess #NoRender
+		SendToModule "#BrawlEscape" "#TransformForceCar"
+		SendToModule "#General" "#SetStateBit=0"
+		SendToModule "#BrawlEscape" #RegenHealth=3
+		SendToModule "#BrawlEscape" "#DirectSpline=D3C4_Brawl5" "#Object=#GreenMediumDot" "#type=Brawl" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+		SendToModule "#General" "#CountASet=5"
+		Idle 0.1
+		SetState Chapter4_Escaping
+	}
+}
+
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+        DestroyAllModules "#IncludeProtected"
+        SendToModule "#General" "#UnLoadCreature=BoneCrusher"
+        SendToModule "#General" "#UnLoadCreature=Brawl"
+		SendToModule "#General" "#PlayerType=StarScream,StarScream,StarScream,StarScream,StarScream"
+        SendToModule "#General" "#ResetLevelCharacters"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_AltIntoComplete
+{
+	conditions 
+	{
+		if module "Timer FailMission" == 1.0 goto Chapter4_Complete
+	}
+	actions 
+	{
+		SendToModule #D3C4KeyLocBrawl #NoProcess #NoRender
+		SendToModule "#BrawlEscape" "#TransformForceCar"
+		SendToModule "#General" "#SetStateBit=0"
+		SendToModule "#BrawlEscape" #RegenHealth=3
+		SendToModule "#BrawlEscape" "#DirectSpline=D3C4_Brawl5" "#Object=#GreenMediumDot" "#type=Brawl" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+		SendToModule "#General" "#CountASet=5"
+
+		CreateModule "#Timer" "#Timer" "#Time=5" "#NoDraw"
+	}
+}
+state Chapter4_IntoComplete
+{
+	conditions 
+	{
+		if module "Timer FailMission" == 1.0 goto Chapter4_Complete
+	}
+	actions 
+	{
+		SendToModule #D3C4KeyLocBoney #NoProcess #NoRender
+		SendToModule "#BoneCrusherEscape" "#TransformForceCar"
+		SendToModule "#General" "#SetStateBit=1"
+		SendToModule "#BoneCrusherEscape" #RegenHealth=3
+		SendToModule "#BoneCrusherEscape" "#DirectSpline=D3C4_BC5" "Range=5.0" "#Object=#GreenMediumDot" "#SplineStep=0" "#Invulnerable" "#Speed=40"
+
+		CreateModule "#Timer" "#Timer" "#Time=5" "#NoDraw"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		SendToModule #General #UnlockBonus=Character_Brawl
+		SendToModule #General #UnlockBonus=Character_StarScream
+		SendToModule #General #UnlockBonus=Mission_ThirdMission
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch4_cmplt" "#PlayDelay=1.2" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoLink
+	}
+	actions
+	{	
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D3C4Outro1"
+	}
+}
+state Chapter4_CompleteVideoLink
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D3C4Outro2"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=Brawl"
+		SendToModule "#General" "#UnLoadCreature=BoneCrusher"
+		SendToModule "#General" "#PlayerType=StarScream,StarScream,StarScream,StarScream,StarScream"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		SetState Chapter4_Leave		
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule #General #AllowPlayerMovement "#CountCSet=0"
+		SetState PickGoto
+	}
+}

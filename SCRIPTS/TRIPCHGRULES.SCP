@@ -1,0 +1,21 @@
+
+CONST SpeedEscapeMin				10.0
+CONST SpeedEscapeMax				12.0
+
+ConditionMacro RuleArt
+{
+	if GetEnergy > 0.75
+}
+
+ConditionMacro RuleHeli
+{
+	if GetEnergy >= 0.35
+}
+
+ConditionMacro RuleCombat
+{
+	if GetEnergy < 0.35
+
+}
+
+

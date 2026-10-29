@@ -1,0 +1,234 @@
+;Destroy all buildings and physobjs within the time limit
+
+;requires:
+;	Keylocation spline 	KeyLoc#
+;	Spawn spline		Spawn#
+
+;Changeable params:
+;	300		time in which to complete the mission
+;	30		total number of creatures that need to be killed
+;	10000	amount of damage required
+;	15			keylocation timeout
+;	2		total active simultaneously
+;	DroneTowTruck_a		type of creature to fight against
+
+state SubMission1_Enter
+{
+	actions
+	{
+		
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission1_Death"
+		SetState "SubMission1_ChooseInit"
+	}
+}
+state SubMission1_ChooseInit
+{
+	conditions
+	{
+		;if module "General GetCountA" == 2.0 goto SubMission1_ScorponokInit
+
+		if module "General ChapterProgress" == 0.0 goto SubMission1_BrawlInit
+		if module "General ChapterProgress" == 1.0 goto SubMission1_BlackoutInit
+		if module "General ChapterProgress" == 2.0 goto SubMission1_BlackoutInit
+		if module "General ChapterProgress" == 3.0 goto SubMission1_StarScreamInit
+		if module "General ChapterProgress" == 4.0 goto SubMission1_Init
+	}		
+}
+state SubMission1_BrawlInit
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#PlayerType=Brawl" "#SetPlayer=#SubMission1" "#CountASet=1"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift"
+	    	SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		
+		CreateModule "#Creature" "#Creature" "#Type=DronePickupTruck_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#SetEnergyMax=1200" "#SetEnergy=1200" "#Script=TruckDrone"
+		CreateModule "#Creature" "#Creature2" "#Type=DroneDefault_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#SetEnergyMax=1000" "#SetEnergy=1000" "#Script=CarDrone"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		;CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone"
+	}
+}
+state SubMission1_BlackoutInit
+{
+	conditions
+	{
+		;if timer > 0.1 goto SubMission1_Main
+	}
+	actions
+	{
+		;ResetTimer
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#ResetLevel" "#PlayerType=Blackout" "#SetPlayer=#SubMission1" "#CountASet=1"
+	    	CreateModule "#Creature" "#Creature" "#Type=DroneTowTruck_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=TowTruckDrone"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		;CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone"
+		SetState SubMission1_Main
+	}
+}
+state SubMission1_StarScreamInit
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#PlayerType=StarScream" "#SetPlayer=#SubMission1" "#CountASet=1"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift"
+	    	SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#LoadCreature=DroneCement_a"
+		
+		CreateModule "#Creature" "#Creature" "#Type=DroneTowTruck_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=TowTruckDrone"
+		CreateModule "#Creature" "#Creature" "#Type=DroneCement_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#SetEnergyMax=400" "#SetEnergy=400" "#Script=MixerDrone"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		;CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone"
+	}
+}
+state SubMission1_ScorponokInit
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission1" "#CountASet=2"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift"
+	    	SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		CreateModule "#Creature" "#Creature" "#Type=DroneTowTruck_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=TowTruckDrone"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		;CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone"
+	}
+}
+state SubMission1_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission1" "#CountASet=0"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift"
+	    	SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		CreateModule "#Creature" "#Creature" "#Type=DroneTowTruck_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=TowTruckDrone"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		;CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone"
+	}
+}
+state SubMission1_Main
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+		;if module "creature getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-120000"
+	}
+}
+state SubMission1_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission1_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission1_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=1"
+		;SetState "SubMission1_Leave"
+	}
+}
+state SubMission1_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission1_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission1_Leave
+{
+	conditions
+	{
+		;if module "General GetCountA" == 2.0 goto GlobalActionRing
+		if module "General GetCountA" == 1.0 goto RevertCreature
+		if module "General GetCountA" == 0.0 goto GlobalActionRing
+	}
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission1" "#FadeUp"
+	   	SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+
+		;SendToModule "#General" "#FadeUp" "#RevertPlayerType"		
+		;SetState "GlobalActionRing"
+	}
+}
+

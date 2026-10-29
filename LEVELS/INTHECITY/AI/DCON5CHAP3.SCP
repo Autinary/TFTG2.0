@@ -1,0 +1,1240 @@
+state Chapter3_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D5_ch3_Goto"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D5_ch3_Goto" "#AutoDestroy" "#Start"
+		Idle 3.0
+		
+		;CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		;SendToModule "#General" "#SetPlayer=#SubMission4" 
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D5C3Intro1"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+	}
+}
+state Chapter3_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=Blackout"
+		
+		SendToModule "#General" "#LoadCreature=IronHide"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#LoadCreature=DroneForklift_a"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+	}
+}
+;;state Chapter3_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter3_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D5C3Intro1"
+;;	}
+;;}
+state Chapter3_Main
+{
+	actions
+	{
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter3_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D5_ch3_obj1" "#AutoDestroy" "#PlayDelay=1.0" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#BlackoutSpawn" "#FadeUp"
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20" "#CountASet=0" "#CountBSet=0" "#CountCSet=0" "#CountDSet=0" "#CountSet=0"
+
+
+		CreateModule "#Speech" "#D5C3IronHideSpeechA" "#speech=#D5_ch3_obj2" "#AutoDestroy" 
+		CreateModule "#Speech" "#D5C3IronHideSpeechB" "#speech=#D5_ch3_obj3" "#AutoDestroy"
+		CreateModule "#Speech" "#D5C3IronHideSpeechC" "#speech=#D5_ch3_obj4" "#AutoDestroy"
+		CreateModule "#Speech" "#D5C3IronHideSpeechD" "#speech=#D5_ch3_obj5" "#AutoDestroy"
+;																														5400
+		CreateModule "#Creature" "#Ironhide" "#spline=D5C3IronHide" "#count=1" "#maxalive=1" "#AddToRadar" "#Type=IronHide" "#SpawnInLOSInit" "#SpawnAsCreature" "#Type=IronHide" "#AntinodeRadius=75.0" "#ForcePlayerAsOpp" "#SetEnergyMax=13500" "#SetEnergy=13500" "#BlockDeath" "#SetPosition=#IronhideSpawn" "#Script=StandAndWait"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D5C3KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		Idle 0.2
+		SendToModule "#Ironhide" "#IronHideToCharge" "#Boss" "#Type=IronHide" "#Script=Ironhide"
+
+
+		SetState Chapter3_IronHideFight1Process
+		;SetState Chapter3_Complete
+	}
+}
+
+state Chapter3_IronHideFight1Process
+{
+	conditions
+	{
+
+		if module "General GetCountA" == 9.0 goto Chapter3_RandomizerReset
+		
+		
+
+
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "IronHide IronHideIsStatic" == 1.0 goto Chapter3_WaveA
+		
+		
+
+		if Timer > 0.2 goto Chapter3_RatchetRandomizer
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter3_RatchetRandomizer
+{
+	actions
+	{
+		SendToModule "#General" "#CountAInc" 
+		SetState Chapter3_IronHideFight1Process
+	}
+}
+state Chapter3_RandomizerReset
+{
+	actions
+	{
+		SendToModule "#General" "#CountASet=0" 
+		SetState Chapter3_IronHideFight1Process
+	}
+}
+state Chapter3_WaveA
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		if module "Wave1 Complete" == 1.0 AND
+			if module "Wave2 Complete" == 1.0 goto Chapter3_WaveAIronHide
+	}
+	actions
+	{
+		;[DroneDefault_a, DroneForklift_a]
+		SendToModule "#IronHide" "#NoHealthBar"
+		CreateModule "#Creature" "#Wave1" "#Spline=D5C3SpawnA" "#count=4" "#maxalive=4" "#Type=DroneForklift_a" "#IgnoreLOS" "#KeyLocation" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800"
+		CreateModule "#Creature" "#Wave2" "#Spline=D5C3SpawnA" "#count=4" "#maxalive=4" "#Type=DroneDefault_a" "#IgnoreLOS" "#KeyLocation" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000"
+		;[DroneDefault_a, DroneForklift_a]
+	}
+}
+
+state Chapter3_WaveAIronHide
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "IronHide IronHideIsCombat" == 1.0 goto Chapter3_WaveAIronHide2
+	}
+	actions
+	{
+		SendToModule "#D5C3IronHideSpeechA" "#StartOneShot"
+
+		;[DroneDefault_a, DroneForklift_a]
+		DestroyModule "#Wave1"
+		DestroyModule "#Wave2"
+		SendToModule "#General" "#BG_UnloadCreature=DroneForklift_a"
+		SendToModule "#General" "#BG_LoadCreature=DronePickupTruck_a"
+		
+		SendToModule "#Ironhide" "#IronHideToCharge" "#Boss" "#Type=IronHide"
+		;[DroneDefault_a, DronePickupTruck_a]
+	}
+}
+
+state Chapter3_WaveAIronHide2
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "IronHide IronHideIsCombat" == 0.0 goto Chapter3_WaveAIronHide3
+		
+	}
+	
+}
+state Chapter3_WaveAIronHide3
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if Timer > 1.0 and
+			if module "IronHide IronHideIsStatic" == 1.0 goto Chapter3_WaveSyncA
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#Ironhide" "#IronHideToCharge"
+	}		
+}
+
+state Chapter3_WaveSyncA
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SendToModule "#IronHide" "#NoHealthBar"
+		SetState Chapter3_WaveB
+	}
+}
+
+state Chapter3_WaveB
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		if module "Wave1 Complete" == 1.0 AND
+			if module "Wave2 Complete" == 1.0 goto Chapter3_WaveBIronHide
+	}
+	actions
+	{
+		;[DroneDefault_a, DronePickupTruck_a]
+		CreateModule "#Creature" "#Wave1" "#Spline=D5C3SpawnA" "#count=4" "#maxalive=4" "#Type=DroneDefault_a" "#IgnoreLOS" "#KeyLocation" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000"
+		CreateModule "#Creature" "#Wave2" "#Spline=D5C3SpawnA" "#count=4" "#maxalive=4" "#Type=DronePickupTruck_a" "#IgnoreLOS" "#KeyLocation" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		;[DroneDefault_a, DronePickupTruck_a]
+	}
+}
+
+state Chapter3_WaveBIronHide
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "IronHide IronHideIsCombat" == 1.0 goto Chapter3_WaveBIronHide2
+	}
+	actions
+	{
+		SendToModule "#D5C3IronHideSpeechB" "#StartOneShot"
+
+		;[DroneDefault_a, DronePickupTruck_a]
+		DestroyModule "#Wave1"
+		DestroyModule "#Wave2"
+		SendToModule "#General" "#BG_UnloadCreature=DroneDefault_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneTowTruck_a"
+		;SendToModule "#General" "#BG_LoadCreature=DroneMig_a"
+		SendToModule "#Ironhide" "#IronHideToCharge" "#DrawHealthBar"
+		;[DroneTowTruck_a, DronePickupTruck_a]
+	}
+}
+
+state Chapter3_WaveBIronHide2
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "IronHide IronHideIsCombat" == 0.0 goto Chapter3_WaveBIronHide3
+		
+	}
+}
+state Chapter3_WaveBIronHide3
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if Timer > 1.0 and
+			if module "IronHide IronHideIsStatic" == 1.0 goto Chapter3_WaveSyncB
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#Ironhide" "#IronHideToCharge"
+	}		
+}
+state Chapter3_WaveSyncB
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SendToModule "#IronHide" "#NoHealthBar"
+
+		CreateModule "#Creature" "#Ratchet" "#Spline=Spawn1" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneArmouredCar" "#SpawnAsCreature" "#SuppressShield" "#Script=RatchetInit" "#SetEnergyMax=1500" "#SetEnergy=1000" "#BlockDeath" "#SetEnergyMin=500"
+				
+
+		
+		SetState Chapter3_RatchetPosition
+	}
+}
+state Chapter3_RatchetPosition
+{
+	conditions
+	{
+		if module "General GetCountA" <= 1.0 goto Chapter3_SetRatchetPosition1
+		if module "General GetCountA" <= 3.0 goto Chapter3_SetRatchetPosition2
+		if module "General GetCountA" <= 5.0 goto Chapter3_SetRatchetPosition3
+		if module "General GetCountA" <= 6.0 goto Chapter3_SetRatchetPosition4
+		if module "General GetCountA" <= 9.0 goto Chapter3_SetRatchetPosition5
+
+		
+	}
+	
+}
+state Chapter3_SetRatchetPosition1
+{
+	actions
+	{
+		SendToModule "#Ratchet" "#SetPosition=#RatchetSpawn2" 
+		CreateModule "#AreaRange" "#RatchetMarker" "#Trigger=#RatchetC3A"  
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#General" "#SetMessage=ITC1" "#SetMessageTimer=3.0"
+
+		
+		
+		SetState Chapter3_WaveC
+	}
+}
+state Chapter3_SetRatchetPosition2
+{
+	actions
+	{
+		SendToModule "#Ratchet" "#SetPosition=#RatchetSpawn3" 
+		CreateModule "#AreaRange" "#RatchetMarker" "#Trigger=#RatchetC3B"  
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#General" "#SetMessage=ITC1" "#SetMessageTimer=3.0"
+
+		
+		
+		SetState Chapter3_WaveC
+	}
+}
+state Chapter3_SetRatchetPosition3
+{
+	actions
+	{
+		SendToModule "#Ratchet" "#SetPosition=#RatchetSpawn4" 
+		CreateModule "#AreaRange" "#RatchetMarker" "#Trigger=#RatchetC3C"  
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#General" "#SetMessage=ITC1" "#SetMessageTimer=3.0"
+
+		
+		
+		SetState Chapter3_WaveC
+	}
+}
+state Chapter3_SetRatchetPosition4
+{
+	actions
+	{
+		SendToModule "#Ratchet" "#SetPosition=#RatchetSpawn5" 
+		CreateModule "#AreaRange" "#RatchetMarker" "#Trigger=#RatchetC3D"  
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#General" "#SetMessage=ITC1" "#SetMessageTimer=3.0"
+
+		
+		
+		SetState Chapter3_WaveC
+	}
+}
+state Chapter3_SetRatchetPosition5
+{
+	actions
+	{
+		SendToModule "#Ratchet" "#SetPosition=#RatchetSpawn6" 
+		CreateModule "#AreaRange" "#RatchetMarker" "#Trigger=#RatchetC3E"  
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#General" "#SetMessage=ITC1" "#SetMessageTimer=3.0"
+
+		
+		
+		SetState Chapter3_WaveC
+	}
+}
+state Chapter3_WaveC
+{
+	
+	actions
+	{
+		;[DroneTowTruck_a, DronePickupTruck_a]
+
+
+		SendToModule "#General" "#CountBSet=1" "#CountCSet=1"
+		CreateModule "Timer" "#HealTheTroops" "#Time=40" "#NoRender" 
+		CreateModule "#Creature" "#WavePT" "#Spline=D5C3SpawnA" "#count=4" "#maxalive=4" "#Type=DronePickupTruck_a" "#IgnoreLOS" "#KeyLocation" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		CreateModule "#Creature" "#WaveTT" "#Spline=D5C3SpawnB" "#count=1" "#maxalive=1" "#Type=DroneTowTruck_a" "#IgnoreLOS" "#KeyLocation" "#Script=TowTruckDrone" "#SetEnergyMax=900" "#SetEnergy=900"
+		;CreateModule "#Creature" "#WaveTF" "#Spline=D5C3SpawnB" "#count=1" "#maxalive=1" "#Type=DroneMig_a" "#IgnoreLOS" "#KeyLocation" "#Script=TruckFlameDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		
+		;[DroneTowTruck_a, DronePickupTruck_a]
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_MassProcess
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		;;;Ratchet 
+		if module "HealTheTroops Timer" < 0.0 and
+			if module "General GetCountC" == 1.0 and
+				if module "General GetCount" == 0.0 goto Chapter3_RatchetHeal
+		if module "IronHide Energy" < 0.2 and 
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetHealBoss
+		if module "Ratchet IsEnergyAtMin" == 1.0 and
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetFlee
+		if module "Ratchet PlayerRange" < 75 and
+			if module "General GetCountC" == 1.0 goto Chapter3_ClearTheRadar
+
+		;;; WaveC
+		if module "WavePT Complete" == 1.0 AND
+			if module "WaveTT Complete" == 1.0 AND
+				if module "General GetCountB" == 1.0 goto Chapter3_WaveCIronHide
+
+		if module "IronHide IronHideIsCombat" == 1.0 and
+			if module "General GetCountB" == 2.0 goto Chapter3_WaveCIronHide2
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 3.0 and
+				if module "General GetCountD" == 1.0 goto Chapter3_WaveCIronHide3
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 3.0 and
+				if module "General GetCountD" == 2.0 goto Chapter3_WaveCIronHide4
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 3.0 and
+				if module "General GetCountD" == 3.0 goto Chapter3_WaveSyncC
+
+		;;; WaveD
+		if module "WaveTT Complete" == 1.0 AND
+			if module "WaveCM Complete" == 1.0 and
+				if module "General GetCountB" == 4.0 goto Chapter3_WaveDIronHide
+		
+		if module "IronHide IronHideIsCombat" == 1.0 and
+			if module "General GetCountB" == 5.0 goto Chapter3_WaveDIronHide2
+	
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 6.0 and
+				if module "General GetCountD" == 1.0 goto Chapter3_WaveDIronHide3
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 6.0 and
+				if module "General GetCountD" == 2.0 goto Chapter3_WaveDIronHide4
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 6.0 and
+				if module "General GetCountD" == 3.0 goto Chapter3_WaveSyncD
+		
+		;;; WaveE
+		if module "WaveAC Complete" == 1.0 AND
+			if module "WaveTT Complete" == 1.0 AND
+				if module "General GetCountB" == 7.0 goto Chapter3_WaveEIronHide
+		
+		if module "IronHide IronHideIsCombat" == 1.0 and
+			if module "General GetCountB" == 8.0 goto Chapter3_WaveEIronHide2
+
+		
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 9.0 goto Chapter3_IronHideCharge
+
+	}
+	
+}
+state Chapter3_RatchetHeal
+{
+	
+	actions
+	{
+		ResetTimer
+		SendToModule "#HealTheTroops" "#Time=40"
+		SendToModule "#Ratchet" "#Script=Heal"
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		SendToModule "#WavePT" "#SetEnergy=1200" 
+		;SendToModule "#WaveTF" "#SetEnergy=1200" 
+		SendToModule "#WaveTT" "#SetEnergy=900"
+		SendToModule "#WaveCM" "#SetEnergy=400" 
+		SendToModule "#WaveAC" "#SetEnergy=1200"
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#General" "#SetMessage=ITC7" "#SetMessageTimer=3.0"
+		;CreateModule "#Speech" "#EWave" "#speech=#D5_ch3_obj7" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		Idle 1.4
+		
+		SetState Chapter3_RadarIsStillJammed
+	}
+}
+state Chapter3_RatchetHealBoss
+{
+	
+	actions
+	{
+		ResetTimer
+		SendToModule "#HealTheTroops" "#Time=40"
+		SendToModule "#Ratchet" "#Script=Heal" 
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		SendToModule "#IronHide" "#SetEnergy=10800" 
+		SendToModule "#WavePT" "#SetEnergy=1200" 
+		;SendToModule "#WaveTF" "#SetEnergy=1200" 
+		SendToModule "#WaveTT" "#SetEnergy=900"
+		SendToModule "#WaveCM" "#SetEnergy=400" 
+		SendToModule "#WaveAC" "#SetEnergy=1200"
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#General" "#SetMessage=ITC8" "#SetMessageTimer=3.0"
+		;CreateModule "#Speech" "#EWave" "#speech=#D5_ch3_obj7" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		
+		Idle 1.4
+		
+		SetState Chapter3_RadarIsStillJammed
+	}
+}
+
+state Chapter3_RadarIsStillJammed
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#Ratchet" "#Script=RatchetInit"
+		Idle 0.6
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_RatchetFlee
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto Chapter3_RatchetFleePos
+	}
+	actions
+	{
+		
+		SendToModule "#Ratchet" "#Script=DummyCar_I" "#TransformForceCar" "#SetEnergyMin=500" ; "#DirectSpline=D5C3IronHide" 
+		DestroyModule "#RatchetMarker" 
+		SendToModule "#General" "#SetRadarInterference=0"
+		
+		
+
+		SendToModule "#General" "#FadeDown"
+		
+	}
+}
+state Chapter3_RatchetFleePos
+{
+	conditions
+	{
+		if module "General GetCountA" <= 1.0 goto Chapter3_SetRatchetFleePosition1
+		if module "General GetCountA" <= 3.0 goto Chapter3_SetRatchetFleePosition2
+		if module "General GetCountA" <= 5.0 goto Chapter3_SetRatchetFleePosition3
+		if module "General GetCountA" <= 6.0 goto Chapter3_SetRatchetFleePosition4
+		if module "General GetCountA" <= 9.0 goto Chapter3_SetRatchetFleePosition5
+
+		
+
+	}
+	
+}
+state Chapter3_SetRatchetFleePosition1
+{
+	conditions
+	{
+		if module "General GetCountD" == 1.0 and
+			if module "General GetCountB" == 9.0 goto Chapter3_IronHideCombat
+	}
+	actions
+	{
+		DestroyModule "#Ratchet"
+		CreateModule "#Goto" "#Ratchet" "#SpawnSpline=D5C3IronHide" "#DirectSpline=Spawn1" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneArmouredCar" "#SpawnAsVehicle" "#SuppressShield" "#SetEnergyMax=1500" "#SetEnergy=500" "#BlockDeath" "#SetPosition=#RatchetTransform2" "#SetEnergyMin=500" "#Unstoppable"
+		
+		SendToModule "#General" "#FadeUp" "#CountCSet=2" 
+		Idle 0.2
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_SetRatchetFleePosition2
+{
+	conditions
+	{
+		if module "General GetCountD" == 1.0 and
+			if module "General GetCountB" == 9.0 goto Chapter3_IronHideCombat
+	}
+	actions
+	{
+		DestroyModule "#Ratchet"
+		CreateModule "#Goto" "#Ratchet" "#SpawnSpline=D5C3IronHide" "#DirectSpline=Spawn1" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneArmouredCar" "#SpawnAsVehicle" "#SuppressShield" "#SetEnergyMax=1500" "#SetEnergy=500" "#BlockDeath" "#SetPosition=#RatchetTransform3" "#SetEnergyMin=500" "#Unstoppable"
+		
+		SendToModule "#General" "#FadeUp" "#CountCSet=2" 
+		Idle 0.2
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_SetRatchetFleePosition3
+{
+	conditions
+	{
+		if module "General GetCountD" == 1.0 and
+			if module "General GetCountB" == 9.0 goto Chapter3_IronHideCombat
+	}
+	actions
+	{
+		DestroyModule "#Ratchet"
+		CreateModule "#Goto" "#Ratchet" "#SpawnSpline=D5C3IronHide" "#DirectSpline=Spawn1" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneArmouredCar" "#SpawnAsVehicle" "#SuppressShield" "#SetEnergyMax=1500" "#SetEnergy=500" "#BlockDeath" "#SetPosition=#RatchetTransform4" "#SetEnergyMin=500" "#Unstoppable"
+		
+		SendToModule "#General" "#FadeUp" "#CountCSet=2" 
+		Idle 0.2
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_SetRatchetFleePosition4
+{
+	conditions
+	{
+		if module "General GetCountD" == 1.0 and
+			if module "General GetCountB" == 9.0 goto Chapter3_IronHideCombat
+	}
+	actions
+	{
+		DestroyModule "#Ratchet"
+		CreateModule "#Goto" "#Ratchet" "#SpawnSpline=D5C3IronHide" "#DirectSpline=Spawn1" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneArmouredCar" "#SpawnAsVehicle" "#SuppressShield" "#SetEnergyMax=1500" "#SetEnergy=500" "#BlockDeath" "#SetPosition=#RatchetTransform5" "#SetEnergyMin=500" "#Unstoppable"
+		
+		SendToModule "#General" "#FadeUp" "#CountCSet=2" 
+		Idle 0.2
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_SetRatchetFleePosition5
+{
+	conditions
+	{
+		if module "General GetCountD" == 1.0 and
+			if module "General GetCountB" == 9.0 goto Chapter3_IronHideCombat
+	}
+	actions
+	{
+		DestroyModule "#Ratchet"
+		CreateModule "#Goto" "#Ratchet" "#SpawnSpline=D5C3IronHide" "#DirectSpline=Spawn1" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneArmouredCar" "#SpawnAsVehicle" "#SuppressShield" "#SetEnergyMax=1500" "#SetEnergy=500" "#BlockDeath" "#SetPosition=#RatchetTransform6" "#SetEnergyMin=500" "#Unstoppable"
+		
+		SendToModule "#General" "#FadeUp" "#CountCSet=2" 
+		Idle 0.2
+		SetState Chapter3_MassProcess
+	}
+}
+
+state Chapter3_ClearTheRadar
+{
+	conditions
+	{
+
+		
+
+		
+		
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		;;;Ratchet 
+		if module "HealTheTroops Timer" < 0.0 and
+			if module "General GetCountC" == 1.0 and
+				if module "General GetCount" == 0.0 goto Chapter3_RatchetHeal
+		if module "Ratchet IsEnergyAtMin" == 1.0 and
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetFlee
+		if module "Ratchet PlayerRange" > 75 goto Chapter3_RadarIsStillJammed
+			
+
+		;;; WaveC
+		if module "WavePT Complete" == 1.0 AND
+			if module "WaveTT Complete" == 1.0 AND
+				if module "General GetCountB" == 1.0 goto Chapter3_WaveCIronHide
+
+		if module "IronHide IronHideIsCombat" == 1.0 and
+			if module "General GetCountB" == 2.0 goto Chapter3_WaveCIronHide2
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 3.0 and
+				if module "General GetCountD" == 1.0 goto Chapter3_WaveCIronHide3
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 3.0 and
+				if module "General GetCountD" == 2.0 goto Chapter3_WaveCIronHide4
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 3.0 and
+				if module "General GetCountD" == 3.0 goto Chapter3_WaveSyncC
+
+		;;; WaveD
+		if module "WaveTT Complete" == 1.0 AND
+			if module "WaveCM Complete" == 1.0 and
+				if module "General GetCountB" == 4.0 goto Chapter3_WaveDIronHide
+		
+		if module "IronHide IronHideIsCombat" == 1.0 and
+			if module "General GetCountB" == 5.0 goto Chapter3_WaveDIronHide2
+	
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 6.0 and
+				if module "General GetCountD" == 1.0 goto Chapter3_WaveDIronHide3
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 6.0 and
+				if module "General GetCountD" == 2.0 goto Chapter3_WaveDIronHide4
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 6.0 and
+				if module "General GetCountD" == 3.0 goto Chapter3_WaveSyncD
+		
+		;;; WaveE
+		if module "WaveAC Complete" == 1.0 AND
+			if module "WaveTT Complete" == 1.0 AND
+				if module "General GetCountB" == 7.0 goto Chapter3_WaveEIronHide
+		
+		if module "IronHide IronHideIsCombat" == 1.0 and
+			if module "General GetCountB" == 8.0 goto Chapter3_WaveEIronHide2
+
+		if module "IronHide IronHideIsStatic" == 1.0 and
+			if module "General GetCountB" == 9.0 goto Chapter3_IronHideCharge
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#Ratchet" "#Script=RatchetCombat" 
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		
+	}
+}
+
+state Chapter3_WaveCIronHide
+{
+	
+	actions
+	{
+		SendToModule "#D5C3IronHideSpeechC" "#StartOneShot"
+
+		;[DroneTowTruck_a, DronePickupTruck_a]
+		DestroyModule "#WavePT"
+		DestroyModule "#WaveTT"
+;		DestroyModule "#WaveTF"
+
+		SendToModule "#General" "#BG_UnloadCreature=DronePickupTruck_a"	
+		SendToModule "#General" "#BG_LoadCreature=DroneCement_a"
+		SendToModule "#Ironhide" "#IronHideToCharge" "#DrawHealthBar"
+		SendToModule "#General" "#CountBSet=2" "#CountSet=1" "#CountDSet=1"
+		;[DroneTowTruck_a, DroneCement_a]
+
+		SetState Chapter3_MassProcess
+	}
+}
+
+state Chapter3_WaveCIronHide2
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=3"
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_WaveCIronHide3
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountDSet=2"
+		SendToModule "#Ironhide" "#IronHideToCharge"
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_WaveCIronHide4
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountDSet=3"
+		SendToModule "#Ironhide" "#IronHideToCharge"
+		SetState Chapter3_MassProcess
+	}
+}
+
+
+state Chapter3_WaveSyncC
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SendToModule "#IronHide" "#NoHealthBar"
+		
+		SetState Chapter3_WaveD
+	}
+}
+
+state Chapter3_WaveD
+{
+	
+	actions
+	{
+		;[DroneTowTruck_a, DroneCement_a]
+		CreateModule "#Creature" "#WaveTT" "#Spline=D5C3SpawnB" "#count=2" "#maxalive=2" "#Type=DroneTowTruck_a" "#IgnoreLOS" "#KeyLocation" "#Script=TowTruckDrone" "#SetEnergyMax=900" "#SetEnergy=900"
+		CreateModule "#Creature" "#WaveCM" "#Spline=D5C3SpawnA" "#count=2" "#maxalive=2" "#Type=DroneCement_a" "#IgnoreLOS" "#KeyLocation" "#Script=MixerDrone" "#SetEnergyMax=400" "#SetEnergy=400"
+		;[DroneTowTruck_a, DroneCement_a]
+
+		SendToModule "#General" "#CountBSet=4" "#CountSet=0" "#CountDSet=0"
+		SetState Chapter3_MassProcess
+	}
+}
+
+state Chapter3_WaveDIronHide
+{
+	
+	actions
+	{
+
+		SendToModule "#D5C3IronHideSpeechD" "#StartOneShot"
+		;[DroneTowTruck_a, DroneCement_a]
+		DestroyModule "#WaveTT"
+		DestroyModule "#WaveCM"
+		SendToModule "#General" "#BG_UnloadCreature=DroneCement_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar_a"
+		SendToModule "#Ironhide" "#IronHideToCharge" "#DrawHealthBar"
+		;[DroneTowTruck_a, DroneArmouredCar_a]
+
+		SendToModule "#General" "#CountBSet=5" "#CountSet=1" "#CountDSet=1"
+		SetState Chapter3_MassProcess
+	}
+}
+
+state Chapter3_WaveDIronHide2
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=6"
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_WaveDIronHide3
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountDSet=2"
+		SendToModule "#Ironhide" "#IronHideToCharge"
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_WaveDIronHide4
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountDSet=3"
+		SendToModule "#Ironhide" "#IronHideToCharge"
+		SetState Chapter3_MassProcess
+	}
+}
+state Chapter3_WaveSyncD
+{
+	actions
+	{
+		CreatureBGLoadSync
+		SendToModule "#IronHide" "#NoHealthBar"
+		SetState Chapter3_WaveE
+	}
+}
+
+state Chapter3_WaveE
+{
+	
+	actions
+	{
+		;[DroneTowTruck_a, DroneArmouredCar_a]
+		CreateModule "#Creature" "#WaveAC" "#Spline=D5C3SpawnB" "#count=2" "#maxalive=2" "#Type=DroneArmouredCar_a" "#IgnoreLOS" "#KeyLocation" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		;CreateModule "#Creature" "#WaveTF" "#Spline=D5C3SpawnB" "#count=1" "#maxalive=1" "#Type=DroneMig_a" "#IgnoreLOS" "#KeyLocation" "#Script=TruckFlameDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		
+		CreateModule "#Creature" "#WaveTT" "#Spline=D5C3SpawnB" "#count=1" "#maxalive=1" "#Type=DroneTowTruck_a" "#IgnoreLOS" "#KeyLocation" "#Script=TowTruckDrone" "#SetEnergyMax=900" "#SetEnergy=900"
+		;[DroneTowTruck_a, DroneArmouredCar_a]
+		SendToModule "#General" "#CountBSet=7" "#CountSet=0" "#CountDSet=0"
+		SetState Chapter3_MassProcess
+	}
+}
+
+state Chapter3_WaveEIronHide
+{
+	
+	actions
+	{
+		;[DroneTowTruck_a, DroneArmouredCar_a]
+		DestroyModule "#WaveAC"
+		DestroyModule "#WaveTT"
+		;DestroyModule "#WaveTF"
+		SendToModule "#Ironhide" "#IronHideToCharge" "#DrawHealthBar"
+
+		;[DroneTowTruck_a, DroneArmouredCar_a]
+		SendToModule "#General" "#CountBSet=8" "#CountSet=1"
+		SetState Chapter3_MassProcess
+	}
+}
+
+state Chapter3_WaveEIronHide2
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=9"
+		SetState Chapter3_MassProcess
+	}
+}
+
+state Chapter3_IronHideCharge
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		if module "IronHide Energy" < 0.2 and 
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetHealBoss2
+		if module "Ratchet IsEnergyAtMin" == 1.0 and
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetFlee
+		if module "Ratchet PlayerRange" < 45 and
+			if module "General GetCountC" == 1.0 goto Chapter3_ClearTheRadar3
+
+		if module "IronHide IronHideIsCombat" == 1.0 goto Chapter3_IronHideCombat
+	}
+	actions
+	{
+		SendToModule "#Ironhide" "#IronHideToCharge" "#DrawHealthBar"
+		SendToModule "#General" "#CountDSet=1"
+	}
+}
+
+state Chapter3_IronHideCombat
+{
+	conditions
+	{
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		if module "IronHide Energy" < 0.2 and 
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetHealBoss2
+		if module "Ratchet IsEnergyAtMin" == 1.0 and
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetFlee
+		if module "Ratchet PlayerRange" < 45 and
+			if module "General GetCountC" == 1.0 goto Chapter3_ClearTheRadar2
+
+		if module "IronHide IronHideIsCombat" == 0.0 goto Chapter3_IronHideCharge
+	}
+}
+state Chapter3_RatchetHealBoss2
+{
+	
+	actions
+	{
+		ResetTimer
+		SendToModule "#HealTheTroops" "#Time=40"
+		SendToModule "#Ratchet" "#Script=Heal" 
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		SendToModule "#IronHide" "#SetEnergy=10800" 
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#General" "#SetMessage=ITC2" "#SetMessageTimer=3.0"
+		CreateModule "#Speech" "#EWave" "#speech=#D5_ch3_obj7" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+
+		Idle 1.4
+		
+		SetState Chapter3_RadarIsStillJammed2
+	}
+}
+
+state Chapter3_ClearTheRadar2
+{
+	conditions
+	{
+
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		if module "IronHide Energy" < 0.2 and 
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetHealBoss2
+		if module "Ratchet IsEnergyAtMin" == 1.0 and
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetFlee
+		
+		if module "IronHide IronHideIsCombat" == 0.0 goto Chapter3_IronHideCharge
+		if module "Ratchet PlayerRange" > 45 goto Chapter3_RadarIsStillJammed2
+	
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#Ratchet" "#Script=RatchetCombat" 
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		
+	}
+}
+state Chapter3_ClearTheRadar3
+{
+	conditions
+	{
+
+		if module "IronHide Dead" == 1.0 goto Chapter3_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		if module "IronHide Energy" < 0.2 and 
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetHealBoss2
+		if module "Ratchet IsEnergyAtMin" == 1.0 and
+			if module "General GetCountC" == 1.0 goto Chapter3_RatchetFlee
+		
+
+		if module "IronHide IronHideIsCombat" == 1.0 goto Chapter3_IronHideCombat
+		if module "Ratchet PlayerRange" > 45 goto Chapter3_RadarIsStillJammed2
+	
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+		SendToModule "#Ratchet" "#Script=RatchetCombat" 
+		SendToModule "#RatchetMarker" "#SetRadarType=#AutoBotRadarIcon"
+		
+	}
+}
+state Chapter3_RadarIsStillJammed2
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=1"
+		SendToModule "#Ratchet" "#Script=RatchetInit"
+		SetState Chapter3_IronHideCombat
+	}
+}
+state Chapter3_DeathFailMission
+{
+	
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"
+
+		SetState Chapter3_DeathFailMission2
+	}
+}
+state Chapter3_DeathFailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission
+{
+	
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"
+
+		SetState Chapter3_FailMission2
+	}
+}
+state Chapter3_FailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter3_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=IronHide"
+    	SendToModule "#General" "#UnloadCreature=DroneForklift_a"
+		SendToModule "#General" "#UnloadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnloadCreature=DronePickupTruck_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		SendToModule "#General" "#UnloadCreature=DroneCement_a"
+		SendToModule "#General" "#UnloadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnloadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnloadCreature=DroneTowTruck_a"
+    	SendToModule "#General" "#PlayerType=Barricade,Scorponok,Blackout,Megatron,Barricade"
+
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter3Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		SendToModule #General #UnlockBonus=Character_Blackout
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+	}
+}
+state Chapter3_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D5C3Outro1"
+	}
+}
+state Chapter3_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=IronHide"
+    	SendToModule "#General" "#UnloadCreature=DroneForklift_a"
+		SendToModule "#General" "#UnloadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnloadCreature=DronePickupTruck_a"
+		;SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		SendToModule "#General" "#UnloadCreature=DroneCement_a"
+		SendToModule "#General" "#UnloadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnloadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnloadCreature=DroneTowTruck_a"
+    	SendToModule "#General" "#PlayerType=Barricade,Scorponok,Blackout,Megatron,Barricade" "#SetVehicle=#D5MIntro" 
+
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter4"
+		SendToModule #General #ResetLevel
+		IncreasePlayerHealth max
+		setstate Chapter3_MoveCharacter ;"PickGoto"
+	}
+}
+state Chapter3_MoveCharacter 
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 4.0 goto LvlCompleteMoveChar
+		if Timer > 0.1 goto PickGoto
+	}
+	actions
+	{
+		ResetTimer	
+	}
+	
+}
+state LvlCompleteMoveChar
+{
+	
+	actions
+	{
+		SendToModule "#General" "#SetPlayer=#COMPPOINT3" 
+		SetState PickGoto
+	}
+	
+}

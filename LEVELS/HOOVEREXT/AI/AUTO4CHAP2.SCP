@@ -1,0 +1,315 @@
+state Chapter2_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A4_ch2_Goto"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter2_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A4_ch2_Goto" "#Start"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter2Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter2_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter2_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter2_LoadCreatures
+{
+	conditions
+	{
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_VideoIntro
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+		SendToModule "#General" "#LoadCreature=DroneMig"
+		SendToModule "#General" "#LoadCreature=DroneCement"
+    	SendToModule "#General" "#PlayerType=BumbleBee07"
+	}
+}
+state Chapter2_VideoIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_Main
+	}
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#A4C2Intro"
+	}
+}
+
+state Chapter2_Main
+{
+	conditions
+	{
+		if message "MissionMessage" == 1.0 goto Chapter2_Complete
+		if message "MissionMessage" == 2.0 goto Chapter2_FailMission 
+	}
+	actions
+	{
+		SetDeathPoint "Chapter2_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A4_ch2_obj1" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter2Start" "#FadeUp"
+		;SendToModule "#General" "#AddTerrainFilter=4" "#SetPlayerTerrainFilter=-1"
+		SetState Chapter2_ClearTheSamSites
+	}
+}
+
+state Chapter2_ClearTheSamSites
+{
+	actions
+	{
+		CreateModule "#AAGun" "#AAGunA"
+		SendToModule "#AAGunA" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_A4C2A" "#Delay=2.0" "#Energy=50.0" "#RespawnDelay=0" "#Ammo=0" "#Create" "#PopDown=255.0" "#VTarget=0.0 900.0 0.0" "#Range=90000.0"  "#NoDamage" "#Doors"
+		CreateModule "#AAGun" "#AAGunB"
+		SendToModule "#AAGunB" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_A4C2B" "#Delay=2.0" "#Energy=50.0" "#RespawnDelay=0" "#Ammo=0" "#Create" "#PopDown=255.0" "#VTarget=0.0 900.0 0.0" "#Range=90000.0"  "#NoDamage" "#Doors"
+		CreateModule "#AAGun" "#AAGunC"
+		SendToModule "#AAGunC" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_A4C2C" "#Delay=2.0" "#Energy=50.0" "#RespawnDelay=0" "#Ammo=0" "#Create" "#PopDown=255.0" "#VTarget=0.0 900.0 0.0" "#Range=90000.0"  "#NoDamage" "#Doors"
+		CreateModule "#AAGun" "#AAGunD"
+		SendToModule "#AAGunD" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_A4C2D" "#Delay=2.0" "#Energy=50.0" "#RespawnDelay=0" "#Ammo=0" "#Create" "#PopDown=255.0" "#VTarget=0.0 900.0 0.0" "#Range=90000.0"  "#NoDamage" "#Doors"
+		CreateModule "#AAGun" "#AAGunE"
+		SendToModule "#AAGunE" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_A4C2E" "#Delay=2.0" "#Energy=50.0" "#RespawnDelay=0" "#Ammo=0" "#Create" "#PopDown=255.0" "#VTarget=0.0 900.0 0.0" "#Range=90000.0"  "#NoDamage" "#Doors"
+		
+
+		CreateModule "#SpecialObj" "#SpecialObjA" "#String=A4C2B"
+		CreateModule "#SpecialObj" "#SpecialObjB" "#String=A4C2E"
+		CreateModule "#SpecialObj" "#SpecialObjC" "#String=A4C2D"
+		CreateModule "#SpecialObj" "#SpecialObjD" "#String=A4C2A"
+		CreateModule "#SpecialObj" "#SpecialObjE" "#String=A4C2C"
+		
+		CreateModule "#ClearIt" "#A4C2ClearItA" "#Spline=A4C2_OBJ_A" "#Radius=3.0" "#Placement=#A4C2ClearItA" "#BoundarySpline=A4C2_BOUND_A" 
+		CreateModule "#ClearIt" "#A4C2ClearItB" "#Spline=A4C2_OBJ_B" "#Radius=3.0" "#Placement=#A4C2ClearItB" "#BoundarySpline=A4C2_BOUND_B" 
+		CreateModule "#ClearIt" "#A4C2ClearItC" "#Spline=A4C2_OBJ_C" "#Radius=3.0" "#Placement=#A4C2ClearItC" "#BoundarySpline=A4C2_BOUND_C" 
+		CreateModule "#ClearIt" "#A4C2ClearItD" "#Spline=A4C2_OBJ_D" "#Radius=3.0" "#Placement=#A4C2ClearItD" "#BoundarySpline=A4C2_BOUND_D" 
+		CreateModule "#ClearIt" "#A4C2ClearItE" "#Spline=A4C2_OBJ_E" "#Radius=3.0" "#Placement=#A4C2ClearItE" "#BoundarySpline=A4C2_BOUND_E" 
+		
+		CreateModule "#Timer" "#Timer" "#Time=300.0" "#Start"
+		
+		;;CREATURE WAVES
+				
+		CreateModule "#Creature" "#CreatureWaveA" "#maxalive=3" "#spline=A4C2_SPAWN_A" "#type=DroneMig" "#rangemax=300" "#rangemin=200" "#Count=3000"
+		CreateModule "#Creature" "#CreatureWaveB" "#maxalive=2" "#spline=A4C2_SPAWN_A" "#type=DroneCement" "#rangemax=300" "#rangemin=200" "#Count=3000"
+		
+		SendToModule "#General" "#CountSet=0"
+		
+		SetState Chapter2_SamSitesWatch
+	}
+
+}
+
+state Chapter2_SamSitesWatch
+{
+	Conditions
+	{
+		
+		if module "Timer" <= 0.0 goto Chapter2_FailMission
+		
+		if module "A4C2ClearItA CompleteTrigger" == 1.0 goto Chapter2_ActivateSamA
+		if module "A4C2ClearItB CompleteTrigger" == 1.0 goto Chapter2_ActivateSamB
+		if module "A4C2ClearItC CompleteTrigger" == 1.0 goto Chapter2_ActivateSamC
+		if module "A4C2ClearItD CompleteTrigger" == 1.0 goto Chapter2_ActivateSamD
+		if module "A4C2ClearItE CompleteTrigger" == 1.0 goto Chapter2_ActivateSamE
+		
+		if module "General CountGet" >= 5.0 goto Chapter2_All5Active
+	
+	
+	}
+}
+
+state Chapter2_ActivateSamA
+{
+	actions
+	{
+		SendToModule "#AAGunA" "#ForcePopRange=0.0"
+		SendToModule "#General" "#CountInc"
+		SendToModule "#A4C2ClearItA" "#ClearTriggeredComplete"
+		SetState Chapter2_SamSitesWatch
+	}
+}
+
+state Chapter2_ActivateSamB
+{
+	actions
+	{
+		SendToModule "#AAGunB" "#ForcePopRange=0.0"
+		SendToModule "#General" "#CountInc"
+		SendToModule "#A4C2ClearItB" "#ClearTriggeredComplete"
+		SetState Chapter2_SamSitesWatch
+	}
+}
+
+state Chapter2_ActivateSamC
+{
+	actions
+	{
+		SendToModule "#AAGunC" "#ForcePopRange=0.0"
+		SendToModule "#General" "#CountInc"
+		SendToModule "#A4C2ClearItC" "#ClearTriggeredComplete"
+		SetState Chapter2_SamSitesWatch
+	}
+}
+
+state Chapter2_ActivateSamD
+{
+	actions
+	{
+		SendToModule "#AAGunD" "#ForcePopRange=0.0"
+		SendToModule "#General" "#CountInc"
+		SendToModule "#A4C2ClearItD" "#ClearTriggeredComplete"
+		SetState Chapter2_SamSitesWatch
+	}
+}
+
+state Chapter2_ActivateSamE
+{
+	actions
+	{
+		SendToModule "#AAGunE" "#ForcePopRange=0.0"
+		SendToModule "#General" "#CountInc"
+		SendToModule "#A4C2ClearItE" "#ClearTriggeredComplete"
+		SetState Chapter2_SamSitesWatch
+	}
+}
+
+state Chapter2_All5Active
+{
+	actions
+	{
+		DestroyModule "#Timer"
+		Idle 5.0
+		SetState Chapter2_Complete
+	}
+}
+
+
+state Chapter2_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter2_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter2_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#UnLoadCreature=DroneCement"
+		SendToModule "#General" "#RevertPlayerType"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter2Restart" "#FadeUp"
+		;SendToModule "#General" "#RemoveTerrainFilter=4" "#SetPlayerTerrainFilter=0"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#CompleteMission" 
+		;SendToModule "#General" "#RemoveTerrainFilter=4" "#SetPlayerTerrainFilter=0"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+	}
+}
+state Chapter2_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A4C2Outro"
+	}
+}
+state Chapter2_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter2_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#UnLoadCreature=DroneCement"
+		SendToModule "#General" "#PlayerType=BumbleBee07"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter2_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter3"
+		IncreasePlayerHealth max
+		setstate "Chapter3_InitGoto"
+	}
+}

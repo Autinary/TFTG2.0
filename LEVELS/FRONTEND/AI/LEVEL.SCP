@@ -1,0 +1,15 @@
+State Base {
+	Conditions {
+		if APIMenuActive == 0.0 goto TriggerStart
+	}
+	Actions {
+		InitFrontEnd
+	}
+}
+
+state TriggerStart {
+	Actions {
+		ActivateGUI TransLogoAppear
+		Fadein 0.1
+	}	
+}

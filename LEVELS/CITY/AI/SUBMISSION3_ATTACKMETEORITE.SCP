@@ -1,0 +1,397 @@
+;Destroy all drones within time limit
+
+;requires:
+;	Keylocation spline 				KeyLoc#
+;	Spawn spline for meteorite impacts		Spawn#
+
+;Changeable params:
+;	300		time in which to complete the mission
+;	15			keylocation timeout
+;	3		maximum alive
+;	DroneForkLift	type of creature one to fight against
+;	DroneDefault	type of creature two to fight against
+;	DronePickupTruck	type of creature three to fight against
+;						DroneForkLift
+;						DroneTowTruck
+;						DroneArmouredCar
+;						DroneCement
+;						DronePickupTruck
+;						DroneMig
+;						BumbleBee
+;						Barricade
+
+
+state SubMission3_Enter
+{
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission3_Death"
+		;SendToModule "#General" "#PlayerType=Optimus"
+		SetState "SubMission3_Init"
+	}
+}
+state SubMission3_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission3_MainInit
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission3"
+	   ;
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc3" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" "#Protect"
+		CreateModule "#Timer" "#Timer" "#Time=300" "#Protect"
+
+	}
+}
+state SubMission3_MainInit
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" == 0.0 goto SubMission3_MainEnergonDrone
+		if module "General ChapterProgress" == 1.0 goto SubMission3_MainJazz
+		if module "General ChapterProgress" == 2.0 goto SubMission3_MainIronhide
+		if module "General ChapterProgress" == 3.0 goto SubMission3_MainBumblebee
+		if module "General ChapterProgress" == 4.0 goto SubMission3_Main
+	}
+	
+}
+state SubMission3_MainEnergonDrone
+{
+	
+	actions
+	{
+		DestroyModule "#Timer"
+		DestroyModule "#KeyLocation"
+		
+		SendToModule "#General" "#FadeUp"
+		Idle 2.0 
+		SendToModule "#General" "#SetMessage=BBTranD1" "#SetMessageTimer=4"
+		Idle 4.0 
+		SetState SubMission3_Fail		
+	}
+}
+state SubMission3_MainJazz
+{
+	conditions
+	{
+		if Timer > 20.0 and
+			if module "Meteorite GetPercentage" == 1.0 and
+				if module "Creature GetCountAlive" == 0.0 and
+					if module "Meteorite2 GetPercentage" == 1.0 and
+						if module "Creature2 GetCountAlive" == 0.0 and 
+							if module "Meteorite3 GetPercentage" == 1.0 and
+								if module "Creature3 GetCountAlive" == 0.0 goto SubMission3_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		
+		 SendToModule "#General" "#LoadCreature=DroneForkLift"
+	    SendToModule "#General" "#LoadCreature=DroneDefault"
+	 
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+		
+	
+		SetMusic "STOP INMISSION ACTION Mission2_4 PLAY ACTION"
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=3" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=Spawn3" "#Time=6" "#Time=9" "#Time=12"
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=Spawn3" "#Time=3" 
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=8" "#IconType=#Drone"
+		SendToModule "#General" "#FadeUp"		
+		Idle 20.0
+		ResetTimer  
+		CreateModule "#Creature" "#Creature3" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#Creature3" "#Spline=Spawn3" "#Time=3" "#Time=6" "#Time=9" "#Time=12"
+		
+		
+	}
+}
+state SubMission3_MainIronhide
+{
+	conditions
+	{
+		if Timer > 15.0 and
+			if module "Meteorite GetPercentage" == 1.0 and
+				if module "Creature GetCountAlive" == 0.0 and
+					if module "Meteorite2 GetPercentage" == 1.0 and
+						if module "Creature2 GetCountAlive" == 0.0 and 
+							if module "Meteorite3 GetPercentage" == 1.0 and
+								if module "Creature3 GetCountAlive" == 0.0 goto SubMission3_Wave2I
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		 SendToModule "#General" "#LoadCreature=DroneForkLift"
+	    SendToModule "#General" "#LoadCreature=DroneDefault"
+		 SendToModule "#General" "#LoadCreature=DronePickupTruck"
+		 SendToModule "#General" "#LoadCreature=Barricade"
+	  
+
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+		
+		SetMusic "STOP INMISSION ACTION Mission1_2 PLAY ACTION"
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=Spawn3" "#Time=3" "#Time=6" "#Time=9" "#Time=12"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=23" "#IconType=#Drone" "#Protect"
+		
+		SendToModule "#General" "#FadeUp"		
+		Idle 10.0
+		ResetTimer  
+		CreateModule "#Creature" "#Creature3" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#Creature3" "#Spline=Spawn3" "#Time=6" "#Time=9" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=Spawn3" "#Time=3" "#Time=12"
+		
+
+			
+	}
+}
+state SubMission3_Wave2I
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+				if module "Creature GetCountAlive" == 0.0 and
+					if module "Meteorite2 GetPercentage" == 1.0 and
+						if module "Creature2 GetCountAlive" == 0.0 and 
+							if module "Meteorite3 GetPercentage" == 1.0 and
+								if module "Creature3 GetCountAlive" == 0.0 goto SubMission3_Wave3I
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		DestroyAllModules 
+
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=Spawn3" "#Time=3" "#Time=6" 
+	
+		CreateModule "#Creature" "#Creature3" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#Creature3" "#Spline=Spawn3" "#Time=7" "#Time=10" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=Spawn3" "#Time=4" "#Time=13"
+	}
+}
+state SubMission3_Wave3I
+{
+	conditions
+	{
+		
+		if module "Creature4 Dead" == 1.0 goto SubMission3_Process
+
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		DestroyAllModules 
+
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=3" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=Spawn3" "#Time=3" "#Time=6" "#Time=9" 
+	
+		CreateModule "#Creature" "#Creature3" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#Creature3" "#Spline=Spawn3" "#Time=7" "#Time=10" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=3" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=Spawn3" "#Time=4" "#Time=12" "#Time=13"
+
+		CreateModule "#Creature" "#Creature4" "#Spline=Spawn3"  "#count=1" "#maxalive=1" "#addtoradaralways" "#Type=Barricade" "#SpawnInLosInit" "#SpawnAsVehicle" "#TransformForceRobot" "#KeyLocation=On" "#Script=Barricade" "#BlockDeath"
+		
+	}
+}
+state SubMission3_Process
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+				if module "Creature GetCountAlive" == 0.0 and
+					if module "Meteorite2 GetPercentage" == 1.0 and
+						if module "Creature2 GetCountAlive" == 0.0 and 
+							if module "Meteorite3 GetPercentage" == 1.0 and
+								if module "Creature3 GetCountAlive" == 0.0 goto SubMission3_Finish
+
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		SendToModule "#DroneCounter" "#Increment=1"
+		
+	}
+}
+state SubMission3_MainBumblebee
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "Creature GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "Creature2 GetCountAlive" == 0.0 goto SubMission3_Wave2
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		 SendToModule "#General" "#LoadCreature=DroneForkLift"
+	    SendToModule "#General" "#LoadCreature=DroneDefault"
+		 SendToModule "#General" "#LoadCreature=DronePickupTruck"
+
+		SetMusic "STOP INMISSION ACTION Mission3_2 PLAY ACTION"
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=Spawn3" "#Time=3" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=Spawn3" "#Time=6" "#Time=9"
+		
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=11" "#IconType=#Drone" "#Protect"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission3_Main
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "Creature GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "Creature2 GetCountAlive" == 0.0 goto SubMission3_Wave2
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		 SendToModule "#General" "#LoadCreature=DroneForkLift"
+	    SendToModule "#General" "#LoadCreature=DroneDefault"
+		 SendToModule "#General" "#LoadCreature=DronePickupTruck"
+
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=Spawn3" "#Time=3" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=Spawn3" "#Time=6" "#Time=9"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=11" "#IconType=#Drone" "#Protect"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission3_Wave2
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+				if module "Creature GetCountAlive" == 0.0 and
+					if module "Meteorite2 GetPercentage" == 1.0 and
+						if module "Creature2 GetCountAlive" == 0.0 and 
+							if module "Meteorite3 GetPercentage" == 1.0 and
+								if module "Creature3 GetCountAlive" == 0.0 goto SubMission3_Wave3
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		DestroyAllModules
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=Spawn3" "#Time=3" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=Spawn3" "#Time=6" "#Time=9" 
+		CreateModule "#Creature" "#Creature3" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#Creature3" "#Spline=Spawn3" "#Time=12"
+
+
+
+	}
+}
+state SubMission3_Wave3
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+				if module "Creature GetCountAlive" == 0.0 and
+					if module "Meteorite2 GetPercentage" == 1.0 and
+						if module "Creature2 GetCountAlive" == 0.0 and 
+							if module "Meteorite3 GetPercentage" == 1.0 and
+								if module "Creature3 GetCountAlive" == 0.0 goto SubMission3_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		DestroyAllModules
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=Spawn3" "#Time=3" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=Spawn3" "#Time=6" "#Time=9" 
+		CreateModule "#Creature" "#Creature3" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#Creature3" "#Spline=Spawn3" "#Time=12"
+	}
+}
+
+state SubMission3_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission3_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission3_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=3"
+		;SetState "SubMission3_Leave"
+	}
+}
+state SubMission3_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission3_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission3_Leave
+{
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission3" "#FadeUp"
+	   	SendToModule "#General" "#UnLoadCreature=DroneForkLift"
+	   	SendToModule "#General" "#UnLoadCreature=DroneDefault"
+	   	SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=Barricade"
+	  
+		SendToModule "#General" "#FadeUp"		
+		SetState "GlobalActionRing"
+	}
+}
+

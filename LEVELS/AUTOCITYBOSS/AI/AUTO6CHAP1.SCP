@@ -1,0 +1,2393 @@
+state Chapter1_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState GlobalActionRing
+	}
+}
+state Chapter1_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter1_Enter
+{
+	actions
+	{
+		DestroyAllModules 
+		SetState Chapter1_IntroVideo
+	}
+}
+state Chapter1_IntroVideo
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A6LevelIntro"
+	}
+}
+state Chapter1_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Main 
+	}
+	actions
+	{
+		;SendToModule "#ActionRing" "#RemoveCreatures"
+
+		SendToModule "#General" "#UnLoadCreature=BumbleBee07"
+		SendToModule "#General" "#UnLoadCreature=IronHide"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#LoadCreature=Megatron"
+		SendToModule "#General" "#LoadCreature=DroneForklift_a"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		
+	}
+}
+ActionMacro CreateBR
+{
+	CreateModule "#CreatureBombingRun" "#CreatureBombingRun" "#ModuleTag=#Megatron" "#Spline=A6C1BR1" "#Spline=A6C1BR2" "#Spline=A6C1BR3" "#Spline=A6C1BR4"	
+	SendToModule "#CreatureBombingRun" "#NumRuns=3" "#SpeedValueMin=250" "#SpeedValueMax=700" "#MeleeScript=Megatron_PH2"
+}
+
+ActionMacro CreateBRAttack
+{
+	CreateModule "#CreatureBombingRun" "#CreatureBombingRun" "#ModuleTag=#Megatron" "#Spline=A6C1Attack1" "#ArrivalSpline=A6C1MegaArrive1"
+	SendToModule "#CreatureBombingRun" "#NumRuns=3" "#LandAtEndOfSpline" "#AttackFiringMode" "#UseFirstSpline" "#LookAtBias=1.0" "#SpeedValueMin=75" "#SpeedValueMax=300" "#MeleeScript=Megatron_PH2"
+	CreateModule "#AreaRange" "#BREnd" "#Trigger=#BRAttackEndZone" "#AddToRadarOff" "#AllCreatures"
+		
+}
+ActionMacro MigAction
+{
+	CreateModule "#Creature" "#M29DroneB" "#Type=DroneMig" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A6C1MegaArrive1" "#SetEnergyMax=1500" "#SetEnergy=1500"
+	CreateModule "#Creature" "#M29DroneC" "#Type=DroneMig" "#Spline=A6C1Spawn" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A6C1MegaArrive1" "#SetEnergyMax=1500" "#SetEnergy=1500"
+	Idle 5.7 
+	SendToModule "#CreatureWaveC" "#Script=Mig29Drone"
+	SendToModule "#CreatureWaveD" "#Script=Mig29Drone"
+	
+} 
+state Chapter1_Main
+{
+	actions
+	{
+		SetMusic "ACTION Mission1_1 Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		SendToModule "#General" "#ResetCounters"
+		SendToModule "#General" "#SetPlayer=#Chapter1Start" 
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1Spawn" "#AddToRadarAlways" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetPosition=#Megatron" "#SetEnergyMax=3000" "#SetEnergy=3000" "#SetEnergyMin=100" "#Protect" ;
+		CreateModule "#Goto" "#RangeTracker" "#Spline=A6C1Spawn" "#SetPosition=#A6C1Phase1KeyLoc" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#RangeTracker" "#Radius=175" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key6Return" "#HeadType=#Optimus"
+		
+		SendToModule "#Megatron" "#SetPosition=#Megatron" "#Script=StandAndWait" "#MegatronToCombat" 
+		CreateModule "#Speech" "#A6_ch1_obj1" "#speech=#A6_ch1_obj1" "#AutoDestroy" "#PlayDelay=2.0" "#Start" 
+		CreateModule "#Speech" "#A6_ch1_obj10" "#speech=#A6_ch1_obj10" "#AutoDestroy" "#PlayDelay=5.5" "#Start"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		Idle 0.1
+		SendToModule "#Megatron" "#SetPosition=#Megatron" "#MegatronToCombat" "#Script=Megatron_PH1" 
+		
+		SendToModule "#General" "#FadeUp"
+		SetState Chapter1_Phase1
+	}
+}
+state Chapter1_Phase1
+{
+	conditions
+	{
+		;if Timer < 15.0 and 
+		;	if module "Megatron Health" <= 0.50 goto Chapter1_Phase1OPTaunt
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_Phase1End
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+;state Chapter1_Phase1OPTaunt
+;{
+;	conditions
+;	{
+;		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_Phase1End
+;		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+;		
+;	}
+;	actions
+;	{
+;		CreateModule "#Speech" "#A6_ch1_obj4" "#speech=#A6_ch1_obj4" "#AutoDestroy" "#Start" 
+;		
+;	}
+;}
+state Chapter1_Phase1End
+{
+	conditions
+	{
+		if module "Megatron Complete" == 1.0 goto Chapter1_Phase2Init
+		if module "RangeTracker GetLinkedDist" < 50 goto Chapter1_Phase2Init
+	}
+	actions
+	{
+		DestroyModule "#KeyLocation" 
+		SendToModule "#RangeTracker" "#SetPosition=#A6C1RangeTracker" "#Link=#Megatron"
+		SendToModule "#Megatron" "#FollowSpline=A6C1Spawn" "#Script=FollowSplineM" "#RemoveBoss" "#SetEnergy=2700"
+		CreateModule "#Speech" "#A6_ch1_obj9" "#speech=#A6_ch1_obj9" "#AutoDestroy" "#Start" 
+		
+	}
+}
+state Chapter1_Phase2Init
+{
+	conditions
+	{
+		;if module "Megatron Complete" == 1.0 goto Chapter1_Phase2Init
+	}
+	actions
+	{
+		DestroyModule "#RangeTracker" 
+		SendToModule "#General" "#BG_UnLoadCreature=DroneForklift_a"
+		Idle 1.5
+		SetState Chapter1_Phase2MegaWait
+		
+	}
+}
+state Chapter1_Phase2MegaWait
+{
+	conditions
+	{
+		if module "Megatron PlayerRange" < 30 goto Chapter1_Phase2
+	}
+	actions
+	{
+		
+		SendToModule "#Megatron" "#Script=Megatron_PH2I" "#Unstoppable" "#SetEnergy=3000"
+	}
+}
+state Chapter1_Phase2Enter
+{
+	actions
+	{
+		DestroyAllModules 
+		SetState Chapter1_Phase2IntroVideo
+	}
+}
+state Chapter1_Phase2IntroVideo
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_Phase2LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A7LevelIntro"
+	}
+}
+state Chapter1_Phase2LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Phase2Main 
+	}
+	actions
+	{
+		;SendToModule "#ActionRing" "#RemoveCreatures"
+
+		SendToModule "#General" "#UnLoadCreature=BumbleBee07"
+		SendToModule "#General" "#UnLoadCreature=IronHide"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#LoadCreature=Megatron"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		
+	}
+}
+state Chapter1_Phase2Main
+{
+	actions
+	{
+		SetMusic "ACTION Mission1_1 Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+
+		SendToModule "#General" "#SetPlayer=#Chapter2Start" 
+		
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+		CreateModule "#Creature" "#AmbusherA" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#SetEnergyMax=1000" "#SetEnergy=1000" "#Script=CarDrone"
+		CreateModule "#Creature" "#AmbusherB" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#SetEnergyMax=1000" "#SetEnergy=1000" "#Script=CarDrone"
+		CreateModule "#Creature" "#AmbusherC" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#SetEnergyMax=1000" "#SetEnergy=1000" "#Script=CarDrone"
+		CreateModule "#Creature" "#AmbusherD" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#SetEnergyMax=1000" "#SetEnergy=1000" "#Script=CarDrone"
+		
+
+		SendToModule "#General" "#FadeUp"
+		SetState Chapter1_MegatronFlyA
+	}
+}
+state Chapter1_Phase2
+{
+	conditions
+	{
+		if Timer > 5.0 and
+			if module "Megatron PlayerRange" > 300 goto Chapter1_MegatronFlyA
+        }
+	actions
+	{
+		
+		ResetTimer
+		;SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter2"
+
+		SendToModule "#Megatron" "#Script=FlyOff_M" "#Stoppable" "#AddToRadarOff"
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#BG_LoadCreature=DronePickupTruck"
+		
+		CreateModule "#Creature" "#AmbusherA" "#Spline=A6C1Spawn" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsVehicle" "#SetPosition=#A6AmbushSpawn1" "#SetEnergyMax=1000" "#SetEnergy=1000"; "#SpawnAsleep" "#Script=Melee" 
+		CreateModule "#Creature" "#AmbusherB" "#Spline=A6C1Spawn" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsVehicle" "#SetPosition=#A6AmbushSpawn2" "#SetEnergyMax=1000" "#SetEnergy=1000"; "#SpawnAsleep" "#Script=Melee"
+		CreateModule "#Creature" "#AmbusherC" "#Spline=A6C1Spawn" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsVehicle" "#SetPosition=#A6AmbushSpawn3" "#SetEnergyMax=1000" "#SetEnergy=1000"; "#SpawnAsleep" "#Script=Melee"
+		CreateModule "#Creature" "#AmbusherD" "#Spline=A6C1Spawn" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#SetPosition=#A6AmbushSpawn4" "#SetEnergyMax=1000" "#SetEnergy=1000"; "#SpawnAsleep" "#Script=Melee"
+		
+		Idle 1.3
+		SendToModule "#AmbusherA" "#TransformForceRobot" "#Script=CarDrone"
+		SendToModule "#AmbusherB" "#TransformForceRobot" "#Script=CarDrone"
+		Idle 0.7
+		SendToModule "#AmbusherC" "#TransformForceRobot" "#Script=CarDrone"
+		SendToModule "#AmbusherD" "#TransformForceRobot" "#Script=CarDrone"
+		Idle 3.0
+	
+		;SetState Chapter1_MegatronFlyA
+	}
+}
+state Chapter1_MegatronFlyA
+{
+	conditions
+	{
+		if module "Megatron BeenHit" == 1.0 and
+			if module "General GetCountB" == 1.0 goto Chapter1_OneShotCollectionA1
+
+		if module "BREnd InArea" == 1.0 goto Chapter1_MegatronBombingRunA
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronChargeA
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1Spawn" "#AddToRadarAlways" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Type=Megatron" "#SetEnergyMax=16000" "#SetEnergy=16000" "#Protect" ;
+		
+		SendToModule "#General" "#SetMaxOpponents=18" "#SetMaxApproachers=18" "#SetAttackRingSize=20"
+
+		SendToModule "#General" "#CountASet=1" "#CountBSet=1"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A6C1KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key6Return" "#Protect"
+		CreateModule "#Creature" "#ATDrone" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneArmouredCar" "#SpawnAsCreature" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#TDrone" "#Spline=A6C1Attack1" "#count=10000" "#maxalive=2" "#addtoradar" "#Type=DronePickupTruck" "#SpawnAsCreature" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		SendToModule "#Megatron" "#Script=DummyAircraft"
+
+		CreateModule "#Speech" "#A6_ch1_obj2" "#speech=#A6_ch1_obj2" "#AutoDestroy" "#Protect"
+		DoMacro CreateBRAttack
+		
+		SendToModule "#CreatureBombingRun" "#ForceTransformEnergy=0.95" 
+	}
+}
+state Chapter1_MegatronBombingRunA
+{
+	conditions
+	{
+		if module "Megatron BeenHit" == 1.0 and
+			if module "General GetCountB" == 1.0 goto Chapter1_OneShotCollectionA1
+
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronChargeA
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#BREnd"
+		DestroyModule "#CreatureBombingRun"
+		SendToModule "#Megatron" "#Script=DummyAircraft" "#AddToRadar" "#SetEnergy=16000"
+
+		DoMacro CreateBR
+		
+		SendToModule "#CreatureBombingRun" "#ForceTransformEnergy=0.99" 
+	}
+}
+state Chapter1_OneShotCollectionA1
+{
+	conditions
+	{
+		if module "BREnd InArea" == 1.0 goto Chapter1_MegatronBombingRunA
+		
+
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronChargeA
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{	
+		SendToModule "#General" "#CountBSet=2"
+		SendToModule "#A6_ch1_obj2" "#StartOneShot"
+	}
+}
+state Chapter1_MegatronChargeA
+{
+	conditions
+	{
+		if module "Megatron MegatronIsCharge" == 0.0 goto Chapter1_MegatronCombatA
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#BREnd" 
+		
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCharge" 
+		;SendToModule "#ATDrone" "#count=3"
+		
+	}
+}
+state Chapter1_MegatronCombatA
+{
+	conditions
+	{
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_MegatronFlyAwayInitB
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+		if Timer > 30 goto Chapter1_MegatronReturnToChargeA
+	}
+	actions
+	{
+		ResetTimer
+		;CreateModule "#Speech" "#A6_ch1_obj3" "#speech=#A6_ch1_obj3" "#Start" "#AutoDestroy" 
+		SendToModule "#Megatron" "#Boss" "#Type=Megatron"
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCombat" "#SetEnergyMin=12000.0"
+	}
+}
+state Chapter1_MegatronReturnToChargeA
+{
+	conditions
+	{
+		if module "Megatron MegatronIsCharge" == 0.0 goto Chapter1_MegatronReturnToCombatA
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCharge" 
+		
+	}
+}
+state Chapter1_MegatronReturnToCombatA
+{
+	conditions
+	{
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_MegatronFlyAwayInitB
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+		if Timer > 30 goto Chapter1_MegatronReturnToChargeA
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCombat" 
+	}
+}
+state Chapter1_MegatronFlyAwayInitB
+{
+	conditions
+	{
+		if module "Megatron PlayerRange" > 300 and
+			if module "ATDrone Energy" <= 0.0 and 
+				if module "TDrone Energy" <= 0.0 and 
+					if module "AmbusherA Energy" <= 0.0 and 
+						if module "AmbusherB Energy" <= 0.0 and 
+							if module "AmbusherC Energy" <= 0.0 and 
+								if module "AmbusherD Energy" <= 0.0 goto Chapter1_MegatronFlyInitB
+        if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+        ;ResetTimer
+	
+	;CreateModule "#Timer" "#Timer" "#Time=5" "#NoRender"
+	SendToModule "#TDrone" "#count=2"
+		
+        SendToModule "#Megatron" "#Script=FlyOff_M" "#NoHealthBar" "#AddToRadarOff"
+    }
+}
+state Chapter1_MegatronFlyInitB
+{
+	conditions
+	{
+		;if module "Timer Finished" == 1.0 goto Chapter1_MegatronFlyDoB
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+        DestroyAllModules
+		DestroyModule "#CreatureBombingRun"
+		SendToModule "#Megatron" "#Script=DummyAircraft" "#AddToRadar"
+
+		DoMacro CreateBR
+		
+
+		SendToModule "#CreatureBombingRun" "#ForceTransformEnergy=0.74" 
+
+		SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar"
+		;SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck"
+		;SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+		;SendToModule "#General" "#BG_LoadCreature=StarScream"
+		SendToModule "#General" "#BG_LoadCreature=DroneTowTruck"
+
+		
+		
+		;CreateModule "#Speech" "#A6_ch1_obj4" "#speech=#A6_ch1_obj4" "#Start" "#AutoDestroy" 
+		
+		;CreateModule "#Timer" "#Timer" "#Time=3" "#NoRender"
+		;SendToModule "#Megatron" 
+		Idle 3.0 
+		CreateModule "#Creature" "#TTDrone" "#Spline=A6C1Spawn" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneTowTruck" "#SpawnAsCreature" "#Script=TowTruckDrone" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#CDrone" "#Spline=A6C1Attack1" "#count=10000" "#maxalive=2" "#addtoradar" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#TDrone" "#Spline=A6C1Attack1" "#count=2" "#maxalive=2" "#addtoradar" "#Type=DronePickupTruck" "#SpawnAsCreature" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		
+		SetState Chapter1_MegatronFlyDoB
+	}
+}
+state Chapter1_MegatronFlyDoB
+{
+	conditions
+	{
+		if module "Megatron BeenHit" == 1.0 and
+			if module "General GetCountB" == 1.0 goto Chapter1_OneShotCollectionB1
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronFlail
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		;DestroyModule "#Timer"
+		SendToModule "#Megatron" "#SetEnergyMin=8000.0"
+	}
+}
+state Chapter1_OneShotCollectionB1
+{
+	conditions
+	{
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronFlail
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{	
+		SendToModule "#General" "#CountBSet=2"
+		SendToModule "#A6_ch1_obj2" "#StartOneShot"
+	}
+}
+state Chapter1_MegatronFlail
+{
+	conditions
+	{
+		if module "Megatron MegatronIsFlail" == 0.0 goto Chapter1_MegatronCombatB
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		;CreateModule "#Speech" "#A6_ch1_obj5" "#speech=#A6_ch1_obj5" "#Start" "#AutoDestroy" 
+		;CreateModule "#Goto" "#AM29Drone" "#Type=StarScream" "#Spline=A6C1Spawn" "#addtoradar" "#Count=10000" "#MaxAlive=3" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=DummyAircraft"  "#SetEnergyMax=400" ; "#SetEnergyMin=1425"
+	
+		;CreateModule "#CreatureBombingRun" "#CreatureBombingRun2" "#ModuleTag=#AM29Drone" "#Spline=A6C1BR1" "#Spline=A6C1BR2" "#Spline=A6C1BR3" "#Spline=A6C1BR4"	
+	;SendToModule "#CreatureBombingRun2" "#NumRuns=9999" "#SpeedValueMin=100" "#SpeedValueMax=500" "#MeleeScript=Mig29Drone"
+
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToFlail"
+
+		;SendToModule "#TTDrone" "#count=3"
+		
+	}
+}
+state Chapter1_MegatronCombatB
+{
+	conditions
+	{
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_MegatronFlyAwayInitC
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if Timer > 30 goto Chapter1_MegatronReturnToFlailA
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCombat" "#DrawHealthBar" 
+	}
+}
+state Chapter1_MegatronReturnToFlailA
+{
+	conditions
+	{
+		if module "Megatron MegatronIsFlail" == 0.0 goto Chapter1_MegatronReturnToCombatB
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToFlail"
+
+		
+		
+	}
+}
+state Chapter1_MegatronReturnToCombatB
+{
+	conditions
+	{
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_MegatronFlyAwayInitC
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if Timer > 30 goto Chapter1_MegatronReturnToFlailA
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCombat" 
+	}
+}
+state Chapter1_MegatronFlyAwayInitC
+{
+	conditions
+	{
+		if module "Megatron PlayerRange" > 300 and
+			if module "TTDrone Energy" <= 0.0 and
+				if module "TDrone Energy" <= 0.0 and
+					if module "CDrone Energy" <= 0.0 goto Chapter1_MegatronFlyInitC
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+	;ResetTimer
+        ;CreateModule "#Timer" "#Timer" "#Time=5" "#NoRender"
+	;SendToModule "#TDrone" "#count=3"
+	SendToModule "#CDrone" "#count=3"
+        SendToModule "#Megatron" "#Script=FlyOff_M" "#NoHealthBar" "#AddToRadarOff"
+	}
+}
+state Chapter1_MegatronFlyInitC
+{
+	conditions
+	{
+		;if module "Timer Finished" == 1.0 goto Chapter1_MegatronFlyDoC
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+        DestroyAllModules
+		DestroyModule "#CreatureBombingRun"
+		SendToModule "#Megatron" "#Script=DummyAircraft" "#AddToRadar"
+
+		DoMacro CreateBRAttack
+		
+		SendToModule "#CreatureBombingRun" "#ForceTransformEnergy=0.45" 
+
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck"
+		SendToModule "#General" "#BG_LoadCreature=DroneForklift"
+		SendToModule "#General" "#BG_LoadCreature=DroneCement"		
+		SendToModule "#General" "#BG_LoadCreature=DroneMig"
+
+		;CreateModule "#Timer" "#Timer" "#Time=3" "#NoRender"
+		;SendToModule "#Megatron" "#NoHealthBar"
+		Idle 3.0 
+		CreateModule "#Creature" "#M29Drone" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneMig" "#SpawnAsCreature" "#Script=Mig29Drone" "#SetEnergyMax=1500" "#SetEnergy=1500" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#FDrone" "#Spline=A6C1Attack1" "#count=10000" "#maxalive=2" "#addtoradar" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#CMDrone" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneCement" "#SpawnAsCreature" "#Script=MixerDrone" "#SetEnergyMax=400" "#SetEnergy=400" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		
+		SetState Chapter1_MegatronFlyDoC
+	}
+}
+state Chapter1_MegatronFlyDoC
+{
+	conditions
+	{
+		if module "Megatron BeenHit" == 1.0 and
+			if module "General GetCountB" == 1.0 goto Chapter1_OneShotCollectionC1
+		if module "BREnd InArea" == 1.0 goto Chapter1_MegatronBombingRunC
+		
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronFlame
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		;DestroyModule "#Timer"
+		SendToModule "#Megatron" "#SetEnergyMin=4000.0"
+
+		;DoMacro MigAction
+	}
+}
+state Chapter1_MegatronBombingRunC
+{
+	conditions
+	{
+		if module "Megatron BeenHit" == 1.0 and
+			if module "General GetCountB" == 1.0 goto Chapter1_OneShotCollectionC1
+
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronFlame
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#BREnd"
+		DestroyModule "#CreatureBombingRun"
+		SendToModule "#Megatron" "#Script=DummyAircraft" "#AddToRadar" "#SetEnergy=8000" 
+
+		DoMacro CreateBR
+		
+		SendToModule "#CreatureBombingRun" "#ForceTransformEnergy=0.49" 
+	}
+}
+state Chapter1_OneShotCollectionC1
+{
+	conditions
+	{
+		if module "BREnd InArea" == 1.0 goto Chapter1_MegatronBombingRunC
+		
+
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronFlame
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{	
+		SendToModule "#General" "#CountBSet=2"
+		SendToModule "#A6_ch1_obj2" "#StartOneShot"
+	}
+}
+state Chapter1_MegatronFlame
+{
+	conditions
+	{
+		if module "Megatron MegatronIsFlame" == 0.0 goto Chapter1_MegatronCombatC
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#BREnd" 
+		
+		;CreateModule "#Speech" "#A6_ch1_obj6" "#speech=#A6_ch1_obj6" "#Start" "#AutoDestroy" 
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToFlame"
+		;SendToModule "#M29Drone" "#count=3"
+		;SendToModule "#AM29Drone" "#count=3"
+		;SendToModule "#CMDrone" "#count=2"
+	}
+}
+state Chapter1_MegatronCombatC
+{
+	conditions
+	{
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_MegatronFlyAwayInitD
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+		if Timer > 30 goto Chapter1_MegatronReturnToFlameA
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCombat" "#DrawHealthBar" 
+	}
+}
+state Chapter1_MegatronReturnToFlameA
+{
+	conditions
+	{
+		if module "Megatron MegatronIsFlame" == 0.0 goto Chapter1_MegatronReturnToCombatC
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToFlame"
+		
+	}
+}
+state Chapter1_MegatronReturnToCombatC
+{
+	conditions
+	{
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_MegatronFlyAwayInitD
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+		if Timer > 30 goto Chapter1_MegatronReturnToFlameA
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCombat" 
+	}
+}
+state Chapter1_MegatronFlyAwayInitD
+{
+	conditions
+	{
+		if module "Megatron PlayerRange" > 300 and
+			if module "FDrone Energy" <= 0.0 and 
+				if module "CMDrone Energy" <= 0.0 and
+		 			if module "M29Drone Energy" <= 0.0 goto Chapter1_MegatronFlyInitD
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+       ; CreateModule "#Timer" "#Timer" "#Time=5" "#NoRender"
+		;ResetTimer
+		
+	SendToModule "#FDrone" "#count=4"
+		
+        SendToModule "#Megatron" "#Script=FlyOff_M" "#NoHealthBar" "#AddToRadarOff"
+	}
+}
+state Chapter1_MegatronFlyInitD
+{
+	conditions
+	{
+		;if module "Timer Finished" == 1.0 goto Chapter1_MegatronFlyDoD
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+       DestroyAllModules
+		DestroyModule "#CreatureBombingRun"
+		SendToModule "#Megatron" "#Script=DummyAircraft" "#AddToRadar"
+
+		DoMacro CreateBR
+		
+
+		SendToModule "#CreatureBombingRun" "#ForceTransformEnergy=0.24" 
+
+		;SendToModule "#General" "#BG_UnLoadCreature=Starscream"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneCement"
+		SendToModule "#General" "#BG_LoadCreature=DroneTowTruck"
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar"
+		
+
+		;CreateModule "#Timer" "#Timer" "#Time=3" "#NoRender"
+		;SendToModule "#Megatron" 
+		Idle 3.0 
+		CreateModule "#Creature" "#M29Drone" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneMig" "#SpawnAsCreature" "#Script=Mig29Drone" "#SetEnergyMax=1500" "#SetEnergy=1500" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#TTDrone" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneTowTruck" "#SpawnAsCreature" "#Script=TowTruckDrone" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#ATDrone" "#Spline=A6C1Attack1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneArmouredCar" "#SpawnAsCreature" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200" "#KeyLocation=On" "#ForcePlayerAsOpp"
+		SetState Chapter1_MegatronFlyDoD
+	}
+}
+state Chapter1_MegatronFlyDoD
+{
+	conditions
+	{
+		if module "Megatron BeenHit" == 1.0 and
+			if module "General GetCountB" == 1.0 goto Chapter1_OneShotCollectionD1
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronSequenceCharge
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#Timer"
+		SendToModule "#Megatron" "#SetEnergyMin=2000.0"
+	}
+}
+state Chapter1_OneShotCollectionD1
+{
+	conditions
+	{
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronSequenceCharge
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{	
+		SendToModule "#General" "#CountBSet=2"
+		SendToModule "#A6_ch1_obj2" "#StartOneShot"
+	}
+}
+state Chapter1_MegatronSequenceCharge
+{
+	conditions
+	{
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_MegatronFlyAwayInitE
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+		
+	}
+	actions
+	{
+		CreateModule "#Speech" "#A6_ch1_obj7" "#speech=#A6_ch1_obj7" "#Start" "#AutoDestroy" 
+		CreateModule "#Speech" "#A6_ch1_obj4" "#speech=#A6_ch1_obj4" "#AutoDestroy" "#PlayDelay=3.3"  "#Start" 
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToSequence" "#DrawHealthBar"
+		
+	}
+}
+state Chapter1_MegatronFlyAwayInitE
+{
+	conditions
+	{
+		if module "Megatron PlayerRange" > 300 and
+			if module "M29Drone Energy" <= 0.0 and 
+				if module "TTDrone Energy" <= 0.0 and 
+					if module "ATDrone Energy" <= 0.0 goto Chapter1_MegatronFlyInitE
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+       ; CreateModule "#Timer" "#Timer" "#Time=5" "#NoRender"
+		;ResetTimer
+		
+        SendToModule "#Megatron" "#Script=FlyOff_M" "#NoHealthBar" "#AddToRadarOff"
+	}
+}
+state Chapter1_SkipToPH3
+{
+	
+	actions
+	{
+
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1Spawn" "#AddToRadarAlways" "#SpawnInLOSInit" "#SpawnAsVehicle" "#ForcePlayerAsOpp" "#BlockDeath" "#Type=Megatron" "#SetEnergyMax=20000" "#SetEnergy=2000" "#Protect" ;
+		
+		SendToModule "#Megatron" "#Boss" "#Type=Megatron" "#NoHealthBar" 
+		SendToModule "#General" "#SetMaxOpponents=18" "#SetMaxApproachers=18" "#SetAttackRingSize=20" 
+
+		SendToModule "#General" "#CountASet=1" "#CountBSet=1"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A6C1KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key6Return" "#Protect"
+		
+		CreateModule "#Speech" "#A6_ch1_obj2" "#speech=#A6_ch1_obj2" "#AutoDestroy" "#Protect"
+		;DoMacro CreateBR
+		
+		
+		SetMusic "ACTION Mission1_1 Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+
+		SendToModule "#General" "#SetPlayer=#COMPPOINT1" 
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+		SendToModule "#General" "#FadeUp"
+		SetState Chapter1_MegatronFlyInitE
+	}
+}
+state Chapter1_MegatronFlyInitE
+{
+	conditions
+	{
+		if module "CreatureBombingRun Finish" == 1.0 goto Chapter1_MegatronCombatE
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		ResetTimer
+       DestroyAllModules
+		DestroyModule "#CreatureBombingRun"
+		SendToModule "#Megatron" "#SetEnergyMin=100.0" "#AddToRadar" "#Script=DummyAircraft" 
+
+		CreateModule "#CreatureBombingRun" "#CreatureBombingRun" "#ModuleTag=#Megatron" "#Spline=A6C1BR1" "#Spline=A6C1BR2" "#Spline=A6C1BR3" "#Spline=A6C1BR4"	
+		SendToModule "#CreatureBombingRun" "#NumRuns=1" "#SpeedValueMin=250" "#SpeedValueMax=700" "#MeleeScript=Megatron_PH2"	
+		;DoMacro CreateBRAttack
+		
+		;SendToModule "#Megatron" "#SetPosition=#MegatronParkHoverSpawn"
+		SendToModule "#CreatureBombingRun" "#ForceTransformEnergy=0.09" 
+
+		
+		SendToModule "#General" "#BG_UnLoadCreature=DroneMig"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#BG_LoadCreature=DroneForklift_a"
+		
+		
+		;Idle 3.0
+		;
+		;SetState Chapter1_MegatronFlyDoD
+	}
+}
+
+state Chapter1_MegatronCombatE
+{
+	conditions
+	{
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_Phase2End
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		CreateModule "#Speech" "#A6_ch1_obj3" "#speech=#A6_ch1_obj3" "#Start" "#AutoDestroy" 
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCombat" "#DrawHealthBar" 
+	}
+}
+state Chapter1_Phase2End
+{
+	conditions
+	{
+		
+		;if Timer > 5.0 goto Chapter1_Phase3Init
+		if module "Megatron PlayerRange" > 300 goto Chapter1_Phase3Init
+		
+	}
+	actions
+	{
+    ;  ResetTimer
+	DestroyModule "#KeyLocation"
+        SendToModule "#Megatron" "#Script=FlyOff_MI" "#Unstoppable" "#NoHealthBar" "#SetEnergy=6000" "#AddToRadarOff"
+	Idle 1.5
+	SetMusic "ACTION Mission1_2 Play Action"
+	Idle 0.1
+	CreateModule "#Speech" "#A6_ch1_obj6" "#speech=#A6_ch1_obj6" "#Start" "#AutoDestroy" 
+	;Idle 0.9
+	;DestroyModule "#Megatron"
+		
+	}
+}
+state Chapter1_Phase3Init
+{
+	conditions
+	{
+		if module "Area3 InArea" == 1.0 goto Chapter1_Phase3
+		if module "Timer FailMission" == 1.0 goto Chapter1_FailMission2
+	}
+	actions
+	{
+		;SetMusic "ACTION Mission1_2 Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission2"
+
+      		DestroyAllModules "#IncludeProtected"
+		CreateModule "#AreaRange" "#Area3" "#Trigger=#A6C1TriggerPH3" "#AddToRadarAlways" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#Timer" "#Timer" "#Time=40" "#Start"
+		SendToModule "#General" "#SetMessage=Key11Goto" "#SetMessageTimer=40.0"
+		CreateModule "#Speech" "#A6_ch1_obj2" "#speech=#A6_ch1_obj2" "#AutoDestroy" "#Protect"
+		
+		
+	}
+}
+state Chapter1_Phase3Enter
+{
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#ResetCounters"
+		SetState Chapter1_Phase3IntroVideo
+	}
+}
+state Chapter1_Phase3IntroVideo
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_Phase3LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A7LevelIntro"
+	}
+}
+state Chapter1_Phase3LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Phase3Main 
+	}
+	actions
+	{
+		;SendToModule "#ActionRing" "#RemoveCreatures"
+
+		SendToModule "#General" "#UnLoadCreature=BumbleBee07"
+		SendToModule "#General" "#UnLoadCreature=IronHide"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#LoadCreature=Megatron"
+		SendToModule "#General" "#LoadCreature=DroneForklift_a"
+		
+	}
+}
+state Chapter1_Phase3Main
+{
+	actions
+	{
+		SetMusic "ACTION Mission1_2 Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission2"
+
+		SendToModule "#General" "#SetPlayer=#Chapter3Start" 
+		
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+		CreateModule "#Speech" "#A6_ch1_obj2" "#speech=#A6_ch1_obj2" "#AutoDestroy" "#Protect"
+		
+		
+		SendToModule "#General" "#FadeUp" "#CountASet=1" "#CountBSet=1"
+		SetState Chapter1_Phase3
+	}
+}
+state Chapter1_Phase3
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+	}
+	actions
+	{
+		;SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+      		DestroyAllModules 
+		CreateModule "#BombingRun" "#Megatron" \
+			"#CentreSpline=A6C1BR1" \
+			"#LoopSpline=A6C1BR1" \
+			"#LoopSpline=A6C1BR2" \
+			"#LoopSpline=A6C1BR3" \
+			"#LoopSpline=A6C1BR4" \
+			"#Boss=#Megatron" "#Type=Megatron" "#Invulnerable" "#Speed=240.0" "#BombLimit=3" "#AddToRadarOff" "#FlyHeight=-12.0" "#NoCast" "#ForceHoverHeight=4.0" "#SetEnergyMax=3500.0" "#SetEnergy=3500.0" "#SetEnergyMin=1750" "#BlockDeath" "#SpawnAsVehicle" "#SpawnInLOSInit"
+		SendToModule "#Megatron" "#SetPosition=#A6C1Phase3HoverSpawn"
+		Idle 0.1
+		SendToModule "#Megatron" "#Path=None" "#Script=DummyAircraft" "#Vulnerable" "#ResetDamageFlags" "#ResetHealthDiff" "#AddToRadarAlways" 
+
+		SendToModule "#General" "#SetMessageTimer=-1.0"
+		CreateModule "#Goto" "#RangeTracker" "#Spline=A6C1Spawn" "#SetPosition=#A6C1Phase3KeyLoc" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#RangeTracker" "#Radius=175" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key6Return" "#HeadType=#Optimus"
+		SendToModule "#RangeTracker" "#Link=#Megatron"
+		SetState Chapter1_MegaJetAttack
+		
+	}
+}
+state Chapter1_MegaJetAttack
+{
+	actions
+	{
+		SendToModule "#General" "#CountASet=0" "#CountCSet=0" "#CountDSet=0"
+		SetState Chapter1_MegaJetAttackHover
+	}
+}
+state Chapter1_MegaJetAttackHover
+{
+	
+	actions
+	{
+		SendToModule "#Megatron" "#Path=Special_Hover" "#AttackFiringMode" "#Script=Megatron_PH3" "#Invulnerable" "#BeenHitHard=0" "#TransformForceCar" "#ResetDamageFlags" "#ResetHealthDiff"
+		SendToModule "#General" "#CountAInc" "#CountCInc"
+		CreateModule "#Timer" "#AttackTime" "#Time=7" "#NoRender" "#Start"
+		SetState Chapter1_MegaJetAttackHoverProcess
+	}
+}
+state Chapter1_MegaJetAttackHoverProcess
+{
+	conditions
+	{
+
+		if module "Megatron BeenHit" == 1.0 and
+			if module "General GetCountB" == 1.0 goto Chapter1_OneShotCollectionPH3H
+
+		if module "AttackTime FailMission" == 1.0 goto Chapter1_MegaJetAttackBomb
+		if module "Megatron GetCountAlive" == 0.0 goto Chapter1_Phase3MidtroInit
+		if module "Megatron BeenHitHard" >= 2.0 goto Chapter1_MegaBeenHitJetAttackBomb
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_Phase3MidtroInit
+		if module "Megatron PlayerRange" < 60 goto Chapter1_MegaJetAttackBomb
+
+		if module "General GetCountA" == 9.0 goto Chapter1_PrePh4CountResetA
+
+		if module "General GetCountC" >= 5.0 goto Chapter1_MegatronPH3ResetPos
+
+		if Timer > 0.1 goto Chapter1_PrePh4CountA
+	}
+	actions
+	{
+		ResetTimer
+		
+		
+	}
+}
+state Chapter1_OneShotCollectionPH3H
+{
+	
+	actions
+	{	
+		SendToModule "#General" "#CountBSet=2"
+		SendToModule "#A6_ch1_obj2" "#StartOneShot"
+		SetState Chapter1_MegaJetAttackHoverProcess
+	}
+}
+state Chapter1_MegatronPH3ResetPos
+{
+	conditions
+	{
+		if module "RangeTracker GetLinkedDist" > 400 goto Chapter1_MegaJetReset
+		if module "Megatron GetCountAlive" == 0.0 goto Chapter1_Phase3MidtroInit
+		if module "Megatron Complete" == 1.0 goto Chapter1_MegaJetAttackHover
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+		
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_Phase3MidtroInit
+	}
+	actions
+	{
+		DestroyModule "#AttackTime" 
+		SendToModule "#Megatron" "#Script=DummyCar_M" 
+		Idle 0.1
+		SendToModule "#Megatron" "#Reset" "#Invulnerable" "#BombLimit=1" "#TransformForceCar" 
+		SendToModule "#General" "#CountAInc" 
+		
+		
+	}
+}
+state Chapter1_MegaJetReset
+{
+	conditions
+	{
+		if module "General GetCountD" == 2.0 goto Chapter1_MegaJetResetPos1
+		if module "General GetCountD" == 1.0 goto Chapter1_MegaJetResetPos2
+		
+		if module "General GetCountA" >= 5.0 goto Chapter1_MegaJetResetPos1
+		if module "General GetCountA" <= 5.0 goto Chapter1_MegaJetResetPos2
+		if Timer > 0.1 goto Chapter1_MegaJetResetPos2
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter1_MegaJetResetPos1
+{
+	
+	actions
+	{
+		DestroyModule "#AttackTime" 
+		SendToModule "#Megatron" "#SetPosition=#A6C1Phase3HoverReset1" "#Path=Special_Hover" "#AttackFiringMode" "#Script=Megatron_PH3" "#Invulnerable" "#BeenHitHard=0" "#TransformForceCar" "#ResetDamageFlags" "#ResetHealthDiff"
+		SendToModule "#General" "#CountCSet=0" "#CountDSet=1"
+		CreateModule "#Timer" "#AttackTime" "#Time=10" "#NoRender" "#Start"
+		SetState Chapter1_MegaJetAttackHoverProcess
+	}
+}
+state Chapter1_MegaJetResetPos2
+{
+	
+	actions
+	{
+		DestroyModule "#AttackTime" 
+		SendToModule "#Megatron" "#SetPosition=#A6C1Phase3HoverReset2" "#Path=Special_Hover" "#AttackFiringMode" "#Script=Megatron_PH3" "#Invulnerable" "#BeenHitHard=0" "#TransformForceCar" "#ResetDamageFlags" "#ResetHealthDiff"
+		SendToModule "#General" "#CountCSet=0" "#CountDSet=2"
+		CreateModule "#Timer" "#AttackTime" "#Time=10" "#NoRender" "#Start"
+		SetState Chapter1_MegaJetAttackHoverProcess
+	}
+}
+state Chapter1_PrePh4CountA
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountAInc"
+		
+		SetState Chapter1_MegaJetAttackHoverProcess
+	}
+}
+state Chapter1_PrePh4CountResetA
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountASet=0"
+		
+		SetState Chapter1_MegaJetAttackHoverProcess
+	}
+}
+state Chapter1_MegaJetAttackBomb
+{
+	
+	actions
+	{
+		DestroyModule "#AttackTime" 
+		SendToModule "#Megatron" "#Script=DummyAircraft" 
+		Idle 0.1
+		SendToModule "#Megatron" "#Reset" "#Invulnerable" "#AttackFiringMode" "#Script=DummyCar" "#BombLimit=1" 
+		SendToModule "#General" "#CountAInc" "#CountCInc"
+		
+		SetState Chapter1_MegaJetAttackBombProcess
+	}
+}
+state Chapter1_MegaBeenHitJetAttackBomb
+{
+	
+	actions
+	{
+		SendToModule "#Megatron" "#Script=HoverFlyOff" 
+		Idle 0.5
+		SendToModule "#Megatron" "#Script=DummyAircraft" 
+		
+		SetState Chapter1_MegaJetAttackBomb
+	}
+}
+state Chapter1_MegaJetAttackBombProcess
+{
+	conditions
+	{
+
+		if module "Megatron BeenHit" == 1.0 and
+			if module "General GetCountB" == 1.0 goto Chapter1_OneShotCollectionPH3B
+
+		if module "RangeTracker GetLinkedDist" > 250 goto Chapter1_MegaJetTooFar
+		if module "Megatron GetCountAlive" == 0.0 goto Chapter1_Phase3MidtroInit
+		if module "Megatron Complete" == 1.0 goto Chapter1_MegaJetAttackHover
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+		
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_Phase3MidtroInit
+
+		if module "General GetCountA" == 9.0 goto Chapter1_PrePh4CountResetB
+	
+		if Timer > 0.1 goto Chapter1_PrePh4CountB
+
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter1_OneShotCollectionPH3B
+{
+	
+	actions
+	{	
+		SendToModule "#General" "#CountBSet=2"
+		SendToModule "#A6_ch1_obj2" "#StartOneShot"
+		SetState Chapter1_MegaJetAttackBombProcess
+	}
+}
+state Chapter1_MegaJetTooFar
+{
+		
+	actions
+	{
+	
+		SendToModule "#Megatron" "#Reset" "#Invulnerable" "#Script=DummyCar" "#TransformForceRobot" "#BombLimit=1" 
+		SendToModule "#General" "#CountAInc"
+		Idle 1.0 
+		SetState Chapter1_MegaJetAttackHover
+	}
+}
+
+state Chapter1_PrePh4CountB
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountAInc"
+		
+		SetState Chapter1_MegaJetAttackBombProcess
+	}
+}
+state Chapter1_PrePh4CountResetB
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountASet=0"
+		
+		SetState Chapter1_MegaJetAttackBombProcess
+	}
+}
+state Chapter1_Phase3MidtroInit
+{
+	actions
+	{
+		SendToModule "#Megatron" "#Script=Megatron_PH2" "#MegatronToCombat" "#TransformForceRobot"
+		SetState Chapter1_Phase3Midtro
+	}
+}
+state Chapter1_Phase3Midtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_Phase3StreetFight
+	}
+
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A6C1Midtro1"
+    }
+}
+state Chapter1_Phase3StreetFight
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+		
+		if module "Megatron IsEnergyAtMin" == 1.0 goto Chapter1_Phase3End
+	}
+
+	actions
+	{
+		SendToModule "#Megatron" "#Script=Megatron_PH3G" "#MegatronToCombat" "#SetPosition=#A6C1Phase3StreetMegatron" "#SetEnergyMin=100"
+		SendToModule "#General" "#SetPlayer=#A6C1Phase3StreetStart" "#ResetLevel"
+		IncreasePlayerHealth max
+	}
+}
+state Chapter1_Phase3End
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+		
+		if module "Megatron PlayerRange" > 300 goto Chapter1_Phase4Init
+	}
+
+	actions
+	{
+		
+		SendToModule "#Megatron" "#Script=FlyOff_M" "#SetEnergy=500" "#AddToRadarOff" "#RemoveBoss"
+		;SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+
+	}
+}
+state Chapter1_Phase4Init
+{
+	conditions
+	{
+		if module "RangeTracker PlayerRange" < 30.0 goto Chapter1_Phase4
+		if module "Area4 InArea" == 1.0 goto Chapter1_Phase4
+		if module "Timer FailMission" == 1.0 goto Chapter1_FailMission2
+	}
+	actions
+	{
+		
+      		DestroyAllModules "#IncludeProtected"
+		CreateModule "#AreaRange" "#Area4" "#Trigger=#A6C1TriggerPH4" "#AddToRadarAlways" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#Timer" "#Timer" "#Time=60" "#Start"
+		SendToModule "#General" "#SetMessage=Key11Goto" "#SetMessageTimer=60.0"
+		CreateModule "#Goto" "#RangeTracker" "#Spline=A6C1Spawn" "#SetPosition=#A6C1Phase4KeyLoc" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" "#Protect"
+		
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+	}
+}
+state Chapter1_Phase4Enter
+{
+	actions
+	{
+		DestroyAllModules 
+		SetState Chapter1_Phase4IntroVideo
+	}
+}
+state Chapter1_Phase4IntroVideo
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_Phase4LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A7LevelIntro"
+	}
+}
+state Chapter1_Phase4LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Phase4Main 
+	}
+	actions
+	{
+		;SendToModule "#ActionRing" "#RemoveCreatures"
+
+		SendToModule "#General" "#UnLoadCreature=BumbleBee07"
+		SendToModule "#General" "#UnLoadCreature=IronHide"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#LoadCreature=Megatron"
+		SendToModule "#General" "#LoadCreature=DroneForklift_a"
+		
+	}
+}
+state Chapter1_Phase4Main
+{
+	conditions
+	{
+		if module "RangeTracker PlayerRange" < 30.0 goto Chapter1_Phase4
+		if module "Area4 InArea" == 1.0 goto Chapter1_Phase4
+		if module "Timer FailMission" == 1.0 goto Chapter1_FailMission2
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_2 Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+
+		SendToModule "#General" "#SetPlayer=#Chapter4Start" 
+		
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+		CreateModule "#AreaRange" "#Area4" "#Trigger=#A6C1TriggerPH4" "#AddToRadarAlways" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#Timer" "#Timer" "#Time=60" "#Start"
+		SendToModule "#General" "#SetMessage=Key11Goto" "#SetMessageTimer=60.0"
+		
+		SendToModule "#General" "#FadeUp" "#CountASet=0" "#CountCSet=0" "#CountDSet=0"
+		CreateModule "#Goto" "#RangeTracker" "#Spline=A6C1Spawn" "#SetPosition=#A6C1Phase4KeyLoc" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" "#Protect"
+		
+		IncreasePlayerHealth max
+
+		;SetState Chapter1_Phase4
+	}
+}
+state Chapter1_Phase4
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+	}
+	actions
+	{
+		DestroyAllModules 
+		
+
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1Spawn" "#AddToRadarOff" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=2500" "#Protect" "#SetPosition=#A6C1Phase4PrimaryPos3" "#Script=Megatron_PH4B"
+		
+		SendToModule "#General" "#SetMessageTimer=-1.0" "#CountBSet=0" "#CountCSet=0" "#CountDSet=3" "#CountSet=0"
+		;CreateModule "#Goto" "#RangeTracker" "#Spline=A6C1Spawn" "#SetPosition=#A6C1Phase4KeyLoc" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#RangeTracker" "#Radius=150" "#String=Key15Return" "#ReEnterMsg=Key15Return" "#HeadType=#Optimus" "#UseHeight" "#Timeout=30"
+		SendToModule "#RangeTracker" "#Link=#Megatron"
+		CreateModule "#Timer" "#AttackTime" "#Time=20" "#NoRender" "#Start"
+		CreateModule "#Speech" "#A6_ch1_obj5" "#speech=#A6_ch1_obj5" "#AutoDestroy" "#Protect"
+		CreateModule "#AreaRange" "#StreetLevel" "#Trigger=#A6C1TriggerPH4G" "#AddToRadarOff" "#AllCreatures"
+		
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+		
+	}
+}
+state Chapter1_Phase4Process
+{
+	conditions
+	{
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+
+		if module "Megatron PlayerRange" < 10.0 goto Chapter1_MegaRepel
+		if module "Megatron HealthDiff" > 0.20 goto Chapter1_MegaFlyAway
+		if module "AttackTime FailMission" == 1.0 goto Chapter1_MegaFlyAway
+
+		if module "General GetCount" == 1.0 and
+			if module "Megatron PlayerRange" < 80.0 goto Chapter1_MegaFlyAway
+
+		if module "StreetLevel InArea" == 1.0 goto Chapter1_AtStreet
+
+		if module "Megatron Health" < 0.25 goto Chapter1_Phase4Process2
+
+		if module "General GetCountA" >= 9.0 goto Chapter1_Ph4CountResetA
+		if module "General GetCountB" >= 9.0 goto Chapter1_Ph4CountResetB
+		if module "General GetCountC" >= 9.0 goto Chapter1_Ph4CountResetC
+		
+
+	
+		if Timer > 0.1 goto Chapter1_Ph4Count
+	}
+	actions
+	{
+		ResetTimer 
+	}
+}
+state Chapter1_Phase4Process2
+{
+	conditions
+	{
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+
+		if module "Megatron PlayerRange" < 5.0 goto Chapter1_MegaRepel
+		if module "Megatron HealthDiff" > 0.10 goto Chapter1_MegaFlyAway
+		if module "AttackTime FailMission" == 1.0 goto Chapter1_MegaFlyAway
+
+		if module "StreetLevel InArea" == 1.0 goto Chapter1_AtStreet
+
+
+		if module "General GetCount" == 1.0 and
+			if module "Megatron PlayerRange" < 130.0 goto Chapter1_MegaFlyAway
+
+		
+		if module "General GetCountA" >= 9.0 goto Chapter1_Ph4CountResetA
+		if module "General GetCountB" >= 9.0 goto Chapter1_Ph4CountResetB
+		if module "General GetCountC" >= 9.0 goto Chapter1_Ph4CountResetC
+		
+	
+		if Timer > 0.1 goto Chapter1_Ph4Count
+	}
+	actions
+	{
+		ResetTimer 
+		SendToModule "#A6_ch1_obj5" "#StartOneShot"
+	}
+}
+state Chapter1_AtStreet
+{
+	conditions
+	{
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+		if module "Megatron PlayerRange" > 300 goto Chapter1_MoveMegaMarker
+
+		if module "Area4 InArea" == 1.0 goto Chapter1_ReturnedToRoof
+		
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#Script=FlyOff_MI" "#AddToRadar" "#RemoveBoss"
+		DestroyModule "#AttackTime"
+		SendToModule "#General" "#CountAInc" "#CountBInc" "#CountCInc" "#CountSet=0"
+		DestroyModule "#RangeTracker"
+		DestroyModule "#KeyLocation" 
+		CreateModule "#Goto" "#RangeTracker" "#Spline=A6C1Spawn" "#SetPosition=#A6C1Phase4KeyLoc" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" "#Protect"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#RangeTracker" "#Radius=1" "#String=Key15Return" "#ReEnterMsg=Key15Return" "#HeadType=#Optimus" "#UseHeight" "#Timeout=30"
+		SendToModule "#RangeTracker" "#Link=#Megatron"
+		
+		CreateModule "#AreaRange" "#Area4" "#Trigger=#A6C1TriggerPH4" "#AddToRadarOff" ; "#SetRadarType=#DecepticonRadarIcon"
+		;SendToModule "#General" "#SetMessage=Key6Return" "#SetMessageTimer=30.0"
+		
+		
+		;SetState Chapter1_Phase4
+	}
+}
+state Chapter1_MoveMegaMarker
+{
+	conditions
+	{
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+		
+		if module "Area4 InArea" == 1.0 goto Chapter1_ReturnedToRoof
+		
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#SetPosition=#A6C1Phase4KeyLocRadar" "#Script=FlyOff_MI"
+				
+		
+		;SetState Chapter1_Phase4
+	}
+}
+state Chapter1_ReturnedToRoof
+{
+	conditions
+	{
+		if module "Megatron PlayerRange" > 300 goto Chapter1_Phase4DetectMegaHealth
+
+
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#Area4"
+		SendToModule "#KeyLocation" "#Radius=150" 
+		SendToModule "#Megatron" "#AddToRadarOff"
+		
+		;SetState Chapter1_Phase4
+	}
+}
+state Chapter1_MegaRepel
+{
+	conditions
+	{
+		if module "Megatron PlayerRange" > 300 goto Chapter1_Phase4DetectMegaHealth
+
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+
+	}
+	actions
+	{
+		Idle 0.8
+		SendToModule "#Megatron" "#Script=FlyOff_MI" "#AddToRadarOff" "#RemoveBoss"
+		DestroyModule "#AttackTime"
+		SendToModule "#General" "#CountAInc" "#CountBInc" "#CountCInc" "#CountSet=0"
+		DestroyModule "#RangeTracker"
+		DestroyModule "#KeyLocation" 
+		CreateModule "#Goto" "#RangeTracker" "#Spline=A6C1Spawn" "#SetPosition=#A6C1Phase4KeyLoc" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" "#Protect"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#RangeTracker" "#Radius=150" "#String=Key15Return" "#ReEnterMsg=Key15Return" "#HeadType=#Optimus" "#UseHeight" "#Timeout=30"
+		SendToModule "#RangeTracker" "#Link=#Megatron"
+		
+		;SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_MegaFlyAway
+{
+	conditions
+	{
+		if module "Megatron PlayerRange" > 300 goto Chapter1_Phase4DetectMegaHealth
+
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+
+	}
+	actions
+	{
+		SendToModule "#Megatron" "#Script=FlyOff_MI" "#AddToRadarOff" "#RemoveBoss"
+		DestroyModule "#AttackTime"
+		SendToModule "#General" "#CountAInc" "#CountBInc" "#CountCInc" "#CountSet=0"
+
+		DestroyModule "#RangeTracker"
+		DestroyModule "#KeyLocation" 
+		CreateModule "#Goto" "#RangeTracker" "#Spline=A6C1Spawn" "#SetPosition=#A6C1Phase4KeyLoc" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" "#Protect"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#RangeTracker" "#Radius=150" "#String=Key15Return" "#ReEnterMsg=Key15Return" "#HeadType=#Optimus" "#UseHeight" "#Timeout=30"
+		SendToModule "#RangeTracker" "#Link=#Megatron"
+		
+		;SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Phase4DetectMegaHealth
+{
+	conditions
+	{
+		if module "Megatron Health" > 0.90 goto MegaHealth100
+		if module "Megatron Health" == 0.90 goto MegaHealth90
+		if module "Megatron Health" > 0.80 goto MegaHealth90
+		if module "Megatron Health" == 0.80 goto MegaHealth80
+		if module "Megatron Health" > 0.70 goto MegaHealth80
+		if module "Megatron Health" == 0.70 goto MegaHealth70
+		if module "Megatron Health" > 0.60 goto MegaHealth70
+		if module "Megatron Health" == 0.60 goto MegaHealth60
+		if module "Megatron Health" > 0.50 goto MegaHealth60
+		if module "Megatron Health" == 0.50 goto MegaHealth50
+		if module "Megatron Health" > 0.40 goto MegaHealth50
+		if module "Megatron Health" == 0.40 goto MegaHealth40
+		if module "Megatron Health" > 0.30 goto MegaHealth40
+		if module "Megatron Health" == 0.30 goto MegaHealth30
+		if module "Megatron Health" > 0.20 goto MegaHealth30
+		if module "Megatron Health" == 0.20 goto MegaHealth20
+		if module "Megatron Health" > 0.10 goto MegaHealth20
+		if module "Megatron Health" == 0.10 goto MegaHealth10
+		if module "Megatron Health" >= 0.00 goto MegaHealth10
+	}
+	actions
+	{
+		
+		
+		
+	}
+}
+state MegaHealth100
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=2500" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state MegaHealth90
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=2250" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state MegaHealth80
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=2000" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state MegaHealth70
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=1750" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state MegaHealth60
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=1500" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state MegaHealth50
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=1250" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state MegaHealth40
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=1000" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state MegaHealth30
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=750" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state MegaHealth20
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=500" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state MegaHealth10
+{
+	actions
+	{
+		DestroyModule "#Megatron"
+		CreateModule "#Goto" "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#BlockDeath" "#Boss" "#Type=Megatron" "#SetEnergyMax=2500" "#SetEnergy=250" "#Protect" "#Script=StandAndWait" "#AddToRadarOff"
+		SetState Chapter1_Phase4ChooseMegaDropType
+	}
+}
+state Chapter1_Phase4ChooseMegaDropType
+{
+	conditions
+	{
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+
+		
+		if module "General GetCountB" == 3.0 goto Chapter1_Ph4MegaDropB
+		if module "General GetCountB" == 6.0 goto Chapter1_Ph4MegaDropB
+		if module "General GetCountB" == 9.0 goto Chapter1_Ph4MegaDropB
+		if module "Megatron Health" > 0.11 and
+			if module "General GetCountC" == 5.0 goto Chapter1_Ph4MegaDropC
+		
+		if Timer > 0.1 goto Chapter1_Ph4MegaDropA
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+}
+state Chapter1_Ph4MegaDropA
+{
+	conditions
+	{
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+
+		if module "General GetCountD" == 0.0 goto Chapter1_Ph4MegaDropA2
+		if module "General GetCountA" == 0.0 goto Chapter1_Ph4MegaDropA1
+		if module "General GetCountD" == 1.0 goto Chapter1_Ph4MegaDropA3
+		if module "General GetCountA" == 1.0 goto Chapter1_Ph4MegaDropA2
+		if module "General GetCountD" == 2.0 goto Chapter1_Ph4MegaDropA4
+		if module "General GetCountA" == 2.0 goto Chapter1_Ph4MegaDropA3
+		if module "General GetCountD" == 3.0 goto Chapter1_Ph4MegaDropA5
+		if module "General GetCountA" == 3.0 goto Chapter1_Ph4MegaDropA4
+		if module "General GetCountD" == 4.0 goto Chapter1_Ph4MegaDropA6
+		if module "General GetCountA" == 4.0 goto Chapter1_Ph4MegaDropA5
+		if module "General GetCountD" == 5.0 goto Chapter1_Ph4MegaDropA7
+		if module "General GetCountA" == 5.0 goto Chapter1_Ph4MegaDropA6
+		if module "General GetCountD" == 6.0 goto Chapter1_Ph4MegaDropA8
+		if module "General GetCountA" == 6.0 goto Chapter1_Ph4MegaDropA7
+		if module "General GetCountD" >= 7.0 goto Chapter1_Ph4MegaDropA1
+		if module "General GetCountA" >= 7.0 goto Chapter1_Ph4MegaDropA8
+		
+		
+		
+		
+		if Timer > 0.1 goto Chapter1_Ph4MegaDropA6
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+}
+state Chapter1_Ph4MegaDropA1
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=20" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=0"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4PrimaryPos1" "#Script=Megatron_PH4" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropA2
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=20" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=1"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4PrimaryPos2" "#Script=Megatron_PH4" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropA3
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=20" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=2"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4PrimaryPos3" "#Script=Megatron_PH4B" ;"#Script=Megatron_PH4" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropA4
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=20" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=3"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4PrimaryPos4" "#Script=Megatron_PH4" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropA5
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=20" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=4"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4PrimaryPos5" "#Script=Megatron_PH4" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropA6
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=20" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=5"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4PrimaryPos6" "#Script=Megatron_PH4" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropA7
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=20" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=6"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4PrimaryPos7" "#Script=Megatron_PH4" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropA8
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=20" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=7"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4PrimaryPos8" "#Script=Megatron_PH4" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropB
+{
+	conditions
+	{
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+
+		if module "General GetCountD" == 0.0 goto Chapter1_Ph4MegaDropB2
+		if module "General GetCountA" == 0.0 goto Chapter1_Ph4MegaDropB1
+		if module "General GetCountD" == 1.0 goto Chapter1_Ph4MegaDropB3
+		if module "General GetCountA" == 1.0 goto Chapter1_Ph4MegaDropB2
+		if module "General GetCountD" == 2.0 goto Chapter1_Ph4MegaDropB4
+		if module "General GetCountA" == 2.0 goto Chapter1_Ph4MegaDropB3
+		if module "General GetCountD" == 3.0 goto Chapter1_Ph4MegaDropB5
+		if module "General GetCountA" == 3.0 goto Chapter1_Ph4MegaDropB4
+		if module "General GetCountD" == 4.0 goto Chapter1_Ph4MegaDropB6
+		if module "General GetCountA" == 4.0 goto Chapter1_Ph4MegaDropB5
+		if module "General GetCountD" == 5.0 goto Chapter1_Ph4MegaDropB7
+		if module "General GetCountA" == 5.0 goto Chapter1_Ph4MegaDropB6
+		if module "General GetCountD" >= 6.0 goto Chapter1_Ph4MegaDropB1
+		if module "General GetCountA" >= 6.0 goto Chapter1_Ph4MegaDropB7
+		
+		
+		
+		
+		
+		if Timer > 0.1 goto Chapter1_Ph4MegaDropB6
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+}
+state Chapter1_Ph4MegaDropB1
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=10" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=0"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4SecondaryPos1" "#Script=Megatron_PH4B" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropB2
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=10" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=1"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4SecondaryPos2" "#Script=Megatron_PH4B" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropB3
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=10" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=2"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4SecondaryPos3" "#Script=Megatron_PH4B" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropB4
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=10" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=3"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4SecondaryPos4" "#Script=Megatron_PH4B" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropB5
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=10" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=4"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4SecondaryPos5" "#Script=Megatron_PH4B" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropB6
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=10" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=5"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4SecondaryPos6" "#Script=Megatron_PH4B" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropB7
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=10" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=6"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#SpawnInLOSInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4SecondaryPos7" "#Script=Megatron_PH4B" 
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		Idle 1.7
+		SendToModule "#Megatron" "#AddToRadar"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropC
+{
+	conditions
+	{
+		if module "Megatron Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission2
+
+		if module "General GetCountD" == 0.0 goto Chapter1_Ph4MegaDropC2
+		if module "General GetCountA" == 0.0 goto Chapter1_Ph4MegaDropC1
+		if module "General GetCountD" <= 2.0 goto Chapter1_Ph4MegaDropC3
+		if module "General GetCountA" <= 2.0 goto Chapter1_Ph4MegaDropC2
+		if module "General GetCountD" <= 4.0 goto Chapter1_Ph4MegaDropC4
+		if module "General GetCountA" <= 4.0 goto Chapter1_Ph4MegaDropC3
+		if module "General GetCountD" <= 6.0 goto Chapter1_Ph4MegaDropC5
+		if module "General GetCountA" <= 6.0 goto Chapter1_Ph4MegaDropC4
+		if module "General GetCountD" >= 8.0 goto Chapter1_Ph4MegaDropC1
+		if module "General GetCountA" >= 8.0 goto Chapter1_Ph4MegaDropC5
+		
+		
+		
+		
+		
+		if Timer > 0.1 goto Chapter1_Ph4MegaDropC5
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+}
+state Chapter1_Ph4MegaDropC1
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=7" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=0" "#CountSet=1"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#AddToRadarAlways" "#SpawnInLOSInit" "#SpawnAsVehicle" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4TertiaryPos1" "#Script=Megatron_PH3" "#AddToRadar"
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropC2
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=7" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=2" "#CountSet=1"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#AddToRadarAlways" "#SpawnInLOSInit" "#SpawnAsVehicle" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4TertiaryPos2" "#Script=Megatron_PH3" "#AddToRadar"
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropC3
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=7" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=4" "#CountSet=1"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#AddToRadarAlways" "#SpawnInLOSInit" "#SpawnAsVehicle" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4TertiaryPos3" "#Script=Megatron_PH3" "#AddToRadar"
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropC4
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=7" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=6" "#CountSet=1"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#AddToRadarAlways" "#SpawnInLOSInit" "#SpawnAsVehicle" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4TertiaryPos4" "#Script=Megatron_PH3" "#AddToRadar"
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4MegaDropC5
+{
+	actions
+	{
+		CreateModule "#Timer" "#AttackTime" "#Time=7" "#NoRender" "#Start"
+		SendToModule "#General" "#CountDSet=8" "#CountSet=1"
+		SendToModule "#Megatron" "#SpawnSpline=A6C1MegaArrive1" "#AddToRadarAlways" "#SpawnInLOSInit" "#SpawnAsVehicle" "#ForcePlayerAsOpp" "#SetPosition=#A6C1Phase4TertiaryPos5" "#Script=Megatron_PH3" "#AddToRadar"
+		Idle 0.1
+		SendToModule "#Megatron" "#ResetDamageFlags" "#ResetHealthDiff" "#MegatronToCombat"
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4Count
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountAInc" ;"#CountBInc" "#CountCInc"
+		
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4CountResetA
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountASet=0"
+		
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4CountResetB
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0"
+		
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_Ph4CountResetC
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountCSet=0"
+		
+		SetState Chapter1_Phase4Process
+	}
+}
+state Chapter1_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#DeathFailMission" 
+
+	}
+}
+state Chapter1_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter1_DeathFailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart2
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#DeathFailMission" 
+
+	}
+}
+state Chapter1_FailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart2
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter1_Restart2
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#UnLoadCreature=Megatron"
+		;SendToModule "#General" "#UnLoadCreature=Starscream"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=DroneCement"
+		SendToModule "#General" "#UnLoadCreature=DroneMig"
+
+		SendToModule "#General" "#LoadCreature=BumbleBee07"
+		SendToModule "#General" "#LoadCreature=IronHide"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+
+		
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+
+		SendToModule "#General" "#CountASet=1"
+		SetState GlobalActionRing
+	}
+}
+state Chapter1_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#UnLoadCreature=Megatron"
+		;SendToModule "#General" "#UnLoadCreature=Starscream"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=DroneCement"
+		SendToModule "#General" "#UnLoadCreature=DroneMig"
+
+		SendToModule "#General" "#LoadCreature=BumbleBee07"
+		SendToModule "#General" "#LoadCreature=IronHide"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+
+		
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+		
+		SendToModule "#General" "#CountASet=0"
+		SetState GlobalActionRing
+	}
+}
+state Chapter1_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		SendToModule #General #UnlockBonus=Character_AutobotCampaign
+		CreateModule "#ActionRing" "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		;SendToModule "#ActionRing" "#CreateChapter=#Chapter1"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" ;"#Unlock=#Chapter1"
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartCampaignOutro=#A6C1Outro"
+		;SetState "Chapter1_CompleteVideoFinished"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		;SetState Chapter1_Leave	Go Back to front end so dont do this
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT1"
+		SendToModule #General #AllowPlayerMovement
+		SetState GlobalActionRing
+	}
+}

@@ -1,0 +1,94 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Actions
+	{
+		;Transform Secondary UntilDone
+		Transform "Car" "Instant"
+		SetPhysicsState "static=true" 
+		
+		SetState Phase1
+	}
+}
+
+state Phase1
+{
+	Conditions
+	{
+
+		;if GetEnergy <= 0.825 goto AnnhilatePlayer
+		
+		if SpecialPhase == 2.0 goto Phase2
+		if SpecialPhase == 3.0 goto Phase3
+		
+
+	}
+	Actions
+	{
+		SetSpecialPhase "Val=1.0"
+		ResetTimer ;fireId 1 - Random Long attack
+		EngageTCRandom 
+
+	}
+}
+
+
+;;Attack Player short time
+state Phase2
+{
+	Conditions
+	{
+		;if GetEnergy <= 0.825 goto AnnhilatePlayer
+		
+		if SpecialPhase != 2.0 goto Phase1
+		
+		if Timer > 2.0 goto Phase1
+	}
+	Actions
+	{
+		ResetTimer
+		EngageOpponentTC "RapidShootRange=1.0" "fireId=0" "firetimemin=0.3" "firetimemax=0.5" 
+	}
+}
+
+;;Attack Player Harder and longer
+state Phase3
+{
+	Conditions
+	{
+		;if GetEnergy <= 0.825 goto AnnhilatePlayer
+		
+		if SpecialPhase != 3.0 goto Phase1
+
+		if Timer > 4.0 goto Phase1
+	}
+	Actions
+	{
+		ResetTimer
+		EngageOpponentTC "RapidShootRange=1.0" "fireId=0" "firetimemin=0.2" "firetimemax=0.4" 
+	}
+}
+
+state AnnhilatePlayer
+{
+	Conditions
+	{
+				
+	}
+	Actions
+	{
+		ResetTimer
+		EngageOpponentTC "RapidShootRange=1.0" "fireId=0" "firetimemin=0.1" "firetimemax=0.3" 
+	}
+
+}
+
+

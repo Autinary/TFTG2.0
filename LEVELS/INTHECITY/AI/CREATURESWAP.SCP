@@ -1,0 +1,151 @@
+
+
+state PrepareSwap
+{
+	
+	actions
+	{
+		DestroyAllModules
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		
+		SendToModule "#General" "#SetPlayer=#CSReset" 
+		;Idle 2.0
+		CreateModule "#KeyLocation" "#CreatureSwapArea" "#spline=D5C2KeyLoc" "#Radius=180" 
+		CreateModule "#AreaRange" "#SwapToBC" "#Trigger=#CSBoneCrusher" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBR" "#Trigger=#CSBrawl" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToSC" "#Trigger=#CSStarScream" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToM" "#Trigger=#CSMegatron" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBL" "#Trigger=#CSBlackout" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToS" "#Trigger=#CSScorponok" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToB" "#Trigger=#CSBarricade" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		
+		SendToModule "#General" "#SetMessage=ITCS" "#SetMessageTimer=1000" 
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#SubMissions" "#TurnOff"
+		
+		SetState CreatureSwapProcess
+	}
+}
+state CreatureSwapProcess
+{
+	conditions
+	{
+		if Timer > 1.0 and
+			if module "CreatureSwapArea InArea" == 0.0 goto LeftSwapArea
+		if module "SwapToBL InArea" == 1.0 goto SelectBL
+		if module "SwapToS InArea" == 1.0 goto SelectS
+		if module "SwapToB InArea" == 1.0 goto SelectB
+		if module "SwapToBC InArea" == 1.0 goto SelectBC
+		if module "SwapToBR InArea" == 1.0 goto SelectBR
+		if module "SwapToSC InArea" == 1.0 goto SelectSC
+		if module "SwapToM InArea" == 1.0 goto SelectM
+		
+	}
+	actions
+	{
+		ResetTimer
+	}	
+	
+}
+state SelectBL
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Blackout" "#SetPlayer=#CSReset" "#CountASet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectS
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Scorponok" "#SetPlayer=#CSReset" "#CountASet=2"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectB
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Barricade" "#SetPlayer=#CSReset" "#CountASet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectBC
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Bonecrusher" "#SetPlayer=#CSReset" "#CountASet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectBR
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Brawl" "#SetPlayer=#CSReset" "#CountASet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectSC
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=StarScream" "#SetPlayer=#CSReset" "#CountASet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+
+state SelectM
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Megatron" "#SetPlayer=#CSReset" "#CountASet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state LeftSwapArea
+{
+	
+	actions
+	{
+		
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#BG_LoadCreature=DroneForklift"
+		
+		SendToModule "#General" "#SetMessageTimer=-1"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#SubMissions" "#TurnOn"
+		
+		CreatureBGLoadSync
+		SetState CreatureSwapInit
+	}
+}

@@ -1,0 +1,121 @@
+;Destroy all drones (all the same type) within time limit
+
+;requires:
+;	Keylocation spline 	KeyLoc#
+;	Spawn spline		Spawn#
+
+;Changeable params:
+;	TIMELIMIT		time in which to complete the mission
+;	TOTALCREATURES	total number of creatures that need to be killed
+;	MAXALIVE		total active simultaneously
+;	TIMEOUT			keylocation timeout
+;	CREATURETYPE	type of creature to fight against
+;						DroneForkLift
+;						DroneTowTruck
+;						DroneArmouredCar
+;						DroneCement
+;						DronePickupTruck
+;						DroneMig
+;						BumbleBee
+;						Barricade
+
+
+
+state SubMissionONE_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMissionONE_Death"
+;		SendToModule "#General" "#PlayerType="
+		SetState "SubMissionONE_Init"
+	}
+}
+state SubMissionONE_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMissionONE_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMissionONE"
+	    SendToModule "#General" "#LoadCreature=CREATURETYPE"
+		CreateModule "#Creature" "#Creature" "#Type=CREATURETYPE" "#Spline=SpawnONE" "#count=TOTALCREATURES" "#maxalive=MAXALIVE" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLocONE" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=TIMEOUT" 
+		CreateModule "#Timer" "#Timer" "#Time=TIMELIMIT"
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone"
+	}
+}
+state SubMissionONE_Main
+{
+	conditions
+	{
+		if module "creature getpercentagecomplete" == 1.0 goto SubMissionONE_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMissionONE_Fail
+		if module "Timer FailMission" == 1.0 goto SubMissionONE_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMissionONE_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionONE_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMissionONE_FinishWait
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=ONE"
+		SetState "SubMissionONE_Leave"
+	}
+}
+state SubMissionONE_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMissionONE_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state SubMissionONE_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMissionONE_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state SubMissionONE_Leave
+{
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#RevertPlayerType"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMissionONE" "#FadeUp"
+	   	SendToModule "#General" "#UnLoadCreature=CREATURETYPE"
+		SendToModule "#General" "#FadeUp"		
+		SetState "GlobalActionRing"
+	}
+}
+

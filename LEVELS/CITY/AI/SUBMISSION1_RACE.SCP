@@ -1,0 +1,160 @@
+;race to the end of the path within the time limit
+
+;requires:
+;race spline		Race#
+
+;Changeable params:
+;	300		time in which to complete the mission
+;   15			distance to each point
+
+
+state SubMission1_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission1_Death"
+		;SendToModule "#General" "#PlayerType=IronHide"
+		SetState "SubMission1_Init"
+	}
+}
+state SubMission1_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_MainInit
+
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetVehicle=#SubMission1"
+		CreateModule "#Timer" "#Timer" "#Time=110"
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Race1" "#Range=25"
+
+	}
+}
+state SubMission1_MainInit
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" == 0.0 goto SubMission1_Main
+		if module "General ChapterProgress" == 1.0 goto SubMission1_MainJazz
+		if module "General ChapterProgress" == 2.0 goto SubMission1_MainIronhide
+		if module "General ChapterProgress" == 3.0 goto SubMission1_MainBumblebee
+		if module "General ChapterProgress" == 4.0 goto SubMission1_Main
+	}
+	
+}
+state SubMission1_MainJazz
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission2_4 PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_MainIronhide
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission1_2 PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_MainBumblebee
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission3_2 PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission1_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission1_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=1"
+		;SetState "SubMission1_Leave"
+	}
+}
+state SubMission1_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state SubMission1_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission1" "#FadeUp"
+		SendToModule "#General" "#FadeUp"		
+		SetState "GlobalActionRing"
+	}
+}
+

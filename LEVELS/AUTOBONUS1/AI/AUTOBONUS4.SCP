@@ -1,0 +1,134 @@
+state Chapter4_Enter
+{
+	conditions
+	{
+	
+	}
+	actions
+	{
+		DestroyAllModules 
+		SetState Chapter4_Main
+	}
+}
+
+state Chapter4_Main
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		SetDeathPoint "Chapter4_DeathFailMission"
+		;CreateModule "#Speech" "#DefeatDrones" "#speech=#D5C1GetAllSpark" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter4Start" "#FadeUp" "#PlayerType=Bumblebee"
+		
+		CreateModule "#Throwable" "#Throwable" "#Spline=Bonus1_Throw" "#MaxAlive=10" "#Type=TRQ_GENERIC20" "#Total=10" "#Random"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=BONUS1_KEYLOC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER"
+		CreateModule "#Timer" "#Timer" "#Time=120.0"
+		
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=10" "#IconType=#Drone" "#ModuleTag=#Throwable" "#GetPercentageComplete"
+		
+		SetState Chapter4_FindTheDonuts
+		
+	}
+}
+
+state Chapter4_FindTheDonuts
+{
+	conditions
+	{
+		  if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		  if module "Timer" <= 0.0 goto Chapter4_FailMission
+		  
+		  if module "Throwable Complete" == 1.0 goto Chapter4_Complete
+	}
+	actions
+	{
+	
+		
+	}
+
+
+}
+
+
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		SetState "StartLevel"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		DestroyModule "#KeyLocation"
+		SendToModule "#General" "#CompleteMission" 
+	}
+}
+
+
+
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartVideo=#D6C1LevelOutro"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		setstate "FinishedLevel" 
+	}
+}

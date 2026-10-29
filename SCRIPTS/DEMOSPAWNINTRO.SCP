@@ -1,0 +1,69 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if CarForm == 1.0 goto SpawnIntro
+		if RobotForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		  SetPhysicsState "static=false"
+		; SetState Alert
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if CarForm == 1.0 goto SpawnIntro
+	}
+	Actions
+	{
+		Transform Car Instant
+		SetState SpawnIntro
+	}
+}
+
+
+
+
+state SpawnIntro
+{
+
+	Actions
+	{
+		ResetTimer
+		;SpawnIntro
+		FollowLandingSpline Speed=330.0 ; Shadow
+		Transform UntilDoneState
+		SetState Main
+	}
+}
+
+state Main
+{
+    ReferenceScript {
+        Script=Early_Combat
+        Source=Global
+        ReturnState=Main
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+

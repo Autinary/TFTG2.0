@@ -1,0 +1,682 @@
+state base
+{
+	conditions
+	{
+		;if CurrentUser "grichards" == 1.0 goto Empty
+		;if CurrentUser "sharding" == 1.0 goto Empty
+		;if CurrentUser "awhite" == 1.0 goto MainWithDebug
+		;if CurrentUser "challiday" == 1.0 goto Empty
+		;if CurrentUser "popdam" == 1.0 goto Empty
+		;if CurrentUser "DWalker" == 1.0 goto MainWithDebug
+		if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		;CreateModule "#General" "#General" "#ProtectSystem"
+		;SendToModule "#General" "#FadeUp" "#SetPlayer=#StartMission"
+		;SendToModule "#General" "#PlayerType=BumbleBee"
+		DrawConditionsFromThisScript
+	}
+}
+state EmptyDeath
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Empty"
+	}
+}
+state Empty
+{
+	Actions
+	{
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#StartMission"
+		SetDeathPoint "EmptyDeath"
+	}
+}
+state StartLevelIntro
+{
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#ActionRing"  "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter1" "#placement=#Chapter1Beacon" "#Title=DCon1Chap1" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter2" "#placement=#Chapter2Beacon" "#Title=DCon1Chap2" "#Ring=ActionRing"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter3" "#placement=#Chapter3Beacon" "#Title=DCon1Chap3" "#Ring=ActionRing"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter4" "#placement=#Chapter4Beacon" "#Title=Dcon1Chap4" "#Ring=ActionRing"
+		;SendToModule "#ActionRing" "#maxalive=3" "#spline=RandomDronesA" "#type=DroneDefault_a" "#rangemax=300" "#rangemin=200"
+		;SendToModule "#ActionRing" "#Unlock=#Chapter1"
+		SendToModule "#ActionRing" "#TurnOff"
+		CreateModule "#General" "#General" "#ProtectSystem"
+
+		SendToModule "#General" "#ResponseLvPlayerDetected=4"
+
+		CreateModule "#SubMissions" "#SubMissions" "#NodeSpline=SubMissionNodes" "#SubmissionSpline=SubMissionGates" "#ProtectSystem"
+		SendToModule "#SubMissions" "#SetTitle=#Destruction"
+		SendToModule "#SubMissions" "#SetTitle=#Scavenger"
+		SendToModule "#SubMissions" "#SetTitle=#Attack"
+		SendToModule "#SubMissions" "#SetTitle=#Sumo"
+
+		; Create all the special terrain links for Bedouin Village
+		CreateModule #BuildingSpecialLink #Building #Building=#Build1  #Special=BuildTer_Build1_!!_  #ProtectSystem
+		SendToModule                      #Building #Building=#Build2  #Special=BuildTer_Build2_!!_  #ProtectSystem
+		SendToModule                      #Building #Building=#Build3  #Special=BuildTer_Build3_!!_  #ProtectSystem
+		SendToModule                      #Building #Building=#Build4  #Special=BuildTer_Build4_!!_  #ProtectSystem
+		SendToModule                      #Building #Building=#Build5  #Special=BuildTer_Build5_!!_  #ProtectSystem
+		SendToModule                      #Building #Building=#Build6  #Special=BuildTer_Build6_!!_  #ProtectSystem
+		SendToModule                      #Building #Building=#Build7  #Special=BuildTer_Build7_!!_  #ProtectSystem
+		SendToModule                      #Building #Building=#Build8  #Special=BuildTer_Build8_!!_  #ProtectSystem
+		SendToModule                      #Building #Building=#Build9  #Special=BuildTer_Build9_!!_  #ProtectSystem
+		SendToModule                      #Building #Building=#Build10 #Special=BuildTer_Build10_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build11 #Special=BuildTer_Build11_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build12 #Special=BuildTer_Build12_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build13 #Special=BuildTer_Build13_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build14 #Special=BuildTer_Build14_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build15 #Special=BuildTer_Build15_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build16 #Special=BuildTer_Build16_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build17 #Special=BuildTer_Build17_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build18 #Special=BuildTer_Build18_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build19 #Special=BuildTer_Build19_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build20 #Special=BuildTer_Build20_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build21 #Special=BuildTer_Build21_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build22 #Special=BuildTer_Build22_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build23 #Special=BuildTer_Build23_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build24 #Special=BuildTer_Build24_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build25 #Special=BuildTer_Build25_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build26 #Special=BuildTer_Build26_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build27 #Special=BuildTer_Build27_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build28 #Special=BuildTer_Build28_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build29 #Special=BuildTer_Build29_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build30 #Special=BuildTer_Build30_!!_ #ProtectSystem
+		SendToModule                      #Building #Building=#Build31 #Special=BuildTer_Build31_!!_ #ProtectSystem
+
+		SetState "LevelIntro"
+	}
+}
+state LevelIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto PrePickGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+		
+		
+
+
+
+
+;		SendToModule "#General" "#TrafficLv = 1"                        ; lock traffic level (1-5) (0=OFF)
+;		SendToModule "#General" "#PatrolLv = 1"                         ; patrol level (1=ON, 0=OFF)
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+
+		SetDeathPoint "Chapter1_HubDeath"
+		SendToModule "#General" "#StartIntroVideo=#D1LevelIntro" "#PlayerType=Blackout,Blackout,Scorponok,Blackout"
+		SendToModule						"#General" "#StartHUB"
+	}
+}
+
+state PrePickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_PreInitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_PreInitGoto
+		if module "General ChapterProgress" == 3.0 goto Chapter4_PreInitGoto
+		if module "General ChapterProgress" == 4.0 goto Chapter1_PreInitGoto
+	}
+}
+
+state PickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_InitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_InitGoto
+		if module "General ChapterProgress" == 3.0 goto Chapter4_InitGoto
+		if module "General ChapterProgress" == 4.0 goto FinishedLevel
+	}
+	actions
+	{
+		SendToModule "#General" "#StartHUB"
+	}
+}
+state PickGoto2
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_InitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_InitGoto_Alt
+		if module "General ChapterProgress" == 3.0 goto Chapter4_InitGoto_Alt
+		if module "General ChapterProgress" == 4.0 goto FinishedLevel
+	}
+	actions
+	{
+		SendToModule "#General" "#StartHUB"
+	}
+}
+state Chapter1_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_Goto
+		if module "General ChapterProgress" == 4.0 DestroyModule "#Speech" "#GotoReminderSpeech"
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#StartMission" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter2_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter2_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#StartMission" "#SetPlayer=#COMPPOINT1" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter3_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter3_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#StartMission" "#SetPlayer=#COMPPOINT3" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter4_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter4_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#StartMission" "#SetPlayer=#Chapter2Finish" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state FinishedLevel
+{
+	conditions
+	{
+	}
+	actions
+	{
+;		SendToModule "#VehicleLevels" "#ResponseLv=0" "#TrafficLv=1" "#PatrolLv=1"
+		SetState Exit
+	}
+}
+state GlobalActionRing
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing3
+	}
+	actions
+	{
+
+		
+		SendToModule "#General" "#StartHUB"
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#AllowCreatures"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#SubMissions" "#TurnOn"
+	}
+}
+state GlobalActionRing2
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+	}
+	actions
+	{
+				
+
+		SendToModule "#General" "#StartHUB"
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#AllowCreatures"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#SubMissions" "#TurnOn"
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+	}
+}
+state GlobalActionRing3
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		
+		
+		if module "CreatureSwap InArea" == 1.0 goto PrepareSwap	
+		if module "SubRace InArea" == 1.0 goto SubMissionEX_Init
+		if module "SubChase InArea" == 1.0 goto SubMissionEX2_Init
+		
+		
+	}
+	actions
+	{
+		CreateModule "#AreaRange" "#CreatureSwap" "#Trigger=#CharSwap" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SubRace" "#Trigger=#Race" "#AddToRadar" "#ParticleRing" 
+		CreateModule "#AreaRange" "#SubChase" "#Trigger=#Chase" "#AddToRadar" "#ParticleRing" 
+		
+		
+	}
+}
+
+state GlobalActionRing_Alt
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init_Alt
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter_Alt
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing_Alt2
+	}
+	actions
+	{
+		
+
+		SendToModule "#General" "#StartHUB" "#CountBSet=0" "#CountCSet=0"
+	
+
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#AllowCreatures"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#SubMissions" "#TurnOn"
+	}
+}
+state GlobalActionRing_Alt2
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter_Alt
+		
+		if module "CreatureSwap InArea" == 1.0 goto PrepareSwap	
+		if module "SubRace InArea" == 1.0 goto SubMissionEX_Init
+		if module "SubChase InArea" == 1.0 goto SubMissionEX2_Init
+		
+		
+	}
+	actions
+	{
+		CreateModule "#AreaRange" "#CreatureSwap" "#Trigger=#CharSwap" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SubRace" "#Trigger=#Race" "#AddToRadar" "#ParticleRing" 
+		CreateModule "#AreaRange" "#SubChase" "#Trigger=#Chase" "#AddToRadar" "#ParticleRing" 
+		
+		
+	}
+}
+state GlobalStartChapter_Alt
+{
+	conditions
+	{
+		if module "ActionRing Chapter1"  == 1.0 goto Chapter1_Enter
+		if module "ActionRing Chapter2"  == 1.0 goto Chapter2_Enter
+		if module "ActionRing Chapter3"  == 1.0 goto Chapter3_Enter_Alt
+		if module "ActionRing Chapter4"  == 1.0 goto Chapter4_Enter_Alt
+	}
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+		
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SendToModule "#SubMissions" "#TurnOff"
+
+	}
+}
+state SubMission_Init_Alt
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission_Start_Alt
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state GlobalStartChapter
+{
+	conditions
+	{
+		if module "ActionRing Chapter1"  == 1.0 goto Chapter1_Enter
+		if module "ActionRing Chapter2"  == 1.0 goto Chapter2_Enter
+		if module "ActionRing Chapter3"  == 1.0 goto Chapter3_Enter
+		if module "ActionRing Chapter4"  == 1.0 goto Chapter4_Enter
+	}
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+		
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SendToModule "#SubMissions" "#TurnOff"
+
+	}
+}
+state SubMission_Init
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission_Start
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#FadeDown"
+	}
+}
+State SubMission_StartTest
+{
+	actions
+	{
+		SendToModule "#General" "#FadeUp" "#AllowPlayerMovement"
+		SetState "SubMission_Start"
+	}
+}
+state SubMission_Start
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionTriggered" == 1.0 goto SubMission1_Enter
+		if module "SubMissions GetSubMissionTriggered" == 2.0 goto SubMission2_Enter
+		if module "SubMissions GetSubMissionTriggered" == 3.0 goto SubMission3_Enter
+		if module "SubMissions GetSubMissionTriggered" == 4.0 goto SubMission4_Enter
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		SendToModule "#ActionRing" "#TurnOff"
+	}
+}
+state SubMission_Start_Alt
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionTriggered" == 1.0 goto SubMission1_Enter_Alt
+		if module "SubMissions GetSubMissionTriggered" == 2.0 goto SubMission2_Enter_Alt
+		if module "SubMissions GetSubMissionTriggered" == 3.0 goto SubMission3_Enter_Alt
+		if module "SubMissions GetSubMissionTriggered" == 4.0 goto SubMission4_Enter_Alt
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		SendToModule "#ActionRing" "#TurnOff"
+	}
+}
+state SkipLevel
+{
+	conditions
+	{
+		if message "MissionMessage" == 1.0 goto Chapter1_InitGoto 
+		if message "MissionMessage" == 2.0 goto Chapter2_InitGoto
+		if message "MissionMessage" == 3.0 goto Chapter3_InitGoto
+		if message "MissionMessage" == 4.0 goto Chapter4_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Start"
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state LevelSpecialTune
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto GlobalActionRing2
+				
+	}
+	actions
+	{
+		
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		
+		CreateModule "#Timer" "#Timer" "#Time=8.7" "#NoRender" 
+		;SetState "GlobalActionRing2"   
+	}
+}
+state Exit
+{
+	conditions
+	{
+		;if timer > 0.2 goto Exit2
+		if module "General GetCountC" == 1.0 goto ResponseLVSet_Alt ; GlobalActionRing_Alt
+		if module "General ChapterProgress" == 4.0 goto ResponseLVSet4
+		if module "General ChapterProgress" == 3.0 goto ResponseLVSet0
+		if module "General ChapterProgress" == 2.0 goto ResponseLVSet1
+		if module "General ChapterProgress" == 1.0 goto ResponseLVSet3
+		if module "General ChapterProgress" == 0.0 goto ResponseLVSet4b
+	}
+	actions
+	{
+		CreateModule "#VehicleLevels" "#VehicleLevels"
+		;ResetTimer
+	}
+}
+state ResponseLVSet0
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		SendToModule "#VehicleLevels" "#TrafficLv=0" "#PatrolLv=0"		
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+		
+		SetState GlobalActionRing
+	}
+
+}
+state ResponseLVSet1
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		SendToModule "#VehicleLevels" "#TrafficLv=1" "#PatrolLv=1"		
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+		
+		Idle 0.2
+		SetState LevelSpecialTune
+	}
+
+}
+state ResponseLVSet_Alt
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 3.0 goto ResponseLVSet_Alt2
+	}
+	actions
+	{
+		SendToModule "#VehicleLevels" "#TrafficLv=1" "#PatrolLv=1"		
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+		
+		Idle 0.2
+		SetState GlobalActionRing_Alt
+	}
+
+}
+state ResponseLVSet_Alt2
+{
+	
+	actions
+	{
+		SendToModule "#VehicleLevels" "#TrafficLv=0" "#PatrolLv=0"		
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+		
+		Idle 0.2
+		SetState GlobalActionRing_Alt
+	}
+
+}
+state ResponseLVSet3
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		SendToModule "#VehicleLevels" "#TrafficLv=3" "#PatrolLv=3"		
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+		
+		SetState GlobalActionRing
+	}
+
+}
+state ResponseLVSet4
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+		
+		SetState GlobalActionRing
+	}
+
+}
+state ResponseLVSet4b
+{
+	conditions
+	{
+
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 4"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+		
+		SetState GlobalActionRing
+	}
+
+}

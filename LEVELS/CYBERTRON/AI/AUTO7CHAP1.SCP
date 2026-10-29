@@ -1,0 +1,1079 @@
+state Chapter1_Enter
+{
+	Conditions
+	{
+		if timer > 1.0 goto Chapter1_Main
+	}
+	actions
+	{
+		ResetTimer
+		DestroyAllModules
+		SendToModule "#General" "#StartMissionWithNoHub"
+	}
+}
+
+
+state Chapter1_Heal
+{
+	actions
+	{
+		DoMacro AutoHeal
+	}
+}
+state Chapter1_Main
+{
+	conditions
+	{
+		if Timer > 2.2 goto Chapter1_MainDelay
+	}
+	actions
+	{
+		DestroyAllModules 
+		ResetTimer
+		SetDeathPoint "Chapter1_DeathFailMission"
+		CreateModule "#Speech" "#A7_ch1_obj1" "#speech=#A7_ch1_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#SetMessage=A7_ch1_obj1" "#SetMessageTimer=3" 
+	}
+}
+state Chapter1_MainDelay
+{
+	conditions
+	{
+		;if module "A7C1Counter Complete" == 1.0 goto Chapter1_Phase2
+		if module "Boss GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveA GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveB GetPercentageComplete" == 1.0 and
+					if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter1_PhaseComplete
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal1
+	}
+	actions
+	{
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=12" "#IconType=#Drone"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A7C1SpawnA" "#Type=DroneDefault"  "#count=7" "#maxalive=2" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#Script=Early_Combat"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A7C1SpawnA" "#Type=DroneArmouredCar"  "#count=2" "#maxalive=2" "#addtoradar" "#SpawnInLos"  "#TransformForceRobot" "#Script=Early_Combat"
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=A7C1SpawnA" "#Type=DroneCement"  "#count=2" "#maxalive=1" "#addtoradar" "#SpawnInLos"  "#TransformForceRobot" "#Script=Early_Combat"
+		CreateModule "#Creature" "#Boss"          "#Spline=A7C1SpawnA" "#Type=Barricade" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLos"  "#TransformForceRobot" "#Script=Barricade" "#SetEnergyMax=2399.0" "#SetEnergy=2399.0" "#SetPosition=#BossEntrance_T1"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		SendToModule "#Boss" "#ForcePlayerAsOpp"
+		SendToModule "#General" "#SetMaxOpponents=18" "#SetMaxApproachers=18" "#SetAttackRingSize=20"
+		SendToModule "#General" "#InhibitCreatureDWRespawn"
+	}
+}
+state Chapter1_Heal1
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH1Process
+	}
+}
+state Chapter1_PH1Process
+{
+	conditions
+	{
+		;if module "A7C1Counter Complete" == 1.0 goto Chapter1_Phase2
+		if module "Boss GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveA GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveB GetPercentageComplete" == 1.0 and
+					if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter1_PhaseComplete
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal1
+	}
+	
+}
+state Chapter1_Phase2Start
+{
+	conditions
+	{
+		;if module "A7C1Counter Complete" == 1.0 goto Chapter1_Phase2
+		if module "Creature GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter1_Phase2
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal2
+	}
+	actions
+	{
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=26" "#IconType=#Drone"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A7C1SpawnA" "#Type=DroneDefault"  "#count=2" "#maxalive=2" "#addtoradar" "#SpawnInLos" "#TransformForceRobot"
+		CreateModule "#Creature" "#Creature"      "#Spline=A7C1SpawnA" "#Type=DroneForkLift" "#count=2" "#maxalive=2" "#addtoradar" "#SpawnInLos" "#TransformForceRobot"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		
+	}
+}
+state Chapter1_Heal2
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH2ProcessA
+	}
+}
+state Chapter1_PH2ProcessA
+{
+	conditions
+	{
+		if module "Creature GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter1_Phase2
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal2
+	}
+	
+}
+state Chapter1_Phase2
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "CreatureWaveB GetCountAlive" == 0.0 goto Chapter1_Phase2W3
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal2B
+	}
+	actions
+	{
+		DestroyModule "#Meteorite"
+		DestroyModule "#Creature"
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=A7C1SpawnA" "#Type=DroneDefault"  "#count=3" "#maxalive=3" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" 
+		
+		CreateModule "#Creature" "#CreatureWaveB" "#count=0" "#maxalive=5" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveB" "#Spline=MeteorSpawn" "#Time=2" "#Time=3,DronePickupTruck" "#Time=8,DroneArmouredCar" "#Time=9,DroneTowTruck" "#Time=13,DroneCement" 
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+	}
+}
+state Chapter1_Heal2B
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH2ProcessB
+	}
+}
+state Chapter1_PH2ProcessB
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "CreatureWaveB GetCountAlive" == 0.0 goto Chapter1_Phase2W3
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal2B
+	}
+	
+}
+state Chapter1_Phase2W3
+{
+	conditions	
+	{
+		
+
+		if module "Boss Complete" == 1.0 goto Chapter1_Shockwave
+	}
+	actions
+	{
+		DestroyModule "#CreatureWaveA"
+		DestroyModule "#Meteorite"
+		SendToModule "#Ratchet" "#AddToRadarOff" 
+		CreateModule "#Creature" "#CreatureWaveA" "#count=0" "#maxalive=7" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On"
+		CreateModule "#Goto" "#Boss"          "#SpawnSpline=A7C1SpawnA" "#DirectSpline=COMCAM1" "#Type=TripleC" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsVehicle" "#SetEnergyMax=7500.0" "#SetEnergy=7500.0" "#SetPosition=#BossEntrance_A1" "#Script=FollowSplineTC" "#Speed=150" "#ResetHealthDiff"; "#Script=Cybertron_TC"
+		
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveA" "#Spline=MeteorSpawn" "#Time=1" "#Time=2,DronePickupTruck" "#Time=7,DroneDefault" "#Time=9,DronePickupTruck" "#Time=4,DroneTowTruck" "#Time=16,DroneArmouredCar" "#Time=17,DroneArmouredCar"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#General" "#CountBSet=0" "#CountCSet=0"
+	}
+}
+state Chapter1_Shockwave
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "CreatureWaveB GetCountAlive" == 0.0 and
+					if module "CreatureWaveC GetCountAlive" == 0.0 and
+						if module "Boss GetCountAlive" == 0.0 and
+							if module "General GetCountC" == 1.0 goto Chapter1_PhaseComplete
+
+		if module "Boss Energy" < 0.75 and
+			if module "General GetCountB" == 0.0 goto Chapter1_ShockwaveFallBack
+		if module "Boss Energy" < 0.50 and
+			if module "General GetCountB" == 1.0 goto Chapter1_ShockwaveFallBack
+		if module "Boss Energy" < 0.25 and
+			if module "General GetCountB" == 2.0 goto Chapter1_ShockwaveFallBack
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal2C1
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#Ratchet" "#AddToRadar" "#CountDSet=1"
+		
+		SendToModule "#Boss" "#Script=Shockwave" "#ForcePlayerAsOpp" 
+	}
+}
+state Chapter1_Heal2C1
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH2ProcessC
+	}
+}
+state Chapter1_PH2ProcessC
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "CreatureWaveB GetCountAlive" == 0.0 and
+					if module "CreatureWaveC GetCountAlive" == 0.0 and
+						if module "Boss GetCountAlive" == 0.0 and
+							if module "General GetCountC" == 1.0 goto Chapter1_PhaseComplete
+
+		if module "Boss Energy" < 0.75 and
+			if module "General GetCountB" == 0.0 goto Chapter1_ShockwaveFallBack
+		if module "Boss Energy" < 0.50 and
+			if module "General GetCountB" == 1.0 goto Chapter1_ShockwaveFallBack
+		if module "Boss Energy" < 0.25 and
+			if module "General GetCountB" == 2.0 goto Chapter1_ShockwaveFallBack
+
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal2C1
+	}
+	
+}
+state Chapter1_ShockwaveFallBack
+{
+	conditions	
+	{
+		
+		if module "Boss PlayerRange" > 100 goto Chapter1_ShockwaveGoto
+	}
+	actions
+	{
+		
+		SendToModule "#Boss" "#Script=FlyOff_M" "#Unstoppable"
+		 
+		SendToModule "#Ratchet" "#AddToRadarOff" 
+		
+
+
+	}
+	
+}
+state Chapter1_ShockwaveGoto
+{
+	conditions	
+	{
+		
+
+		if module "Boss Complete" == 1.0 goto Chapter1_ShockwaveTransform
+		
+	}
+	actions
+	{
+		
+		 
+		SendToModule "#Boss" "#Script=FollowSplineTC" "#TransformForceCar" "#DirectSpline=COMCAM1" "#Speed=150" 
+		SendToModule "#General" "#CountBInc"
+
+
+	}
+	
+}
+state Chapter1_ShockwaveTransform
+{
+	Conditions
+	{
+		if module "General FadeDown" == 1.0 goto Chapter1_TripleChangerArtillerySetHealthLevel
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown" 
+		SendToModule "#Boss" "#Script=Shockwave" "#TransformForceRobot" 
+		
+		;Idle 1.5
+		
+
+
+	}
+	
+}
+state Chapter1_TripleChangerArtillerySetHealthLevel
+{
+	conditions
+	{
+		if module "General GetCountB" == 1.0 goto TripleCArtHealth75
+		if module "General GetCountB" == 2.0 goto TripleCArtHealth50
+		if module "General GetCountB" == 3.0 goto TripleCArtHealth25
+		
+	}
+	
+}
+
+state TripleCArtHealth75
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#Boss"
+		CreateModule "#Creature" "#TripleChanger" "#Type=TripleCTurret" "#count=1" "#maxalive=1" "#Spline=MeteorSpawn" "#Script=TC_TURRETC" "#SpawnInLosInit" "#SetEnergyMax=7500"  "#SetEnergyMin=5625" "#AddToRadarAlways"  "#ResetHealthDiff" "#BlockDeath" ; "#FollowSpline=TCTURRET_TARGETS"
+		SendToModule "#TripleChanger" "#SetEnergy=5625" "#SetPosition=#TripleCPoint" 
+		SetState Chapter1_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+
+state TripleCArtHealth50
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#Boss"
+		CreateModule "#Creature" "#TripleChanger" "#Type=TripleCTurret" "#count=1" "#maxalive=1" "#Spline=MeteorSpawn" "#Script=TC_TURRETC" "#SpawnInLosInit" "#SetEnergyMax=7500"  "#SetEnergyMin=3750" "#AddToRadarAlways"  "#ResetHealthDiff" "#BlockDeath" ; "#FollowSpline=TCTURRET_TARGETS"
+		SendToModule "#TripleChanger" "#SetEnergy=3750" "#SetPosition=#TripleCPoint" 
+		SetState Chapter1_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+
+state TripleCArtHealth25
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#Boss"
+		CreateModule "#Creature" "#TripleChanger" "#Type=TripleCTurret" "#count=1" "#maxalive=1" "#Spline=MeteorSpawn" "#Script=TC_TURRETC" "#SpawnInLosInit" "#SetEnergyMax=7500"  "#SetEnergyMin=1875" "#AddToRadarAlways"  "#ResetHealthDiff" "#BlockDeath" ; "#FollowSpline=TCTURRET_TARGETS"
+		SendToModule "#TripleChanger" "#SetEnergy=1875" "#SetPosition=#TripleCPoint" 
+		SendToModule "#General" "#CountCSet=1" 
+		SetState Chapter1_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state Chapter1_TripleChangerArtilleryPosition
+{
+	conditions
+	{
+		;if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter1_FailMission		
+		;if module "Ratchet Dead" == 1.0 goto Chapter1_FailMission
+
+		if Timer > 10 goto Chapter1_TripleChangerRobotPrep
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#FadeUp"
+	}
+}
+
+state Chapter1_TripleChangerRobotPrep
+{
+	conditions
+	{
+		
+		if module "General GetCountB" == 1.0 goto TripleCRobHealth75
+		if module "General GetCountB" == 2.0 goto TripleCRobHealth50
+		if module "General GetCountB" == 3.0 goto TripleCRobHealth25
+		
+	}
+	
+}
+
+state TripleCRobHealth75
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		CreateModule "#Goto" "#Boss" "#SpawnSpline=MeteorSpawn" "#type=TripleC" "#SetEnergyMax=7500.0" 
+		SendToModule "#Boss" "#SetEnergy=5625" "#SetPosition=#TripleCPoint" "#ResetHealthDiff"
+		SetState Chapter1_Shockwave
+		
+		
+	}
+}
+state TripleCRobHealth50
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		CreateModule "#Goto" "#Boss" "#SpawnSpline=MeteorSpawn" "#type=TripleC" "#SetEnergyMax=7500.0" 
+		SendToModule "#Boss" "#SetEnergy=3750" "#SetPosition=#TripleCPoint" "#ResetHealthDiff"
+		SetState Chapter1_Shockwave
+		
+		
+	}
+}
+
+state TripleCRobHealth25
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		CreateModule "#Goto" "#Boss" "#SpawnSpline=MeteorSpawn" "#type=TripleC" "#SetEnergyMax=7500.0" 
+		SendToModule "#Boss" "#SetEnergy=1875" "#SetPosition=#TripleCPoint" "#ResetHealthDiff"
+		SetState Chapter1_Shockwave
+		
+		
+	}
+}
+
+
+
+
+state Chapter1_Phase3Start
+{
+	conditions
+	{
+		;if module "A7C1Counter Complete" == 1.0 goto Chapter1_Phase2
+		if module "CreatureWaveB Energy" <= 0.0 and
+			if module "CreatureWaveA Energy" <= 0.0 goto Chapter1_Phase3
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal3
+	}
+	actions
+	{
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=26" "#IconType=#Drone"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=MeteorSpawn" "#Type=DronePickupTruck"  "#count=9" "#maxalive=4" "#addtoradar" "#TransformForceRobot" "#Script=AdvDefault"
+		CreateModule "#Creature" "#CreatureWaveB"      "#Spline=A7C1SpawnA" "#Type=DroneDefault" "#count=9" "#maxalive=2" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#Script=AdvDefault"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		
+	}
+}
+state Chapter1_Heal3
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH3ProcessA
+	}
+}
+state Chapter1_PH3ProcessA
+{
+	conditions
+	{
+		if module "CreatureWaveB Energy" <= 0.0 and
+			if module "CreatureWaveA Energy" <= 0.0 goto Chapter1_Phase3
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal3
+	}
+	
+}
+state Chapter1_Phase3
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "CreatureWaveB GetCountAlive" == 0.0 and
+					if module "CreatureWaveC GetCountAlive" = 0.0 and
+						if module "CreatureWaveD GetCountAlive" == 0.0 and
+							if module "CreatureWaveE GetCountAlive" = 0.0 and
+								if module "Boss GetCountAlive" == 0.0 goto Chapter1_PhaseComplete
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal3B
+	}
+	actions
+	{
+		DestroyModule "#Meteorite"
+		CreateModule "#Creature" "#CreatureWaveC" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#Script=AdvDefault"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveC" "#Spline=MeteorSpawn" "#Time=2" "#Time=6,DronePickupTruck" "#Time=8,DroneForklift" "#Time=13,DronePickupTruck" 
+		CreateModule "#Creature" "#CreatureWaveD" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneTowTruck" "#TransformForceRobot" "#KeyLocation=On" "#Script=Advanced"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveD" "#Spline=MeteorSpawn" "#Time=4" "#Time=12" 
+		CreateModule "#Creature" "#CreatureWaveE" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneCement" "#TransformForceRobot" "#KeyLocation=On" "#Script=CAgile"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#CreatureWaveE" "#Spline=MeteorSpawn"  "#Time=14"
+		CreateModule "#Creature" "#Boss"          "#Spline=A7C1SpawnA" "#Type=Brawl" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#Script=Brawl" "#SetEnergyMax=8000" "#SetHealth=8000" "#SetPosition=#BossEntrance_T2"
+		
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveD" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveE" "#ForcePlayerAsOpp"
+	}
+}
+state Chapter1_Heal3B
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH3ProcessB
+	}
+}
+state Chapter1_PH3ProcessB
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "CreatureWaveB GetCountAlive" == 0.0 and
+					if module "CreatureWaveC GetCountAlive" = 0.0 and
+						if module "CreatureWaveD GetCountAlive" == 0.0 and
+							if module "CreatureWaveE GetCountAlive" = 0.0 and
+								if module "Boss GetCountAlive" == 0.0 goto Chapter1_PhaseComplete
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal3B
+	}
+	
+}
+state Chapter1_Phase4Start
+{
+	conditions
+	{
+		;if module "A7C1Counter Complete" == 1.0 goto Chapter1_Phase2
+		
+		if module "Boss2 Complete" == 1.0 goto Chapter1_Starscream
+	}
+	actions
+	{
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=28" "#IconType=#Drone"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=MeteorSpawn" "#Type=DroneForklift"  "#count=12" "#maxalive=3" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetEnergy=800"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A7C1SpawnA" "#Type=DroneMig"  "#count=2" "#maxalive=1" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#Script=Mig29Drone" "#SetEnergyMax=1500" "#SetEnergy=1500"
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=MeteorSpawn" "#Type=DronePickupTruck"  "#count=12" "#maxalive=2" "#addtoradar" "#TransformForceRobot" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		;CreateModule "#Creature" "#CreatureWaveD" "#Spline=A7C1SpawnA" "#Type=DroneDefault"  "#count=12" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000"
+		;CreateModule "#Creature" "#CreatureWaveE" "#Spline=A7C1SpawnA" "#Type=DroneArmouredCar"  "#count=1" "#maxalive=1" "#addtoradar" "#TransformForceRobot" "#Script=Arm_TruckDrone" "#SetEnergyMax=1200" "#SetEnergy=1200"
+		CreateModule "#Creature" "#Boss"          "#Spline=A7C1SpawnA" "#Type=Bonecrusher" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#Script=Bonecrusher" "#SetPosition=#BossEntrance_T3"
+		CreateModule "#Goto" "#Boss2"          "#SpawnSpline=A7C1SpawnA" "#DirectSpline=COMCAM1" "#Type=Starscream" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=FollowSplineTC" "#SetEnergyMax=4000.0" "#SetEnergy=4000.0" "#SetPosition=#BossEntrance_A2" "#Speed=320"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		SendToModule "#Boss" "#ForcePlayerAsOpp"
+		SendToModule "#Boss2" "#ForcePlayerAsOpp"
+		
+	}
+}
+state Chapter1_Starscream
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "CreatureWaveB GetCountAlive" == 0.0 and
+					if module "CreatureWaveC GetCountAlive" == 0.0 and
+						if module "Boss GetCountAlive" == 0.0 and
+							if module "Boss2 GetCountAlive" == 0.0 goto Chapter1_PhaseComplete
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal4
+
+	}
+	actions
+	{
+		SendToModule "#Boss2" "#Script=Starscream" "#ForcePlayerAsOpp"
+	}
+}
+state Chapter1_Heal4
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH4Process
+	}
+}
+state Chapter1_PH4Process
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "CreatureWaveB GetCountAlive" == 0.0 and
+					if module "CreatureWaveC GetCountAlive" == 0.0 and
+						if module "Boss GetCountAlive" == 0.0 and
+							if module "Boss2 GetCountAlive" == 0.0 goto Chapter1_PhaseComplete
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal4
+	}
+	
+}
+state Chapter1_Phase5Start
+{
+	conditions
+	{
+		;if module "A7C1Counter Complete" == 1.0 goto Chapter1_Phase2
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "CreatureWaveB GetCountAlive" == 0.0 and
+					if module "CreatureWaveC GetCountAlive" == 0.0 and
+						if module "Boss GetCountAlive" == 0.0 and
+							if module "Boss2 GetCountAlive" == 0.0 goto Chapter1_PhaseComplete
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal5
+	}
+	actions
+	{
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=48" "#IconType=#Drone"
+		SendToModule "#General" "#ForceHealthSpawnMin=0.8" "#ForceHealthSpawnMed=0.45" "#ForceHealthSpawnMax=0.1"
+		
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=MeteorSpawn" "#Type=EnergonDrone"  "#count=32" "#maxalive=3" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#Script=EnergonDrone" 
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A7C1SpawnA" "#Type=DroneMig"  "#count=2" "#maxalive=1" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#Script=Mig29Drone" "#SetEnergyMax=1500" "#SetEnergy=1500"
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=A7C1SpawnA" "#Type=DroneDefault"  "#count=12" "#maxalive=2" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#Script=CarDrone" "#SetEnergyMax=1000" "#SetEnergy=1000"
+		CreateModule "#Creature" "#Boss"          "#Spline=A7C1SpawnA" "#Type=Blackout" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLos" "#SpawnAsVehicle" "#Script=Blackout" "#SetEnergyMax=4500.0" "#SetEnergy=4500.0"  "#SetPosition=#BossEntrance_A3"
+		CreateModule "#Creature" "#Boss2"          "#Spline=A7C1SpawnA" "#Type=Scorponok" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLos" "#Script=Scorponok" "#SetPosition=#BossEntrance_A3B"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		SendToModule "#Boss" "#ForcePlayerAsOpp"
+		SendToModule "#Boss2" "#ForcePlayerAsOpp"
+		
+	}
+}
+state Chapter1_Heal5
+{
+	actions
+	{
+		;DoMacro AutoHeal	
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH5Process
+	}
+}
+state Chapter1_PH5Process
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+			if module "CreatureWaveB GetCountAlive" == 0.0 and
+				if module "CreatureWaveC GetCountAlive" == 0.0 and
+					if module "Boss GetCountAlive" == 0.0 and
+						if module "Boss2 GetCountAlive" == 0.0 goto Chapter1_PhaseComplete
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal5
+	}
+	
+}
+state Chapter1_Phase6Start
+{
+	conditions
+	{
+		if module "Meteorite1 GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "CreatureWaveB GetCountAlive" == 0.0 and
+						if module "Meteorite3 GetPercentage" == 1.0 and
+							if module "CreatureWaveC GetCountAlive" == 0.0 goto Chapter1_Phase62
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal6
+	}
+	actions
+	{
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=50" "#IconType=#Drone"
+		
+		CreateModule "#Creature" "#CreatureWaveA" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#SetEnergy=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite1" "#ModuleTag=#CreatureWaveA" "#Spline=MeteorSpawn" "#Time=1" "#Time=4" "#Time=9" "#Time=12" 
+		CreateModule "#Creature" "#CreatureWaveB" "#count=0" "#maxalive=3" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#SetEnergy=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#CreatureWaveB" "#Spline=MeteorSpawn" "#Time=2,DronePickupTruck" "#Time=10" "#Time=13" 
+		CreateModule "#Creature" "#CreatureWaveC" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneCement" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=400" "#SetEnergy=400" "#Script=MixerDrone"
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#CreatureWaveC" "#Spline=MeteorSpawn" "#Time=6" 
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		
+	}
+}
+state Chapter1_Heal6
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH6ProcessA
+	}
+}
+state Chapter1_PH6ProcessA
+{
+	conditions
+	{
+		if module "Meteorite1 GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "CreatureWaveB GetCountAlive" == 0.0 and
+						if module "Meteorite3 GetPercentage" == 1.0 and
+							if module "CreatureWaveC GetCountAlive" == 0.0 goto Chapter1_Phase62
+		
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal6
+	}
+	
+}
+state Chapter1_Phase62
+{
+	conditions
+	{
+		if module "Meteorite4 GetPercentage" == 1.0 and
+			if module "CreatureWaveD GetCountAlive" == 0.0 and
+				if module "Meteorite5 GetPercentage" == 1.0 and
+					if module "CreatureWaveE GetCountAlive" == 0.0 and
+						if module "Meteorite6 GetPercentage" == 1.0 and
+							if module "CreatureWaveF GetCountAlive" == 0.0 goto Chapter1_Phase63
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal6B
+	}
+	actions
+	{
+		DestroyModule "#CreatureWaveA"
+		DestroyModule "#Meteorite1"
+		CreateModule "#Creature" "#CreatureWaveD" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneDefault" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#SetEnergy=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite4" "#ModuleTag=#CreatureWaveD" "#Spline=MeteorSpawn" "#Time=1" "#Time=3,DroneDefault" "#Time=6,DroneDefault" "#Time=7,DroneDefault"
+		CreateModule "#Creature" "#CreatureWaveE" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneForklift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#SetEnergy=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite5" "#ModuleTag=#CreatureWaveE" "#Spline=MeteorSpawn" "#Time=2,DroneForkLift" "#Time=5,DroneForkLift" 
+		CreateModule "#Creature" "#CreatureWaveF" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#SetEnergy=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite6" "#ModuleTag=#CreatureWaveF" "#Spline=MeteorSpawn" "#Time=2,DronePickupTruck" "#Time=4,DronePickupTruck" 
+		SendToModule "#CreatureWaveD" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveE" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveF" "#ForcePlayerAsOpp"
+	}
+}
+state Chapter1_Heal6B
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH6ProcessB
+	}
+}
+state Chapter1_PH6ProcessB
+{
+	conditions
+	{
+		if module "Meteorite4 GetPercentage" == 1.0 and
+			if module "CreatureWaveD GetCountAlive" == 0.0 and
+				if module "Meteorite5 GetPercentage" == 1.0 and
+					if module "CreatureWaveE GetCountAlive" == 0.0 and
+						if module "Meteorite6 GetPercentage" == 1.0 and
+							if module "CreatureWaveF GetCountAlive" == 0.0 goto Chapter1_Phase63
+		
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal6B
+	}
+	
+}
+state Chapter1_Phase63
+{
+	conditions	
+	{
+		
+
+		if module "Boss Complete" == 1.0 goto Chapter1_Megatron
+	}
+	actions
+	{
+		DestroyModule "#CreatureWaveB"
+		DestroyModule "#Meteorite2"
+		DestroyModule "#CreatureWaveC"
+		DestroyModule "#Meteorite3"
+		DestroyModule "#CreatureWaveD"
+		DestroyModule "#Meteorite4"	
+		DestroyModule "#CreatureWaveE"
+		DestroyModule "#Meteorite5"
+		CreateModule "#Creature" "#CreatureWaveA" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneForkLift" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=800" "#SetEnergy=800" "#Script=ForkliftDrone"
+		CreateModule "#Meteorite" "#Meteorite1" "#ModuleTag=#CreatureWaveA" "#Spline=MeteorSpawn" "#Time=1" 
+		CreateModule "#Creature" "#CreatureWaveB" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#SetEnergy=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#CreatureWaveB" "#Spline=MeteorSpawn" "#Time=2,DronePickupTruck" "#Time=3,DronePickupTruck" "#Time=4,DronePickupTruck" "#Time=6,DronePickupTruck"  
+		CreateModule "#Creature" "#CreatureWaveC" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneCement" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=400" "#SetEnergy=400" "#Script=MixerDrone"
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#CreatureWaveC" "#Spline=MeteorSpawn" "#Time=16" "#Time=17"
+		CreateModule "#Goto" "#Boss"          "#SpawnSpline=A7C1SpawnA" "#DirectSpline=COMCAM1" "#Type=Megatron" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=FollowSplineTC" "#SetEnergyMax=15000" "#SetEnergy=15000" "#SetPosition=#BossEntrance_M" "#Speed=500"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+		
+		
+	}
+}
+state Chapter1_Megatron
+{
+	conditions	
+	{
+		if module "Meteorite1 GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "CreatureWaveB GetCountAlive" == 0.0 and
+						if module "Meteorite3 GetPercentage" == 1.0 and
+							if module "CreatureWaveC GetCountAlive" == 0.0 and
+								if module "CreatureWaveD GetCountAlive" == 0.0 and
+									if module "CreatureWaveE GetCountAlive" == 0.0 and
+										if module "Boss GetCountAlive" == 0.0 goto Chapter1_Complete
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal6C
+
+		
+	}
+	actions
+	{
+		
+		SendToModule "#Boss" "#ForcePlayerAsOpp" "#MegatronToSequence" "#Script=Megatron_PH2"
+		Idle 17.0
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=MeteorSpawn" "#Type=DroneForklift"  "#count=16" "#maxalive=4" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#SetEnergyMax=800" "#SetEnergy=800" "#Script=ForkliftDrone"
+		CreateModule "#Creature" "#CreatureWaveE" "#Spline=A7C1SpawnA" "#Type=DroneDefault"  "#count=10" "#maxalive=3" "#addtoradar" "#SpawnInLos" "#TransformForceRobot" "#SetEnergyMax=1000" "#SetEnergy=1000" "#Script=CarDrone"
+		
+		
+		
+		SendToModule "#CreatureWaveD" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveE" "#ForcePlayerAsOpp"
+		
+	}
+}
+state Chapter1_Heal6C
+{
+	actions
+	{
+		;DoMacro AutoHeal
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		SendToModule "#General" "#CountDSet=0"
+		Idle 2.8
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		Idle 7.0
+		SendToModule "#Ratchet" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		SetState Chapter1_PH6ProcessC
+	}
+}
+state Chapter1_PH6ProcessC
+{
+	conditions
+	{
+		if module "Meteorite1 GetPercentage" == 1.0 and
+			if module "CreatureWaveA GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "CreatureWaveB GetCountAlive" == 0.0 and
+						if module "Meteorite3 GetPercentage" == 1.0 and
+							if module "CreatureWaveC GetCountAlive" == 0.0 and
+								if module "CreatureWaveD GetCountAlive" == 0.0 and
+									if module "CreatureWaveE GetCountAlive" == 0.0 and
+										if module "Boss GetCountAlive" == 0.0 goto Chapter1_Complete
+		
+
+
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountD" == 1.0 goto Chapter1_Heal6C
+	}
+	
+}
+state Chapter1_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter1_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter1_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		;SendToModule "#General" "#UnLoadCreature=DroneCement"
+		SendToModule "#General" "#UnLoadCreature=Barricade"
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		;SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=TripleC"
+		;SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+		SendToModule "#General" "#UnLoadCreature=Brawl"
+		;SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#UnLoadCreature=Bonecrusher"
+		SendToModule "#General" "#UnLoadCreature=Starscream"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=Blackout"
+		SendToModule "#General" "#UnLoadCreature=Scorponok"
+		SendToModule "#General" "#UnLoadCreature=Megatron"
+		
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+		SetState "LevelIntro"
+	}
+}
+state Chapter1_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		SendToModule #General #UnlockBonus=Mission_Cybertron
+		SendToModule #General #UnlockBonus=Character_CyberOpti
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartVideo=#A7C1Outro"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+		;if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		SetState Chapter1_Leave
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		;SetState "FinishedLevel"
+	}
+}

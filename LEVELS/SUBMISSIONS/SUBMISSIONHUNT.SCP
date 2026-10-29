@@ -1,0 +1,122 @@
+;hunt and destroy all the vehicles within the time limit
+
+;requires:
+;   Route spline 1		Route#a
+;   Route spline 2		Route#b
+;   Route spline 3		Route#c
+;   Route spline 4		Route#d
+
+;Changeable params:
+;	TIMELIMIT		time in which to complete the mission
+;	TYPE1			vehicle type 1
+;	TYPE2			vehicle type 2
+;	TYPE3			vehicle type 3
+;	TYPE4			vehicle type 4
+;						Jeep
+;						Sector7Drone
+;						CommTruck
+;						Shilka
+;						ShilkaTracer
+;						SUV
+
+state SubMissionONE_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMissionONE_Death"
+;		SendToModule "#General" "#PlayerType="
+		SetState "SubMissionONE_Init"
+	}
+}
+state SubMissionONE_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMissionONE_Main
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		ResetTimer
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMissionONE"
+		CreateModule "#Timer" "#Timer" "#Time=TIMELIMIT"
+	}
+}
+state SubMissionONE_Main
+{
+	conditions
+	{
+		if module "GotoDroneA GetPercentageComplete" == 1.0 and
+			if module "GotoDroneB GetPercentageComplete" == 1.0 and
+				if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMissionONE_Finish
+		if module "Timer FailMission" == 1.0 goto SubMissionONE_Fail
+	}
+	actions
+	{
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=RouteONEa" "#maxalive=1" "#count=1" "#FollowSpline=RouteONEa" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=TYPE1" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths"
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=RouteONEb" "#maxalive=1" "#count=1" "#FollowSpline=RouteONEb" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=TYPE2" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=RouteONEc" "#maxalive=1" "#count=1" "#FollowSpline=RouteONEc" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=TYPE3" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=RouteONEd" "#maxalive=1" "#count=1" "#FollowSpline=RouteONEd" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=TYPE4" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths"
+
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMissionONE_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionONE_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMissionONE_FinishWait
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=ONE"
+		SetState "SubMissionONE_Leave"
+	}
+}
+state SubMissionONE_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMissionONE_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state SubMissionONE_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMissionONE_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state SubMissionONE_Leave
+{
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#RevertPlayerType"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMissionONE" "#FadeUp"
+		SendToModule "#General" "#FadeUp"		
+		SetState "GlobalActionRing"
+	}
+}
+

@@ -1,0 +1,5 @@
+include "Auto4Hub.scp"
+include "Auto4Chap1.scp"
+include "Auto4Chap2.scp"
+include "Auto4Chap3.scp"
+include "Auto4Chap4.scp"

@@ -1,0 +1,135 @@
+
+;race to the end of the path within the time limit
+
+;requires:
+;race spline		Race#
+
+;Changeable params:
+;	TIMELIMIT		time in which to complete the mission
+;   RANGE			distance to each point
+
+
+state SubMission1_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission1_Death"
+		SetState "SubMission1_Init"
+	}
+}
+state SubMission1_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main
+		if module "General ChapterProgress" >= 4.0 goto SubMission1_Main2
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetVehicle=#SubMission1"
+		;CreateModule "#Timer" "#Timer" "#Time=120" ;TIMELIMIT
+		;CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Race1" "#Range=25" ;RANGE
+
+	}
+}
+state SubMission1_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		CreateModule "#Timer" "#Timer" "#Time=120" ;TIMELIMIT
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Race1" "#Range=25" ;RANGE
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission1_Main2
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		;SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#SetVehicle=#SubMission1b"
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		CreateModule "#Timer" "#Timer" "#Time=60" ;TIMELIMIT
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Race2" "#Range=25" ;RANGE "#Spline=Race2"
+		SendToModule "#General" "#FadeUp"
+		;CreateModule "#Goto" "#Ratchet" "#SpawnSpline=A1C3SpawnA" "#AddToRadarOff" "#type=DroneArmouredCar_a" "#Speed=120"  "#SpawnInLOSInit" "#SpawnAsVehicle" "#Health=#RatchetHealth" "#Unstoppable" "#SuppressShield" "#Friend" ; "#Invulnerable" 
+				
+	}
+}
+state SubMission1_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission1_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission1_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=1"
+		;SetState "SubMission1_Leave"
+	}
+}
+state SubMission1_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission1_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission1_Leave
+{
+	
+	actions
+	{
+		
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		
+		
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission1" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+
+
+
+
+

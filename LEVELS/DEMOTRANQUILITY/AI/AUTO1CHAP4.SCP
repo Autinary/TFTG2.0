@@ -1,0 +1,601 @@
+state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A1_ch4_Goto" "#AutoDestroy" "#Start"
+		Idle 3.0
+		
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+;;		SendToModule "#General" "#StartMissionIntro=#A1C4Intro"
+		SendToModule "#General" "#StartMissionIntro=#A1C4Intro" "#SetPlayerDeathPoint=#Chapter4Restart"
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+	   
+	    SendToModule "#General" "#UnLoadCreature=DroneDefault_a" 
+
+	    SendToModule "#General" "#LoadCreature=DronePickupTruck"
+	    SendToModule "#General" "#LoadCreature=DroneForklift"
+	    SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+	    SendToModule "#General" "#PlayerType=BumbleBee"
+	}
+}
+;;state Chapter4_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter4_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartVideo=#A1C4Intro"
+;;	}
+;;}
+state Chapter4_Main
+{
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter4_DeathFailMission"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter4Start" "#FadeUp"
+		SetState "Chapter4_MainStart"
+	}
+}
+state Chapter4_MainStart
+{
+	conditions
+	{
+		;if module "Clearit GetPercentageComplete" == 1.0 and
+		;if module "ClearitB GetPercentageComplete" == 1.0 goto Chapter4_GotoBusinessPark
+		if module "KeyLocation3 FailMission" == 1.0 goto Chapter4_FailMission
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter4_FailMission
+		if module "KeyLocation3 InArea" == 1.0 goto Chapter4_Main2
+		if module "KeyLocation1 InArea" == 1.0 goto Chapter4_GotoBusinessPark
+	}
+	actions
+	{
+		SetDeathPoint "Chapter4_DeathFailMission"
+		CreateModule "#SpecialObj" "#SpecialObj" "#Placement=A1C4" "#Protect" ;"#DetonateWhenWeak"
+		CreateModule "#AreaRange" "#Trigger3" "#Trigger=#A1C4TriggerD" "#Beacon"
+		CreateModule "#AreaRange" "#Trigger1" "#Trigger=#A1C4TriggerA" "#Beacon"
+		CreateModule "#Speech" "#Speech" "#speech=#A1_ch4_obj1" "#Start" "#AutoDestroy" "#GermanWiiAudioFudge"
+		CreateModule "#KeyLocation" "#KeyLocation3" "#Spline=A1C4KeyLocC" "#String=Key10Goto" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60" "#TimeOut=30" 
+		CreateModule "#KeyLocation" "#KeyLocation1" "#Spline=A1C4KeyLocA" "#InitTimeOut=60" "#TimeOut=30" 
+		SendToModule "#General" "#SetCount=0"
+
+	}
+}
+state Chapter4_Main2
+{
+	conditions
+	{
+		if module "Clearit GetPercentageComplete" == 1.0 and
+		if module "ClearitB GetPercentageComplete" == 1.0 goto Chapter4_DoubleCheck2
+		if module "KeyLocation3 FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#KeyLocation1"
+		DestroyModule "#Trigger3"
+		DestroyModule "#Trigger1"
+		CreateModule "#ClearIt" "#ClearIt" "#Spline=A1c4Area3"   "#BoundarySpline=A1C4AreaRadius3" "#placement=#A1C4Area3" "#Radius=2.0" "#Delay=2" "#addtoradar" "#Radar=#MastDot" "#DontDrawBeacon" "#DetonateWhenWeak" ;"#OnMove" 
+		CreateModule "#ClearIt" "#ClearItB" "#Spline=A1c4Area3B"   "#BoundarySpline=A1C4AreaRadius3" "#placement=#A1C4Area3B" "#Radius=2.0" "#Delay=2" "#addtoradar" "#Radar=#LightningDot" "#DontDrawBeacon" "#DetonateWhenWeak" ;"#OnMove" 
+		SendToModule "#General" "#CountInc"
+	}
+}
+state Chapter4_DoubleCheck
+{
+	conditions
+	{	
+		if module "General GetCount" == 2.0 goto Chapter4_PrepSignal
+		if Timer > 0.2 goto Chapter4_NextZone
+	}
+	actions
+	{
+		
+		ResetTimer
+		CreateModule "#SpecialObj" "#SpecialObj" "#Placement=A1C4" "#Protect" ;"#DetonateWhenWeak"
+		
+		
+	}
+}
+state Chapter4_DoubleCheck2
+{
+	conditions
+	{	
+		if module "General GetCount" == 2.0 goto Chapter4_ReturnToPark
+		if Timer > 0.2 goto Chapter4_GotoBusinessPark
+	}
+	actions
+	{
+		
+		ResetTimer
+		
+		
+	}
+}
+state Chapter4_NextZone
+{
+	conditions
+	{	
+		
+		if module "KeyLocation3 InArea" == 1.0 goto Chapter4_Main2
+		if module "KeyLocation3 FailMission" == 1.0 goto Chapter4_FailMission
+		
+	}
+	actions
+	{
+		DestroyModule "#ClearIt" 
+		DestroyModule "#ClearIt2"
+		DestroyModule "#ClearIt3"
+		DestroyModule "#KeyLocation3"
+		DestroyModule "#KeyLocation1"
+		DestroyModule "#Speech"
+		DestroyModule "#Trigger1"
+		DestroyModule "#Trigger3"
+		CreateModule "#AreaRange" "#Trigger3" "#Trigger=#A1C4TriggerD" "#Beacon"
+		
+		CreateModule "#KeyLocation" "#KeyLocation3" "#Spline=A1C4KeyLocC" "#String=Key1Goto" "#ReEnterMsg=KEY_LOC_REENTER" "#AutoDestroy" "#InitTimeOut=60" "#TimeOut=30" ;"#Zoom"
+
+		
+	}
+}
+state Chapter4_ReturnToPark
+{
+	conditions
+	{	
+		if module "Trigger InArea" == 1.0 goto Chapter4_PrepSignal
+	}
+	actions
+	{
+		DestroyAllModules 
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#A1C4TriggerC" "#AddToRadar" "#Beacon" "#ParticleRing"
+		SendToModule "#General" "#SetMessage=BBTranD2" "#SetMessageTimer=10"
+		
+	}
+}
+state Chapter4_PrepSignal
+{
+	conditions
+	{	
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter4_FailMission
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveB GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveC GetPercentageComplete" == 1.0 and
+					if module "CreatureWaveD GetPercentageComplete" == 1.0 goto Chapter4_GotoPowerStationDoubleCheck
+		
+	}
+	actions
+	{
+		DestroyAllModules
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A1C4SpawnB" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsVehicle" "#AddToRadar" "#Script=ComCen" "#SetPosition=#Chapter4DroneAssaultA" "#KeyLocation=on"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A1C4SpawnB" "#count=1" "#maxalive=1" "#Type=DronePickupTruck" "#SpawnAsVehicle" "#AddToRadar" "#Script=ComCen"  "#SetPosition=#Chapter4DroneAssaultB" "#KeyLocation=on"
+                CreateModule "#Creature" "#CreatureWaveC" "#Spline=A1C4SpawnB" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar" "#SpawnAsVehicle" "#AddToRadar" "#Script=PLoadEarly"  "#SetPosition=#Chapter4DroneAssaultC" "#KeyLocation=on"
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A1C4SpawnB" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsVehicle" "#AddToRadar" "#Script=ComCen"  "#SetPosition=#Chapter4DroneAssaultD" "#KeyLocation=on"
+		SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+                SendToModule "#CreatureWaveD" "#ForcePlayerAsOpp"
+		CreateModule "#KeyLocation" "#KeyLocation1" "#Spline=A1C4KeyLocA" "#String=Key1Goto" "#ReEnterMsg=Key12Return" "#AutoDestroy" "#InitTimeOut=60" "#TimeOut=30" ;"#Zoom"
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A1_ch4_obj6" "#Start" "#AutoDestroy"
+		SendToModule "#General" "#SetMessage=BBTranD3" "#SetMessageTimer=5"
+	}
+}
+state Chapter4_GotoPowerStationDoubleCheck
+{
+	conditions
+	{	
+		if module "KeyLocation1 InArea" == 1.0 goto Chapter4_GotoPowerStation
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter4_FailMission
+		
+	}
+	actions
+	{
+		
+	}
+}
+state Chapter4_GotoBusinessPark
+{
+	conditions
+	{
+		;if module "Trigger InArea" == 1.0 goto Chapter4_BusinessPark
+		if module "KeyLocation1 InArea" == 1.0 goto Chapter4_BusinessPark
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter4_FailMission
+		if module "General GetCount" == 2.0 goto Chapter4_ReturnToPark
+	}
+	actions
+	{
+		DestroyAllModules 
+		
+		CreateModule "#AreaRange" "#Trigger1" "#Trigger=#A1C4TriggerA" "#Beacon"
+		
+		CreateModule "#KeyLocation" "#KeyLocation1" "#Spline=A1C4KeyLocA" "#String=Key1Goto" "#ReEnterMsg=KEY_LOC_REENTER" "#AutoDestroy" "#InitTimeOut=60" "#TimeOut=30" ;"#Zoom"
+	}
+}
+
+
+state Chapter4_BusinessPark
+{
+	conditions
+	{
+		if module "Clearit GetPercentageComplete" > 0.2 goto Chapter4_BusinessParkStarted
+		if module "Clearit2 GetPercentageComplete" > 0.2 goto Chapter4_BusinessParkStarted
+		if module "Clearit3 GetPercentageComplete" > 0.2 goto Chapter4_BusinessParkStarted
+
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveB GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter4_FinishedTheJob2
+
+		
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#GotoReminderSpeech"
+		DestroyModule "#Trigger1"
+		DestroyModule "#Speech"
+		DestroyModule "#ClearIt"
+		DestroyModule "#ClearItB"
+		DestroyModule "#SpecialObj"
+
+		;CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A1_ch4_obj4" "#Start" "#AutoDestroy"
+              	CreateModule "#Creature" "#CreatureWaveA" "#Spline=A1C4SpawnA" "#count=2" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsVehicle" "#AddToRadarOff" "#Script=ComCen"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A1C4SpawnA" "#count=2" "#maxalive=1" "#Type=DronePickupTruck" "#SpawnAsVehicle" "#AddToRadarOff" "#Script=ComCen"
+                CreateModule "#Creature" "#CreatureWaveC" "#Spline=A1C4SpawnA" "#count=2" "#maxalive=1" "#Type=DroneArmouredCar" "#SpawnAsVehicle" "#AddToRadarOff" "#Script=PLoadEarly"
+
+		CreateModule "#ClearIt" "#ClearIt" "#Spline=A1c4Area1"   "#BoundarySpline=A1C4AreaRadius1" "#placement=#A1C4Area1" "#Radius=2.0" "#Delay=2" "#addtoradar" "#Radar=#MastDot" "#DontDrawBeacon" "#DetonateWhenWeak" ; "#OnMove"
+		CreateModule "#ClearIt" "#ClearIt2" "#Spline=A1c4Area1B" "#BoundarySpline=A1C4AreaRadius1" "#placement=#A1C4Area1B" "#Radius=2.0" "#Delay=2" "#addtoradar" "#Radar=#LightningDot" "#DontDrawBeacon" "#DetonateWhenWeak" ;"#OnMove"
+		CreateModule "#ClearIt" "#ClearIt3" "#Spline=A1c4Area1C" "#BoundarySpline=A1C4AreaRadius1" "#placement=#A1C4Area1C" "#Radius=2.0" "#Delay=2" "#addtoradar" "#Radar=#MastDot" "#DontDrawBeacon" "#DetonateWhenWeak" ;"#OnMove"
+		SendToModule "#General" "#CountInc"
+	}
+}
+state Chapter4_BusinessParkStarted
+{
+	conditions
+	{
+		if module "Clearit GetPercentageComplete" == 1.0 and
+			if module "Clearit2 GetPercentageComplete" == 1.0 and
+				if module "Clearit3 GetPercentageComplete" == 1.0 goto Chapter4_FinishTheJob2
+
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveB GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter4_FinishedTheJob2
+
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+                SendToModule "#CreatureWaveA" "#ForcePlayerAsOpp"
+		SendToModule "#CreatureWaveB" "#ForcePlayerAsOpp"
+                SendToModule "#CreatureWaveC" "#ForcePlayerAsOpp"
+	}
+}
+state Chapter4_FinishTheJob2
+{
+	conditions
+	{
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveB GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter4_DoubleCheck
+
+		
+                if module "KeyLocation1 FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		
+		SendToModule "#General" "#SetMessage=FinishThem" "#SetMessageTimer=5"
+
+		SendToModule "#CreatureWaveA" "#AddToRadar"
+		SendToModule "#CreatureWaveB" "#AddToRadar"
+		SendToModule "#CreatureWaveC" "#AddToRadar"
+		
+	}
+}
+state Chapter4_FinishedTheJob2
+{
+	conditions
+	{	
+		if module "Clearit GetPercentageComplete" == 1.0 and
+			if module "Clearit2 GetPercentageComplete" == 1.0 and
+				if module "Clearit3 GetPercentageComplete" == 1.0 goto Chapter4_DoubleCheck
+
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		
+		
+		
+	}
+}
+state Chapter4_GotoPowerStationInit
+{
+	conditions
+	{
+		if Timer > 1.0 goto Chapter4_GotoPowerStation
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetGasCylinders"
+		SendToModule "#ClearIt" "#FadeDown" "#AutoDestroy"
+		SendToModule "#ClearIt2" "#FadeDown" "#AutoDestroy"
+		SendToModule "#ClearIt3" "#FadeDown" "#AutoDestroy"
+	}
+}
+
+state Chapter4_GotoPowerStation
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter4_PowerStation
+		if module "KeyLocation InARea" == 1.0 goto Chapter4_PowerStation
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyAllModules 
+
+		SendToModule "#CreatureWaveA" "#Count=0" "#FadeDown" "#AutoDestroy" 
+		SendToModule "#CreatureWaveB" "#Count=0" "#FadeDown" "#AutoDestroy"
+		DestroyModule "#KeyLocation1"
+		DestroyModule "#Speech"
+		DestroyModule "#Trigger"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A1C4KeyLocB" "#String=Key2Goto" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=30" "#InitTimeOut=60"
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#A1C4TriggerB" "#Beacon"
+		;CreateModule "#AreaRange" "#Trigger" "#KeyLocSpline=A1C4KeyLocB" "#AddToRadar" ;"#Beacon"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A1_ch4_obj2" "#Start" "#AutoDestroy"
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A1_ch4_obj3" 
+                CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=12" "#times=1"
+		
+	}
+}
+
+state Chapter4_PowerStation
+{
+	conditions
+	{
+		if module "Clearit GetPercentageComplete" == 1.0 and
+			if module "Clearit3 GetPercentageComplete" == 1.0 goto Chapter4_FinishTheJob
+
+		if module "CreatureWaveB GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveC GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveD GetPercentageComplete" == 1.0 goto Chapter4_FinishedTheJob
+
+                if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#GotoReminderSpeech"
+		DestroyModule "#Trigger"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A1C4SpawnB" "#count=2" "#maxalive=1" "#Type=DroneArmouredCar" "#SpawnAsCreature" "#AddToRadarOff" "#Script=PLoadEarly"
+		
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=A1C4SpawnB" "#count=2" "#maxalive=1" "#Type=DronePickupTruck" "#SpawnAsCreature" "#AddToRadarOff" "#Script=Early_CombatVeh"
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A1C4SpawnB" "#count=2" "#maxalive=1" "#Type=droneforklift" "#SpawnAsCreature" "#AddToRadarOff" "#Script=Early_CombatVeh"
+		SendToModule "#General" "#ResetGasCylinders"
+		CreateModule "#ClearIt" "#ClearIt" "#Spline=A1c4Area2" "#BoundarySpline=A1C4AreaRadius2" "#placement=#A1C4Area2" "#OnMove" "#Radius=5.0" "#Delay=2" "#AddToRadar" "#DontDrawBeacon" "#DetonateWhenWeak"
+		;CreateModule "#ClearIt" "#ClearIt2" "#Spline=A1c4Area2B" "#BoundarySpline=A1C4AreaRadius2" "#placement=#A1C4Area2" "#OnMove" "#Radius=5.0" "#Delay=2" "#AddToRadar" "#DontDrawBeacon" "#DetonateWhenWeak"
+		CreateModule "#ClearIt" "#ClearIt3" "#Spline=A1c4Area2C" "#BoundarySpline=A1C4AreaRadius2" "#placement=#A1C4Area2C" "#OnMove" "#Radius=5.0" "#Delay=2" "#AddToRadar" "#DontDrawBeacon" "#DetonateWhenWeak"
+		
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A1_ch4_obj4" "#Start" "#AutoDestroy"
+               ; CreateModule "#Speech" "#MissionStartSpeech"  "#PlayDelay=4"  "#speech=#A1_ch4_obj6" "#Start" "#AutoDestroy"
+	}
+}
+state Chapter4_FinishTheJob
+{
+	conditions
+	{
+		if module "CreatureWaveB GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveC GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+
+		
+                if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		CreateModule "#Speech" "#Speech" "#speech=#A1_ch4_obj5" "#Start" "#AutoDestroy"
+		SendToModule "#General" "#SetMessage=FinishThem" "#SetMessageTimer=5"
+
+		SendToModule "#CreatureWaveB" "#AddToRadar"
+		SendToModule "#CreatureWaveC" "#AddToRadar"
+		SendToModule "#CreatureWaveD" "#AddToRadar"
+		
+	}
+}
+state Chapter4_FinishedTheJob
+{
+	conditions
+	{
+		if module "Clearit GetPercentageComplete" == 1.0 and
+			if module "Clearit3 GetPercentageComplete" == 1.0 goto Chapter4_Complete
+
+		
+                if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		
+		
+	}
+}
+state Chapter4_Chatter
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto Chapter4_Complete
+	}
+	actions
+	{
+		
+		
+		CreateModule "#Timer" "#Timer" "#Time=5.0" "#NoRender" "#Start"
+
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A1_ch4_cmplt" "#AutoDestroy" "#Start"
+		
+	}
+}
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		DestroyModule "#KeyLocation"
+
+		SetMusic "ACTION Mission1_1 QUIET Tag1 Play Quiet"
+		SendToModule #General  "#EndOfMission" #UnlockBonus=Mission_FirstMission
+		SendToModule "#General" "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+                CreateModule "#Speech" "#DefeatDrones" "#PlayDelay=1.2" "#speech=#A1_ch4_cmplt" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A1C4Outro"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+ 		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+    	SendToModule "#General" "#UnLoadCreature=DroneForklift"
+    	 SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+	    SendToModule "#General" "#LoadCreature=DroneDefault"
+	      
+   	       ;SendToModule "#General" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		
+		SetState Chapter4_Leave
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule #General #AllowPlayerMovement
+		SendToModule "#General" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+		SetState PickGoto
+	}
+}

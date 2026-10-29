@@ -1,0 +1,2147 @@
+ state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch4_Goto" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch4_Goto2" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch4_obj3" "#AutoDestroy"
+		Idle 3.0
+		
+		DestroyModule "#MissionStartSpeech"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		CreateModule "#Timer" "#PrimeReply" "#Time=5.3" "#NoRender"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=2" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+        SendToModule "#General" "#PlayerType=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=TripleC" 
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a" 
+		
+	}
+}
+;;state Chapter4_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter4_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartVideo=#A2C4Intro1"
+;;	}
+;;}
+state Chapter4_Main
+{
+	conditions
+	{
+		;if message "MissionMessage" == 1.0 goto Chapter4_Complete
+		;if message "MissionMessage" == 2.0 goto Chapter4_FailMission 
+		if module "Trigger InArea" == 1.0 goto Chapter4_FightStage1Start
+		;if module "TripleChanger Health" <= 0.99 goto Chapter4_FightStage1Start
+		if module "TripleChanger BeenHit" == 1.0 goto Chapter4_FightStage1Start
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission  
+	}
+	actions
+	{
+		DestroyAllModules
+		
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter4_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#GotoReminderSpeech" "#speech=#A2_ch4_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter4Start" "#FadeUp"
+		CreateModule "#Creature" "#TripleChanger" "#Boss=#TripleChanger" "#Type=TripleCTurret" "#count=1" "#maxalive=1" "#Spline=A2C4Spawn" "#Script=TC_TURRET" "#SpawnInLos" "#SetEnergyMax=7500"  "#SetEnergyMin=250" "#AddToRadarAlways"  "#ResetHealthDiff" "#BlockDeath" "#FollowSpline=TCTURRET_TARGETS" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#TripleChanger" "#Radius=170.0f" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER"
+		CreateModule "#Timer" "#Destruction" "#Time=150.0" "#DrawHealthBar" "#HeadType=#Destruction" "#Index=2" "#Random"
+		SendToModule "#TripleChanger" "#AddToRadarAlways"
+		SendToModule "#General" "#CountASet=1" "#CountBSet=0" "#CountCSet=0" "#CountDSet=0"
+
+		
+		
+		;SetState Chapter4_FightStage1Start
+	}
+}
+
+
+state Chapter4_FightStage1Start
+{
+
+	Conditions
+	{
+		if module "TripleChanger Health" <= 0.95 goto Chapter4_FightTransform1
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+	}
+	Actions
+	{
+		
+		  
+				
+	}
+}
+
+state Chapter4_MainProcess
+{
+	conditions
+	{
+		;TRIPLECHANGER DRONE FIGHT CONSTANT CONDITIONS 
+
+		if module "A2C4Spawn Dead" == 1.0 goto Chapter4_Chatter
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+		
+		
+	
+		
+	
+		if module "A2C4Spawn HealthDiff" > 0.10 and
+			if module "General GetCountD" == 1.0 goto Chapter4_FightTransform2
+
+		if module "Timer Finished" == 1.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo2
+
+		if module "A2C4KeyLoc InArea" == 0.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackRampageReturn1
+
+		if module "A2C4KeyLoc InArea" == 1.0 and
+				if module "General GetCountB" == 2.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFightReturn1
+
+	
+
+		
+		
+		
+
+		
+		
+	}
+	
+
+}
+state Chapter4_MainProcess2
+{
+	conditions
+	{
+		;TRIPLECHANGER DRONE FIGHT CONSTANT CONDITIONS 
+
+		if module "A2C4Spawn Dead" == 1.0 goto Chapter4_Chatter
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+		
+		if module "A2C4Spawn Complete" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 0.0 goto Chapter4_TripleCStrikesBackShoot2
+	
+				
+		
+		if module "A2C4Spawn PlayerRange" < 15.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight2
+
+		if module "A2C4Spawn BeenHit" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight2
+		
+
+		
+	
+		if module "A2C4Spawn HealthDiff" > 0.10 and
+			if module "General GetCountD" == 1.0 and
+				if module "General GetCountB" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo3
+
+		if module "Timer Finished" == 1.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo3
+
+		if module "A2C4KeyLoc InArea" == 0.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackRampageReturn2
+
+		if module "A2C4KeyLoc InArea" == 1.0 and
+				if module "General GetCountB" == 2.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFightReturn2
+
+	
+
+		
+		
+		
+
+
+		
+				
+	}
+	actions
+	{
+		ResetTimer
+	}
+
+}
+state Chapter4_MainProcess3
+{
+	conditions
+	{
+		;TRIPLECHANGER DRONE FIGHT CONSTANT CONDITIONS 
+
+		if module "A2C4Spawn Dead" == 1.0 goto Chapter4_Chatter
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+		
+		if module "A2C4Spawn Complete" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 0.0 goto Chapter4_TripleCStrikesBackShoot3
+
+		
+						
+		if module "A2C4Spawn PlayerRange" < 15.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight3
+
+		if module "A2C4Spawn BeenHit" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight3
+		
+
+		
+	
+		if module "A2C4Spawn HealthDiff" > 0.10 and
+			if module "General GetCountD" == 1.0 and
+				if module "General GetCountB" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo4
+
+		if module "Timer Finished" == 1.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo4
+
+		if module "A2C4KeyLoc InArea" == 0.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackRampageReturn3
+
+		if module "A2C4KeyLoc InArea" == 1.0 and
+				if module "General GetCountB" == 2.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFightReturn3
+
+	
+
+		
+		
+
+		;RATCHET CONDITIONS	
+	
+		if module "Ratchet PlayerRange" < 30 and
+			if module "General GetCountA" == 1.0 goto Chapter4_Heal
+		if module "Ratchet GetCountAlive" == 0.0 goto Chapter4_FailMission
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		
+		
+
+		;VARIOUS SCRIPT CHANGE CONDITIONS
+
+		if Timer > 7.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_TripleCThrowsObject3
+
+
+		
+		if Timer > 3.0  and
+			if module "General GetCountC" == 2.0 goto Chapter4_TripleCThrowsObject4
+		
+		
+
+		
+		
+	}
+	actions 
+	{
+		ResetTimer
+	}
+
+}
+state Chapter4_MainProcess4
+{
+	conditions
+	{
+		;TRIPLECHANGER DRONE FIGHT CONSTANT CONDITIONS 
+
+		if module "A2C4Spawn Dead" == 1.0 goto Chapter4_Chatter
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+		
+		if module "A2C4Spawn Complete" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 0.0 goto Chapter4_TripleCStrikesBackShoot4
+
+		
+
+		if module "A2C4Spawn PlayerRange" < 15.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight4
+
+		if module "A2C4Spawn BeenHit" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight4
+		
+
+		
+	
+		if module "A2C4Spawn HealthDiff" > 0.10 and
+			if module "General GetCountD" == 1.0 and
+				if module "General GetCountB" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo5
+
+		if module "Timer Finished" == 1.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo5
+
+		if module "A2C4KeyLoc InArea" == 0.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackRampageReturn4
+
+		if module "A2C4KeyLoc InArea" == 1.0 and
+				if module "General GetCountB" == 2.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFightReturn4
+
+	
+
+		
+		
+
+		;RATCHET CONDITIONS	
+	
+		if module "Ratchet PlayerRange" < 30 and
+				if module "General GetCountA" == 1.0 and
+					if module "General GetCountD" == 0.0 goto Chapter4_Heal2
+		
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission		
+		
+	
+		
+
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+
+}
+state Chapter4_MainProcess5
+{
+	conditions
+	{
+		;TRIPLECHANGER DRONE FIGHT CONSTANT CONDITIONS 
+
+		if module "A2C4Spawn Dead" == 1.0 goto Chapter4_Chatter
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+		
+		if module "A2C4Spawn Complete" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 0.0 goto Chapter4_TripleCStrikesBackShoot5
+
+
+		
+
+		if module "A2C4Spawn PlayerRange" < 15.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight5
+
+		if module "A2C4Spawn BeenHit" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight5
+		
+
+		
+	
+		if module "A2C4Spawn HealthDiff" > 0.10 and
+			if module "General GetCountD" == 1.0 and
+				if module "General GetCountB" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo6
+
+		if module "Timer Finished" == 1.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo6
+
+		if module "A2C4KeyLoc InArea" == 0.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackRampageReturn5
+
+		if module "A2C4KeyLoc InArea" == 1.0 and
+				if module "General GetCountB" == 2.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFightReturn5
+
+	
+
+		
+		
+
+		
+		
+
+
+		
+	}
+	actions
+	{
+		ResetTimer
+	}		
+
+}
+state Chapter4_MainProcess6
+{
+	conditions
+	{
+		;TRIPLECHANGER DRONE FIGHT CONSTANT CONDITIONS 
+
+		if module "A2C4Spawn Dead" == 1.0 goto Chapter4_Chatter
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+		
+		if module "A2C4Spawn Complete" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 0.0 goto Chapter4_TripleCStrikesBackShoot6
+
+		
+
+
+		if module "A2C4Spawn PlayerRange" < 15.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight7
+
+		if module "A2C4Spawn BeenHit" == 1.0 and
+				if module "General GetCountB" == 0.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFight7
+		
+
+		
+	
+		if module "A2C4Spawn HealthDiff" > 0.10 and
+			if module "General GetCountD" == 1.0 and
+				if module "General GetCountB" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo2
+
+		if module "Timer Finished" == 1.0 and
+				if module "General GetCountB" == 1.0 and
+					if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackEscapeTo2
+
+		if module "A2C4KeyLoc InArea" == 0.0 and
+			if module "General GetCount" == 6.0 and
+					if module "General GetCountB" == 1.0 and
+						if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackRampageReturn6
+
+		if module "A2C4KeyLoc InArea" == 1.0 and
+			if module "General GetCount" == 6.0 and
+					if module "General GetCountB" == 2.0 and
+						if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFightReturn6
+
+	
+		if module "A2C4KeyLoc InArea" == 0.0 and
+			if module "General GetCount" == 7.0 and
+					if module "General GetCountB" == 1.0 and
+						if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackRampageReturn7
+
+		if module "A2C4KeyLoc InArea" == 1.0 and
+			if module "General GetCount" == 7.0 and
+					if module "General GetCountB" == 2.0 and
+						if module "General GetCountD" == 1.0 goto Chapter4_TripleCStrikesBackFightReturn7
+		
+		
+
+		;VARIOUS SCRIPT CHANGE CONDITIONS
+		
+		
+		
+		if Timer > 4.0 and
+			if module "General GetCountB" == 1.0 and
+					if module "General GetCountC" == 4.0 goto Chapter4_TripleCThrowsObject1
+		
+		
+		if Timer > 3.0 and
+			if module "General GetCountB" == 1.0 and
+				if module "General GetCountC" == 5.0 goto Chapter4_TripleCThrowsObject2
+		
+		
+		
+		if Timer > 7.0 and
+			if module "General GetCountB" == 1.0 and
+				if module "General GetCountC" == 3.0 goto Chapter4_TripleCThrowsObject1
+		
+
+
+		
+	}
+	actions 
+	{
+		ResetTimer
+	}
+
+}
+
+
+state Chapter4_FightTransform1
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_FightStage2Start
+	}
+	Actions
+	{
+		SendToModule "#General" "#StartVideo=#A2C4midtro1"
+	}
+}
+state Chapter4_FightTransform2
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_TripleCFlysOff 
+	}
+	Actions
+	{
+		SendToModule "#General" "#StartVideo=#A2C4midtro2" 
+	}
+}
+state Chapter4_FightStage2Start
+{
+	Actions
+	{
+		DestroyModule "#Creature"
+		DestroyModule "#KeyLocation"
+
+		SetState Chapter4_TripleCStrikesBackInit
+	}
+}
+
+
+state Chapter4_TripleCStrikesBackInit
+{
+	actions
+	{
+		DestroyModule "#TripleChanger"
+
+		CreateModule "#Goto" "#A2C4Spawn" "#SpawnSpline=A2C4Spawn" "#Boss=#TripleChanger" "#type=TripleC" "#BlockDeath" "#SetEnergyMax=15000.0" "#SetEnergy=14250.0" "#InhibitRubble"
+		CreateModule "#KeyLocation" "#A2C4KeyLoc" "#Spline=A2C4KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key4Return"
+
+		CreateModule "#Speech" "#A2_ch4_obj5" "#speech=#A2_ch4_obj5" "#AutoDestroy"
+		CreateModule "#Speech" "#A2_ch4_obj6" "#speech=#A2_ch4_obj6" "#AutoDestroy"
+		CreateModule "#Speech" "#A2_ch4_obj7" "#speech=#A2_ch4_obj7" "#AutoDestroy"
+		CreateModule "#Speech" "#A2_ch4_obj8" "#speech=#A2_ch4_obj8" "#AutoDestroy"
+		CreateModule "#Speech" "#A2_ch4_obj9" "#speech=#A2_ch4_obj9" "#AutoDestroy"
+		CreateModule "#Speech" "#A2_ch4_obj10" "#speech=#A2_ch4_obj10" "#AutoDestroy"
+
+		SetState Chapter4_TripleCStrikesBackFight1
+	}
+}
+
+
+
+state Chapter4_TripleCStrikesBackFight1
+{
+	
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A2_ch4_obj4" "#AutoDestroy" "#Start"
+		CreateModule "#Timer" "#Timer" "#Time=20.0" "#NoRender"
+		SendToModule "#A2C4Spawn" "#Script=Combat"  "#ResetHealthDiff" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#General" "#CountSet=1" "#CountBSet=1" "#CountDSet=1"
+		SetState Chapter4_MainProcess
+	}
+}
+state Chapter4_TripleCStrikesBackFightReturn1
+{
+	
+	actions
+	{
+		
+		SendToModule "#A2C4Spawn" "#Script=Combat"  "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#General" "#CountBSet=1"
+		SetState Chapter4_MainProcess
+		
+	}
+}
+state Chapter4_TripleCStrikesBackRampageReturn1
+{
+	
+	actions
+	{
+	
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#ShootSpline=A2C4Shoot1"
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountBSet=2"
+		SetState Chapter4_MainProcess
+		
+	}
+}
+state Chapter4_TripleCFlysOff
+{
+	conditions
+	{
+		
+	}
+	Actions
+	{
+		DestroyModule "#A2C4Spawn" 
+		CreateModule "#Goto" "#A2C4Spawn" "#SpawnSpline=A2C4Spawn" "#Boss=#TripleChanger" "#type=TripleC" "#BlockDeath" "#SetEnergyMax=15000.0" "#SetEnergy=13500.0" "#InhibitRubble" "#SpawnAsVehicle"
+		SetState Chapter4_TripleCStrikesBackEscapeTo2
+	}
+}
+
+state Chapter4_TripleCStrikesBackEscapeTo2
+{
+	
+	actions
+	{
+		;SendToModule "#General" "#BG_LoadCreature=Jazz"
+		SendToModule "#Ratchet" "#AddToRadarOff"
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		SendToModule "#Destruction" "#NoProcess"
+		DestroyModule "#A2C4KeyLoc"
+		DestroyModule "#Timer"
+		SendToModule "#A2C4Spawn" "#Script=FollowSplineTC" "#DirectSpline=A2C4FlyToLoc2" "#TransformForceCar" "#Speed=150" "#ResetHealthDiff" "#Unstoppable"
+		SendToModule "#A2_ch4_obj5" "#StartOneShot=2.0"
+		SendToModule "#General" "#CountSet=2" "#CountBSet=0" "#CountCSet=0" "#CountDSet=0"
+		SetState Chapter4_MainProcess2
+	}
+}
+
+state Chapter4_TripleCStrikesBackShoot2
+{
+	conditions
+	{
+		;if Timer > 1.0 and
+		if module "A2C4Spawn PlayerRange" > 130.0 goto Chapter4_TripleChangerArtilleryPrep
+		if module "A2C4Spawn PlayerRange" < 150.0 goto Chapter4_MainProcess2
+	}
+	actions
+	{	
+		ResetTimer
+		CreateModule "#KeyLocation" "#A2C4KeyLoc" "#Spline=A2C4KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key4Return"
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#TransformForceRobot" "#ShootSpline=A2C4Shoot2" "#Stoppable" 
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountDSet=1"
+		;SetState Chapter4_MainProcess2
+	}
+}
+state Chapter4_TripleChangerArtilleryPrep
+{
+	actions
+	{
+		SetMusic "ACTION Mission4_3 QUIET Generic Play Action"
+		Idle 1.5
+		SetState Chapter4_TripleChangerArtillerySetHealthLevel	
+
+
+	}
+	
+}
+state Chapter4_TripleChangerArtillerySetHealthLevel
+{
+	conditions
+	{
+		if module "A2C4Spawn Energy" > 0.9 goto TripleCArtHealth100
+		if module "A2C4Spawn Energy" == 0.9 goto TripleCArtHealth90
+		if module "A2C4Spawn Energy" > 0.8 goto TripleCArtHealth90
+		if module "A2C4Spawn Energy" == 0.8 goto TripleCArtHealth80
+		if module "A2C4Spawn Energy" > 0.7 goto TripleCArtHealth80
+		if module "A2C4Spawn Energy" == 0.7 goto TripleCArtHealth70
+		if module "A2C4Spawn Energy" > 0.6 goto TripleCArtHealth70
+		if module "A2C4Spawn Energy" == 0.6 goto TripleCArtHealth60
+		if module "A2C4Spawn Energy" > 0.5 goto TripleCArtHealth60
+		if module "A2C4Spawn Energy" == 0.5 goto TripleCArtHealth50
+		if module "A2C4Spawn Energy" > 0.4 goto TripleCArtHealth50
+		if module "A2C4Spawn Energy" == 0.4 goto TripleCArtHealth40
+		if module "A2C4Spawn Energy" > 0.3 goto TripleCArtHealth40
+		if module "A2C4Spawn Energy" == 0.3 goto TripleCArtHealth30
+		if module "A2C4Spawn Energy" > 0.2 goto TripleCArtHealth30
+		if module "A2C4Spawn Energy" == 0.2 goto TripleCArtHealth20
+		if module "A2C4Spawn Energy" > 0.1 goto TripleCArtHealth20
+		if module "A2C4Spawn Energy" == 0.1 goto TripleCArtHealth10
+		if module "A2C4Spawn Energy" >= 0.0 goto TripleCArtHealth10
+	}
+	
+}
+state Chapter4_TripleChangerArtilleryPosition
+{
+	conditions
+	{
+		if module "General GetCount" == 2.0 goto TripleCArtPos1
+		if module "General GetCount" == 3.0 goto TripleCArtPos2
+		if module "General GetCount" == 4.0 goto TripleCArtPos3
+		if module "General GetCount" == 5.0 goto TripleCArtPos4
+		if module "General GetCount" == 6.0 goto TripleCArtPos5
+	}
+	
+}
+state TCART_RatchetNearby
+{
+	
+	Actions
+	{
+		SendToModule "#General" "#CountASet=0" 
+		SendToModule "#Ratchet" "#Script=FollowSplineTC" "#TransformForceCar" "#AddToRadarOff"
+		SetState Chapter4_TripleChangerArtilleryProcess
+	}
+}
+state RatchetWakeUp
+{
+	
+	Actions
+	{
+		SendToModule "#General" "#CountASet=1" 
+		SendToModule "#Ratchet" "#Script=Ratchet" "#TransformForceRobot" "#AddToRadar"
+		SetState Chapter4_TripleChangerRobotPrep
+	}
+}
+state TripleCHealthProcess1
+{
+	conditions
+	{
+		if module "TripleChanger Health" <= 0.90 goto Chapter4_TripleChangerRobotPrep
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission
+
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby	
+	}
+}
+state TripleCHealthProcess2
+{
+	conditions
+	{
+		if module "TripleChanger Health" <= 0.80 goto Chapter4_TripleChangerRobotPrep
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission		
+
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby	
+	}
+}
+state TripleCHealthProcess3
+{
+	conditions
+	{
+		if module "TripleChanger Health" <= 0.70 goto Chapter4_TripleChangerRobotPrep
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission
+
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby	
+	}
+}
+state TripleCHealthProcess4
+{
+	conditions
+	{
+		if module "TripleChanger Health" <= 0.60 goto Chapter4_TripleChangerRobotPrep
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission		
+
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby		
+	}
+}
+state TripleCHealthProcess5
+{
+	conditions
+	{
+		if module "TripleChanger Health" <= 0.50 goto Chapter4_TripleChangerRobotPrep
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission
+		
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby	
+	}
+}
+state TripleCHealthProcess6
+{
+	conditions
+	{
+		if module "TripleChanger Health" <= 0.40 goto Chapter4_TripleChangerRobotPrep
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission
+		
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby	
+	}
+}
+state TripleCHealthProcess7
+{
+	conditions
+	{
+		if module "TripleChanger Health" <= 0.30 goto Chapter4_TripleChangerRobotPrep
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission
+		
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby	
+	}
+}
+state TripleCHealthProcess8
+{
+	conditions
+	{
+		if module "TripleChanger Health" <= 0.20 goto Chapter4_TripleChangerRobotPrep
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission
+		
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby		
+	}
+}
+state TripleCHealthProcess9
+{
+	conditions
+	{
+		if module "TripleChanger Health" <= 0.10 goto Chapter4_TripleChangerRobotPrep
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission
+		
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby	
+	}
+}
+state TripleCHealthProcess10
+{
+	conditions
+	{
+		if module "TripleChanger IsEnergyAtMin" == 1.0 goto TripleCRobHealth0
+		if module "Destruction GetPercentageComplete" == 1.0 goto Chapter4_FailMission
+		if module "A2C4KeyLoc FailMission" == 1.0 goto Chapter4_FailMission
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission		
+		if module "Ratchet Dead" == 1.0 goto Chapter4_FailMission
+
+		if module "General GetCount" >= 3.0 and 
+			if module "General GetCount" <= 4.0 and 
+				if module "General GetCountA" == 1.0 and
+					if module "Ratchet GetCountAlive" == 1.0 goto TCART_RatchetNearby	
+	}
+}
+
+state Chapter4_Heal3
+{
+	
+	actions
+	{
+		
+		DoMacro AutoHeal
+		SetState Chapter4_TripleChangerArtilleryProcess
+		
+	}
+}
+state Chapter4_TripleChangerArtilleryProcess
+{
+	conditions
+	{
+		if module "TripleChanger Health" == 1.00 goto TripleCHealthProcess1
+		if module "TripleChanger Health" == 0.90 goto TripleCHealthProcess2
+		if module "TripleChanger Health" == 0.80 goto TripleCHealthProcess3
+		if module "TripleChanger Health" == 0.70 goto TripleCHealthProcess4
+		if module "TripleChanger Health" == 0.60 goto TripleCHealthProcess5
+		if module "TripleChanger Health" == 0.50 goto TripleCHealthProcess6
+		if module "TripleChanger Health" == 0.40 goto TripleCHealthProcess7
+		if module "TripleChanger Health" == 0.30 goto TripleCHealthProcess8
+		if module "TripleChanger Health" == 0.20 goto TripleCHealthProcess9
+		if module "TripleChanger Health" == 0.10 goto TripleCHealthProcess10
+	}
+}
+state Chapter4_TripleChangerRobotPrep
+{
+	conditions
+	{
+		
+		;if module "TripleChanger IsEnergyAtMin" == 1.0 goto TripleCRobHealth0
+		if module "General GetCountA" == 0.0 goto RatchetWakeUp
+
+		if module "TripleChanger Health" > 0.90 goto TripleCRobHealth100
+		if module "TripleChanger Health" == 0.90 goto TripleCRobHealth90
+		if module "TripleChanger Health" > 0.80 goto TripleCRobHealth90
+		if module "TripleChanger Health" == 0.80 goto TripleCRobHealth80
+		if module "TripleChanger Health" > 0.70 goto TripleCRobHealth80
+		if module "TripleChanger Health" == 0.70 goto TripleCRobHealth70
+		if module "TripleChanger Health" > 0.60 goto TripleCRobHealth70
+		if module "TripleChanger Health" == 0.60 goto TripleCRobHealth60
+		if module "TripleChanger Health" > 0.50 goto TripleCRobHealth60
+		if module "TripleChanger Health" == 0.50 goto TripleCRobHealth50
+		if module "TripleChanger Health" > 0.40 goto TripleCRobHealth50
+		if module "TripleChanger Health" == 0.40 goto TripleCRobHealth40
+		if module "TripleChanger Health" > 0.30 goto TripleCRobHealth40
+		if module "TripleChanger Health" == 0.30 goto TripleCRobHealth30
+		if module "TripleChanger Health" > 0.20 goto TripleCRobHealth30
+		if module "TripleChanger Health" == 0.20 goto TripleCRobHealth20
+		if module "TripleChanger Health" > 0.10 goto TripleCRobHealth20
+		if module "TripleChanger Health" == 0.10 goto TripleCRobHealth10
+		if module "TripleChanger Health" >= 0.00 goto TripleCRobHealth10
+		
+	}
+	
+}
+state ForceTripleCSpawn
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+
+state Chapter4_TripleChangerRobotPosition
+{
+	conditions
+	{
+		if module "General GetCount" == 2.0 goto TripleCRobPos1
+		if module "General GetCount" == 3.0 goto TripleCRobPos2
+		if module "General GetCount" == 4.0 goto TripleCRobPos3
+		if module "General GetCount" == 5.0 goto TripleCRobPos4
+		if module "General GetCount" == 6.0 goto TripleCRobPos5
+	}
+	
+}
+state TripleCArtPos1
+{
+	conditions
+	{
+		if module "TripleChanger Health" >= 1.00 goto TripleCHealthProcess1
+		if module "TripleChanger Health" >= 0.90 goto TripleCHealthProcess2
+		if module "TripleChanger Health" >= 0.80 goto TripleCHealthProcess3
+		if module "TripleChanger Health" >= 0.70 goto TripleCHealthProcess4
+		if module "TripleChanger Health" >= 0.60 goto TripleCHealthProcess5
+		if module "TripleChanger Health" >= 0.50 goto TripleCHealthProcess6
+		if module "TripleChanger Health" >= 0.40 goto TripleCHealthProcess7
+		if module "TripleChanger Health" >= 0.30 goto TripleCHealthProcess8
+		if module "TripleChanger Health" >= 0.20 goto TripleCHealthProcess9
+		if module "TripleChanger Health" >= 0.10 goto TripleCHealthProcess10
+	}
+	actions
+	{
+		
+		SendToModule "#TripleChanger" "#SetPosition=#TripleCArtSpawn1" "#FollowSpline=A2C4Shoot2"
+		;SetState Chapter4_TripleChangerArtilleryProcess
+		
+	}
+}
+state TripleCArtPos2
+{
+	conditions
+	{
+		if module "TripleChanger Health" >= 1.00 goto TripleCHealthProcess1
+		if module "TripleChanger Health" >= 0.90 goto TripleCHealthProcess2
+		if module "TripleChanger Health" >= 0.80 goto TripleCHealthProcess3
+		if module "TripleChanger Health" >= 0.70 goto TripleCHealthProcess4
+		if module "TripleChanger Health" >= 0.60 goto TripleCHealthProcess5
+		if module "TripleChanger Health" >= 0.50 goto TripleCHealthProcess6
+		if module "TripleChanger Health" >= 0.40 goto TripleCHealthProcess7
+		if module "TripleChanger Health" >= 0.30 goto TripleCHealthProcess8
+		if module "TripleChanger Health" >= 0.20 goto TripleCHealthProcess9
+		if module "TripleChanger Health" >= 0.10 goto TripleCHealthProcess10
+	}
+	actions
+	{
+		
+		SendToModule "#TripleChanger" "#SetPosition=#TripleCArtSpawn2" "#FollowSpline=A2C4Shoot3"
+		;SetState Chapter4_TripleChangerArtilleryProcess
+		
+	}
+}
+state TripleCArtPos3
+{
+	conditions
+	{
+		if module "TripleChanger Health" >= 1.00 goto TripleCHealthProcess1
+		if module "TripleChanger Health" >= 0.90 goto TripleCHealthProcess2
+		if module "TripleChanger Health" >= 0.80 goto TripleCHealthProcess3
+		if module "TripleChanger Health" >= 0.70 goto TripleCHealthProcess4
+		if module "TripleChanger Health" >= 0.60 goto TripleCHealthProcess5
+		if module "TripleChanger Health" >= 0.50 goto TripleCHealthProcess6
+		if module "TripleChanger Health" >= 0.40 goto TripleCHealthProcess7
+		if module "TripleChanger Health" >= 0.30 goto TripleCHealthProcess8
+		if module "TripleChanger Health" >= 0.20 goto TripleCHealthProcess9
+		if module "TripleChanger Health" >= 0.10 goto TripleCHealthProcess10
+	}
+	actions
+	{
+		
+		SendToModule "#TripleChanger" "#SetPosition=#TripleCArtSpawn3" "#FollowSpline=A2C4Shoot4"
+		;SetState Chapter4_TripleChangerArtilleryProcess
+		
+	}
+}
+state TripleCArtPos4
+{
+	conditions
+	{
+		if module "TripleChanger Health" >= 1.00 goto TripleCHealthProcess1
+		if module "TripleChanger Health" >= 0.90 goto TripleCHealthProcess2
+		if module "TripleChanger Health" >= 0.80 goto TripleCHealthProcess3
+		if module "TripleChanger Health" >= 0.70 goto TripleCHealthProcess4
+		if module "TripleChanger Health" >= 0.60 goto TripleCHealthProcess5
+		if module "TripleChanger Health" >= 0.50 goto TripleCHealthProcess6
+		if module "TripleChanger Health" >= 0.40 goto TripleCHealthProcess7
+		if module "TripleChanger Health" >= 0.30 goto TripleCHealthProcess8
+		if module "TripleChanger Health" >= 0.20 goto TripleCHealthProcess9
+		if module "TripleChanger Health" >= 0.10 goto TripleCHealthProcess10
+	}
+	actions
+	{
+		
+		SendToModule "#TripleChanger" "#SetPosition=#TripleCArtSpawn4" "#FollowSpline=A2C4Shoot5"
+		;SetState Chapter4_TripleChangerArtilleryProcess
+		
+	}
+}
+state TripleCArtPos5
+{
+	conditions
+	{
+		if module "TripleChanger Health" >= 1.00 goto TripleCHealthProcess1
+		if module "TripleChanger Health" >= 0.90 goto TripleCHealthProcess2
+		if module "TripleChanger Health" >= 0.80 goto TripleCHealthProcess3
+		if module "TripleChanger Health" >= 0.70 goto TripleCHealthProcess4
+		if module "TripleChanger Health" >= 0.60 goto TripleCHealthProcess5
+		if module "TripleChanger Health" >= 0.50 goto TripleCHealthProcess6
+		if module "TripleChanger Health" >= 0.40 goto TripleCHealthProcess7
+		if module "TripleChanger Health" >= 0.30 goto TripleCHealthProcess8
+		if module "TripleChanger Health" >= 0.20 goto TripleCHealthProcess9
+		if module "TripleChanger Health" >= 0.10 goto TripleCHealthProcess10
+	}
+	actions
+	{
+		
+		
+		SendToModule "#TripleChanger" "#SetPosition=#TripleCArtSpawn5" "#FollowSpline=A2C4Shoot1"
+		;SetState Chapter4_TripleChangerArtilleryProcess
+		
+	}
+}
+state TripleCRobPos1
+{
+	actions
+	{
+		
+		SendToModule "#A2C4Spawn" "#SetPosition=#TripleCArtSpawn1" "#Script=Shooty" "#ShootSpline=A2C4Shoot2"
+		Idle 0.2
+		SetState Chapter4_MainProcess2
+		
+	}
+}
+state TripleCRobPos2
+{
+	
+	actions
+	{
+		
+		SendToModule "#A2C4Spawn" "#SetPosition=#TripleCArtSpawn2"  "#Script=Shooty" "#ShootSpline=A2C4Shoot3"
+		Idle 0.2
+		SetState Chapter4_MainProcess3
+		
+	}
+}
+state TripleCRobPos3
+{
+	
+	actions
+	{
+		
+		SendToModule "#A2C4Spawn" "#SetPosition=#TripleCArtSpawn3"  "#Script=Shooty" "#ShootSpline=A2C4Shoot4"
+		Idle 0.2
+		SetState Chapter4_MainProcess4
+		
+	}
+}
+state TripleCRobPos4
+{
+	
+	actions
+	{
+		
+		SendToModule "#A2C4Spawn" "#SetPosition=#TripleCArtSpawn4"  "#Script=Shooty" "#ShootSpline=A2C4Shoot5"
+		Idle 0.2
+		SetState Chapter4_MainProcess5
+		
+	}
+}
+state TripleCRobPos5
+{
+	
+	actions
+	{
+		
+		
+		SendToModule "#A2C4Spawn" "#SetPosition=#TripleCArtSpawn5"  "#Script=Shooty" "#ShootSpline=A2C4Shoot1"
+		Idle 0.2
+		SetState Chapter4_MainProcess6
+		
+	}
+}
+ActionMacro ARTILLERYTRANIN
+{
+	CreateModule "#Creature" "#TripleChanger" "#Boss=#TripleChanger" "#Type=TripleCTurret" "#count=1" "#maxalive=1" "#Spline=A2C4Spawn" "#Script=TC_TURRET" "#SpawnInLos" "#SetEnergyMax=7500"  "#SetEnergyMin=250" "#AddToRadarAlways"  "#ResetHealthDiff" "#BlockDeath" ; "#FollowSpline=TCTURRET_TARGETS"
+	
+}
+ActionMacro ARTILLERYTRANOUT
+{
+	CreateModule "#Goto" "#A2C4Spawn" "#SpawnSpline=A2C4Spawn" "#Boss=#TripleChanger" "#type=TripleC" "#BlockDeath" "#SetEnergyMax=15000.0" "#InhibitRubble"
+	SetMusic "ACTION Mission4_5 QUIET Generic Play Action"
+}
+
+state TripleCArtHealth100
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=7500" 
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state TripleCArtHealth90
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=6750"  
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state TripleCArtHealth80
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=6000"  
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state TripleCArtHealth70
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=5250"  
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state TripleCArtHealth60
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=4500"  
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state TripleCArtHealth50
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=3750"  
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state TripleCArtHealth40
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=3000"  
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state TripleCArtHealth30
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=2250"  
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state TripleCArtHealth20
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=1500"  
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+state TripleCArtHealth10
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#A2C4Spawn"
+		DoMacro ARTILLERYTRANIN
+		SendToModule "#TripleChanger" "#SetEnergy=750"  
+		SetState Chapter4_TripleChangerArtilleryPosition
+		
+		
+	}
+}
+
+state TripleCRobHealth100
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=15000" 
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth90
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=13500"  
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth80
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=12000"  
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth70
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=10500"  
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth60
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=9000"  
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth50
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=7500"  
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth40
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=6000"  
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth30
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=4500"  
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth20
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=3000"  
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth10
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=1500"  
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+state TripleCRobHealth0
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		
+		
+		DestroyModule "#TripleChanger"
+		DoMacro ARTILLERYTRANOUT
+		SendToModule "#A2C4Spawn" "#SetEnergy=250"
+		SetState Chapter4_TripleChangerRobotPosition
+		
+		
+	}
+}
+
+state Chapter4_TripleCStrikesBackFight2
+{
+	
+	actions
+	{
+		
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		;SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar"
+		
+		CreateModule "#Timer" "#Timer" "#Time=20.0" "#NoRender"
+		SendToModule "#A2C4Spawn" "#Script=Agile" "#ResetHealthDiff" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#A2_ch4_obj6" "#StartOneShot"
+		SendToModule "#General" "#CountBSet=1" 
+		SetState Chapter4_MainProcess2
+	}
+}
+state Chapter4_TripleCStrikesBackFightReturn2
+{
+	
+	actions
+	{
+		
+		SendToModule "#A2C4Spawn" "#Script=Agile" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#General" "#CountBSet=1"
+		SetState Chapter4_MainProcess2
+	}
+}
+state Chapter4_TripleCStrikesBackRampageReturn2
+{
+	
+	actions
+	{
+	
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#ShootSpline=A2C4Shoot2"
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountBSet=2" 
+		SetState Chapter4_MainProcess2
+		
+	}
+}
+state Chapter4_TripleCStrikesBackEscapeTo3
+{
+	
+	actions
+	{
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		CreateModule "#Creature" "#Ratchet" "#Spline=Spawn4b" "#SetPosition=#RatchetSpawn3" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsVehicle" "#Unstoppable" "#Script=FollowSplineTC" "#Protect" "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=699.0" "#BlockDeath"
+		DestroyModule "#A2C4KeyLoc"
+		DestroyModule "#Timer"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#A2C4Spawn" "#Script=FollowSplineTC" "#DirectSpline=A2C4FlyToLoc3" "#TransformForceCar" "#Speed=150" "#ResetHealthDiff" "#Unstoppable"
+		SendToModule "#A2_ch4_obj8" "#StartOneShot=4.0"
+		SendToModule "#General" "#CountSet=3" "#CountBSet=0" "#CountDSet=0"
+		SetState Chapter4_MainProcess3
+	}
+}
+
+state Chapter4_TripleCStrikesBackShoot3
+{
+	conditions
+	{
+		;if Timer > 1.0 and
+		if module "A2C4Spawn PlayerRange" > 100.0 goto Chapter4_TripleChangerArtilleryPrep
+		if module "A2C4Spawn PlayerRange" < 150.0 goto Chapter4_MainProcess3
+	}
+	actions
+	{
+		
+		CreateModule "#KeyLocation" "#A2C4KeyLoc" "#Spline=A2C4KeyLoc3" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key4Return"
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#TransformForceRobot" "#ShootSpline=A2C4Shoot3" "#Stoppable" 
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountDSet=1"
+		;SetState Chapter4_MainProcess3
+	}
+}
+state Chapter4_Heal
+{
+	
+	actions
+	{
+		
+		DoMacro AutoHeal
+		SetState Chapter4_MainProcess3
+		
+	}
+}
+state Chapter4_Heal2
+{
+	
+	actions
+	{
+		
+		DoMacro AutoHeal
+		SetState Chapter4_MainProcess4
+		
+	}
+}
+state Chapter4_RatchetMovesOn
+{
+	
+	actions
+	{
+		DestroyModule "#Ratchet"
+		SetState Chapter4_MainProcess4
+		
+	}
+}
+
+
+state Chapter4_TripleCStrikesBackFight3
+{
+	
+	actions
+	{
+		ResetTimer
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		;SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar"
+		CreateModule "#Timer" "#Timer" "#Time=20.0" "#NoRender"
+		SendToModule "#Ratchet" "#AddToRadar" "#SuppressShieldOff" "#TransformForceRobot" "#Script=Ratchet"  
+		SendToModule "#A2C4Spawn" "#Script=Advanced" "#ResetHealthDiff" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#A2_ch4_obj7" "#StartOneShot"
+		SendToModule "#General"  "#CountBSet=1" "#CountCSet=1" 
+		SetState Chapter4_MainProcess3
+	}
+}
+state Chapter4_TripleCStrikesBackFightReturn3
+{
+	
+	actions
+	{
+		ResetTimer
+		SendToModule "#A2C4Spawn" "#Script=Advanced" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#General" "#CountBSet=1" "#CountCSet=1" 
+		SetState Chapter4_MainProcess3
+	}
+}
+state Chapter4_TripleCStrikesBackRampageReturn3
+{
+	
+	actions
+	{
+	
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#ShootSpline=A2C4Shoot3"
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountBSet=2" "#CountCSet=0" 
+		SetState Chapter4_MainProcess3
+		
+	}
+}
+
+state Chapter4_TripleCThrowsObject3
+{
+	
+	actions
+	{
+		ResetTimer
+		SendToModule "#A2C4Spawn" "#Script=Pitcher" 
+		SendToModule "#General" "#CountCSet=2" 
+		SetState Chapter4_MainProcess3
+		
+	}
+}
+state Chapter4_TripleCThrowsObject4
+{
+	
+	actions
+	{
+		
+		
+		SendToModule "#A2C4Spawn" "#Script=Advanced" 
+		SendToModule "#General" "#CountCSet=1" 
+		SetState Chapter4_MainProcess3
+		
+	}
+}
+
+state Chapter4_TripleCStrikesBackEscapeTo4
+{
+	
+	actions
+	{
+		SendToModule "#Ratchet" "#AddToRadar"
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		DestroyModule "#A2C4KeyLoc"
+		DestroyModule "#Timer"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#A2C4Spawn" "#Script=FollowSplineTC" "#DirectSpline=A2C4FlyToLoc4" "#TransformForceCar" "#Speed=150" "#ResetHealthDiff" "#Unstoppable"
+		;SendToModule "#A2_ch4_obj9" "#StartOneShot"
+		SendToModule "#General" "#CountSet=4" "#CountBSet=0" "#CountCSet=0" "#CountDSet=0"
+		SetState Chapter4_MainProcess4
+	}
+}
+
+state Chapter4_TripleCStrikesBackShoot4
+{
+	conditions
+	{
+		;if Timer > 1.0 and
+		if module "A2C4Spawn PlayerRange" > 80.0 goto Chapter4_TripleChangerArtilleryPrep
+		if module "A2C4Spawn PlayerRange" < 150.0 goto Chapter4_MainProcess4
+	}
+	actions
+	{
+		SendToModule "#Ratchet" "#AddToRadar"
+		CreateModule "#KeyLocation" "#A2C4KeyLoc" "#Spline=A2C4KeyLoc4" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key4Return"
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#TransformForceRobot" "#ShootSpline=A2C4Shoot4" "#Stoppable" 
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountDSet=1"
+		;SetState Chapter4_MainProcess4
+	}
+}
+
+
+
+
+state Chapter4_TripleCStrikesBackFight4
+{
+	
+	actions
+	{
+		DestroyModule "#Ratchet"
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		CreateModule "#Timer" "#Timer" "#Time=20.0" "#NoRender"
+		SendToModule "#A2C4Spawn" "#Script=ShotGunner" "#ResetHealthDiff" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#A2_ch4_obj10" "#StartOneShot"
+		SendToModule "#General" "#CountBSet=1" 
+		SetState Chapter4_MainProcess4
+		
+	}
+}
+state Chapter4_TripleCStrikesBackFightReturn4
+{
+	
+	actions
+	{
+		
+		SendToModule "#A2C4Spawn" "#Script=ShotGunner" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#General" "#CountBSet=1" 
+		SetState Chapter4_MainProcess4
+		
+	}
+}
+state Chapter4_TripleCStrikesBackRampageReturn4
+{
+	
+	actions
+	{
+	
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#ShootSpline=A2C4Shoot4"
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountBSet=2" 
+		SetState Chapter4_MainProcess4
+	
+		
+	}
+}
+state Chapter4_TripleCStrikesBackEscapeTo5
+{
+	
+	actions
+	{
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		DestroyModule "#Ratchet"
+		;CreateModule "#Creature" "#Ratchet" "#Spline=A2C4KeyLoc1" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#SpawnAsCreature" "#Friend" "#Protect" "#InVulnerable" "#SetEnergyMin=899.0" 
+		DestroyModule "#A2C4KeyLoc"
+		DestroyModule "#Timer"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#A2C4Spawn" "#Script=FollowSplineTC" "#DirectSpline=A2C4FlyToLoc5" "#TransformForceCar" "#Speed=150" "#ResetHealthDiff" "#Unstoppable"
+		SendToModule "#General" "#CountSet=5" "#CountBSet=0" "#CountCSet=0" "#CountDSet=0"
+		SetState Chapter4_MainProcess5
+	}
+}
+
+state Chapter4_TripleCStrikesBackShoot5
+{
+	conditions
+	{
+		;if Timer > 1.0 and
+		if module "A2C4Spawn PlayerRange" > 140.0 goto Chapter4_TripleChangerArtilleryPrep
+		if module "A2C4Spawn PlayerRange" < 150.0 goto Chapter4_MainProcess5
+	}
+	actions
+	{
+		
+		CreateModule "#KeyLocation" "#A2C4KeyLoc" "#Spline=A2C4KeyLoc5" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key4Return"
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#TransformForceRobot" "#ShootSpline=A2C4Shoot5" "#Stoppable" 
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountDSet=1"
+		;SetState Chapter4_MainProcess5
+	}
+}
+
+
+
+
+state Chapter4_TripleCStrikesBackFight5
+{
+	
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		CreateModule "#Timer" "#Timer" "#Time=20.0" "#NoRender"
+		SendToModule "#A2C4Spawn" "#Script=Advanced" "#ResetHealthDiff" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#A2_ch4_obj9" "#StartOneShot"
+		SendToModule "#General" "#CountBSet=1" 
+		SetState Chapter4_MainProcess5
+	}
+}
+state Chapter4_TripleCStrikesBackFightReturn5
+{
+	
+	actions
+	{
+		
+		SendToModule "#A2C4Spawn" "#Script=Advanced" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#General" "#CountBSet=1" 
+		SetState Chapter4_MainProcess5
+	}
+}
+state Chapter4_TripleCStrikesBackRampageReturn5
+{
+	
+	actions
+	{
+	
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#ShootSpline=A2C4Shoot5"
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountBSet=2" 
+		SetState Chapter4_MainProcess5
+		
+	}
+}
+state Chapter4_TripleCStrikesBackEscapeTo6
+{
+	
+	actions
+	{
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		DestroyModule "#A2C4KeyLoc"
+		DestroyModule "#Timer"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#A2C4Spawn" "#Script=FollowSplineTC" "#DirectSpline=A2C4FlyToLoc1" "#TransformForceCar" "#Speed=150" "#ResetHealthDiff" "#Unstoppable"
+		SendToModule "#General" "#CountSet=6" "#CountBSet=0" "#CountCSet=0" "#CountDSet=0"
+		SetState Chapter4_MainProcess6
+	}
+}
+
+state Chapter4_TripleCStrikesBackShoot6
+{
+	conditions
+	{
+		;if Timer > 1.0 and
+		if module "A2C4Spawn PlayerRange" > 120.0 goto Chapter4_TripleChangerArtilleryPrep
+		if module "A2C4Spawn PlayerRange" < 150.0 goto Chapter4_MainProcess6
+	}
+	actions
+	{
+		CreateModule "#KeyLocation" "#A2C4KeyLoc" "#Spline=A2C4KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key4Return"
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#TransformForceRobot" "#ShootSpline=A2C4Shoot1" "#Stoppable" 
+		SendToModule "#Destruction" "#Process"	
+		SendToModule "#General" "#CountDSet=1"
+		;SetState Chapter4_MainProcess6
+	}
+}
+state Chapter4_TripleCStrikesBackFight7
+{
+	
+	actions
+	{
+		ResetTimer
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		;DestroyModule "#Ratchet"
+		CreateModule "#Timer" "#Timer" "#Time=20.0" "#NoRender"
+		SendToModule "#A2C4Spawn" "#Script=ShotGunner" "#ResetHealthDiff" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#General" "#CountBSet=1" "#CountCSet=3" 
+		SetState Chapter4_MainProcess6
+		
+	}
+}
+state Chapter4_TripleCStrikesBackFightReturn6
+{
+	
+	actions
+	{
+		ResetTimer
+		SendToModule "#A2C4Spawn" "#Script=ShotGunner" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#General" "#CountBSet=1" "#CountCSet=4"
+		SetState Chapter4_MainProcess6
+	}
+}
+state Chapter4_TripleCStrikesBackRampageReturn6
+{
+	
+	actions
+	{
+	
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#ShootSpline=A2C4Shoot1"
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountBSet=2" 
+		SetState Chapter4_MainProcess6
+		
+	}
+}
+state Chapter4_TripleCThrowsObject1
+{
+	
+	actions
+	{
+		ResetTimer
+		
+		SendToModule "#A2C4Spawn" "#Script=Pitcher" 
+		SendToModule "#General" "#CountSet=7" "#CountCSet=5" 
+		SetState Chapter4_MainProcess6
+		
+	}
+}
+state Chapter4_TripleCThrowsObject2
+{
+	
+	actions
+	{
+		
+		
+		SendToModule "#A2C4Spawn" "#Script=Agile" 
+		SendToModule "#General" "#CountCSet=0" 
+		SetState Chapter4_MainProcess6
+		
+	}
+}
+state Chapter4_TripleCStrikesBackFightReturn7
+{
+	
+	actions
+	{
+		
+		SendToModule "#A2C4Spawn" "#Script=Agile" "#ShootSpline=null"
+		SendToModule "#Destruction" "#NoProcess"
+		SendToModule "#General" "#CountBSet=1" 
+		SetState Chapter4_MainProcess6
+		
+	}
+}
+state Chapter4_TripleCStrikesBackRampageReturn7
+{
+	
+	actions
+	{
+	
+		SendToModule "#A2C4Spawn" "#Script=Shooty" "#ShootSpline=A2C4Shoot1"
+		SendToModule "#Destruction" "#Process"
+		SendToModule "#General" "#CountBSet=2" 
+		SetState Chapter4_MainProcess6
+		
+	}
+}
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#UnLoadCreature=TripleC"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+        
+		SendToModule "#General" "#PlayerType=Jazz,Ironhide,OptimusPrime,OptimusPrime,Jazz"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Chatter
+{
+	conditions
+	{
+		;if module "Timer FailMission" == 1.0 goto Chapter4_Complete	
+		;if Timer > 3.5 goto Chapter4_Complete
+		
+	}
+	actions
+	{
+				
+		ResetTimer
+		;CreateModule "#Timer" "#Timer" "#Time=3.5" "#NoRender" "#Start"
+		;DestroyModule "#Ratchet"
+		 
+		
+		
+
+		CreateModule "#Speech" "#DefeatDrones"  "#speech=#A2_ch4_cmplt" "#AutoDestroy" "#Start"
+		;SetMusic "ACTION Mission4_6 QUIET Generic Play Action"
+		Idle 3.7
+		SetState Chapter4_Complete
+		
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission"  "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		DestroyModule "#KeyLocation"
+		SendToModule #General #UnlockBonus=Mission_SecondMission
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A2_ch4_cmplt2" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A2C4Outro1"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=TripleC"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#PlayerType=Jazz,Ironhide,OptimusPrime,OptimusPrime,Jazz"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		SetState Chapter4_Leave
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule #General #AllowPlayerMovement
+		SetState PickGoto
+	}
+}

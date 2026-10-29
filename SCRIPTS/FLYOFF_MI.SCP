@@ -1,0 +1,35 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Actions
+	{
+		SetPhysicsState "immunetoshots=true" "immunetomelee=true" "immunetothrown=true"
+		
+		SetState FlyAway
+	}
+}
+
+state FlyAway
+{
+	Conditions
+	{
+
+		
+	}
+	Actions
+	{
+		ResetTimer
+		Transform Car UntilDone
+		SetPhysicsState "immunetoshots=true" "immunetomelee=true" "immunetothrown=true"
+		
+		FlyAway goalrange=10.0 speed=120.0 distance=600.0;Time=3.0
+	}
+}

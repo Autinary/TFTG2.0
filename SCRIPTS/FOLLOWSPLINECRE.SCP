@@ -1,0 +1,47 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto FollowSpline
+		if CarForm == 1.0 goto CarInit
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+	}
+}
+
+state CarInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto FollowSpline
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+
+state FollowSpline
+{
+	Actions
+	{
+		SetStrafe false
+		SetFlag "ReachedSplineEnd=false" "FollowingSpline=false"
+		ApproachSpline
+		SetFlag "FollowingSpline=true"
+		SetStrafe false
+		FollowSpline
+		SetFlag "ReachedSplineEnd=true" "FollowingSpline=false"
+	}
+}

@@ -1,0 +1,255 @@
+state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A4_ch4_Goto"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A4_ch4_Goto" "#Start"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+;    	SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#PlayerType=OptimusPrime"
+    	SendToModule "#General" "#LoadCreature=BoneCrusher"
+    	SendToModule "#General" "#LoadCreature=bumblebee07"
+	}
+}
+state Chapter4_VideoIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#A4C4Intro"
+	}
+}
+
+;//disable barriers
+;	gGlobals.RemoveTerrainFilter(4);
+;
+;//enable barriers
+;	gGlobals.AddTerrainFilter(4);
+
+state Chapter4_Main
+{
+	conditions
+	{
+		if module "GotoDroneA Complete" == 1.0 goto Chapter4_FailMission
+		;check too see if dronea within range of bumblebee and failmission
+		if module "GotoDroneA GetHealth" < 0.66 goto Chapter4_Midtro1
+	}
+	actions
+	{
+		SetDeathPoint "Chapter3_DeathFailMission"
+
+;need to set warning string and warning range
+		SendToModule "#General" "#AddTerrainFilter=7" "#SetPlayerTerrainFilter=-1"
+		CreateModule "#Goto" "#GotoDroneA" "#SpawnSpline=A4C4Route" "#SplineStep=0" "#DirectSpline=A4C4Route" "#Transform=2.5" "#Location=#GreenMediumDot" "#Object=#GreenMediumDot" "#Warning" "#Boss" "#type=BoneCrusher" "#Speed=75" "#ExtraTerrColl=0"
+		CreateModule "#Goto" "#BumbleBee" "#SpawnSpline=A4C4Bumblebee" "#SplineStep=0" "#DirectSpline=A4C4Bumblebee" "#Location=#GreenMediumDot" "#Object=#GreenMediumDot" "#AlternateBoss" "#type=bumblebee07" "#Speed=85"
+		SendToModule "#GotoDroneA" "#Link=#BumbleBee"
+
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A4_ch4_obj1" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#PhysObj" "#SetVehicle=#Chapter4Start" "#FadeUp"
+	}
+}
+state Chapter4_Midtro1
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_Part2
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A4C4Midtro1"
+		SendToModule "#GotoDroneA" "#TransformMeterReset" "#SetHealth=0.66"
+	}
+}
+state Chapter4_Part2
+{
+	conditions
+	{
+		if module "GotoDroneA Complete" == 1.0 goto Chapter4_FailMission
+		if module "GotoDroneA GetLinkedDist" < 30.0 goto Chapter4_FailMission
+		if module "GotoDroneA GetHealth" < 0.33 goto Chapter4_Midtro2
+	}
+	actions
+	{
+		CreateModule "#Speech" "#A4_ch4_obj2" "#speech=#A4_ch4_obj2" "#AutoDestroy" "#Start" 
+		SendToModule "#General" "#ForcePlayerFlyBackRecover"
+	}
+}
+state Chapter4_Midtro2
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_Part3
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A4C4Midtro1"
+		SendToModule "#GotoDroneA" "#TransformMeterReset" "#SetHealth=0.33"
+	}
+}
+state Chapter4_Part3
+{
+	conditions
+	{
+		if module "GotoDroneA Complete" == 1.0 goto Chapter4_FailMission
+		if module "GotoDroneA GetLinkedDist" < 30.0 goto Chapter4_FailMission
+		if module "GotoDroneA GetPercentageComplete" == 1.0 goto Chapter4_Complete
+	}
+	actions
+	{
+		SendToModule "#General" "#ForcePlayerFlyBackRecover"
+	}
+}
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=BoneCrusher"
+    	SendToModule "#General" "#UnLoadCreature=bumblebee07"
+;    	SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#RevertPlayerType"
+
+		SendToModule "#General" "#RemoveTerrainFilter=7" "#SetPlayerTerrainFilter=0"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#General" "#RemoveTerrainFilter=7" "#SetPlayerTerrainFilter=0"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A4C4Outro"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=BoneCrusher"
+    	SendToModule "#General" "#UnLoadCreature=bumblebee07"
+;    	SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#PlayerType=OptimusPrime"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		SetState Chapter4_Leave
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		;SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule #General #AllowPlayerMovement
+		SetState GlobalActionRing
+	}
+}

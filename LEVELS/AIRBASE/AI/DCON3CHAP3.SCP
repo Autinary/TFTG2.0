@@ -1,0 +1,811 @@
+;used to be mission 3
+
+state Chapter3_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#SetRadarInterference=0"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D3_ch3_Goto" "#Start"
+		SendToModule "#General" "#SetMessage=Frenzy5" "#SetMessageTimer=5"
+		Idle 3.0
+		
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter3_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+``
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+		SendToModule "#General" "#PlayerType=StarScream" "#ResetLevelCharacters"
+		SendToModule "#General" "#LoadCreature=BoneCrusher" 
+		SendToModule "#General" "#LoadCreature=TripleC" 
+		
+		
+	}
+}
+
+state Chapter3_Main
+{
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter2_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch3_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		CreateModule "#Speech" "#Chatter1" "#speech=#D3_ch3_obj6" "#AutoDestroy"
+		CreateModule "#Speech" "#Chatter2" "#speech=#D3_ch3_obj7" "#AutoDestroy"
+		CreateModule "#Speech" "#Chatter3" "#speech=#D3_ch3_obj5" "#AutoDestroy"
+		SendToModule "#General" "#SetMessage=Frenzy6" "#SetMessageTimer=3"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3Start" "#FadeUp" "#CountCSet=0"
+
+		;; Create a health meter for BoneCrusher and set it to deteriorate
+		CreateModule "#Timer" "#BoneCrusherHealth" "#HeadType=#BoneCrusher" "#Time=45.0" "#DrawHealthBar" "#Protect" "#Random" "#StartLoseHealth" ;"#CREATURERECOIL=#BoneCrusher" ; DON'T PUT RECOIL BACK IN UNLESS YOU FIX THE FACT THAT HE WILL MOVE BACKWARDS ALSO!
+		CreateModule "#Goto" "#BoneCrusher" "#Script=D3Follow" "#SpawnSpline=D3C2Bone_Spawn" "#Object=#RedMediumDot" "#type=BoneCrusher" "#SplineStep=0" "#Speed=50" "#Health=#BoneCrusherHealth" "#Unstoppable" "#SuppressShield" "#Friend" ; "#Invulnerable" 
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BoneCrusher" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key7Return" "#HeadType=#Megatron" "#Radius=140.0"
+
+        CreateModule "#AAGun" "#AAGunLaser"
+		SendToModule "#AAGunLaser" "#Breakable" "#Type=AAGUNTYPE_LASER" "#Placement=AAGun_D3C31L" "#Range=100.0" "#Delay=0.0" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+
+        CreateModule "#AAGun" "#AAGunRockets"
+		SendToModule "#AAGunRockets" "#Breakable" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_D3C31R" "#Range=100.0" "#Delay=0.7" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=4" "#TrafficLv=1" "#PatrolLv=1" "#RoadBlocks=D3C2ROADBLOCKS"
+
+		SetState "Chapter3_Stage1"
+	}
+}
+;state Chapter3_IntoStage1 
+;{
+;	conditions 
+;	{
+;		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+;			if module "AAGunRockets GetPercentageComplete" == 1.0 goto Chapter3_IntoStage2		
+;		if module "BoneCrusher Complete" == 1.0 goto Chapter3_Stage1
+;		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission
+;		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+;	}
+;}
+state Chapter3_Stage1 
+{
+	conditions {
+		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+			if module "AAGunRockets GetPercentageComplete" == 1.0 goto Chapter3_IntoStage2
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission
+
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions 
+	{
+		SendToModule "#BoneCrusherHealth" "#Time=90.0"
+		SendToModule "#BoneCrusher" "#TransformForceRobot"
+	}
+}
+state Chapter3_IntoStage2 
+{
+	conditions 
+	{
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3_Stage2
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+			if module "AAGunRockets GetPercentageComplete" == 1.0 goto Chapter3_AADestroyedEarly1
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#BoneCrusher" "#TransformForceCar"
+		
+		SendToModule #BoneCrusherHealth #NoDraw
+
+		SendToModule "#BoneCrusherHealth" "#Time=45.0" "#Stop"
+
+
+		SendToModule "#BoneCrusher" "#DirectSpline=D3C2BONECRUSHER1"
+		SendToModule "#BoneCrusher" "#Object=#GreenMediumDot"
+	
+		DestroyModule "#AAGunLaser"
+		DestroyModule "#AAGunRockets"
+
+		CreateModule "#Creature" "#ArtilleryTurret1" "#Type=TripleCTurret" "#count=1" "#maxalive=1" "#ForcePlayerAsOpp" "#Spline=Spawn4b" "#Script=Art_Turret" "#SpawnInLos" "#SetEnergyMax=800" "#AddToRadarOff" "#SuppressShield" "#SetPosition=#Art_Turret31"
+	
+
+       	CreateModule "#AAGun" "#AAGunLaser"
+		SendToModule "#AAGunLaser" "#Breakable" "#Type=AAGUNTYPE_LASER" "#Placement=AAGun_D3C32L" "#Range=100.0" "#Delay=0.0" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+
+       	CreateModule "#AAGun" "#AAGunRockets"
+		SendToModule "#AAGunRockets" "#Breakable" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_D3C32M" "#Range=100.0" "#Delay=0.7" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+	}
+}
+state Chapter3_AADestroyedEarly1
+{
+	conditions
+	{
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3_IntoStage3
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#ArtilleryTurret1" "#SetEnergy=0.0"
+		SendToModule "#Chatter1" "#StartOneShot" 
+		Idle 3.0 
+		DestroyModule "#ArtilleryTurret1"
+	}
+} 
+state Chapter3_AADestroyedEarly2
+{
+	conditions
+	{
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3_IntoStage4
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#ArtilleryTurret2" "#SetEnergy=0.0"
+		
+		SendToModule "#Chatter2" "#StartOneShot" 
+		Idle 3.0
+		DestroyModule "#ArtilleryTurret2"
+	}
+} 
+state Chapter3_AADestroyedEarly3
+{
+	conditions
+	{
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3_IntoComplete
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		;SendToModule "#ArtilleryTurret" "#SetEnergy=0.0"
+		
+		;SendToModule "#Chatter3" "#StartOneShot" 
+
+		SetState Chapter3_IntoComplete
+	}
+} 
+state Chapter3_Stage2 
+{
+	conditions 
+{
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission
+		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+			if module "AAGunRockets GetPercentageComplete" == 1.0 goto Chapter3_IntoStage3
+			
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#BoneCrusherHealth" "#Time=90.0"
+		SendToModule "#BoneCrusher" "#TransformForceRobot"	
+		SendToModule "#BoneCrusherHealth" "#StartLoseHealth" "#Draw"
+		SendToModule "#BoneCrusher" "#Object=#RedMediumDot"
+	}
+}
+state Chapter3_IntoStage3 
+{
+	conditions 
+	{
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3_Stage3
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+			if module "AAGunRockets GetPercentageComplete" == 1.0 goto Chapter3_AADestroyedEarly2
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#Chatter1" "#StartOneShot" 
+		SendToModule "#BoneCrusher" "#TransformForceCar"
+
+		SendToModule #BoneCrusherHealth #NoDraw
+
+		SendToModule "#BoneCrusherHealth" "#Time=45.0" "#Stop"
+
+		SendToModule "#BoneCrusher" "#DirectSpline=D3C2BONECRUSHER2"
+		SendToModule "#BoneCrusher" "#Object=#GreenMediumDot"
+
+		DestroyModule "#AAGunLaser"
+		DestroyModule "#AAGunRockets"
+		
+		SendToModule "#ArtilleryTurret1" "#SetEnergy=0.0"
+		
+		CreateModule "#Creature" "#ArtilleryTurret2" "#Type=TripleCTurret" "#count=1" "#maxalive=1" "#ForcePlayerAsOpp" "#Spline=Spawn4b" "#Script=Art_Turret" "#SpawnInLos" "#SetEnergyMax=800" "#AddToRadarOff" "#SuppressShield" "#SetPosition=#Art_Turret33"
+	
+       	CreateModule "#AAGun" "#AAGunLaser"
+		SendToModule "#AAGunLaser" "#Breakable" "#Type=AAGUNTYPE_LASER" "#Placement=AAGun_D3C33L" "#Range=100.0" "#Delay=0.0" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+
+       	CreateModule "#AAGun" "#AAGunRockets"
+		SendToModule "#AAGunRockets" "#Breakable" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_D3C33R" "#Range=100.0" "#Delay=0.7" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+
+		Idle 3.0
+		DestroyModule "#ArtilleryTurret1"
+	}
+}
+state Chapter3_Stage3 
+{
+	conditions 
+	{
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission
+		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+			if module "AAGunRockets GetPercentageComplete" == 1.0 goto Chapter3_IntoStage4
+			
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyModule "#ArtilleryTurret1"
+		
+		SendToModule "#BoneCrusherHealth" "#Time=90.0"
+		SendToModule "#BoneCrusher" "#TransformForceRobot"
+		SendToModule "#BoneCrusherHealth" "#StartLoseHealth" "#Draw"
+		SendToModule "#BoneCrusher" "#Object=#RedMediumDot"
+	}
+}
+state Chapter3_IntoStage4 
+{
+	conditions {
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3_Stage4
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+			if module "AAGunRockets GetPercentageComplete" == 1.0 goto Chapter3_AADestroyedEarly3
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#Chatter2" "#StartOneShot" 
+		SendToModule "#BoneCrusher" "#TransformForceCar"
+
+		SendToModule #BoneCrusherHealth #NoDraw
+
+		SendToModule "#BoneCrusherHealth" "#Time=45.0" "#Stop"
+
+		SendToModule "#BoneCrusher" "#DirectSpline=D3C2BONECRUSHER3"
+		SendToModule "#BoneCrusher" "#Object=#GreenMediumDot"
+
+		DestroyModule "#AAGunLaser"
+		DestroyModule "#AAGunRockets"
+		
+		SendToModule "#ArtilleryTurret2" "#SetEnergy=0.0"
+		
+		CreateModule "#Creature" "#ArtilleryTurret" "#Type=TripleCTurret" "#count=1" "#maxalive=1" "#ForcePlayerAsOpp" "#Spline=Spawn4b" "#Script=Art_Turret" "#SpawnInLos" "#SetEnergyMax=800" "#AddToRadarOff" "#SuppressShield" "#SetPosition=#Art_Turret34"
+	
+   		CreateModule "#AAGun" "#AAGunLaser"
+		SendToModule "#AAGunLaser" "#Breakable" "#Type=AAGUNTYPE_LASER" "#Placement=AAGun_D3C34L" "#Range=100.0" "#Delay=0.0" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#IgnorePlayer" "#Create"
+
+        CreateModule "#AAGun" "#AAGunRockets"
+		SendToModule "#AAGunRockets" "#Breakable" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_D3C34R" "#Range=100.0" "#Delay=0.7" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#IgnorePlayer" "#Create"
+
+		Idle 3.0
+		DestroyModule "#ArtilleryTurret2"
+	}
+}
+state Chapter3_Stage4 
+{
+	conditions 
+	{
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+			if module "AAGunRockets GetPercentageComplete" == 1.0 goto Chapter3_IntoComplete
+			
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		DestroyModule "#ArtilleryTurret2"
+		
+		SendToModule "#BoneCrusherHealth" "#Time=90.0"
+		SendToModule "#BoneCrusher" "#TransformForceRobot"
+		SendToModule "#BoneCrusherHealth" "#StartLoseHealth" "#Draw"
+		SendToModule "#BoneCrusher" "#Object=#RedMediumDot"
+	}
+}
+
+state Chapter3_IntoStage5 
+{
+	conditions {
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3_IntoComplete
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#Chatter3" "#StartOneShot" 
+		SendToModule "#BoneCrusher" "#TransformForceCar"
+
+		SendToModule #BoneCrusherHealth #NoDraw
+
+		SendToModule "#BoneCrusherHealth" "#Time=45.0" "#Stop"
+
+		SendToModule "#ArtilleryTurret" "#SetEnergy=0.0"
+		
+		SendToModule "#BoneCrusher" "#DirectSpline=D3C2BONECRUSHER4"
+		SendToModule "#BoneCrusher" "#Object=#GreenMediumDot"
+
+		DestroyModule "#AAGunLaser"
+		DestroyModule "#AAGunRockets"
+		Idle 3.0 
+		DestroyModule "#ArtilleryTurret"
+    
+	}
+}
+state Chapter3Alt_Enter
+{
+	
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#General" "#DisableLevelCreatures"
+		
+		SendToModule "#General" "#BG_UnLoadCreature=DroneMig_a"
+		SetState Chapter3Alt_EnterInit
+	}
+}
+state Chapter3Alt_EnterInit
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3Alt_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D3C5Intro"
+	}
+}
+state Chapter3Alt_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3Alt_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+``
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 3"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+		SendToModule "#General" "#PlayerType=StarScream" "#ResetLevelCharacters"
+		SendToModule "#General" "#LoadCreature=BoneCrusher" 
+		
+		
+	}
+}
+
+state Chapter3Alt_Main
+{
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter2_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D3_ch3_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		
+		SendToModule "#General" "#SetMessage=Frenzy6" "#SetMessageTimer=3"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#AltC3Start" "#FadeUp" "#CountCSet=0"
+
+		CreateModule "#Timer" "#BoneCrusherHealth" "#HeadType=#BoneCrusher" "#Time=45.0" "#DrawHealthBar" "#Protect" "#Random" "#StartLoseHealth" ;"#CREATURERECOIL=#BoneCrusher" ; DON'T PUT RECOIL BACK IN UNLESS YOU FIX THE FACT THAT HE WILL MOVE BACKWARDS ALSO!
+		CreateModule "#Goto" "#BoneCrusher" "#Script=D3Follow" "#SpawnSpline=D3C3_BONECRUSHER1" "#Object=#RedMediumDot" "#type=BoneCrusher" "#SplineStep=0" "#Speed=50" "#Health=#BoneCrusherHealth" "#Unstoppable" "#SuppressShield" "#Friend" ; "#Invulnerable" 
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BoneCrusher" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key7Return" "#HeadType=#Megatron" "#Radius=140.0"
+
+       
+
+       	CreateModule "#AAGun" "#AAGunLaser"
+		SendToModule "#AAGunLaser" "#Breakable" "#Type=AAGUNTYPE_LASER" "#Placement=AAGun_AD3C31L" "#Range=100.0" "#Delay=0.0" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+
+        CreateModule "#AAGun" "#AAGunRockets"
+		SendToModule "#AAGunRockets" "#Breakable" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_AD3C31R" "#Range=100.0" "#Delay=0.7" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=4" "#TrafficLv=1" "#PatrolLv=1" "#RoadBlocks=D3C2ROADBLOCKS"
+
+		SetState "Chapter3Alt_Stage1"
+	}
+}
+
+state Chapter3Alt_Stage1 
+{
+	conditions {
+		if module "AAGunRockets GetPercentageComplete" == 1.0 and
+			if module "AAGunLaser GetPercentageComplete" == 1.0 goto Chapter3Alt_IntoStage2
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission
+
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		;if Timer > 5 goto Chapter3Alt_IntoStage2
+	}
+	actions 
+	{
+		;ResetTimer
+		SendToModule "#BoneCrusherHealth" "#Time=50.0"
+		SendToModule "#BoneCrusher" "#TransformForceRobot"
+	}
+}
+state Chapter3Alt_IntoStage2 
+{
+	conditions 
+	{
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3Alt_Stage2
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#BoneCrusher" "#TransformForceCar"
+		
+		SendToModule #BoneCrusherHealth #NoDraw
+
+		SendToModule "#BoneCrusherHealth" "#Time=45.0" "#Stop"
+
+
+		SendToModule "#BoneCrusher" "#DirectSpline=D3C3_BONECRUSHER2"
+		SendToModule "#BoneCrusher" "#Object=#GreenMediumDot"
+	
+		DestroyModule "#AAGunRockets"
+		DestroyModule "#AAGunLaser"
+
+       		CreateModule "#AAGun" "#AAGunLaser"
+		SendToModule "#AAGunLaser" "#Breakable" "#Type=AAGUNTYPE_LASER" "#Placement=AAGun_AD3C32L" "#Range=100.0" "#Delay=0.0" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+		CreateModule "#AAGun" "#AAGunRockets"
+		SendToModule "#AAGunRockets" "#Breakable" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_AD3C32R" "#Range=100.0" "#Delay=0.7" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+
+	}
+}
+
+state Chapter3Alt_Stage2 
+{
+	conditions 
+{
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission
+		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+			if module "AAGunRockets GetPercentageComplete" == 1.0 goto Chapter3Alt_IntoStage3
+			
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		;if Timer > 5 goto Chapter3Alt_IntoStage3
+	}
+	actions
+	{
+		;ResetTimer 
+		SendToModule "#BoneCrusherHealth" "#Time=50.0"
+		SendToModule "#BoneCrusher" "#TransformForceRobot"	
+		SendToModule "#BoneCrusherHealth" "#StartLoseHealth" "#Draw"
+		SendToModule "#BoneCrusher" "#Object=#RedMediumDot"
+	}
+}
+state Chapter3Alt_IntoStage3 
+{
+	conditions 
+	{
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3Alt_Stage3
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#BoneCrusher" "#TransformForceCar"
+
+		SendToModule #BoneCrusherHealth #NoDraw
+
+		SendToModule "#BoneCrusherHealth" "#Time=45.0" "#Stop"
+
+		SendToModule "#BoneCrusher" "#DirectSpline=D3C3_BONECRUSHER3"
+		SendToModule "#BoneCrusher" "#Object=#GreenMediumDot"
+
+		DestroyModule "#AAGunLaser"
+		DestroyModule "#AAGunRockets"
+		
+       		CreateModule "#AAGun" "#AAGunLaser"
+		SendToModule "#AAGunLaser" "#Breakable" "#Type=AAGUNTYPE_LASER" "#Placement=AAGun_AD3C33L" "#Range=100.0" "#Delay=0.0" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+		CreateModule "#AAGun" "#AAGunRockets"
+		SendToModule "#AAGunRockets" "#Breakable" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_AD3C33R" "#Range=100.0" "#Delay=0.7" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+		CreateModule "#AAGun" "#AAGunBullets"
+		SendToModule "#AAGunBullets" "#Breakable" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAGun_AD3C33B" "#Range=100.0" "#Delay=0.0" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+
+        }
+}
+state Chapter3Alt_Stage3 
+{
+	conditions 
+	{
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission
+		if module "AAGunLaser GetPercentageComplete" == 1.0 and
+			if module "AAGunRockets GetPercentageComplete" == 1.0 and
+				if module "AAGunBullets GetPercentageComplete" == 1.0 goto Chapter3Alt_IntoStage4
+			
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+		;if Timer > 5 goto Chapter3Alt_IntoStage4
+	}
+	actions
+	{
+		;ResetTimer
+		SendToModule "#BoneCrusherHealth" "#Time=30.0"
+		SendToModule "#BoneCrusher" "#TransformForceRobot"
+		SendToModule "#BoneCrusherHealth" "#StartLoseHealth" "#Draw"
+		SendToModule "#BoneCrusher" "#Object=#RedMediumDot"
+	}
+}
+state Chapter3Alt_IntoStage4 
+{
+	conditions {
+		if module "BoneCrusher Complete" == 1.0 goto Chapter3Alt_Stage4
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SendToModule "#BoneCrusher" "#TransformForceCar"
+
+		SendToModule #BoneCrusherHealth #NoDraw
+
+		SendToModule "#BoneCrusherHealth" "#Time=45.0" "#Stop"
+
+		SendToModule "#BoneCrusher" "#DirectSpline=D3C3_BONECRUSHER4"
+		SendToModule "#BoneCrusher" "#Object=#GreenMediumDot"
+
+		DestroyModule "#AAGunLaser"
+		DestroyModule "#AAGunRockets"
+		
+   		
+	        CreateModule "#AAGun" "#AAGunRockets"
+		SendToModule "#AAGunRockets" "#Breakable" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAGun_AD3C34R" "#Range=100.0" "#Delay=0.7" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#IgnorePlayer" "#Create"
+		CreateModule "#AAGun" "#AAGunLaser"
+		SendToModule "#AAGunLaser" "#Breakable" "#Type=AAGUNTYPE_LASER" "#Placement=AAGun_AD3C34L" "#Range=100.0" "#Delay=0.0" "#Energy=450.0" "#RespawnDelay=-1" "#Ammo=0" "#TargetModuleTag=#BoneCrusher" "#IgnorePlayer" "#Create"
+		
+	}
+}
+state Chapter3Alt_Stage4 
+{
+	conditions 
+	{
+		if module "BoneCrusherHealth FailMission" == 1.0 goto Chapter3_FailMission 
+		if module "AAGunRockets GetPercentageComplete" == 1.0 and
+			if module "AAGunLaser GetPercentageComplete" == 1.0 goto Chapter3Alt_IntoComplete
+			
+		if module "Keylocation FailMission" == 1.0 goto Chapter3_FailMission
+
+		;if Timer > 5 goto Chapter3_IntoComplete
+	}
+	actions
+	{
+		;ResetTimer
+
+		SendToModule "#BoneCrusherHealth" "#Time=50.0"
+		SendToModule "#BoneCrusher" "#TransformForceRobot"
+		SendToModule "#BoneCrusherHealth" "#StartLoseHealth" "#Draw"
+		SendToModule "#BoneCrusher" "#Object=#RedMediumDot"
+	}
+}
+
+
+
+
+
+state Chapter3_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#FailMission"
+	}
+}
+state Chapter3_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#UnLoadCreature=BoneCrusher"
+		SendToModule "#General" "#UnLoadCreature=TripleC"
+		SendToModule "#General" "#PlayerType=StarScream,StarScream,StarScream,StarScream,StarScream"
+		SendToModule "#General" "#ResetLevelCharacters"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter3Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_IntoComplete
+{
+	conditions 
+	{
+		if module "ShortDelay FailMission" == 1.0 goto Chapter3_Complete
+	}
+	actions 
+	{
+		CreateModule "#Timer" "#ShortDelay" "#Time=4.6" "#NoDraw"
+		SendToModule "#Chatter3" "#StartOneShot" 
+		SendToModule "#BoneCrusher" "#TransformForceCar"
+
+		SendToModule #BoneCrusherHealth #NoDraw
+
+		SendToModule "#BoneCrusherHealth" "#Time=45.0" "#Stop"
+
+		SendToModule "#ArtilleryTurret" "#SetEnergy=0.0"
+		
+		SendToModule "#BoneCrusher" "#DirectSpline=D3C2BoneCrusher4"
+		SendToModule "#BoneCrusher" "#Object=#GreenMediumDot"
+
+		DestroyModule "#AAGunLaser"
+		DestroyModule "#AAGunRockets"
+	}
+}
+state Chapter3Alt_IntoComplete
+{
+	conditions 
+	{
+		if module "ShortDelay FailMission" == 1.0 goto Chapter3Alt_Complete
+	}
+	actions 
+	{
+		CreateModule "#Timer" "#ShortDelay" "#Time=4.6" "#NoDraw"
+		SendToModule "#BoneCrusher" "#TransformForceCar"
+
+		SendToModule #BoneCrusherHealth #NoDraw
+
+		SendToModule "#BoneCrusherHealth" "#Time=45.0" "#Stop"
+
+
+		SendToModule "#BoneCrusher" "#DirectSpline=D3C4_BoneCrusher4"
+		SendToModule "#BoneCrusher" "#Object=#GreenMediumDot"
+
+		DestroyModule "#AAGunLaser"
+		DestroyModule "#AAGunRockets"
+	}
+}
+state Chapter3_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#SetPosition=COMPPOINT2" "#Spline=COMCAM2" "#SetFocus=CAMFOCUS2"
+		DestroyModule "#BoneCrusherHealth"
+		SendToModule "#General" "#CompleteMission" "#Unlock=#Chapter4"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+	}
+}
+state Chapter3Alt_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		DestroyModule "#BoneCrusherHealth"
+		SendToModule "#General" "#CompleteMission" "#Unlock=#Chapter4"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+	}
+}
+state Chapter3_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D3C3Outro2"
+	}
+}
+state Chapter3_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=BoneCrusher"
+		SendToModule "#General" "#UnLoadCreature=TripleC"
+		
+		SendToModule "#General" "#PlayerType=StarScream,StarScream,StarScream,StarScream,StarScream" 
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		setstate "PickGoto"
+	}
+}

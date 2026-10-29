@@ -1,0 +1,420 @@
+state base
+{
+	conditions
+	{
+		;if CurrentUser "grichards" == 1.0 goto Empty
+		;if CurrentUser "sharding" == 1.0 goto Empty
+		;if CurrentUser "awhite" == 1.0 goto MainWithDebug
+		;if CurrentUser "challiday" == 1.0 goto Empty
+		;if CurrentUser "popdam" == 1.0 goto Empty
+		;if CurrentUser "DWalker" == 1.0 goto MainWithDebug
+		if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+	}
+}
+state EmptyDeath
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Empty"
+	}
+}
+state Empty
+{
+	Actions
+	{
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#StartMission"
+		SetDeathPoint "EmptyDeath"
+	}
+}
+state StartLevelIntro
+{
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#ActionRing"  "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter1" "#placement=#Chapter1Beacon" "#Title=Auto5Chap1" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter2" "#placement=#Chapter2Beacon" "#Title=Auto5Chap2" "#Ring=ActionRing"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter3" "#placement=#Chapter3Beacon" "#Title=Auto5Chap3" "#Ring=ActionRing"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter4" "#placement=#Chapter4Beacon" "#Title=Auto5Chap4" "#Ring=ActionRing"
+		;SendToModule "#General" "#BG_LoadCreature=DroneForklift_a"
+		;SendToModule "#ActionRing" "#maxalive=3" "#spline=RandomDronesA" "#type=EnergonDrone" "#rangemax=300" "#rangemin=200"
+		;SendToModule "#ActionRing" "#Unlock=#Chapter1"
+		SendToModule "#ActionRing" "#TurnOff"
+		CreateModule "#General" "#General" "#ProtectSystem"
+		
+		CreateModule "#SubMissions" "#SubMissions" "#NodeSpline=SubMissionNodes" "#SubmissionSpline=SubMissionGates" "#ProtectSystem"
+		SendToModule "#SubMissions" "#SetTitle=#Race"
+		SendToModule "#SubMissions" "#SetTitle=#Scavenger"
+		SendToModule "#SubMissions" "#SetTitle=#Attack"
+		SendToModule "#SubMissions" "#SetTitle=#Sumo"
+
+		SetState "LevelIntro"
+	}
+}
+state LevelIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto PrePickGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Chapter1_HubDeath"
+		SendToModule "#General" "#StartIntroVideo=#A5LevelIntro" "#PlayerType=IronHide,Jazz,IronHide,BumbleBee07,IronHide"
+		SendToModule						"#General" "#StartHUB"
+	}
+}
+
+state PrePickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_PreInitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_PreInitGoto
+		if module "General ChapterProgress" == 3.0 goto Chapter4_PreInitGoto
+		if module "General ChapterProgress" == 4.0 goto Chapter1_PreInitGoto
+	}
+}
+
+state PickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_PostC1InitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_InitGoto
+		if module "General ChapterProgress" == 3.0 goto Chapter4_InitGoto
+		if module "General ChapterProgress" == 4.0 goto FinishedLevel
+	}
+	actions
+	{
+		;SendToModule "#General" "#BG_LoadCreature=DroneForklift_a"
+		
+		SendToModule "#General" "#StartHUB"
+	}
+}
+state Chapter1_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_Goto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+	
+		SendToModule "#General" "#StartMission" "#SetPlayer=#StartMission" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter2_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter2_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#COMPPOINT1" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter3_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter3_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#COMPPOINT2" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter4_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter4_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetVehicle=#COMPPOINT6" "#SetPlayerDeathPoint=#StartMission" "#VEHICLEROLLINGSTART_MPH=30.0" 
+	}
+}
+state FinishedLevel
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SetState GlobalActionRing
+	}
+}
+state RevertCreature
+{
+	
+	actions
+	{
+
+		
+		SendToModule "#General" "#FadeUp" "#RevertPlayerType"
+		SetState GlobalActionRing
+		
+		
+	}
+}
+state GlobalActionRing
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		if module "General ChapterProgress" == 0.0 goto GlobalActionRingEnergonDroneMadness1
+	}
+	actions
+	{
+
+		
+		;SendToModule "#General" "#BG_LoadCreature=DroneForklift_a"
+		
+		SendToModule "#General" "#StartHUB"
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#AllowCreatures"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#SubMissions" "#TurnOn"
+		SetState ChooseMusic
+		
+		
+	}
+}
+state ChooseMusic
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+	
+		if module "General ChapterProgress" == 0.0 goto GlobalActionRingEnergonDroneMadness1
+		if Timer > 8.7 and
+			if module "General ChapterProgress" == 1.0 goto JazzTrack
+		if Timer > 8.7 and
+			if module "General ChapterProgress" == 2.0 goto IronhideTrack
+		if Timer > 8.7 and
+			if module "General ChapterProgress" == 3.0 goto BumblebeeTrack
+
+		if module "General ChapterProgress" == 4.0 goto CreatureSwapInit
+
+		
+	}
+	actions
+	{
+
+	}
+}
+state JazzTrack
+{
+	actions
+	{
+		SetMusic "ACTION Mission2_4 QUIET Generic"
+		SetState HubZoneInit
+	}
+}
+state IronhideTrack
+{
+	actions
+	{
+		SetMusic "ACTION Mission1_2 QUIET Generic"
+		SetState HubZoneInit
+	}
+}
+state BumblebeeTrack
+{
+	conditions
+	{
+		if module "General GetCountD" == 5.0 goto GlobalActionRing1
+	}
+	actions
+	{
+		
+		SetMusic "ACTION Mission3_2 QUIET Generic"
+		Idle 0.2
+		SetState HubZoneInit
+	}
+}
+state GlobalActionRing1
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapterPC
+		
+	}
+	actions
+	{
+		
+		
+		
+	}
+}
+state CreatureSwapInit
+{
+	actions
+	{
+		CreateModule "#AreaRange" "#CreatureSwap" "#Trigger=#CharSwap" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon" "#DontClampRadar"
+		CreateModule "#AreaRange" "#AltChapter3" "#Trigger=#AltA5C3" "#AddToRadar" "#ParticleRing" 
+		
+		
+		SetState HubZoneInit
+	}
+}
+state GlobalActionRingEnergonDroneMadness1
+{
+	conditions
+	{
+		if Timer > 0.1 goto GlobalActionRingEnergonDroneMadness2
+		if module "General ChapterProgress" == 1.0 goto GlobalActionRing1
+	}
+	actions
+	{
+		ResetTimer
+		
+	}
+}
+state GlobalActionRingEnergonDroneMadness2
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+	}
+	actions
+	{
+		SendToModule "#General" "#BG_LoadCreature=EnergonDrone"
+		SendToModule "#General" "#SetMaxOpponents=20" "#SetMaxApproachers=20" "#SetAttackRingSize=20"
+		CreateModule "#Creature" "#EnergonDrones1" "#Spline=A5C1Drones" "#Count=10000" "#MaxAlive=5" "#Type=EnergonDrone" "#SpawnAsCreature"  "#Script=EnergonDrone" "#AddToRadarOff" 
+		CreateModule "#Creature" "#EnergonDrones3" "#Spline=A5C3Spawn" "#Count=10000" "#MaxAlive=4" "#Type=EnergonDrone" "#SpawnAsCreature"  "#Script=EnergonDrone" "#AddToRadarOff" 
+		CreateModule "#Creature" "#EnergonDrones4" "#Spline=A5C3SpawnA" "#Count=10000" "#MaxAlive=2" "#Type=EnergonDrone" "#SpawnAsCreature"  "#Script=EnergonDrone" "#AddToRadarOff" 
+		CreateModule "#Creature" "#EnergonDrones5" "#Spline=A5C3SpawnB" "#Count=10000" "#MaxAlive=2" "#Type=EnergonDrone" "#SpawnAsCreature"  "#Script=EnergonDrone" "#AddToRadarOff" 
+		CreateModule "#Creature" "#EnergonDrones6" "#Spline=A5C4BarricadeA" "#Count=10000" "#MaxAlive=1" "#Type=EnergonDrone" "#SpawnAsCreature"  "#Script=EnergonDrone" "#AddToRadarOff" 
+		CreateModule "#Creature" "#EnergonDrones7" "#Spline=A5C4RaceA" "#Count=10000" "#MaxAlive=2" "#Type=EnergonDrone" "#SpawnAsCreature"  "#Script=EnergonDrone" "#AddToRadarOff" 
+		CreateModule "#Creature" "#EnergonDrones8" "#Spline=A5C4RaceB" "#Count=10000" "#MaxAlive=5" "#Type=EnergonDrone" "#SpawnAsCreature"  "#Script=EnergonDrone" "#AddToRadarOff" 
+		CreateModule "#Creature" "#EnergonDrones9" "#Spline=Spawn4a" "#Count=10000" "#MaxAlive=4" "#Type=EnergonDrone" "#SpawnAsCreature"  "#Script=EnergonDrone" "#AddToRadarOff" 
+		
+		
+	}
+}
+state GlobalStartChapter
+{
+	conditions
+	{
+		if module "ActionRing Chapter1"  == 1.0 goto Chapter1_Enter
+		if module "ActionRing Chapter2"  == 1.0 goto Chapter2_Enter
+		if module "ActionRing Chapter3"  == 1.0 goto Chapter3_Enter
+		if module "ActionRing Chapter4"  == 1.0 goto Chapter4_Enter
+	}
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#General" "#BG_UnLoadCreature=EnergonDrone"
+		;SendToModule "#General" "#BG_UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+	}
+}
+state GlobalStartChapterPC
+{
+	conditions
+	{
+		if module "ActionRing Chapter1"  == 1.0 goto Chapter1_Enter
+		if module "ActionRing Chapter2"  == 1.0 goto Chapter2_Enter
+		if module "ActionRing Chapter3"  == 1.0 goto Chapter3_Enter
+		if module "ActionRing Chapter4"  == 1.0 goto Chapter4_IntroPC
+	}
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#General" "#BG_UnLoadCreature=EnergonDrone"
+		;SendToModule "#General" "#BG_UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+	}
+}
+state SubMission_Init
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission_Start
+	}
+	actions
+	{
+		SendToModule "#General" "#BG_UnLoadCreature=EnergonDrone"
+		;SendToModule "#General" "#BG_UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#FadeDown"
+	}
+}
+State SubMission_StartTest
+{
+	actions
+	{
+		SendToModule "#General" "#FadeUp" "#AllowPlayerMovement"
+		SetState "SubMission_Start"
+	}
+}
+state SubMission_Start
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionTriggered" == 1.0 goto SubMission1_Enter
+		if module "SubMissions GetSubMissionTriggered" == 2.0 goto SubMission2_Enter
+		if module "SubMissions GetSubMissionTriggered" == 3.0 goto SubMission3_Enter
+		if module "SubMissions GetSubMissionTriggered" == 4.0 goto SubMission4_Enter
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+
+		SendToModule "#General" "#StartSubMission"
+		SendToModule "#ActionRing" "#TurnOff"
+	}
+}
+state SkipLevel
+{
+	conditions
+	{
+		if message "MissionMessage" == 1.0 goto Chapter1_InitGoto 
+		if message "MissionMessage" == 2.0 goto Chapter2_InitGoto
+		if message "MissionMessage" == 3.0 goto Chapter3_InitGoto
+		if message "MissionMessage" == 4.0 goto Chapter4_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Start"
+		SendToModule "#General" "#FadeDown"
+	}
+}

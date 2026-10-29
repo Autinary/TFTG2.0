@@ -1,0 +1,69 @@
+state base
+{
+	conditions
+	{
+		;if CurrentUser "grichards" == 1.0 goto Empty
+		;if CurrentUser "sharding" == 1.0 goto Empty
+		;if CurrentUser "awhite" == 1.0 goto MainWithDebug
+		;if CurrentUser "challiday" == 1.0 goto Empty
+		;if CurrentUser "popdam" == 1.0 goto Empty
+		;if CurrentUser "DWalker" == 1.0 goto MainWithDebug
+		;if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#AllowPlayerMovement"
+		SetState "Main"
+	}
+}
+
+state Main
+{
+	actions
+	{
+		SendToModule "#General" "#FadeUp" "#ResetAll" "#PlayerType=ironhide"
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Death"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;choose opponent
+		;SetState "BumbleBeeTest"
+		;SetState "ForkLiftTest"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	}
+}
+
+state BumbleBeeTest
+{
+	actions
+	{
+    	SendToModule "#General"      "#LoadCreature=EnergonDrone"
+		CreateModule "#Creature" "#Creature" "#Type=EnergonDrone"   "#Spline=comcam1" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+	}
+}
+
+state ForkLiftTest
+{
+	actions
+	{
+    	SendToModule "#General"      "#LoadCreature=DroneForkLift"
+		CreateModule "#Creature" "#Creature" "#Type=DroneForkLift"   "#Spline=TestSpawn" "#count=10000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+
+	}
+}
+
+state Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Main
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}

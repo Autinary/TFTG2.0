@@ -1,0 +1,84 @@
+
+;     123456789ABCDEF0123456789ABCDEF - Cap of 31 chars
+CONST PlayerShortRangeMin			45.0
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto TransInit
+		if CarForm == 1.0 goto TransInit
+		if SecondaryForm == 1.0 goto Alert
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=true"
+	}
+}
+
+state TransInit
+{
+	Conditions
+	{
+		if SecondaryForm == 1.0 goto Alert
+	}
+	Actions
+	{
+		Transform Secondary UntilDone
+	}
+}
+
+
+state Alert
+{
+	Conditions
+	{
+
+	}
+	Actions
+	{
+		ResetGlobalTimer timer1
+		SetState ShortRangeFire
+
+	}
+}
+
+state ShortRangeFire 
+{
+	Conditions {
+		if OpponentRange > PlayerShortRangeMin goto LongRangeFire 
+	}
+	Actions {
+		FaceOpponent 0.5
+		EngageOpponent "goalrange=0.1" "useglobaltimer0" "fireinterval=0.2" "movetorandom" "firerange=70.0" "dodgeiftarget=0.2" "attack=1"
+		SetState ShortRangeFire
+	}
+
+}
+
+state LongRangeFire 
+{
+	Conditions {
+		if OpponentRange <= PlayerShortRangeMin goto ShortRangeFire 
+	}
+	Actions {
+		FaceOpponent 0.5
+		EngageOpponent "goalrange=0.1" "useglobaltimer0" "fireinterval=1.7" "movetorandom" "firerange=300.0" "dodgeiftarget=0.2" "attack=2"
+		SetState LongRangeFire
+	}
+
+}
+
+
+
+
+
+

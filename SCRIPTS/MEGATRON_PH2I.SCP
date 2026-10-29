@@ -1,0 +1,81 @@
+
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRange			1.0
+CONST MeleeRangeMin				10.0
+CONST MeleeRangeMax				12.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto AttackRanged
+		if CarForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		  SetPhysicsState "static=false"
+		; SetState Alert
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto AttackRanged
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+
+
+
+
+state AttackRanged
+{
+	Conditions
+	{
+		if Timer > 0.1 goto AttackRanged2
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponentTC "goalrange=1.0" "firerange=10.0" "RapidShootRange=10.0" "fireId=0" "firetimemin=0.3" "firetimemax=0.5"
+		
+	}
+}
+state AttackRanged2
+{
+	Conditions
+	{
+		if Timer > 0.1 goto AttackRanged2
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponent "goalrange=1.0" "fireinterval=((0.1-ThrashedMelee)/FIRERATE)" "firerange=9000.0" "spread=0.0" "static"
+		
+	}
+}
+

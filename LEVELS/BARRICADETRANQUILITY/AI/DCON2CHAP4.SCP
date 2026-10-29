@@ -1,0 +1,1033 @@
+state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D2_ch4_Goto2" "#AutoDestroy" "#Start"
+		;CreateModule "#Speech" "#FrenzySpeech" "#speech=#D2_ch4_Goto" "#AutoDestroy" "#Start"
+		Idle 3.0
+		
+		CreateModule "#Timer" "#FrenzySpeech" "#Time=60" "#NoRender"
+		;CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D2C4Intro"
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+    	SendToModule "#General" "#LoadCreature=BumbleBee"
+	;SendToModule "#General" "#LoadCreature=OptimusPrime"
+    	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#PlayerType=Barricade"
+	}
+}
+;;state Chapter4_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter4_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D2C4Intro"
+;;	}
+;;}
+state Chapter4_Main
+{
+	conditions
+	{
+		if module "D2C4SpawnA IsEnergyAtMin" == 1.0 goto Chapter4_MainBChaseEnter
+		if module "D2C4KeyLocA FailMission" == 1.0 goto Chapter4_FailMission 
+	        
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Chapter4_DeathFailMission"
+		
+;		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=5" "#TrafficLv=1" "#PatrolLv=0" "#Protect"
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		CreateModule "#Speech" "#D2C4DefeatBumblebee" "#speech=#D2_ch4_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter4Start" "#FadeUp" "#CountASet=0"
+		CreateModule "#Creature" "#D2C4SpawnA" "#Spline=D2C4SpawnA" "#Boss" "#Type=Bumblebee" "#SpawnInLosInit" "#SetPosition=#D2C4StartA" "#SpawnAsVehicle" "#AddToRadarAlways" "#BlockDeath" 
+		SendToModule "#D2C4SpawnA" "#SetEnergyMax=600" "#SetHealth=600" "#SetEnergyMin=2.0" 
+		
+		CreateModule "#KeyLocation" "#D2C4KeyLocA" "#Creature=#D2C4SpawnA" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key2Return" "#HeadType=#StarScream" "#Radius=150"
+		CreateModule "#SplineExplode" "#D2C4SamA" "#Spline=D2C4SamA" "#MilesPerHour=65" "#AddToRadar=#SamIcon" "#Start"
+		Idle 0.3 
+		SendToModule "#D2C4SpawnA" "#TransformForceRobot"
+	}
+}
+state Chapter4_MainBChaseEnter
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_MainBChase
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C4Midtro1"
+	}
+}
+state Chapter4_MainBChase
+{
+	conditions
+	{
+		if module "D2C4TriggerB InArea" == 1.0 goto Chapter4_MainBFightEnter
+		if module "D2C4RaceB GetPercentage" == 1.0 goto Chapter4_MainBWait
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		DestroyAllModules
+		
+		CreateModule "#Speech" "#D2_ch4_obj6" "#speech=#D2_ch4_obj4" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetMessage=Key4Goto" "#SetMessageTimer=5" "#SetPlayer=#D2C4RepositionA"
+		CreateModule "#SplineExplode" "#D2C4RaceB" "#Spline=D2C4Goto1" "#MilesPerHour=80" "#AddToRadar=#AutoBotRadarIconNotClamped" "#Start"
+		CreateModule "#SplineExplode" "#D2C4WaitB" "#Spline=D2C4SpawnB" "#AddToRadar=#GreenMediumDot"
+		CreateModule "#AreaRange" "#D2C4TriggerB" "#Trigger=#D2C4TriggerB" "#ParticleRing"
+	}
+}
+state Chapter4_MainBWait
+{
+	conditions
+	{
+		if module "D2C4TriggerB InArea" == 1.0 goto Chapter4_MainBFightEnter
+		if module "D2C4TimerB FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#D2C4RaceB"
+		CreateModule "#Timer" "#D2C4TimerB" "#time=45.0"
+	}
+}
+state Chapter4_MainBFightEnter
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_MainBFight
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C4Midtro2"
+	}
+}
+state Chapter4_MainBFight
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4SpawnB BeenHit" == 1.0 goto Chapter4_BeeHit
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Speech" "#D2C4DefeatBumblebee" "#speech=#D2_ch4_obj2" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetPlayer=#D2C4FightPosBC1"
+		CreateModule "#Creature" "#D2C4SpawnB" "#Spline=D2C4SpawnB" "#Boss" "#Type=Bumblebee" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Agile" "#SetPosition=#D2C4FightPosBB1"
+		SendToModule "#D2C4SpawnB" "#SetEnergyMax=900" "#SetHealth=900" "#SetEnergyMin=2.0"
+		CreateModule "#KeyLocation" "#D2C4KeyLocB" "#Creature=#D2C4SpawnB" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key2Return" "#HeadType=#StarScream" "#Radius=150"
+		CreateModule "#SplineExplode" "#D2C4SamB" "#Spline=D2C4SamB" "#MilesPerHour=65" "#AddToRadar=#SamIcon" "#Start"
+	}
+}
+state Chapter4_BeeHit
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if Timer > 1.2 goto Chapter4_HoldIt 
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#D2C4SpawnB" "#SetHealth=800" ;Off"
+		SendToModule "#D2C4SpawnC" "#SetHealth=900" ;Off"
+		SendToModule "#D2C4SpawnD" "#SetHealth=1175" ;Off"
+		
+	}
+}
+state Chapter4_BeeHit2
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if Timer > 1.2 goto Chapter4_HoldIt2
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#D2C4SpawnB" "#SetHealth=700" ;Off"
+		SendToModule "#D2C4SpawnC" "#SetHealth=800" ;Off"
+		SendToModule "#D2C4SpawnD" "#SetHealth=1150" ;Off"
+		
+	}
+}
+state Chapter4_BeeHit3
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if Timer > 1.2 goto Chapter4_HoldIt3
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#D2C4SpawnB" "#SetHealth=600" ;Off"
+		SendToModule "#D2C4SpawnC" "#SetHealth=700" ;Off"
+		SendToModule "#D2C4SpawnD" "#SetHealth=1125" ;Off"
+	}
+}
+state Chapter4_BeeHit4
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if Timer > 1.2 goto Chapter4_HoldIt4
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#D2C4SpawnB" "#SetHealth=500" ;Off"
+		SendToModule "#D2C4SpawnC" "#SetHealth=600" ;Off"
+		SendToModule "#D2C4SpawnD" "#SetHealth=790" ;Off"
+		
+	}
+}
+state Chapter4_BeeHit5
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if Timer > 1.2 goto Chapter4_HoldIt5
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#D2C4SpawnB" "#SetHealth=400" ;Off"
+		SendToModule "#D2C4SpawnC" "#SetHealth=500" ;Off"
+		SendToModule "#D2C4SpawnD" "#SetHealth=780" ;Off"
+		
+	}
+}
+state Chapter4_BeeHit6
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if Timer > 1.2 goto Chapter4_HoldIt6
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#D2C4SpawnB" "#SetHealth=300" ;Off"
+		SendToModule "#D2C4SpawnC" "#SetHealth=400" ;Off"
+		SendToModule "#D2C4SpawnD" "#SetHealth=770" ;Off"
+		
+	}
+}
+state Chapter4_BeeHit7
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if Timer > 1.2 goto Chapter4_HoldIt7
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#D2C4SpawnB" "#SetHealth=200" ;Off"
+		SendToModule "#D2C4SpawnC" "#SetHealth=300" ;Off"
+		SendToModule "#D2C4SpawnD" "#SetHealth=760" ;Off"
+
+		
+	}
+}
+state Chapter4_BeeHit8
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if Timer > 1.2 goto Chapter4_HoldIt8
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#D2C4SpawnB" "#SetHealth=100" ;Off"
+		SendToModule "#D2C4SpawnC" "#SetHealth=200" ;Off"
+		
+	}
+}
+state Chapter4_BeeHit9
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if Timer > 1.2 goto Chapter4_HoldIt9
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#D2C4SpawnB" "#SetHealth=2.0" ;Off"
+		SendToModule "#D2C4SpawnC" "#SetHealth=100" ;Off"
+		
+	}
+}
+state Chapter4_BeeHit10
+{
+	conditions
+	{
+		;if module "D2C4SpawnC GetCountAlive" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnC" "#SetHealth=2.0" ;Off"
+		
+	}
+}
+state Chapter4_HoldIt
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4SpawnB BeenHit" == 1.0 goto Chapter4_BeeHit2
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit2
+		if module "D2C4SpawnD BeenHit" == 1.0 goto Chapter4_BeeHit2
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnB" ;"
+		SendToModule "#D2C4SpawnC" ;"
+		SendToModule "#D2C4SpawnD" ;"
+	}
+}
+state Chapter4_HoldIt2
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4SpawnB BeenHit" == 1.0 goto Chapter4_BeeHit3
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit3
+		if module "D2C4SpawnD BeenHit" == 1.0 goto Chapter4_BeeHit3
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnB" ;"
+		SendToModule "#D2C4SpawnC" ;"
+		SendToModule "#D2C4SpawnD" ;"
+		
+	}
+}
+state Chapter4_HoldIt3
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4SpawnB BeenHit" == 1.0 goto Chapter4_BeeHit4
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit4
+		if module "D2C4SpawnD BeenHit" == 1.0 goto Chapter4_BeeRadialBlast
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnB" ;"
+		SendToModule "#D2C4SpawnC" ;"
+		SendToModule "#D2C4SpawnD" ;"
+		
+	}
+}
+state Chapter4_HoldIt4
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4SpawnB BeenHit" == 1.0 goto Chapter4_BeeHit5
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit5
+		if module "D2C4SpawnD BeenHit" == 1.0 goto Chapter4_BeeHit5
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnB" ;"
+		SendToModule "#D2C4SpawnC" ;"
+		SendToModule "#D2C4SpawnD" ;"
+		
+	}
+}
+state Chapter4_HoldIt5
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4SpawnB BeenHit" == 1.0 goto Chapter4_BeeHit6
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit6
+		if module "D2C4SpawnD BeenHit" == 1.0 goto Chapter4_BeeHit6
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnB" ;"
+		SendToModule "#D2C4SpawnC" ;"
+		SendToModule "#D2C4SpawnD" ;"
+		
+	}
+}
+state Chapter4_HoldIt6
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4SpawnB BeenHit" == 1.0 goto Chapter4_BeeHit7
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit7
+		if module "D2C4SpawnD BeenHit" == 1.0 goto Chapter4_BeeHit7
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnB" ;"
+		SendToModule "#D2C4SpawnC" ;"
+		SendToModule "#D2C4SpawnD" ;"
+		
+	}
+}
+state Chapter4_HoldIt7
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4SpawnB BeenHit" == 1.0 goto Chapter4_BeeHit8
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit8
+		if module "D2C4SpawnD BeenHit" == 1.0 goto Chapter4_BeeAdv
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnB" ;"
+		SendToModule "#D2C4SpawnC" ;"
+		SendToModule "#D2C4SpawnD" ;"
+		
+	}
+}
+state Chapter4_HoldIt8
+{
+	conditions
+	{
+		if module "D2C4SpawnB IsEnergyAtMin" == 1.0 goto Chapter4_MainCChaseEnter
+		if module "D2C4SpawnB BeenHit" == 1.0 goto Chapter4_BeeHit9
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit9
+		if module "D2C4KeyLocB FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnB" ;"
+		SendToModule "#D2C4SpawnC" ;"
+		SendToModule "#D2C4SpawnD" ;"
+		
+	}
+}
+state Chapter4_HoldIt9
+{
+	conditions
+	{
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit10
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#D2C4SpawnB" ;"
+		SendToModule "#D2C4SpawnC" ;"
+		SendToModule "#D2C4SpawnD" ;"
+		
+	}
+}
+state Chapter4_MainCChaseEnter
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_MainCChase
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C4Midtro3"
+	}
+}
+state Chapter4_MainCChase
+{
+	conditions
+	{
+		if module "D2C4TriggerC InArea" == 1.0 goto Chapter4_MainCFightEnter
+		if module "D2C4RaceC GetPercentage" == 1.0 goto Chapter4_MainCWait
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Speech" "#D2_ch4_obj6" "#speech=#D2_ch4_obj6" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetMessage=Key3Goto" "#SetMessageTimer=5" "#SetPlayer=#D2C4RepositionB"
+		CreateModule "#SplineExplode" "#D2C4RaceC" "#Spline=D2C4Goto2" "#MilesPerHour=80" "#AddToRadar=#AutoBotRadarIconNotClamped" "#Start"
+		CreateModule "#SplineExplode" "#D2C4WaitC" "#Spline=D2C4SpawnC" "#AddToRadar=#GreenMediumDot"
+		CreateModule "#AreaRange" "#D2C4TriggerC" "#Trigger=#D2C4TriggerC"  "#ParticleRing"  ;"#Beacon"
+	}
+}
+state Chapter4_MainCWait
+{
+	conditions
+	{
+		if module "D2C4TriggerC InArea" == 1.0 goto Chapter4_MainCFightEnter
+		if module "D2C4TimerC FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#D2C4RaceC"
+		CreateModule "#Timer" "#D2C4TimerC" "#time=35.0"
+	}
+}
+state Chapter4_MainCFightEnter
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_MainCFight
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C4Midtro4"
+	}
+}
+state Chapter4_MainCFight
+{
+	conditions
+	{
+		if module "D2C4SpawnC IsEnergyAtMin" == 1.0 goto Chapter4_MainDChaseEnter
+		if module "D2C4SpawnC BeenHit" == 1.0 goto Chapter4_BeeHit
+		if module "D2C4KeyLocC FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		DestroyAllModules
+		SendToModule "#General" "#SetPlayer=#D2C4FightPosBC2"
+		CreateModule "#Creature" "#D2C4SpawnC" "#Spline=D2C4SpawnC" "#Boss" "#Type=Bumblebee" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=ShotGunner" "#SetPosition=#D2C4FightPosBB2"
+		SendToModule "#D2C4SpawnC" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetEnergyMin=2.0"
+		CreateModule "#KeyLocation" "#D2C4KeyLocC" "#Creature=#D2C4SpawnC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key2Return" "#HeadType=#StarScream" "#Radius=150"
+		CreateModule "#SplineExplode" "#D2C4SamC" "#Spline=D2C4SamC" "#MilesPerHour=65" "#AddToRadar=#SamIcon" "#Start"
+	}
+}
+state Chapter4_MainDChaseEnter
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_MainDChase
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C4Midtro5"
+	}
+}
+state Chapter4_MainDChase
+{
+	conditions
+	{
+		if module "D2C4TriggerD InArea" == 1.0 goto Chapter4_MainDFightEnter
+		if module "D2C4RaceD GetPercentage" == 1.0 goto Chapter4_MainDWait
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Speech" "#D2_ch4_obj6" "#speech=#D2_ch4_obj5" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetMessage=Key3Goto" "#SetMessageTimer=5" "#SetPlayer=#D2C4RepositionC"
+		CreateModule "#SplineExplode" "#D2C4RaceD" "#Spline=D2C4Goto3" "#MilesPerHour=80" "#AddToRadar=#AutoBotRadarIconNotClamped" "#Start"
+		CreateModule "#SplineExplode" "#D2C4WaitD" "#Spline=D2C4SpawnD1" "#AddToRadar=#GreenMediumDot"
+		CreateModule "#AreaRange" "#D2C4TriggerD" "#Trigger=#D2C4TriggerD"  "#ParticleRing" ;"#Beacon"
+	}
+}
+state Chapter4_MainDWait
+{
+	conditions
+	{
+		if module "D2C4TriggerD InArea" == 1.0 goto Chapter4_MainDFightEnter
+		if module "D2C4TimerD FailMission" = 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#D2C4RaceD"
+		CreateModule "#Timer" "#D2C4TimerD" "#time=50.0"
+	}
+}
+state Chapter4_MainDFightEnter
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_MainDFight
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D2C4Midtro6"
+	}
+}
+state Chapter4_MainDFight
+{
+	conditions
+	{
+		if module "D2C4SpawnD Health" < 0.01 goto Chapter4_BumbleBeeDead
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+;		if module "D2C4SpawnD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+		if Timer > 1.2 goto Chapter4_MainDFight2
+		;if module "D2C4SpawnD IsEnergyAtMin" == 1.0 goto Chapter4_BeeShotGunner
+	}
+	actions
+	{
+
+		ResetTimer
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Creature" "#Creature" "#Type=DroneDefault_a" "#Spline=D2C4Spawn4" "#count=10" "#maxalive=3" "#addtoradar" "#SpawnAsCreature" "#KeyLocation=On"
+		CreateModule "#Speech" "#D2C4DefeatBumblebee" "#speech=#D2_ch4_obj3" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetPlayer=#D2C4FightPosBC3"
+		CreateModule "#Creature" "#D2C4SpawnD" "#Spline=D2C4SpawnD" "#Boss" "#Type=BumbleBee" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadarAlways" "#BlockDeath" "#Script=Advanced" "#SetPosition=#D2C4FightPosBB3"
+		;SendToModule "#D2C4SpawnD" "#SetEnergyMax=1500" "#SetHealth=1500" "#SetEnergyMin=1400"
+		CreateModule "#KeyLocation" "#D2C4KeyLocD" "#Creature=#D2C4SpawnD" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key2Return" "#HeadType=#StarScream" "#Radius=150"
+		;SendToModule "#General" "#SetPlayer=#D2C4Repos1"
+		SendToModule "#Creature" "#ForcePlayerAsOpp"
+		
+	}
+}
+state Chapter4_MainDFight2
+{
+	conditions
+	{
+		if module "D2C4SpawnD Health" < 0.01 goto Chapter4_BumbleBeeDead
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+;		if module "D2C4SpawnD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+		if Timer > 4.2 goto Chapter4_MainDFight3
+		;if module "D2C4SpawnD IsEnergyAtMin" == 1.0 goto Chapter4_BeeShotGunner
+	}
+	actions
+	{
+
+		ResetTimer
+		SendToModule "#D2C4SpawnD" "#Script=Combat"
+	}
+}
+state Chapter4_MainDFight3
+{
+	conditions
+	{
+		if module "D2C4SpawnD Health" < 0.01 goto Chapter4_BumbleBeeDead
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+;		if module "D2C4SpawnD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+		;if module "D2C4SpawnD IsEnergyAtMin" == 1.0 goto Chapter4_BeeShotGunner
+	}
+	actions
+	{
+
+		
+		SendToModule "#D2C4SpawnD" "#Script=Advanced"
+	}
+}
+state Chapter4_BeeShotGunner
+{
+	conditions
+	{
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+;		if module "D2C4SpawnD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD IsEnergyAtMin" == 1.0 goto Chapter4_GunnerPainTolerance
+	}
+	actions
+	{
+	
+		SendToModule "#D2C4SpawnD" "#SetEnergyMin=1200" "#Script=ShotGunner"
+		
+	}
+}
+state Chapter4_GunnerPainTolerance
+{
+	conditions
+	{
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+;		if module "D2C4SpawnD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD BeenHit" == 1.0 goto Chapter4_BeeHit
+	}
+	actions
+	{
+	
+		SendToModule "#D2C4SpawnD" 
+		
+	}
+}
+state Chapter4_BeeRadialBlast
+{
+	conditions
+	{
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+;		if module "D2C4SpawnD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD IsEnergyAtMin" == 1.0 goto Chapter4_BeeBruiser
+	}
+	actions
+	{
+	
+		SendToModule "#D2C4SpawnD" "#SetHealth=1100" "#SetEnergyMin=1000" "#Script=Combat" 
+		
+	}
+}
+state Chapter4_BeeBruiser
+{
+	conditions
+	{
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+;		if module "D2C4SpawnD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD IsEnergyAtMin" == 1.0 goto Chapter4_BeeBruiserPainTolerance
+	}
+	actions
+	{
+	
+		SendToModule "#D2C4SpawnD" "#SetEnergyMin=800" "#Script=Agile"
+		
+	}
+}
+state Chapter4_BeeBruiserPainTolerance
+{
+	conditions
+	{
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+;		if module "D2C4SpawnD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+		if module "D2C4SpawnD BeenHit" == 1.0 goto Chapter4_BeeHit4
+	}
+	actions
+	{
+	
+		SendToModule "#D2C4SpawnD" "#SetEnergyMin=0" 
+		
+	}
+}
+state Chapter4_BeeAdv
+{
+	conditions
+	{
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_BumbleBeeDead
+;		if module "D2C4SpawnD GetPercentageComplete" == 1.0 goto Chapter4_Complete
+		if module "Creature GetPercentageComplete" == 1.0 goto Chapter4_DronesDead
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+		
+	}
+	actions
+	{
+	
+		SendToModule "#D2C4SpawnD" "#SetEnergyMin=0" "#Script=Advanced" 
+		SendToModule "#Creature" "#Count=5"
+		
+	}
+}
+state Chapter4_DronesDead
+{
+	conditions
+	{
+		if module "D2C4SpawnD Health" < 0.01 goto Chapter4_BumbleBeeDead
+		
+		if module "D2C4SpawnD Dead" == 1.0 goto Chapter4_Complete
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+	}
+}
+state Chapter4_BumbleBeeDead
+{
+	conditions
+	{
+		if module "creature getpercentagecomplete" == 1.0 goto Chapter4_Complete
+		if module "D2C4KeyLocD FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#D2C4KeyLocD"
+		SendToModule "#Creature" "#KeyLocation=Off"
+		CreateModule "#KeyLocation" "#D2C4KeyLocD" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#StarScream"
+		SendToModule "#General" "#SetMessage=BTranA1" "#SetMessageTimer=5"
+	}
+}
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=BumbleBee"
+    	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		SendToModule #General #UnlockBonus=Mission_SecondMission
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D2C4Outro"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=BumbleBee"
+    	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		SetState Chapter4_Leave
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule #General #AllowPlayerMovement
+		SetState PickGoto
+	}
+}

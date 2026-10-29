@@ -1,0 +1,261 @@
+
+
+state PrepareSwap
+{
+	
+	actions
+	{
+		DestroyModule "#CreatureSwap"
+		SendToModule "#General" "#SetPlayer=#CSReset" "#CountDSet=1"
+		;Idle 2.0
+		
+		CreateModule "#AreaRange" "#SwapToG" "#Trigger=#CSGround" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToA" "#Trigger=#CSAerial" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		SendToModule "#General" "#SetMessage=CDCS" "#SetMessageTimer=1000" 
+		
+		SetState CreatureSwapProcess
+	}
+}
+
+state CreatureSwapProcess
+{
+	conditions
+	{
+		
+		if module "Timer FailMission" == 1.0 goto LeftSwapArea
+
+		if module "OutOfBoundsNorth InArea" == 1.0 goto RespawnCS
+		if module "OutOfBoundsEast InArea" == 1.0 goto RespawnCS	
+		if module "OutOfBoundsSouth InArea" == 1.0 goto RespawnCS
+		if module "OutOfBoundsWest InArea" == 1.0 goto RespawnCS
+
+		if module "SwapToG InArea" == 1.0 goto SelectG
+		if module "SwapToA InArea" == 1.0 goto SelectA		
+
+		if module "SwapToTC InArea" == 1.0 goto SelectTC
+		if module "SwapToBL InArea" == 1.0 goto SelectBL
+		if module "SwapToS InArea" == 1.0 goto SelectS
+		if module "SwapToB InArea" == 1.0 goto SelectB
+		if module "SwapToBC InArea" == 1.0 goto SelectBC
+		if module "SwapToBR InArea" == 1.0 goto SelectBR
+		if module "SwapToSC InArea" == 1.0 goto SelectSC
+		if module "SwapToM InArea" == 1.0 goto SelectM
+
+		;if Timer > 10.0 goto Chapter1_WaitingRoom
+		
+	}
+	actions
+	{
+		ResetTimer
+	}	
+	
+}
+state RespawnCS
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto RespawnCS2
+		if module "General GetCountC" == 0.0 goto CreatureSwapProcess
+	}
+	actions
+	{
+		Idle 0.1
+		SendToModule "#General" "#FadeDown" 
+	}
+}
+state RespawnCS2
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetVehicle=#Respawn" "#FadeUp" 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectG
+{
+	conditions
+	{
+		if module "General GetCountA" >= 3.0 goto Chapter1DestroyBoney
+
+	}
+	actions
+	{
+		DestroyModule "#SwapToG"
+		DestroyModule "#SwapToA"
+		
+		SendToModule "#General" "#SetPlayer=#CSReset"
+		
+		CreateModule "#AreaRange" "#SwapToS" "#Trigger=#CSScorponok" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToB" "#Trigger=#CSBarricade" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBC" "#Trigger=#CSBoneCrusher" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBR" "#Trigger=#CSBrawl" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		
+		Idle 0.1
+		SendToModule "#General" "#SetMessage=CDGCS" "#SetMessageTimer=1000" 
+		
+		SetState CreatureSwapProcess
+	}
+}
+state Chapter1DestroyBoney
+{
+	
+	actions
+	{
+		DestroyModule "#SwapToBC"
+		
+		SendToModule "#General" "#SetMessage=CDBCGCS" "#SetMessageTimer=1000" 
+		
+		SetState CreatureSwapProcess
+	}
+}
+state SelectA
+{
+	
+	actions
+	{
+		DestroyModule "#SwapToG"
+		DestroyModule "#SwapToA"
+		
+		SendToModule "#General" "#SetPlayer=#CSReset" 
+
+		CreateModule "#AreaRange" "#SwapToTC" "#Trigger=#CSTripleChanger" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToSC" "#Trigger=#CSStarScream" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToM" "#Trigger=#CSMegatron" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBL" "#Trigger=#CSBlackout" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		
+		SendToModule "#General" "#SetMessage=CDACS" "#SetMessageTimer=1000" 
+		
+		SetState CreatureSwapProcess
+	}
+}
+state SelectTC
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=TripleC" "#SetPlayer=#CSReset" "#CountCSet=2" "#CountBSet=1"
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state SelectBL
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Blackout" "#SetPlayer=#CSReset" "#CountCSet=2" "#CountBSet=1"
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state SelectS
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Scorponok" "#SetPlayer=#CSReset" "#CountCSet=1" "#CountBSet=1" "#CountDSet=0"
+		DestroyAllModules 
+		DestroyModule "#Timer"
+		SendToModule "#General" "#SetMessageTimer=-1"
+		 
+		SetState Chapter1_Scorponok ;Chapter1_WaitingRoom
+	}
+}
+state SelectB
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Barricade" "#SetPlayer=#CSReset" "#CountCSet=0" "#CountBSet=1"
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state SelectBC
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Bonecrusher" "#SetPlayer=#CSReset" "#CountCSet=0" "#CountBSet=1"
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state SelectBR
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Brawl" "#SetPlayer=#CSReset" "#CountCSet=0" "#CountBSet=1"
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state SelectSC
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=StarScream" "#SetPlayer=#CSReset" "#CountCSet=2" "#CountBSet=1"
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+
+state SelectM
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Megatron" "#SetPlayer=#CSReset" "#CountCSet=2" "#CountBSet=1"
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state LeftSwapArea
+{
+	conditions
+	{
+		if module "General GetCountA" == 1.0 goto Chapter1_Main
+
+		if module "General GetCountA" == 2.0 goto Chapter1_Phase2
+		
+		if module "General GetCountA" == 3.0 goto Chapter1_Phase3
+
+		if module "General GetCountA" == 4.0 goto Chapter1_Phase4
+
+		if module "General GetCountA" == 5.0 goto Chapter1_Phase5
+
+		if module "General GetCountA" == 6.0 goto Chapter1_Phase6
+
+				
+	}
+	actions
+	{
+		DestroyAllModules 
+		DestroyModule "#Timer"
+		SendToModule "#General" "#SetMessageTimer=-1" "#CountDSet=0"
+		
+		 
+		;SetState GlobalActionRing
+	}
+}

@@ -1,0 +1,1268 @@
+state Chapter1_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter1_InitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_GotoWaitSpeech
+                if module "General ChapterProgress" == 4.0 DestroyAllModules "#VEHICLEROLLINGSTART_MPH=75.0"  "#VEHICLEROLLINGSTART_MPH=-1.0"
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+                
+		SendToModule "#ActionRing" "#maxalive=0" "#spline=RandomDronesA" "#type=DroneDefault" "#rangemax=200" "#rangemin=150"
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#Auto1LevelIntro" "#AutoDestroy"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A1_ch1_Goto" "#AutoDestroy"
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A1_ch1_Goto4" "#AutoDestroy"
+                SendToModule "#General" "#StartMission" "#SetVehicle=#StartLevel" "#VEHICLEROLLINGSTART_MPH=60.0" "#SetPlayerDeathPoint=#StartMission" 
+	}
+}
+state Chapter1_GotoWaitSpeech
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement" "#VEHICLEROLLINGSTART_MPH=-30.0"
+		Idle 2.0
+		SendToModule "#General" "#CountBSet=0"
+
+		SendToModule "#MissionStartSpeech" "#Start"
+		Idle 3.0
+		SetState Chapter1_Goto
+	}
+}
+state Chapter1_Goto
+{
+        
+	actions
+	{
+              
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter1Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+
+state Chapter1_Enter
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A1C1IntroNope" "#SetPlayerDeathPoint=#Chapter1Restart"
+	}
+}
+state Chapter1_LoadCreatures
+{
+	conditions
+	{
+
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+        SendToModule "#General" "#UnLoadCreature=DroneDefault"
+	SendToModule "#General" "#UnLoadCreature=DroneDefault_a" 
+	SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+    	
+	SendToModule "#General" "#LoadCreature=DroneMig"
+	
+
+	;SendToModule "#General" "#LoadCreature=DroneCement"
+	;SendToModule "#General" "#LoadCreature=DroneMig"
+
+	;SendToModule "#General" "#LoadCreature=StarScream"
+    	;SendToModule "#General" "#LoadCreature=DronePickupTruck"
+    	;SendToModule "#General" "#LoadCreature=DroneForklift"
+        ;SendToModule "#General" "#LoadCreature=Brawl"
+	SendToModule "#General" "#PlayerType=BumbleBee"	
+        }
+}
+
+state Chapter1_Main
+{
+	conditions
+	{
+		if module "ConstructionYardCreature GetPercentageComplete" == 1.0 and
+			if module "ConstructionYardCreature2 GetPercentageComplete" == 1.0 and
+				if module "ConstructionYardCreature3 GetPercentageComplete" == 1.0 and
+					if module "ConstructionYardCreature4 GetPercentageComplete" == 1.0 goto Chapter1_GotoSecondAreaIntro
+		
+		
+		if Timer > 0.1 goto KeyLocCreReset
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#InMissionTextNumber=0"
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		;SendToModule "#General" "#SetRadarInterference=1"		
+		;SendToModule "#General" "#SetMessage=BBTranD5" "#SetMessageTimer=3" 
+
+		CreateModule "#Creature" "#ConstructionYardCreature" "#Spline=A1C1Spawn" "#count=1" "#maxalive=1" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat" "#SetPosition=#A1C1Area2Spawn_01" "#SetEnergyMax=400" "#KeyLocation=On"
+		CreateModule "#Creature" "#ConstructionYardCreature2" "#Spline=A1C1Spawn" "#count=1" "#maxalive=1" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat" "#SetPosition=#A1C1Area2Spawn_02" "#SetEnergyMax=400" "#KeyLocation=On"
+		CreateModule "#Creature" "#ConstructionYardCreature3" "#Spline=A1C1Spawn" "#count=1" "#maxalive=1" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat" "#SetPosition=#A1C1Area2Spawn_03" "#SetEnergyMax=400" "#KeyLocation=On"
+		CreateModule "#Creature" "#ConstructionYardCreature4" "#Spline=A1C1Spawn" "#count=1" "#maxalive=1" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat" "#SetPosition=#A1C1Area2Spawn_04" "#SetEnergyMax=400" "#KeyLocation=On"
+		
+		CreateModule "#Speech" "#DefeatDrones"  "#PlayDelay=2" "#speech=#A1_ch1_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		
+		CreateModule "#Creature" "#KeyLocCre" "#Spline=A1C1Spawn" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat" "#SetPosition=#KeyLocUA1" "#SetEnergyMin=1.0"
+	
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#KeyLocCre" "#Radius=120" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" 
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter1Start" "#FadeUp"
+
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		SendToModule "#General" "#ClearPlayerChecks"
+
+		
+	}
+}
+
+state KeyLocCreReset
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if module "ConstructionYardCreature GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature PlayerRange" > 120 goto Chapter1_Drone1Reset
+		if module "ConstructionYardCreature2 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature2 PlayerRange" > 120 goto Chapter1_Drone2Reset
+		if module "ConstructionYardCreature3 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature3 PlayerRange" > 120 goto Chapter1_Drone3Reset
+		if module "ConstructionYardCreature4 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature4 PlayerRange" > 120 goto Chapter1_Drone4Reset
+		
+		if module "ConstructionYardCreature GetPercentageComplete" == 1.0 and
+			if module "ConstructionYardCreature2 GetPercentageComplete" == 1.0 and
+				if module "ConstructionYardCreature3 GetPercentageComplete" == 1.0 and
+					if module "ConstructionYardCreature4 GetPercentageComplete" == 1.0 goto Chapter1_GotoSecondAreaIntro
+		
+		if Timer > 0.1 goto KeyLocCreReset2
+	}
+	actions
+	{
+		ResetTimer
+		
+		SendToModule "#KeyLocCre" "#SetPosition=#KeyLocUA1" 
+	
+		
+		
+		
+	}
+}
+state KeyLocCreReset2
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if module "ConstructionYardCreature GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature PlayerRange" > 120 goto Chapter1_Drone1Reset
+		if module "ConstructionYardCreature2 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature2 PlayerRange" > 120 goto Chapter1_Drone2Reset
+		if module "ConstructionYardCreature3 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature3 PlayerRange" > 120 goto Chapter1_Drone3Reset
+		if module "ConstructionYardCreature4 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature4 PlayerRange" > 120 goto Chapter1_Drone4Reset
+
+		if module "ConstructionYardCreature GetPercentageComplete" == 1.0 and
+			if module "ConstructionYardCreature2 GetPercentageComplete" == 1.0 and
+				if module "ConstructionYardCreature3 GetPercentageComplete" == 1.0 and
+					if module "ConstructionYardCreature4 GetPercentageComplete" == 1.0 goto Chapter1_GotoSecondAreaIntro
+		
+		if Timer > 0.1 goto KeyLocCreReset
+	}
+	actions
+	{
+		ResetTimer
+		
+		SendToModule "#KeyLocCre" "#SetPosition=#KeyLocUA1" 
+	
+		
+
+		
+	}
+}
+state Chapter1_Drone1Reset
+{
+	conditions
+	{
+
+		if module "ConstructionYardCreature2 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature2 PlayerRange" > 120 goto Chapter1_Drone2Reset
+		if module "ConstructionYardCreature3 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature3 PlayerRange" > 120 goto Chapter1_Drone3Reset
+		if module "ConstructionYardCreature4 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature4 PlayerRange" > 120 goto Chapter1_Drone4Reset
+		
+		if module "ConstructionYardCreature GetPercentageComplete" == 1.0 and
+			if module "ConstructionYardCreature2 GetPercentageComplete" == 1.0 and
+				if module "ConstructionYardCreature3 GetPercentageComplete" == 1.0 and
+					if module "ConstructionYardCreature4 GetPercentageComplete" == 1.0 goto Chapter1_GotoSecondAreaIntro
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if Timer > 0.1 goto KeyLocCreReset2
+	}
+	actions
+	{
+		ResetTimer
+		
+		SendToModule "#KeyLocCre" "#SetPosition=#KeyLocUA1" 
+		SendToModule "#ConstructionYardCreature" "#SetPosition=#A1C1Area2Spawn_01"
+		
+		
+		
+		
+	}
+}
+state Chapter1_Drone2Reset
+{
+	conditions
+	{
+
+		if module "ConstructionYardCreature GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature PlayerRange" > 120 goto Chapter1_Drone1Reset
+		if module "ConstructionYardCreature3 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature3 PlayerRange" > 120 goto Chapter1_Drone3Reset
+		if module "ConstructionYardCreature4 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature4 PlayerRange" > 120 goto Chapter1_Drone4Reset
+		
+		if module "ConstructionYardCreature GetPercentageComplete" == 1.0 and
+			if module "ConstructionYardCreature2 GetPercentageComplete" == 1.0 and
+				if module "ConstructionYardCreature3 GetPercentageComplete" == 1.0 and
+					if module "ConstructionYardCreature4 GetPercentageComplete" == 1.0 goto Chapter1_GotoSecondAreaIntro
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if Timer > 0.1 goto KeyLocCreReset2
+	}
+	actions
+	{
+		ResetTimer
+		
+		SendToModule "#KeyLocCre" "#SetPosition=#KeyLocUA1" 
+		SendToModule "#ConstructionYardCreature2" "#SetPosition=#A1C1Area2Spawn_02"
+		
+		
+		
+		
+	}
+}
+state Chapter1_Drone3Reset
+{
+	conditions
+	{
+
+		if module "ConstructionYardCreature GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature PlayerRange" > 120 goto Chapter1_Drone1Reset
+		if module "ConstructionYardCreature2 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature2 PlayerRange" > 120 goto Chapter1_Drone2Reset
+		if module "ConstructionYardCreature4 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature4 PlayerRange" > 120 goto Chapter1_Drone4Reset
+		
+		if module "ConstructionYardCreature GetPercentageComplete" == 1.0 and
+			if module "ConstructionYardCreature2 GetPercentageComplete" == 1.0 and
+				if module "ConstructionYardCreature3 GetPercentageComplete" == 1.0 and
+					if module "ConstructionYardCreature4 GetPercentageComplete" == 1.0 goto Chapter1_GotoSecondAreaIntro
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if Timer > 0.1 goto KeyLocCreReset2
+	}
+	actions
+	{
+		ResetTimer
+		
+		SendToModule "#KeyLocCre" "#SetPosition=#KeyLocUA1" 
+		SendToModule "#ConstructionYardCreature3" "#SetPosition=#A1C1Area2Spawn_03"
+		
+		
+		
+		
+	}
+}
+state Chapter1_Drone4Reset
+{
+	conditions
+	{
+
+		if module "ConstructionYardCreature GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature PlayerRange" > 120 goto Chapter1_Drone1Reset
+		if module "ConstructionYardCreature2 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature2 PlayerRange" > 120 goto Chapter1_Drone2Reset
+		if module "ConstructionYardCreature3 GetCountAlive" == 1.0 and
+			if module "ConstructionYardCreature3 PlayerRange" > 120 goto Chapter1_Drone3Reset
+		
+		if module "ConstructionYardCreature GetPercentageComplete" == 1.0 and
+			if module "ConstructionYardCreature2 GetPercentageComplete" == 1.0 and
+				if module "ConstructionYardCreature3 GetPercentageComplete" == 1.0 and
+					if module "ConstructionYardCreature4 GetPercentageComplete" == 1.0 goto Chapter1_GotoSecondAreaIntro
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if Timer > 0.1 goto KeyLocCreReset2
+	}
+	actions
+	{
+		ResetTimer
+		
+		SendToModule "#KeyLocCre" "#SetPosition=#KeyLocUA1" 
+		SendToModule "#ConstructionYardCreature4" "#SetPosition=#A1C1Area2Spawn_04"
+		
+		
+		
+		
+	}
+}
+state Chapter1_GotoSecondAreaIntro
+{
+	
+	actions
+	{
+		;SendToModule "#General" "#SetMessage=BBTranD6" "#SetMessageTimer=3" 
+		;SendToModule "#General" "#SetRadarInterference=0"		
+		
+		;Idle 1.5 
+		SetState Chapter1_GotoSecondAreaIntro2
+		
+		
+	}
+}
+state Chapter1_GotoSecondAreaIntro2
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_GotoSecondArea
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A1C1Midtro1"
+		
+		
+	}
+}
+state Chapter1_GotoSecondArea
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter1_Main2Intro
+		if module "Timer FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyAllModules
+
+		SetMusic "ACTION Mission3_3 QUIET Generic Play Action"
+		
+		SendToModule "#General" "#SetMessage=BBTranD7" "#SetMessageTimer=7" 	
+		CreateModule "#Timer" "#Timer" "#Time=60" "#Start"
+
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#A1C1Start" "#AddToRadar" "#ParticleRing" "#Beacon"
+		SendToModule "#General" "#SetRadarInterference=0"		
+		
+	
+		SendToModule "#General" "#SetPlayer=#Chapter1Start3"
+		SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck_a"
+    		SendToModule "#General" "#BG_UnLoadCreature=DroneMig"
+
+		SendToModule "#General" "#BG_LoadCreature=DroneCement"
+		;SendToModule "#General" "#LoadCreature=DroneMig"
+
+		SendToModule "#General" "#BG_LoadCreature=StarScream"
+	    	SendToModule "#General" "#BG_LoadCreature=DronePickupTruck"
+    		SendToModule "#General" "#BG_LoadCreature=DroneForklift"
+        	;SendToModule "#General" "#LoadCreature=Brawl"
+	}
+}
+
+state Chapter1_Main2Intro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_Main2
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A1C1Intro"
+		
+		
+	}
+}
+state Chapter1_Main2
+{
+	conditions
+	{
+		if module "ConstructionYardCreature GetPercentageComplete" == 1.0 and
+		if module "CreatureWaveB GetPercentageComplete" == 1.0 goto Chapter1_SecondWave
+		
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#InMissionTextNumber=0"
+		SendToModule "#General" "#SetMessageTimer=-1" 	
+		
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		CreateModule "#Creature" "#ConstructionYardCreature" "#Spline=A1C1Spawn" "#count=2" "#maxalive=4" "#addtoradar" "#Type=DroneForklift" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#Script=Early_CombatVeh"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A1C1Spawn" "#count=2" "#maxalive=4" "#addtoradar" "#Type=DroneForklift" "#SpawnInLosInit" "#SpawnAsVehicle" "#KeyLocation=On" "#SpawnAsleep" 
+		CreateModule "#Speech" "#LooksLikeMoreOnWayDown" "#speech=#A1_ch1_obj2" "#AutoDestroy"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#LooksLikeMoreOnWayDown" "#param=#start" "#delay=2" "#times=1" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A1C1KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#Protect"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter1Start2" "#FadeUp"
+
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		SendToModule "#General" "#ClearPlayerChecks"
+
+		Idle 2.0 
+
+		SendToModule "#CreatureWaveB" "#Script=Early_CombatVeh"
+	}
+}
+
+
+state Chapter1_SixthWaveMidtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_SixthWave
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A1C1Midtro1"
+		
+		
+	}
+}
+state Chapter1_SecondWave
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature GetCountAlive" == 0.0 goto Chapter1_SecondWaveCmplt
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if Timer > 20.0 and 
+			if module "General GetCount" == 1.0 goto Chapter1_ThirdWave
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyAllModules
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20" "#CountSet=0" "#CountBSet=0" "#CountCSet=0" "#CountDSet=0"
+		CreateModule "#Creature" "#ConstructionYardCreature" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneForklift" "#TransformForceRobot" "#KeyLocation=On" "#Script=Early_Combat"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#ConstructionYardCreature" "#Spline=A1C1Meteors" "#Time=3" "#Time=6" "#Time=9" "#Time=12,DronePickupTruck"
+		CreateModule "#Speech" "#MoreDronesArriving" "#speech=#A1_ch1_obj3" "#AutoDestroy"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#MoreDronesArriving" "#param=#start" "#delay=2" "#times=1" 
+		SendToModule "#General" "#CountInc"
+		
+	}
+}
+state Chapter1_SecondWaveCmplt
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+
+		
+		SendToModule "#General" "#CountSet=0" "#CountBSet=1"
+		SetState Chapter1_ThirdWave
+		
+	}
+}
+state Chapter1_ThirdWave
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 goto Chapter1_GetCount
+		if module "Meteorite2 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature2 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 goto Chapter1_GetCount 
+
+		if module "Meteorite2 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature2 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 1.0 goto Chapter1_ThirdWaveCmplt
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if Timer > 20.0 and 
+			if module "General GetCount" == 1.0 goto Chapter1_FourthWave
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyModule "#DelayedSendReminder" 
+		CreateModule "#Creature" "#ConstructionYardCreature2" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneForklift" "#TransformForceRobot" "#KeyLocation=On" "#Script=Early_Combat"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#ConstructionYardCreature2" "#Spline=A1C1Meteors1" "#Time=2" "#Time=5" "#Time=8," "#Time=12,DronePickupTruck"
+		
+		SendToModule "#General" "#CountInc"
+	}
+}
+state Chapter1_GetCount
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 goto Chapter1_ThirdWave1Cmplt
+
+		if module "Meteorite2 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature2 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 goto Chapter1_ThirdWave2Cmplt
+		
+	}
+	
+}
+state Chapter1_ThirdWave1Cmplt
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+
+		
+		SendToModule "#General" "#CountSet=1" "#CountBSet=1"
+		SetState Chapter1_ThirdWaveProcess
+		
+	}
+}
+state Chapter1_ThirdWave2Cmplt
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+
+		
+		SendToModule "#General" "#CountSet=1" "#CountCSet=1"
+		SetState Chapter1_ThirdWaveProcess
+		
+	}
+}
+state Chapter1_ThirdWaveProcess
+{
+	conditions
+	{
+		
+		
+
+		if module "Meteorite2 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature2 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 1.0 and 
+					if module "General GetCountC" == 0.0 goto Chapter1_ThirdWaveCmplt
+
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+				if module "General GetCount" == 1.0 and 
+					if module "General GetCountB" == 0.0 goto Chapter1_ThirdWaveCmplt
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if Timer > 5 and 
+			if module "General GetCount" == 1.0 goto Chapter1_FourthWave
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+}
+state Chapter1_ThirdWaveCmplt
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+
+		
+		SendToModule "#General" "#CountSet=0" "#CountBSet=1" "#CountCSet=1"
+		SetState Chapter1_FourthWave
+		
+	}
+}
+state Chapter1_FourthWave
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 and 
+					if module "General GetCountB" == 0.0 goto Chapter1_GetCount2
+		if module "Meteorite2 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature2 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 and 
+					if module "General GetCountC" == 0.0 goto Chapter1_GetCount2 
+		if module "Meteorite3 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature3 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 goto Chapter1_GetCount2 
+
+		
+		if module "Meteorite3 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature3 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 1.0 goto Chapter1_FourthWaveCmplt
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if Timer > 20.0 and 
+			if module "General GetCount" == 1.0 goto Chapter1_FifthWave
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyModule "#DelayedSendReminder" 
+		CreateModule "#Creature" "#ConstructionYardCreature3" "#count=0" "#maxalive=4" "#addtoradaralways" "#Type=DroneForklift" "#TransformForceRobot" "#KeyLocation=On" "#Script=Early_Combat"
+		CreateModule "#Meteorite" "#Meteorite3" "#ModuleTag=#ConstructionYardCreature3" "#Spline=A1C1Meteors2" "#Time=1" "#Time=3" "#Time=6,DronePickupTruck" "#Time=12,DroneCement"
+		CreateModule "#Speech" "#MoreDronesArriving" "#speech=#A1_ch1_obj4" "#AutoDestroy"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#MoreDronesArriving" "#param=#start" "#delay=2" "#times=1"
+	
+		
+		SendToModule "#General" "#CountInc" 
+	}
+}
+state Chapter1_GetCount2
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 and 
+					if module "General GetCountB" == 0.0 goto Chapter1_FourthWave1Cmplt
+
+		if module "Meteorite2 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature2 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 and 
+					if module "General GetCountC" == 0.0 goto Chapter1_FourthWave2Cmplt
+
+		if module "Meteorite3 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature3 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 2.0 and 
+					if module "General GetCountD" == 0.0 goto Chapter1_FourthWave3Cmplt
+		
+	}
+	
+}
+state Chapter1_FourthWave1Cmplt
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+
+		
+		SendToModule "#General" "#CountSet=1" "#CountBSet=1"
+		SetState Chapter1_FourthWaveProcess
+		
+	}
+}
+state Chapter1_FourthWave2Cmplt
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+
+		
+		SendToModule "#General" "#CountSet=1" "#CountCSet=1"
+		SetState Chapter1_FourthWaveProcess
+		
+	}
+}
+state Chapter1_FourthWave3Cmplt
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+
+		
+		SendToModule "#General" "#CountSet=1" "#CountDSet=1"
+		SetState Chapter1_FourthWaveProcess
+		
+	}
+}
+state Chapter1_FourthWaveProcess
+{
+	conditions
+	{
+		
+		
+
+		if module "Meteorite2 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature2 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 1.0 and 
+					if module "General GetCountC" == 0.0 goto Chapter1_FourthWaveCmplt
+
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+				if module "General GetCount" == 1.0 and 
+					if module "General GetCountB" == 0.0 goto Chapter1_FourthWaveCmplt
+
+		if module "Meteorite3 GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature3 GetCountAlive" == 0.0 and
+				if module "General GetCount" == 1.0 and 
+					if module "General GetCountD" == 0.0 goto Chapter1_FourthWaveCmplt
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if Timer > 5 and 
+			if module "General GetCount" == 1.0 goto Chapter1_FifthWave
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+}
+state Chapter1_FourthWaveCmplt
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+
+		
+		SendToModule "#General" "#CountSet=0" "#CountBSet=1" "#CountCSet=1" "#CountDSet=1"
+		SetState Chapter1_FifthWave
+		
+	}
+}
+state Chapter1_FifthWave
+{
+	conditions
+	{
+		
+		if Timer > 2 goto Chapter1_MigFlysIn
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+                ResetTimer
+            
+		
+		CreateModule "#Creature" "#ConstructionYardCreature4" "#count=0" "#maxalive=3" "#addtoradaralways" "#Type=DroneForklift" "#TransformForceRobot" "#KeyLocation=On" "#Script=Early_Combat"
+		CreateModule "#Meteorite" "#Meteorite4" "#ModuleTag=#ConstructionYardCreature4" "#Spline=A1C1Meteors3" "#Time=2" "#Time=4,DronePickupTruck" "#Time=8,DroneCement"
+		;CreateModule "#Creature" "#Mig" "#Type=DroneMig" "#Spline=MigTest" "#count=1" "#maxalive=1" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=DemoSpawnIntro" "#FollowSpline=TestLand"
+		CreateModule "#Creature" "#Mig" "#Type=StarScream" "#Spline=MigTest" "#count=1" "#maxalive=1" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=DemoSpawnIntro" "#FollowSpline=TestLand" "#BlockDeath" "#SetEnergyMax=900" "#SetEnergy=900" "#Protect" 
+		
+		CreateModule "#Speech" "#LooksLikeMoreOnWayDown" "#speech=#A1_ch1_obj6" "#AutoDestroy"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#LooksLikeMoreOnWayDown" "#param=#start" "#delay=2" "#times=1" 
+	}
+}
+state Chapter1_MigFlysIn
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "ConstructionYardCreature2 GetCountAlive" == 0.0 and
+						if module "Meteorite3 GetPercentage" == 1.0 and
+							if module "ConstructionYardCreature3 GetCountAlive" == 0.0 and
+								if module "Meteorite4 GetPercentage" == 1.0 and
+									if module "ConstructionYardCreature4 GetCountAlive" == 0.0 and
+										if module "Mig Dead" == 1.0 goto Chapter1_SixthWaveIntro
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if Timer > 1 goto Chapter1_MigFlysIn
+	}
+	actions
+	{
+		SendToModule "#Mig" "#addtoradar"
+
+		Idle 3.0
+
+		SendToModule "#Mig" "#ForcePlayerAsOpp"
+	}
+}
+state Chapter1_SixthWaveIntro
+{
+	conditions
+	{
+		
+		if module "General FadeDown" == 1.0 goto Chapter1_SixthWave
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state Chapter1_SixthWave
+{
+	conditions
+	{
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+		;if Timer > 3.2 and
+		;	if module "Meteorite GetPercentage" == 1.0 and
+		;		if module "ConstructionYardCreature GetCountAlive" == 0.0 goto Chapter1_GotoFinalArea
+
+		if Timer > 10.0 goto Chapter1_EvilBeeEncounter1
+	}
+	actions
+	{
+		DestroyAllModules
+		ResetTimer
+                SendToModule "#General" "#UnLoadCreature=DroneForklift"
+	        SendToModule "#General" "#UnLoadCreature=DroneCement"
+		;SendToModule "#General" "#BG_UnLoadCreature=DroneMig"
+		;SendToModule "#General" "#BG_UnLoadCreature=Starscream"
+		SendToModule "#General" "#LoadCreature=Brawl"
+		CreateModule "#Creature" "#ConstructionYardCreature" "#count=0" "#maxalive=3" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#Script=Early_Combat"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#ConstructionYardCreature" "#Spline=A1C1Meteors4" "#Time=2.5" "#Time=5.4" "#Time=7.6"
+		SendToModule "#General" "#SetPlayer=#Chapter1StartB" "#FadeUp"
+	}
+}
+state Chapter1_EvilBeeEncounter1
+{
+	conditions
+	{
+		if Timer > 3.2 and
+			if module "Meteorite GetPercentage" == 1.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+						if module "ConstructionYardCreature2 Dead" == 1.0 goto Chapter1_GotoFinalArea
+		if Timer > 3.2 and			
+			if module "ConstructionYardCreature2 IsEnergyAtMin" == 1.0 goto Chapter1_EvilBeeFlee1
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		
+	}
+	actions
+	{
+		
+		ResetTimer 
+		;SendToModule "#General" "#LoadCreature=Brawl" "#FadeUp"
+		CreateModule "#Meteorite" "#Meteorite2" "#Spline=TestLand" "#Time=3" 
+		Idle 3.1 
+		CreateModule "#Goto" "#ConstructionYardCreature2" "#Spline=TestLand" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=Brawl" "#TransformForceRobot" "#BlockDeath" "#SetPosition=#EBDropOffPoint" "#Script=EvilBeeEarly" "#AddtoRadarAlways" "#ForcePlayerAsOpp" "#SetEnergyMin=2.0" "#Protect"
+		
+		
+		
+	}
+}
+state Chapter1_EvilBeeFlee1
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "Meteorite2 GetPercentage" == 1.0 and
+				if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+					if Timer > 4.0 goto Chapter1_GotoFinalArea
+
+		if Timer > 12 and
+			if module "ConstructionYardCreature2 PlayerRange" > 150 goto Chapter1_EvilBeeEscaped1
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#ConstructionYardCreature2" "#DirectSpline=A1C2RouteB" "#Script=FollowSplineCre" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+
+		Idle 2.0
+		SendToModule "#ConstructionYardCreature2" "#DirectSpline=A1C2RouteB" "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+		;Idle 10.0 
+		;DestroyModule "#ConstructionYardCreature2" 
+		
+	}
+}
+state Chapter1_EvilBeeEscaped1
+{
+	conditions
+	{
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "Meteorite2 GetPercentage" == 1.0 and
+				if module "ConstructionYardCreature GetCountAlive" == 0.0 goto Chapter1_GotoFinalArea
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#ConstructionYardCreature2" 
+		
+	}
+}
+state Chapter1_GotoFinalArea
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter1_EvilBeeEncounter
+		if module "Timer FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyAllModules 
+		DestroyModule "#KeyLocation"
+               
+
+		SetMusic "ACTION Mission3_3 QUIET Generic Play Action"
+		
+		SendToModule "#General" "#SetMessage=BBTranD8" "#SetMessageTimer=7" 	
+		CreateModule "#Timer" "#Timer" "#Time=60" "#Start"
+		
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#A1C1End" "#AddToRadar" "#ParticleRing" "#Beacon"
+
+		SendToModule "#General" "#BG_UnLoadCreature=DroneForklift"
+    	
+		SendToModule "#General" "#BG_UnLoadCreature=DroneCement"
+
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		
+		SendToModule "#General" "#BG_LoadCreature=Brawl"
+	}
+}
+
+state Chapter1_EvilBeeEncounter
+{
+	conditions
+	{
+		if Timer > 3.2 and
+			if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+				if module "ConstructionYardCreature3 GetCountAlive" == 0.0 and
+					if module "ConstructionYardCreature4 GetCountAlive" == 0.0 and
+						if module "ConstructionYardCreature2 Dead" == 1.0 goto Chapter1_Chatter
+		if Timer > 3.2 and			
+			if module "ConstructionYardCreature2 IsEnergyAtMin" == 1.0 goto Chapter1_EvilBeeFlee
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1" 	
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		
+		DestroyAllModules "#IncludeProtected"
+		ResetTimer 
+		SendToModule "#General" "#LoadCreature=Brawl" "#FadeUp"
+		CreateModule "#Creature" "#ConstructionYardCreature" "#count=1" "#maxalive=1" "#Spline=Spawn4a" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#Script=Early_Combat" "#SetPosition=#A1C1Area3Spawn1" 
+		CreateModule "#Creature" "#ConstructionYardCreature3" "#count=1" "#maxalive=1" "#Spline=Spawn4a" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#Script=Early_Combat" "#SetPosition=#A1C1Area3Spawn2" 
+		CreateModule "#Creature" "#ConstructionYardCreature4" "#count=1" "#maxalive=1" "#Spline=Spawn4a" "#addtoradaralways" "#Type=DronePickupTruck" "#TransformForceRobot" "#KeyLocation=On" "#Script=Early_Combat" "#SetPosition=#A1C1Area3Spawn3" 
+		;CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#ConstructionYardCreature" "#Spline=Spawn4a" "#Time=2.5" "#Time=2.4" "#Time=2.6"
+		CreateModule "#Speech" "#MoreDronesArriving" "#speech=#A1_ch1_obj5" "#AutoDestroy"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc4" "#Radius=120" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#Protect"
+		CreateModule "#Goto" "#ConstructionYardCreature2" "#Spline=Spawn4b" "#count=1" "#maxalive=1" "#Type=Brawl" "#BlockDeath" "#SetPosition=#A1C1Area3Spawn4" "#Script=EvilBeeEarly" "#AddtoRadarOff" "#ForcePlayerAsOpp" "#SetEnergyMin=2.0"
+		CreateModule "#Speech" "#MoreDronesArriving" "#speech=#A1_ch1_obj5" "#AutoDestroy"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#MoreDronesArriving" "#param=#start" "#delay=2" "#times=1"
+		
+		Idle 0.1 
+		SendToModule "#ConstructionYardCreature" "#ForcePlayerAsOpp" 
+		SendToModule "#ConstructionYardCreature2"  "#ForcePlayerAsOpp"
+		SendToModule "#ConstructionYardCreature3" "#ForcePlayerAsOpp" 
+		SendToModule "#ConstructionYardCreature4" "#ForcePlayerAsOpp" 
+		;CreateModule "#Meteorite" "#Meteorite2" "#Spline=KeyLoc4" "#Time=13" 
+		;Idle 0.5 
+		
+		;CreateModule "#Goto" "#EscapingCreature" "#Spline=Spawn4b" "#DirectSpline=A1C2RouteB" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneDefault" "#SetPosition=#A1C1Area3Spawn5" "#Script=FollowSplineCre" "#SetEnergyMin=2.0" "#Unstoppable" "#InhibitRubble"
+		;CreateModule "#Goto" "#EscapingCreature2" "#Spline=Spawn4b" "#DirectSpline=A1C2RouteB" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneDefault" "#SetPosition=#A1C1Area3Spawn6" "#Script=FollowSplineCre" "#Unstoppable" "#InhibitRubble"
+		;CreateModule "#Goto" "#EscapingCreature3" "#Spline=Spawn4b" "#DirectSpline=A1C2RouteB" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneDefault" "#SetPosition=#A1C1Area3Spawn7" "#Script=FollowSplineCre" "#Unstoppable" "#InhibitRubble"
+		;CreateModule "#Goto" "#EscapingCreature4" "#Spline=Spawn4b" "#DirectSpline=A1C2RouteB"  "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneDefault" "#SetPosition=#A1C1Area3Spawn8" "#Script=FollowSplineCre" "#Unstoppable" "#InhibitRubble"
+		;CreateModule "#Goto" "#EscapingCreature5" "#Spline=Spawn4b" "#DirectSpline=A1C2RouteB"  "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DronePickupTruck" "#SetPosition=#A1C1Area3Spawn9" "#Script=FollowSplineCre" "#Unstoppable" "#InhibitRubble"
+		SendToModule "#ConstructionYardCreature2" "#AddtoRadarAlways" 
+		;Idle 2.0 
+		;SendToModule "#EscapingCreature" "#DirectSpline=A1C2RouteB"  "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150"
+		;SendToModule "#EscapingCreature2" "#DirectSpline=A1C2RouteB"  "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150"
+		;SendToModule "#EscapingCreature3" "#DirectSpline=A1C2RouteB"  "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150"
+		;SendToModule "#EscapingCreature4" "#DirectSpline=A1C2RouteB"  "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150"
+		;SendToModule "#EscapingCreature5" "#DirectSpline=A1C2RouteB"  "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150"
+		
+	}
+}
+state Chapter1_EvilBeeFlee
+{
+	conditions
+	{
+		if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+			if module "ConstructionYardCreature3 GetCountAlive" == 0.0 and
+				if module "ConstructionYardCreature4 GetCountAlive" == 0.0 and
+					if Timer > 4.0 goto Chapter1_Chatter
+
+		if Timer > 12 and
+			if module "ConstructionYardCreature2 PlayerRange" > 150 goto Chapter1_EvilBeeEscaped
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#ConstructionYardCreature2" "#DirectSpline=A1C2RouteB" "#Script=FollowSplineCre" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+
+		Idle 2.0
+		SendToModule "#ConstructionYardCreature2" "#DirectSpline=A1C2RouteB" "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+		;Idle 10.0 
+		;DestroyModule "#ConstructionYardCreature2" 
+		
+	}
+}
+state Chapter1_EvilBeeEscaped
+{
+	conditions
+	{
+		if module "ConstructionYardCreature GetCountAlive" == 0.0 and
+			if module "ConstructionYardCreature3 GetCountAlive" == 0.0 and
+				if module "ConstructionYardCreature4 GetCountAlive" == 0.0 goto Chapter1_Chatter
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+					
+		
+	}
+	actions
+	{
+		
+		DestroyModule "#ConstructionYardCreature2" 
+		
+	}
+}
+state Chapter1_Chatter
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto Chapter1_Complete
+	}
+	actions
+	{
+		
+
+		
+		CreateModule "#Timer" "#Timer" "#Time=4.6" "#NoRender" "#Start"
+
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A1_ch1_cmplt" "#AutoDestroy" "#Start"
+		
+	}
+}
+SendToModule "#General" "#SetRadarInterference=1"		
+		
+state Chapter1_DeathFailMission
+{
+	
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"		
+
+		SetState Chapter1_DeathFailMission2
+	}
+}
+state Chapter1_FailMission
+{
+	
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"		
+
+		SetState Chapter1_FailMission2
+	}
+}
+state Chapter1_DeathFailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter1_FailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter1_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+    	SendToModule "#General" "#UnLoadCreature=DroneForklift"
+        SendToModule "#General" "#UnLoadCreature=DroneCement"
+	SendToModule "#General" "#UnLoadCreature=DroneMig"
+	SendToModule "#General" "#UnLoadCreature=StarScream"
+    	SendToModule "#General" "#UnLoadCreature=Brawl"
+	SendToModule "#General" "#LoadCreature=DroneDefault"
+    	SendToModule "#General" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Complete
+{
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Tag1 Play Quiet"
+		SetState "Chapter1_CheckForAchievement"
+               
+	}
+}
+state Chapter1_CheckForAchievement
+{
+	conditions
+	{
+		if module "General CheckOnlyMelee" == 1.0 goto Chapter1_DidAchievement
+		if AlwaysTrue == 1.0 goto Chapter1_Complete2
+	}
+}
+state Chapter1_DidAchievement
+{
+	actions
+	{
+		SendToModule "#General" "#MeleeAchievementDone"
+		SetState "Chapter1_Complete2"
+	}
+}
+state Chapter1_Complete2
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter2"
+               
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A1C1Outro"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+	SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+	SendToModule "#General" "#UnLoadCreature=DroneForklift"
+	SendToModule "#General" "#UnLoadCreature=DroneCement"
+	SendToModule "#General" "#UnLoadCreature=DroneMig"
+	SendToModule "#General" "#UnLoadCreature=StarScream"
+    	SendToModule "#General" "#UnLoadCreature=Brawl"
+	  SendToModule "#General" "#LoadCreature=DroneDefault"
+	 	SendToModule "#General" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter2"
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT1"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+		setstate "PickGoto" ;goto next chapter
+	}
+}

@@ -1,0 +1,128 @@
+;push all drones out of key location within time limit
+;player and drones are invincible
+;if anyone leaves area instant death
+
+;requires:
+;	Keylocation spline 				KeyLoc#
+;	Spawn spline for type 1 creatures		Spawn#a
+;	Spawn spline for type 2 creatures		Spawn#b
+
+;Changeable params:
+;	TIMELIMIT		time in which to complete the mission
+;	TOTALCREATURES1	total number of creature type 1 that need to be killed
+;	TOTALCREATURES2	total number of creature type 2 that need to be killed
+;	MAXALIVE1		total creature type 1 that are simultaneously active 
+;	MAXALIVE2		total creature type 2 that are simultaneously active 
+;	CREATURETYPE1	type of creature one to fight against
+;	CREATURETYPE2	type of creature two to fight against
+;						DroneForkLift
+;						DroneTowTruck
+;						DroneArmouredCar
+;						DroneCement
+;						DronePickupTruck
+;						DroneMig
+;						BumbleBee
+;						Barricade
+
+
+state SubMissionONE_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMissionONE_Death"
+;		SendToModule "#General" "#PlayerType="
+		SetState "SubMissionONE_Init"
+	}
+}
+state SubMissionONE_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMissionONE_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMissionONE"
+		SendToModule "#General" "#LoadCreature=CREATURETYPE1"
+		SendToModule "#General" "#LoadCreature=CREATURETYPE2"
+		CreateModule "#Creature" "#CreatureWaveA" "#Type=CREATURETYPE1" "#Spline=SpawnONEa" "#count=TOTALCREATURES1" "#maxalive=MAXALIVE1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		CreateModule "#Creature" "#CreatureWaveB" "#Type=CREATURETYPE2" "#Spline=SpawnONEb" "#count=TOTALCREATURES2" "#maxalive=MAXALIVE2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		SendToModule "#General" "#SumoKeyLoc=KeyLocONE" "#SumoCreatureModule=#CreatureWaveA"  "#SumoCreatureModule=#CreatureWaveB"
+		CreateModule "#Timer" "#Timer" "#Time=TIMELIMIT"
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone"
+	}
+}
+state SubMissionONE_Main
+{
+	conditions
+	{
+		if module "CreatureWaveA getpercentagecomplete" == 1.0 and
+			if module "CreatureWaveB getpercentagecomplete" == 1.0 goto SubMissionONE_Finish
+		if module "Timer FailMission" == 1.0 goto SubMissionONE_Fail
+		if module "General SumoCheck" == 1.0 goto SubMissionONE_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMissionONE_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionONE_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMissionONE_FinishWait
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=ONE"
+		SetState "SubMissionONE_Leave"
+	}
+}
+state SubMissionONE_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMissionONE_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state SubMissionONE_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMissionONE_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state SubMissionONE_Leave
+{
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMissionONE" "#FadeUp"
+	   	SendToModule "#General" "#UnLoadCreature=CREATURETYPE1"
+	   	SendToModule "#General" "#UnLoadCreature=CREATURETYPE2"
+		SendToModule "#General" "#FadeUp"		
+		SetState "GlobalActionRing"
+	}
+}
+

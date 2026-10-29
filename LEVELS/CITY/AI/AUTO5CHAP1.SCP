@@ -1,0 +1,384 @@
+state Chapter1_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter1_InitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_GotoWaitSpeech
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#StartMission"
+		SendToModule "#General" "#PlayerType=IronHide"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+	}
+}
+state Chapter1_GotoWaitSpeech
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch1_Goto" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch1_obj2" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch1_Goto2" "#AutoDestroy" 
+		Idle 3.0
+		SetState Chapter1_Goto
+	}
+}
+state Chapter1_Goto
+{
+	actions
+	{
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=2" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter1Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter1_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A5C1Intro"
+	}
+}
+state Chapter1_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=EnergonDrone"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#PlayerType=IronHide"
+	}
+}
+;;state Chapter1_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter1_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#A5C1Intro"
+;;	}
+;;}
+ActionMacro AutoHeal
+{
+	IncreasePlayerHealth 65.0
+	SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+	SendToModule "#General" "#CountASet=0"
+	Idle 2.8
+	SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+	Idle 7.0
+	SendToModule "#Ratchet" "#AddToRadar"	
+	SendToModule "#General" "#CountASet=1"	
+
+}
+state Chapter1_Main
+{
+	conditions
+	{
+		if module "A5C1Counter Complete" == 1.0 goto Chapter1_Complete
+		if module "A5C1Drones GetPercentageComplete" == 1.0 and
+			if module "General GetCountC" == 0.0 goto Chapter1_HalfwayPoint
+		if module "A5C1Timer GetPercentageComplete" > 0.75 goto Chapter1_MainLowHealth
+		if module "A5C1KeyLoc FailMission" == 1.0 goto Chapter1_FailMission
+		if module "A5C1KeyLoc InArea" == 0.0 goto Chapter1_Return
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter1_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter1_Heal
+		if module "A5C1Drones GetCountAlive" <= 10.0 and
+			if module "General GetCountB" == 0.0 goto Chapter1_Wave2
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A5_ch1_obj5" "#AutoDestroy" "#Start" 
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A5_ch1_obj1" "#PlayDelay=1.5" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		
+		CreateModule "#Speech" "#Return" "#speech=#A5_ch1_obj3" "#AutoDestroy"
+		CreateModule "#Speech" "#HalfwayPoint" "#speech=#A5_ch1_obj4" "#AutoDestroy"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chapter1Start" "#FadeUp" "#CountASet=1" "#CountBSet=0" "#CountCSet=0"
+		CreateModule "#KeyLocation" "#A5C1KeyLoc" "#Spline=A5C1KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key11Return" "#HeadType=#Optimus"
+;		CreateModule "#Creature" "#A5C1Drones" "#Spline=A5C1Drones" "#Count=100" "#MaxAlive=19" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#POILocation=#A5C1PoiA" "#POIAttentionMin=1" "#POIAttentionMax=4" "#Script=EnergonDrone"
+		CreateModule "#Creature" "#A5C1Drones" "#Spline=A5C1Drones" "#Count=50" "#MaxAlive=14" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#POILocation=#A5C1PoiA" "#POIAttentionMin=1" "#POIAttentionMax=4" "#Script=EnergonDrone" 
+		CreateModule "#Timer" "#A5C1Timer" "#HeadType=#BumbleBee07" "#DrawHealthBar" "#StartLoseHealth" "#Time=300.0" "#Random"
+		CreateModule "#DroneCounter" "#A5C1Counter" "#DronesToDefeat=100" "#IconType=#Drone"
+		CreateModule "#SpecialObj" "#SpecialObj" "#Placement=A5C1" "#Pinned" "#Terrain"
+
+		SendToModule "#General" "#SetMaxOpponents=16" "#SetMaxApproachers=6" "#SetAttackRingSize=15"
+		SendToModule "#General" "#ForceHealthSpawnMin=0.4" "#ForceHealthSpawnMed=0.225" "#ForceHealthSpawnMax=0.05"
+		CreateModule "#Creature" "#Ratchet" "#Spline=A5C1KeyLoc" "#Type=DroneArmouredCar_a" "#count=1" "#maxalive=1" "#AddToRadar" "#SpawnAsCreature" "#Script=Ratchet"  "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#SetPosition=#RatchetSpawn1"
+		CreateModule "#AreaRange" "#Bee" "#Trigger=#BeeIcon" "#SetRadarType=#AutoBotRadarIcon" 
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+	}
+}
+state Chapter1_Wave2
+{
+	conditions
+	{
+		if module "A5C1Counter Complete" == 1.0 goto Chapter1_Complete
+		if module "A5C1Drones GetPercentageComplete" == 1.0 and
+			if module "General GetCountC" == 0.0 goto Chapter1_HalfwayPoint
+		if module "A5C1Timer GetPercentageComplete" > 0.75 goto Chapter1_MainLowHealth
+		if module "A5C1KeyLoc FailMission" == 1.0 goto Chapter1_FailMission
+		if module "A5C1KeyLoc InArea" == 0.0 goto Chapter1_Return
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter1_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter1_Heal
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMaxOpponents=19" "#SetMaxApproachers=19" "#SetAttackRingSize=15" "#CountBSet=1"
+		CreateModule "#Creature" "#A5C1Drones2" "#Spline=A5C1Drones" "#Count=50" "#MaxAlive=19" "#Type=EnergonDrone" "#SpawnAsCreature" "#POILocation=#A5C1PoiA" "#POIAttentionMin=1" "#POIAttentionMax=4" "#Script=EnergonDrone" 
+		;
+		;SendToModule "#HalfwayPoint" "#StartOneShot" 
+		;SendToModule "#Ratchet" "#AddToRadar"
+	}
+}
+state Chapter1_Heal
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter1_PostMedicProcess
+		
+	}
+}
+state Chapter1_PostMedicProcess
+{
+	conditions
+	{
+		if module "A5C1Counter Complete" == 1.0 goto Chapter1_Complete
+		if module "A5C1Drones GetPercentageComplete" == 1.0 and
+			if module "General GetCountC" == 0.0 goto Chapter1_HalfwayPoint
+		if module "A5C1Timer GetPercentageComplete" > 0.75 goto Chapter1_MainLowHealth
+		if module "A5C1KeyLoc FailMission" == 1.0 goto Chapter1_FailMission
+		if module "A5C1KeyLoc InArea" == 0.0 goto Chapter1_Return
+		if module "Ratchet GetCountAlive" == 0.0 goto Chapter1_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter1_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter1_Heal
+
+		if module "A5C1Drones GetCountAlive" <= 10.0 and
+			if module "General GetCountB" == 0.0 goto Chapter1_Wave2	
+		
+		
+		
+	}
+	
+}
+state Chapter1_HalfwayPoint
+{
+	conditions
+	{
+		if module "A5C1Counter Complete" == 1.0 goto Chapter1_Complete
+		if module "A5C1Timer GetPercentageComplete" > 0.75 goto Chapter1_MainLowHealth
+		if module "A5C1KeyLoc FailMission" == 1.0 goto Chapter1_FailMission
+		if module "A5C1KeyLoc InArea" == 0.0 goto Chapter1_Return
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter1_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter1_Heal		
+
+
+		if module "A5C1Drones GetCountAlive" <= 10.0 and
+			if module "General GetCountB" == 0.0 goto Chapter1_Wave2
+	}
+	actions
+	{
+		SendToModule "#General" "#CountCSet=1"
+		SendToModule "#HalfwayPoint" "#StartOneShot" 
+		;SendToModule "#Ratchet" "#AddToRadar"
+		
+		
+	}
+}
+state Chapter1_Return
+{
+	conditions
+	{
+		if module "A5C1Counter Complete" == 1.0 goto Chapter1_Complete
+		if module "A5C1Drones GetPercentageComplete" == 1.0 and
+			if module "General GetCountC" == 0.0 goto Chapter1_HalfwayPoint
+		if module "A5C1Timer GetPercentageComplete" > 0.75 goto Chapter1_MainLowHealth
+		if module "A5C1KeyLoc FailMission" == 1.0 goto Chapter1_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter1_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter1_Heal
+		if module "A5C1Drones GetCountAlive" <= 10.0 and
+			if module "General GetCountB" == 0.0 goto Chapter1_Wave2
+	}
+	actions
+	{
+		
+		
+		SendToModule "#Return" "#StartOneShot"
+		SendToModule "#Ratchet" "#AddToRadar"
+		
+		
+	}
+}
+
+state Chapter1_MainLowHealth
+{
+	conditions
+	{
+		if module "A5C1Counter GetPercentageComplete" == 1.0 goto Chapter1_Complete
+		if module "A5C1Drones GetPercentageComplete" == 1.0 and
+			if module "General GetCountC" == 0.0 goto Chapter1_HalfwayPoint
+		if module "A5C1KeyLoc FailMission" == 1.0 goto Chapter1_FailMission
+		if module "A5C1KeyLoc InArea" == 0.0 goto Chapter1_Return
+		if module "A5C1Timer FailMission" == 1.0 goto Chapter1_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter1_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter1_Heal
+		if module "A5C1Drones GetCountAlive" <= 10.0 and
+			if module "General GetCountB" == 0.0 goto Chapter1_Wave2
+	}
+	actions
+	{
+		SendToModule "#A5C1BumbleBee" "#Spline=A5C1BumbleBee" "#AddToRadar=#Critical"	
+		
+	}
+}
+state Chapter1_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter1_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter1_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+
+		SendToModule "#General" "#PlayerType=IronHide,Jazz,IronHide,BumbleBee07,IronHide"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter2"
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A5C1Outro"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#PlayerType=IronHide,Jazz,IronHide,BumbleBee07,IronHide"
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter2"
+		SendToModule #General #ResetLevel
+		IncreasePlayerHealth max
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		setstate "PickGoto" ;goto next chapter
+	}
+}

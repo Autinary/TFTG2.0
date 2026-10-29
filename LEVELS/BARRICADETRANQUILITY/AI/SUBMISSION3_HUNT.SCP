@@ -1,0 +1,923 @@
+;hunt and destroy all the vehicles within the time limit
+
+;requires:
+;   Route spline 1		Route#a
+;   Route spline 2		Route#b
+;   Route spline 3		Route#c
+;   Route spline 4		Route#d
+
+;Changeable params:
+;	300		time in which to complete the mission
+;	Jeep			vehicle type 1
+;	Jeep			vehicle type 2
+;	CommTruck			vehicle type 3
+;	CommTruck			vehicle type 4
+;						Jeep
+;						Sector7Drone
+;						CommTruck
+;						Shilka
+;						ShilkaTracer
+;						SUV
+
+state SubMission3_Enter
+{	
+	actions
+	{
+		DestroyModule "#CreatureFreeRoamA"
+		DestroyModule "#CreatureFreeRoamB"
+		DestroyModule "#CreatureFreeRoamC"
+		DestroyModule "#CreatureFreeRoamD"
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission3_Death"
+		;SendToModule "#General" "#PlayerType=Barricade"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SetState "SubMission3_Init"
+	}
+}
+state SubMission3_EnterTC
+{	
+	actions
+	{
+		DestroyModule "#CreatureFreeRoamA"
+		DestroyModule "#CreatureFreeRoamB"
+		DestroyModule "#CreatureFreeRoamC"
+		DestroyModule "#CreatureFreeRoamD"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SetDeathPoint "SubMission3_Death"
+		;SendToModule "#General" "#PlayerType=Barricade"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SetState "SubMission3_InitTC"
+	}
+}
+state SubMission3_Enter0
+{	
+	actions
+	{
+		DestroyModule "#CreatureFreeRoamA"
+		DestroyModule "#CreatureFreeRoamB"
+		DestroyModule "#CreatureFreeRoamC"
+		DestroyModule "#CreatureFreeRoamD"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SetDeathPoint "SubMission3_Death"
+		;SendToModule "#General" "#PlayerType=Barricade"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SetState "SubMission3_Init0"
+	}
+}
+state SubMission3_Enter4
+{	
+	conditions
+	{
+		if timer > 0.2 goto SubMission3_Main3
+		if module "General ChapterProgress" >= 4.0 goto SubMission3_Main5
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state SubMission3_Enter2
+{	
+	conditions
+	{
+		if timer > 0.2 goto SubMission3_Main2
+		if module "General ChapterProgress" >= 3.0 goto SubMission3_Enter4
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state SubMission3_Enter3
+{	
+	conditions
+	{
+		if timer > 0.2 goto SubMission3_Main4
+		if module "General ChapterProgress" >= 2.0 goto SubMission3_Enter2
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state SubMission3_Init
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission3_Main
+		if module "General ChapterProgress" >= 1.0 goto SubMission3_Enter3
+	}
+	actions
+	{
+		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission3"
+		CreateModule "#Timer" "#Timer" "#Time=300"
+	}
+}
+state SubMission3_InitTC
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission3_MainTC
+		
+	}
+	actions
+	{
+		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission3"
+		CreateModule "#Timer" "#Timer" "#Time=300"
+	}
+}
+state SubMission3_Init0
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission3_Main0
+		
+	}
+	actions
+	{
+		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission3"
+		CreateModule "#Timer" "#Timer" "#Time=300"
+	}
+}
+state SubMission3_Main
+{
+	conditions
+	{
+		if module "GotoDroneA GetPercentageComplete" == 1.0 and
+			if module "GotoDroneB GetPercentageComplete" == 1.0 and
+				if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail1
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=Route3a" "#maxalive=1" "#count=1" "#FollowSpline=Route3a" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=Route3b" "#maxalive=1" "#count=1" "#FollowSpline=Route3b" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3d" "#maxalive=1" "#count=1" "#FollowSpline=Route3d" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar"
+																																																						   
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission3_Main2
+{
+	conditions
+	{
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail1
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#LoadCreature=BumbleBee"
+		SetMusic "STOP INMISSION ACTION Mission3_1 PLAY ACTION"
+		CreateModule "#Goto" "#GotoDroneA" "#SpawnSpline=Route3a" "#DirectSpline=Route3a" "#TransformBothWays=8.0" "#type=BumbleBee" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#Goto" "#GotoDroneB" "#SpawnSpline=Route3b" "#DirectSpline=Route3b" "#TransformBothWays=2.0" "#type=DroneDefault_a" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" "#ModuleTag=#DroneCounter"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3d" "#maxalive=1" "#count=1" "#FollowSpline=Route3d" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" "#ModuleTag=#DroneCounter"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=2" "#IconType=#Drone"
+																																																				   
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission3_Main3
+{
+	conditions
+	{
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail1
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=Jazz"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#PlayerType=Brawl"
+		SetMusic "STOP INMISSION ACTION Mission3_1 PLAY ACTION"
+		CreateModule "#Goto" "#GotoDroneA" "#SpawnSpline=Route3a" "#DirectSpline=Route3a" "#TransformBothWays=7.0" "#type=Jazz" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#Goto" "#GotoDroneB" "#SpawnSpline=Route3d" "#DirectSpline=Route3d" "#TransformBothWays=6.0" "#type=DroneArmouredCar_a" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline"  ;"#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3b" "#maxalive=1" "#count=1" "#FollowSpline=Route3b" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" "#ModuleTag=#DroneCounter"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" "#ModuleTag=#DroneCounter"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=2" "#IconType=#Drone"
+																																																				   
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission3_Main4
+{
+	conditions
+	{
+		
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail1
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		SetMusic "STOP INMISSION ACTION Generic PLAY ACTION"
+		CreateModule "#Goto" "#GotoDroneA" "#SpawnSpline=Route3a" "#DirectSpline=Route3a" "#TransformBothWays=4.0" "#type=DronePickupTruck_a" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#Goto" "#GotoDroneB" "#SpawnSpline=Route3b" "#DirectSpline=Route3b" "#TransformBothWays=5.0" "#type=DroneTowTruck_a" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" "#ModuleTag=#DroneCounter"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3d" "#maxalive=1" "#count=1" "#FollowSpline=Route3d" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" "#ModuleTag=#DroneCounter"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=2" "#IconType=#Drone"
+																																																				   
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission3_MainTC
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKOTC
+		if module "GotoDroneA TransformMeter" == 1.0 goto SubMission_PrimeTCCompatibility
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+				if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_FinishTC
+		if module "Timer FailMission" == 1.0 goto SubMission3_FailTC
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_FailTC
+		;if module "Ratchet InArea" == 0.0 goto SubMission3_RadarScrambledTC
+		if Timer > 3.0 goto SubMission3_RatchetKeyLocationTC
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#LoadCreature=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+		SetMusic "STOP INMISSION ACTION Mission3_1 PLAY ACTION"
+		CreateModule "#Goto" "#GotoDroneA" "#SpawnSpline=Route3b" "#DirectSpline=Route3b" "#TransformBothWays=15.0" "#type=OptimusPrime" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ; "#ModuleTag=#DroneCounter"
+		CreateModule "#Goto" "#GotoDroneE" "#SpawnSpline=Route3a" "#DirectSpline=Route3a" "#UnStoppableAndTransform=9.0" "#type=DroneArmouredCar" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#SuppressShield" "#AddToRadarOff" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" ; "#ModuleTag=#DroneCounter"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3d" "#maxalive=1" "#count=1" "#FollowSpline=Route3d" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" ; "#ModuleTag=#DroneCounter"
+		;CreateModule "#KeyLocation" "#Ratchet" "#Creature=#GotoDroneE" "#Radius=150" "#String=Key1Find" "#ReEnterMsg=Key1Found" "#InitTimeOut=60" "#TimeOut=30" "#HeadType=#StarScream" 
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=2" "#IconType=#Drone"
+		SendToModule "#General" "#DeleteRadarFreeInterferenceZones"
+		SendToModule "#General" "#SetRadarInterference=1"
+		
+																																																				   
+		SendToModule "#General" "#FadeUp"
+				
+	}
+}
+state SubMission_PrimeTCCompatibility
+{
+	conditions
+	{
+		if Timer > 1.0 goto SubMission_PrimeTCCompatibility2
+		
+	}
+	actions
+	{
+		
+		ResetTimer
+	}
+}
+state SubMission_PrimeTCCompatibility2
+{
+	conditions
+	{
+		
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKOTC
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_FinishTC
+		if module "Timer FailMission" == 1.0 goto SubMission3_FailTC
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_FailTC
+		if module "Ratchet InArea" == 0.0 goto SubMission3_RadarScrambledTC
+		if module "Ratchet InArea" == 1.0 goto SubMission3_UnScrambleRadarTC
+		
+	}
+	actions
+	{
+		
+		SendToModule "#GotoDroneA" "#Script=TCComp"
+	}
+}
+state SubMission_PrimeTCCompatibility3
+{
+	conditions
+	{
+		if Timer > 1.0 goto SubMission_PrimeTCCompatibility4
+		
+	}
+	actions
+	{
+		
+		ResetTimer
+	}
+}
+state SubMission_PrimeTCCompatibility4
+{
+	conditions
+	{
+		
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_FinishTC
+		if module "Timer FailMission" == 1.0 goto SubMission3_FailTC
+		
+		
+	}
+	actions
+	{
+		
+		SendToModule "#GotoDroneA" "#Script=TCComp"
+	}
+}
+state SubMission_RatchetKOTC
+{
+	conditions
+	{
+		if module "GotoDroneA TransformMeter" == 1.0 goto SubMission_PrimeTCCompatibility3
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+				if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_FinishTC
+		if module "Timer FailMission" == 1.0 goto SubMission3_FailTC
+	}
+	actions
+	{
+		DestroyModule "#Ratchet"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#GotoDroneE" "#Script=StopAndSmoke"  ; "#SuppressShield"
+		SendToModule "#GotoDroneE" "#SetEnergy=0.01"
+		SendToModule "#General" "#SetRadarInterference=0"
+	}
+}
+
+state SubMission3_RatchetKeyLocationTC
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKOTC
+		if module "GotoDroneA TransformMeter" == 1.0 goto SubMission_PrimeTCCompatibility
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+				if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_FinishTC
+		if module "Timer FailMission" == 1.0 goto SubMission3_FailTC
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_FailTC
+		if module "Ratchet InArea" == 1.0 goto SubMission3_UnScrambleRadarTC
+	}
+	actions
+	{
+		CreateModule "#KeyLocation" "#Ratchet" "#Creature=#GotoDroneE" "#Radius=95" "#String=Key1Find" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=120" "#TimeOut=120" "#HeadType=#StarScream" 
+		
+	}
+}
+state SubMission3_RadarScrambledTC
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKOTC
+		if module "GotoDroneA TransformMeter" == 1.0 goto SubMission_PrimeTCCompatibility
+		if module "DroneCounter Complete" == 1.0 and
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+				if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_FinishTC
+		if module "Timer FailMission" == 1.0 goto SubMission3_FailTC
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_FailTC
+		if module "Ratchet InArea" == 1.0 goto SubMission3_UnScrambleRadarTC
+	}
+	actions
+	{
+		SendToModule "#General" "#DeleteRadarFreeInterferenceZones"
+		SendToModule "#General" "#SetRadarInterference=1"
+	}
+}
+state SubMission3_UnScrambleRadarTC
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKOTC
+		if module "GotoDroneA TransformMeter" == 1.0 goto SubMission_PrimeTCCompatibility
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+				if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_FinishTC
+		if module "Timer FailMission" == 1.0 goto SubMission3_FailTC
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_FailTC
+		if module "Ratchet InArea" == 0.0 goto SubMission3_RadarScrambledTC
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+	}
+}
+state SubMission3_Main5
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKO
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail1
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_Fail1
+		;if module "Ratchet InArea" == 0.0 goto SubMission3_RadarScrambled
+		if Timer > 3.0 goto SubMission3_RatchetKeyLocation
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#LoadCreature=Jazz"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+		SetMusic "STOP INMISSION ACTION Mission3_1 PLAY ACTION"
+		CreateModule "#Goto" "#GotoDroneA" "#SpawnSpline=Route3b" "#DirectSpline=Route3b" "#TransformBothWays=7.0" "#type=Jazz" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ; "#Script=TripChgCombat"
+		CreateModule "#Goto" "#GotoDroneE" "#SpawnSpline=Route3a" "#DirectSpline=Route3a" "#UnStoppableAndTransform=9.0" "#type=DroneArmouredCar" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#SuppressShield" "#AddToRadarOff" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" ; "#ModuleTag=#DroneCounter"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3d" "#maxalive=1" "#count=1" "#FollowSpline=Route3d" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" ; "#ModuleTag=#DroneCounter"
+		;CreateModule "#KeyLocation" "#Ratchet" "#Creature=#GotoDroneE" "#Radius=150" "#String=Key1Find" "#ReEnterMsg=Key1Found" "#InitTimeOut=60" "#TimeOut=30" "#HeadType=#StarScream" 
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=2" "#IconType=#Drone"
+		SendToModule "#General" "#DeleteRadarFreeInterferenceZones"
+		SendToModule "#General" "#SetRadarInterference=1"
+		
+																																																				   
+		SendToModule "#General" "#FadeUp"
+				
+	}
+}
+
+state SubMission_RatchetKO
+{
+	conditions
+	{
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail1
+	}
+	actions
+	{
+		DestroyModule "#Ratchet"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#GotoDroneE" "#Script=StopAndSmoke"  ; "#SuppressShield"
+		SendToModule "#GotoDroneE" "#SetEnergy=0.01"
+		SendToModule "#General" "#SetRadarInterference=0"
+	}
+}
+
+state SubMission3_RatchetKeyLocation
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKO
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail1
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_Fail1
+		if module "Ratchet InArea" == 1.0 goto SubMission3_UnScrambleRadar
+	}
+	actions
+	{
+		CreateModule "#KeyLocation" "#Ratchet" "#Creature=#GotoDroneE" "#Radius=95" "#String=Key1Find" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=120" "#TimeOut=120" "#HeadType=#StarScream" 
+		
+	}
+}
+state SubMission3_RadarScrambled
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKO
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail1
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_Fail1
+		if module "Ratchet InArea" == 1.0 goto SubMission3_UnScrambleRadar
+	}
+	actions
+	{
+		SendToModule "#General" "#DeleteRadarFreeInterferenceZones"
+		SendToModule "#General" "#SetRadarInterference=1"
+	}
+}
+state SubMission3_UnScrambleRadar
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKO
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail1
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_Fail1
+		if module "Ratchet InArea" == 0.0 goto SubMission3_RadarScrambled
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+	}
+}
+state SubMission3_Main0
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKO0
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish0
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail0
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_Fail0
+		;if module "Ratchet InArea" == 0.0 goto SubMission3_RadarScrambled0
+		if Timer > 3.0 goto SubMission3_RatchetKeyLocation0
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#LoadCreature=Jazz"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+		SetMusic "STOP INMISSION ACTION Mission3_1 PLAY ACTION"
+		CreateModule "#Goto" "#GotoDroneA" "#SpawnSpline=Route3b" "#DirectSpline=Route3b" "#TransformBothWays=7.0" "#type=Jazz" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#Goto" "#GotoDroneE" "#SpawnSpline=Route3a" "#DirectSpline=Route3a" "#UnStoppableAndTransform=9.0" "#type=DroneArmouredCar" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#Speed=120" "#SuppressShield" "#AddToRadarOff" "#LoopSpline" ;"#DrawHealthBar"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" ; "#ModuleTag=#DroneCounter"
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3d" "#maxalive=1" "#count=1" "#FollowSpline=Route3d" "#spacing=1.0" "#goalrange=8.0" "#type=HUNTSUV" "#Object=#GreenMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#DrawHealthBar" ; "#ModuleTag=#DroneCounter"
+		;CreateModule "#KeyLocation" "#Ratchet" "#Creature=#GotoDroneE" "#Radius=150" "#String=Key1Find" "#ReEnterMsg=Key1Found" "#InitTimeOut=60" "#TimeOut=30" "#HeadType=#StarScream" 
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=2" "#IconType=#Drone"
+		SendToModule "#General" "#DeleteRadarFreeInterferenceZones"
+		SendToModule "#General" "#SetRadarInterference=1"
+		
+																																																				   
+		SendToModule "#General" "#FadeUp"
+				
+	}
+}
+
+state SubMission_RatchetKO0
+{
+	conditions
+	{
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish0
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail0
+	}
+	actions
+	{
+		DestroyModule "#Ratchet"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SendToModule "#GotoDroneE" "#Script=StopAndSmoke"  ; "#SuppressShield"
+		SendToModule "#GotoDroneE" "#SetEnergy=0.01"
+		SendToModule "#General" "#SetRadarInterference=0"
+	}
+}
+state SubMission3_RatchetKeyLocation0
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKO0
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish0
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail0
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_Fail0
+		if module "Ratchet InArea" == 1.0 goto SubMission3_UnScrambleRadar0
+	}
+	actions
+	{
+		CreateModule "#KeyLocation" "#Ratchet" "#Creature=#GotoDroneE" "#Radius=95" "#String=Key1Find" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=120" "#TimeOut=120" "#HeadType=#StarScream" 
+		
+	}
+}
+state SubMission3_RadarScrambled0
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKO0
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish0
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail0
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_Fail0
+		if module "Ratchet InArea" == 1.0 goto SubMission3_UnScrambleRadar0
+	}
+	actions
+	{
+		SendToModule "#General" "#DeleteRadarFreeInterferenceZones"
+		SendToModule "#General" "#SetRadarInterference=1"
+	}
+}
+state SubMission3_UnScrambleRadar0
+{
+	conditions
+	{
+		if module "GotoDroneE TransformMeter" == 1.0 goto SubMission_RatchetKO0
+		if module "DroneCounter Complete" == 1.0 and 
+			if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 goto SubMission3_Finish0
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail0
+		if module "Ratchet FailMission" == 1.0 goto SubMission3_Fail0
+		if module "Ratchet InArea" == 0.0 goto SubMission3_RadarScrambled0
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetRadarInterference=0"
+	}
+}
+
+state SubMission3_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission3_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission3_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission3_Leave1
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=3"
+		;SetState "SubMission3_Leave1"
+	}
+}
+state SubMission3_Finish0
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission3_FinishWait0
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission3_FinishWait0
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission3_Leave0
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=3"
+		;SetState "SubMission3_Leave"
+	}
+}
+state SubMission3_FinishTC
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission3_FinishWaitTC
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission3_FinishWaitTC
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission3_LeaveTC
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=3"
+		;SetState "SubMission3_Leave"
+	}
+}
+state SubMission3_Death
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"	
+		SetState SubMission3_Death1
+	}
+}
+state SubMission3_Death1
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission3_Fail
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"	
+		SetState SubMission3_Fail2
+	}
+}
+state SubMission3_Fail1
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"	
+		SetState SubMission3_Fail12
+	}
+}
+state SubMission3_Fail0
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"	
+		SetState SubMission3_Fail02
+	}
+}
+state SubMission3_FailTC
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"	
+		SetState SubMission3_FailTC2
+	}
+}
+state SubMission3_Fail2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission3_Fail12
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission3_Leave1
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission3_Fail02
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission3_Leave0
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission3_FailTC2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission3_LeaveTC
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission3_Leave
+{
+	conditions
+	{
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing
+	}
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		;
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission3" "#FadeUp"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=Jazz"
+		SendToModule "#General" "#UnLoadCreature=OptimusPrime"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=BumbleBee"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#SetRadarInterference=0"	
+		Idle 0.2
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+		SendToModule "#General" "#FadeUp"
+			
+		SetState "GlobalActionRing"
+	}
+}
+state SubMission3_Leave1
+{
+	conditions
+	{
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing
+	}
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission3" 
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=Jazz"
+		SendToModule "#General" "#UnLoadCreature=OptimusPrime"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=BumbleBee"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+
+		Idle 0.2
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+		
+		SendToModule "#General" "#FadeUp"
+		SendToModule "#General" "#SetRadarInterference=0"		
+		SetState "GlobalActionRing"
+	}
+}
+state SubMission3_Leave0
+{
+	
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		;
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission3" "#FadeUp"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=Jazz"
+		SendToModule "#General" "#UnLoadCreature=OptimusPrime"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=BumbleBee"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		
+		;SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Blackout"
+		SendToModule "#General" "#FadeUp"	
+		SendToModule "#General" "#SetRadarInterference=0"	
+		SetState "GlobalActionRing"
+	}
+}
+
+state SubMission3_LeaveTC
+{
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		;
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission3" "#FadeUp"
+		SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=Jazz"
+		SendToModule "#General" "#UnLoadCreature=OptimusPrime"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=BumbleBee"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		;SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Blackout"
+		SendToModule "#General" "#FadeUp"	
+		SendToModule "#General" "#SetRadarInterference=0"	
+		SetState "GlobalActionRing"
+	}
+}
+
+

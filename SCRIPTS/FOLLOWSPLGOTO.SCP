@@ -1,0 +1,36 @@
+
+INCLUDE "Rules.scp"
+
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Main
+	}
+}
+
+state Main
+{
+	ReferenceScript
+	{
+		Script=FollowSplineVeh
+		Source=Global
+		ReturnState=Main
+		Conditions
+		{
+			OnMacro RuleFollowVehicle
+		}
+	}
+
+	ReferenceScript
+	{
+		Script=Combat
+		Source=Global
+		ReturnState=Main
+		Conditions
+		{
+			OnMacro RuleCombat
+		}
+	}
+}

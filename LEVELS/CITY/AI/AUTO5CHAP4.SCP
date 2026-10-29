@@ -1,0 +1,1091 @@
+state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch4_Goto"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_PostC3InitGoto
+{
+	actions
+	{
+
+	
+
+		SendToModule "#General" "#SetVehicle=#COMPPOINT6" 
+		
+
+		SetState Chapter4_InitGoto
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		DestroyModule "#MissionStartSpeech"
+
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch4_Goto" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch4_Goto2" "#AutoDestroy"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch4_Goto3" "#AutoDestroy"
+		Idle 3.0
+
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=2" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetCountD" == 5.0 AND
+			if module "General ChapterProgress" == 3.0 goto Chapter4_IntroPC
+
+	}
+	actions
+	{
+		Idle 0.1
+		SetState Chapter4_Intro
+	}
+}
+state Chapter4_Intro
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A5C4Intro"
+	}
+}
+state Chapter4_IntroPC
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreaturesPC
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A5C4Intro"
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		;SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#PlayerType=BumbleBee07"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=Barricade"
+		SendToModule "#General" "#LoadCreature=DroneForklift"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+	}
+}
+state Chapter4_LoadCreaturesPC
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_MainAlt
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=BumbleBee07"
+		
+		SendToModule "#General" "#LoadCreature=Barricade"
+		
+	}
+}
+state Chapter4_Main
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "BarricadeCreature IsEnergyAtMin" == 1.0 goto Chapter4_SecondPartIntro
+		if module "CreatureWaveA GetCountAlive" == 0.0 goto Chapter4_DroneAP1Death
+		if module "CreatureWaveB GetCountAlive" == 0.0 goto Chapter4_DroneBP1Death
+		if module "CreatureWaveC GetCountAlive" == 0.0 goto Chapter4_DroneCP1Death
+		if module "CreatureWaveD GetCountAlive" == 0.0 goto Chapter4_DroneDP1Death
+		
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter4_HealF1
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		SetDeathPoint "Chapter4_DeathFailMission"
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A5C4BarricadeA" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit" "#Script=Barricade" "#SetPosition=#BarricadeSpawn1"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=1199.0" "#SetEnergy=1199.0" "#SetEnergyMin=2.0"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BarricadeCreature" "#Radius=125" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key14Return" "#HeadType=#Ironhide"
+		CreateModule "#Speech" "#MissionStartSpeech"  "#PlayDelay=2"  "#speech=#A5_ch4_obj1" "#Start" "#AutoDestroy" "#GermanWiiAudioFudge"
+		CreateModule "#SplineExplode" "#RadarSplinePoint" "#Spline=A5C4SamA" "#MilesPerHour=60" "#AddToRadar" "#Start" ; "#moduletag=#healthmeter" "#param=#stopped"
+
+		CreateModule "#Creature" "#Ratchet" "#Spline=A5C1KeyLoc" "#Type=DroneArmouredCar_a" "#count=1" "#maxalive=1" "#AddToRadar" "#SpawnAsCreature" "#SpawnInLOSInit" "#Script=Ratchet"  "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#SetPosition=#RatchetSpawn6"
+		
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsVehicle"  "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#ForkDroneSpawn1" "#Protect" "#AddToRadarOff"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DronePickupTruck" "#SpawnAsCreature" "#Script=StandAndWait" "#SetEnergyMax=1200" "#SetHealth=1200"  "#SetPosition=#TruckDroneSpawn1" "#Protect" "#AddToRadarOff"
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=StandAndWait" "#SetEnergyMax=800" "#SetHealth=800"  "#SetPosition=#ForkDroneSpawn2" "#Protect" "#AddToRadarOff"
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DronePickupTruck" "#SpawnAsCreature" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetHealth=1200"  "#SetPosition=#TruckDroneSpawn2" "#Protect" "#AddToRadarOff"
+		
+
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chapter4Start" "#FadeUp" "#PlayerType=BumbleBee07" 
+
+		SendToModule "#General" "#CountASet=1" "#CountBSet=1" "#CountCSet=1" "#CountDSet=1" "#CountSet=1"
+
+		SendToModule "#General" "#TrafficLv = 4"                        ; lock traffic level (1-5) (0=OFF)
+		SendToModule "#General" "#PatrolLv = 0"                         ; patrol level (1=ON, 0=OFF)
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		Idle 0.8
+		SendToModule "#CreatureWaveA" "#AddToRadar"
+		SendToModule "#CreatureWaveB" "#Script=TruckDrone" "#AddToRadar"
+		SendToModule "#CreatureWaveC" "#Script=ForkliftDrone" "#AddToRadar"
+		SendToModule "#CreatureWaveD" "#AddToRadar"
+	}
+}
+state Chapter4_HealF1
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter4_PostMedicProcess
+		
+	}
+}
+state Chapter4_PostMedicProcess
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "BarricadeCreature IsEnergyAtMin" == 1.0 goto Chapter4_SecondPartIntro
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+			if module "General GetCount" == 1.0 goto Chapter4_DroneAP1Death
+		if module "CreatureWaveB GetCountAlive" == 0.0 and
+			if module "General GetCountB" == 1.0 goto Chapter4_DroneBP1Death
+		if module "CreatureWaveC GetCountAlive" == 0.0 and
+			if module "General GetCountC" == 1.0 goto Chapter4_DroneCP1Death
+		if module "CreatureWaveD GetCountAlive" == 0.0 and
+			if module "General GetCountD" == 1.0 goto Chapter4_DroneDP1Death
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter4_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter4_HealF1
+	}
+}
+state Chapter4_DroneAP1Death
+{
+	actions
+	{
+		DestroyModule "#CreatureWaveA" 
+		SendToModule "#General" "#CountSet=0"
+		SetState Chapter4_PostMedicProcess
+	}
+}
+state Chapter4_DroneBP1Death
+{
+	actions
+	{
+		DestroyModule "#CreatureWaveB" 
+		SendToModule "#General" "#CountBSet=0"
+		SetState Chapter4_PostMedicProcess
+	}
+}
+state Chapter4_DroneCP1Death
+{
+	actions
+	{
+		DestroyModule "#CreatureWaveC" 
+		SendToModule "#General" "#CountCSet=0"
+		SetState Chapter4_PostMedicProcess
+	}
+}
+state Chapter4_DroneDP1Death
+{
+	actions
+	{
+		DestroyModule "#CreatureWaveD" 
+		SendToModule "#General" "#CountDSet=0"
+		SetState Chapter4_PostMedicProcess
+	}
+}
+state Chapter4_SecondPartIntro
+{
+	conditions
+	{
+		;if module "General ChapterProgress" == 3.0 goto Chapter4_SecondPartPreventCrash
+		
+		;if module "General ChapterProgress" == 4.0 goto Chapter4_SecondPartPlayFMV
+	}
+	actions
+	{
+		SetState Chapter4_SecondPartPlayFMV
+	}
+}
+state Chapter4_SecondPartPlayFMV
+{
+	conditions
+	{
+		
+		if module "General VideoFinished" == 1.0 goto Chapter4_SecondPart
+	}
+	actions
+	{
+		;DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartVideo=#A5C4Midtro1"
+	}
+}
+state Chapter4_SecondPartPreventCrash
+{
+	conditions
+	{
+		
+		
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState Chapter4_SecondPartInit
+		
+	}
+}
+state Chapter4_SecondPartInit
+{
+	
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#CountASet=1" "#CountBSet=0" "#CountCSet=0" "#CountDSet=0" "#CountSet=0"
+		SetState Chapter4_SecondPartPlayFMV
+
+	}
+}
+
+state Chapter4_SecondPart
+{
+	conditions
+	{
+		if module "BarricadeCreature Complete" == 1.0 goto Chapter4_FailMission
+		if module "Trigger InArea" == 1.0 goto Chapter4_ThirdPartIntro
+		if module "BarricadeCreature TransformMeter" == 1.0 goto Chapter4_SecondPartOnFire
+	}
+	actions
+	{
+		DestroyAllModules ;"#IncludeProtected"
+		CreateModule "#Goto" "#BarricadeCreature" "#SpawnSpline=A5C4RaceA"  "#DirectSpline=A5C4RaceA"  "#Object=#GreenMediumDot" "#Warning" "#type=Barricade" "#UnStoppableAndTransform=3.0" "#TransformForceCar" "#HideTransformMeter" "#SuppressShield" "#Speed=60"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=1000.0" "#SetEnergy=1000.0"
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#A5C4TriggerA" "#AddToRadar" "#ParticleRing"
+		CreateModule "#Speech" "#A5C4GetToSam"  "#PlayDelay=2"  "#speech=#A5_ch4_obj2" "#Start" "#AutoDestroy"
+		SendToModule "#General" "#PhysObj" "#FadeUp" "#BarricadeHelpOff" "#SetPlayer=#Chapter4StartRaceA"
+
+		CreateModule "#Speech" "#Yikes" "#speech=#A5_ch4_obj3" "#AutoDestroy"
+		
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#Yikes" "#param=#start" "#delay=12" "#times=1" 
+
+		
+	}
+}
+
+state Chapter4_SecondPartOnFire
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter4_ThirdPartIntro
+		if module "Timer FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder" 
+		DestroyModule "#Yikes" 
+		SendToModule "#General" "#SetMessage=KEY_LOC_WARNING" "#SetMessageTimer=20" "#DisplayTimerTime"
+		CreateModule "#Timer" "#Timer" "#Time=30" "#NoRender"
+		SendToModule "#BarricadeCreature" "#Script=StopAndSmoke" "#AddToRadarOff" "#SuppressShield"
+	}
+}
+
+state Chapter4_ThirdPartIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_ThirdPartHoldOn
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1"
+		SendToModule "#General" "#StartVideo=#A5C4Midtro2"
+	}
+}
+state Chapter4_ThirdPartHoldOn
+{
+	conditions
+	{
+		if module "General GetCount" == 0.0  and
+			if module "General GetCountB" == 0.0 and
+				if module "General GetCountC" == 0.0 and
+					if module "General GetCountD" == 0.0 goto Chapter4_RespawnDrones
+		if Timer > 0.1 goto Chapter4_ThirdPart        ;CheckDroneA		
+	}
+	actions
+	{
+		ResetTimer
+		
+		;SendToModule "#General" "#SetPlayer=#Chapter4StartB" 
+	}
+}
+;state Chapter4_ThirdPartCheckDroneA		
+;{
+;	conditions
+;	{
+;		if module "General GetCount" == 1.0 goto Chapter4_DroneAStillAlive
+;		if Timer > 0.1 goto Chapter4_ThirdPartCheckDroneB
+;	}
+;	actions
+;	{
+;		ResetTimer
+;	}
+;}
+;state Chapter4_DroneAStillAlive
+;{
+;	
+;	actions
+;	{
+;		
+;		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsVehicle"  "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetHealth=800" "#Protect" 
+;		SetState Chapter4_ThirdPartCheckDroneB
+;	}
+;}
+;state Chapter4_ThirdPartCheckDroneB	
+;{;
+;	conditions
+;	{
+;		if module "General GetCountB" == 1.0 goto Chapter4_DroneBStillAlive
+;		if Timer > 0.1 goto Chapter4_ThirdPartCheckDroneC
+;	}
+;	actions
+;	{
+;		ResetTimer
+;	}
+;}
+;state Chapter4_DroneBStillAlive
+;{;
+;	
+;	actions
+;	{
+;		
+;		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DronePickupTruck" "#SpawnAsCreature" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetHealth=1200"  "#Protect" 
+;		SetState Chapter4_ThirdPartCheckDroneC
+;	}
+;}
+;state Chapter4_ThirdPartCheckDroneC		
+;{;
+;	conditions
+;	{
+;		if module "General GetCount" == 1.0 goto Chapter4_DroneCStillAlive
+;		if Timer > 0.1 goto Chapter4_ThirdPartCheckDroneD
+;	}
+;	actions
+;	{
+;		ResetTimer
+;	}
+;}
+;state Chapter4_DroneCStillAlive
+;{;
+;	
+;	actions
+;	{
+;		
+;		CreateModule "#Creature" "#CreatureWaveC" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsVehicle"  "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetHealth=800" "#Protect" 
+;		SetState Chapter4_ThirdPartCheckDroneD
+;	}
+;}
+;state Chapter4_ThirdPartCheckDroneD	
+;{;
+;	conditions
+;	{
+;		if module "General GetCount" == 1.0 goto Chapter4_DroneDStillAlive
+;		if Timer > 0.2 goto Chapter4_ThirdPart
+;	}
+;	actions
+;	{
+;		ResetTimer
+;	}
+;}
+;state Chapter4_DroneDStillAlive
+;{
+;	
+;	actions
+;	{
+;		
+;		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DronePickupTruck" "#SpawnAsCreature" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetHealth=1200"  "#Protect" 
+;		SetState Chapter4_ThirdPart
+;	}
+;}
+state Chapter4_RespawnDrones
+{
+	
+	actions
+	{
+		DestroyModule "#CreatureWaveA"
+		DestroyModule "#CreatureWaveB"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsVehicle"  "#Script=ForkliftDrone" "#SetEnergyMax=800" "#SetHealth=800" "#Protect" 
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DronePickupTruck" "#SpawnAsCreature" "#Script=TruckDrone" "#SetEnergyMax=1200" "#SetHealth=1200"  "#Protect" 
+		SendToModule "#General" "#CountSet=1" "#CountBSet=1"
+		SetState Chapter4_ThirdPart
+	}
+}
+state Chapter4_ThirdPart
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "BarricadeCreature IsEnergyAtMin" == 1.0 goto Chapter4_FourthPartIntro
+
+		;if module "CreatureWaveA GetCountAlive" == 0.0 and
+		;	if module "General GetCount" == 1.0 goto Chapter4_DroneAP2Death
+		;if module "CreatureWaveB GetCountAlive" == 0.0 and
+		;	if module "General GetCountB" == 1.0 goto Chapter4_DroneBP2Death
+		;if module "CreatureWaveC GetCountAlive" == 0.0 and
+		;	if module "General GetCountC" == 1.0 goto Chapter4_DroneCP2Death
+		;if module "CreatureWaveD GetCountAlive" == 0.0 and
+		;	if module "General GetCountD" == 1.0 goto Chapter4_DroneDP2Death
+	}
+	actions
+	{
+		DestroyAllModules
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A5C4BarricadeB" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit" "#Script=Barricade" "#SetPosition=#BarricadeSpawn2"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=1799.0" "#SetEnergy=1799.0" "#SetEnergyMin=2.0"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A5C4BarricadeB" "#Radius=125" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key14Return" "#HeadType=#Ironhide" 
+		CreateModule "#Speech" "#A5C4StopBarricade"  "#PlayDelay=2"  "#speech=#A5_ch4_obj4" "#Start" "#AutoDestroy" 
+		CreateModule "#SplineExplode" "#RadarSplinePoint" "#Spline=A5C4SamB" "#MilesPerHour=60" "#AddToRadar" "#Start"
+		SendToModule "#General" "#PhysObj"  "#FadeUp" "#SetPlayer=#Chapter4StartB" "#BarricadeHelpOn"
+		
+		
+		SendToModule "#CreatureWaveA" "#SetPosition=#ForkDroneSpawn3" 
+		SendToModule "#CreatureWaveB" "#SetPosition=#TruckDroneSpawn3" 
+		SendToModule "#CreatureWaveC" "#SetPosition=#ForkDroneSpawn4"
+		SendToModule "#CreatureWaveD" "#SetPosition=#TruckDroneSpawn4"
+		;SetState Chapter4_P2Process
+	}
+}
+;state Chapter4_P2Process
+;{;
+;	conditions
+;;	{
+;		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+;		if module "BarricadeCreature IsEnergyAtMin" == 1.0 goto Chapter4_FourthPartIntro
+;
+;		if module "CreatureWaveA GetCountAlive" == 0.0 and
+;;			if module "General GetCount" == 1.0 goto Chapter4_DroneAP2Death
+;		if module "CreatureWaveB GetCountAlive" == 0.0 and
+;			if module "General GetCountB" == 1.0 goto Chapter4_DroneBP2Death
+;		if module "CreatureWaveC GetCountAlive" == 0.0 and
+;			if module "General GetCountC" == 1.0 goto Chapter4_DroneCP2Death
+;		if module "CreatureWaveD GetCountAlive" == 0.0 and
+;			if module "General GetCountD" == 1.0 goto Chapter4_DroneDP2Death
+;	}
+;	
+;}
+;state Chapter4_DroneAP2Death
+;{;;
+;	actions
+;	{
+;;		DestroyModule "#CreatureWaveA" 
+;		SendToModule "#General" "#CountSet=0"
+;		SetState Chapter4_P2Process
+;	}
+;}
+;state Chapter4_DroneBP2Death
+;{
+;	actions
+;	{
+;		DestroyModule "#CreatureWaveB" 
+;		SendToModule "#General" "#CountBSet=0"
+;		SetState Chapter4_P2Process
+;	}
+;}
+;state Chapter4_DroneCP2Death
+;{
+;	actions
+;	{
+;		DestroyModule "#CreatureWaveC" 
+;		SendToModule "#General" "#CountCSet=0"
+;		SetState Chapter4_P2Process
+;	}
+;}
+;state Chapter4_DroneDP2Death
+;{
+;	actions
+;	{
+;		DestroyModule "#CreatureWaveD" 
+;		SendToModule "#General" "#CountDSet=0"
+;		SetState Chapter4_P2Process
+;	}
+;}
+state Chapter4_FourthPartIntro
+{
+	conditions
+	{
+		;if module "General ChapterProgress" == 3.0 goto Chapter4_FourthPartPreventCrash
+		
+
+		;if module "General ChapterProgress" == 4.0 goto Chapter4_FourthPartIntroPlayFMV
+		
+
+	}
+	actions
+	{
+		SetState Chapter4_FourthPartIntroPlayFMV
+	}
+	
+}
+state Chapter4_FourthPartIntroPlayFMV
+{
+	conditions
+	{
+		
+
+		if module "General VideoFinished" == 1.0 goto Chapter4_FourthPart
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#StartVideo=#A5C4Midtro3"
+	}
+}
+state Chapter4_FourthPartPreventCrash
+{
+	
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState Chapter4_FourthPartInit
+
+	}
+}
+state Chapter4_FourthPartInit
+{
+	
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#CountASet=1" "#CountBSet=0" "#CountCSet=0" "#CountDSet=0" "#CountSet=0"
+		SetState Chapter4_FourthPartIntroPlayFMV
+
+	}
+}
+state Chapter4_FourthPart
+{
+	conditions
+	{
+		if module "BarricadeCreature Complete" == 1.0 goto Chapter4_FailMission
+		if module "Trigger InArea" == 1.0 goto Chapter4_FifthPartIntro
+		if module "BarricadeCreature TransformMeter" == 1.0 goto Chapter4_AltFifthPart
+	}
+	actions
+	{
+		DestroyAllModules ;"#IncludeProtected"
+		
+		CreateModule "#Goto" "#BarricadeCreature" "#SpawnSpline=A5C4RaceB"  "#DirectSpline=A5C4RaceB"  "#Object=#GreenMediumDot" "#Warning" "#type=Barricade" "#UnStoppableAndTransform=3.0" "#TransformForceCar" "#SuppressShield" "#Speed=120" "#BlockDeath"
+
+		CreateModule "#Speech" "#A5C4StopBarricade"  "#PlayDelay=2"  "#speech=#A5_ch4_obj5" "#Start" "#AutoDestroy" 
+		
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=2399.0" "#SetEnergy=2399.0"
+		
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#A5C4TriggerB" "#AddToRadar" "#ParticleRing"
+		SendToModule "#General" "#PhysObj" "#FadeUp" "#SetPlayer=#Chapter4StartRaceB"
+	}
+}
+state Chapter4_FourthPartOnFire
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter4_FifthPartIntro
+		if module "Timer FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=KEY_LOC_WARNING" "#SetMessageTimer=20" "#DisplayTimerTime"
+		CreateModule "#Timer" "#Timer" "#Time=30" "#NoRender"
+		SendToModule "#BarricadeCreature" "#Script=StopAndSmoke" "#AddToRadarOff" "#SuppressShield"
+	}
+}
+state Chapter4_FifthPartIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_FifthPart
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1"
+		SendToModule "#General" "#StartVideo=#A5C4Midtro4"
+	}
+}
+state Chapter4_FifthPart
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "BarricadeCreature Dead" == 1.0 goto Chapter4_CheckDrones
+			
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A5C4BarricadeC" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit" "#BlockDeath" "#Script=Barricade"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=2399.0" "#SetEnergy=2399.0"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BarricadeCreature" "#Radius=125" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" 
+		;CreateModule "#Speech" "#MissionStartSpeech"  "#PlayDelay=2"  "#speech=#A5_ch4_obj3" "#Start" "#AutoDestroy"
+		SendToModule "#General" "#PhysObj" "#FadeUp" "#SetPlayer=#Chapter4StartC" "#BarricadeHelpOn"
+
+		
+		SendToModule "#CreatureWaveA" "#SetPosition=#ForkDroneSpawn5"
+		SendToModule "#CreatureWaveB" "#SetPosition=#TruckDroneSpawn5"
+		SendToModule "#CreatureWaveC" "#SetPosition=#ForkDroneSpawn6"
+		SendToModule "#CreatureWaveD" "#SetPosition=#TruckDroneSpawn6"
+	}
+}
+state Chapter4_AltFifthPart
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "BarricadeCreature Dead" == 1.0 goto Chapter4_CheckDrones
+			
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		DestroyModule "#Trigger"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=2399.0" "#SetEnergy=2399.0" "#Boss=#Barricade" "#Type=Barricade" "#BlockDeath" "#TransformForceRobot" "#Script=Barricade" "#SuppressShieldOff" "#Stoppable" "#HideTransformMeter" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BarricadeCreature" "#Radius=125" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" 
+		
+	}
+}
+state Chapter4_CheckDrones
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and 
+				if module "CreatureWaveB GetCountAlive" == 0.0 and
+					if module "CreatureWaveC GetCountAlive" == 0.0 and 
+						if module "CreatureWaveD GetCountAlive" == 0.0 goto Chapter4_CompleteDelay
+		if Timer > 1.0 goto Chapter4_KillDrones
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#BarricadeCreature" "#RemoveBoss"
+	}
+}
+state Chapter4_KillDrones
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and 
+				if module "CreatureWaveB GetCountAlive" == 0.0 and
+					if module "CreatureWaveC GetCountAlive" == 0.0 and 
+						if module "CreatureWaveD GetCountAlive" == 0.0 goto Chapter4_CompleteDelay
+		
+	}
+	actions
+	{
+		DestroyModule "#KeyLocation"
+		SendToModule "#General" "#SetMessage=FinishThem" "#SetMessageTimer=3"
+		
+	}
+}
+state Chapter4_MainAlt
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "BarricadeCreature IsEnergyAtMin" == 1.0 goto Chapter4_SecondPartIntroPC
+		
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		SetDeathPoint "Chapter4_DeathFailMission"
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A5C4BarricadeA" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit" "#Script=Barricade" "#SetPosition=#BarricadeSpawn1"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=1199.0" "#SetEnergy=1199.0" "#SetEnergyMin=2.0"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BarricadeCreature" "#Radius=125" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key14Return" "#HeadType=#Ironhide"
+		CreateModule "#Speech" "#MissionStartSpeech"  "#PlayDelay=2"  "#speech=#A5_ch4_obj1" "#Start" "#AutoDestroy" "#GermanWiiAudioFudge"
+		CreateModule "#SplineExplode" "#RadarSplinePoint" "#Spline=A5C4SamA" "#MilesPerHour=60" "#AddToRadar" "#Start" ; "#moduletag=#healthmeter" "#param=#stopped"
+
+		
+
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chapter4Start" "#FadeUp" "#PlayerType=BumbleBee07" 
+
+		
+		SendToModule "#General" "#TrafficLv = 4"                        ; lock traffic level (1-5) (0=OFF)
+		SendToModule "#General" "#PatrolLv = 0"                         ; patrol level (1=ON, 0=OFF)
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		
+	}
+}
+state Chapter4_SecondPartIntroPC
+{
+	conditions
+	{
+		
+		if module "General VideoFinished" == 1.0 goto Chapter4_SecondPartPC
+	}
+	actions
+	{
+		;DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartVideo=#A5C4Midtro1"
+	}
+}
+
+
+state Chapter4_SecondPartPC
+{
+	conditions
+	{
+		if module "BarricadeCreature Complete" == 1.0 goto Chapter4_FailMission
+		if module "Trigger InArea" == 1.0 goto Chapter4_ThirdPartIntroPC
+		if module "BarricadeCreature TransformMeter" == 1.0 goto Chapter4_SecondPartOnFirePC
+	}
+	actions
+	{
+		DestroyAllModules ;"#IncludeProtected"
+		CreateModule "#Goto" "#BarricadeCreature" "#SpawnSpline=A5C4RaceA"  "#DirectSpline=A5C4RaceA"  "#Object=#GreenMediumDot" "#Warning" "#type=Barricade" "#UnStoppableAndTransform=3.0" "#TransformForceCar" "#HideTransformMeter" "#SuppressShield" "#Speed=60"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=1000.0" "#SetEnergy=1000.0"
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#A5C4TriggerA" "#AddToRadar" "#ParticleRing"
+		CreateModule "#Speech" "#A5C4GetToSam"  "#PlayDelay=2"  "#speech=#A5_ch4_obj2" "#Start" "#AutoDestroy"
+		SendToModule "#General" "#PhysObj" "#FadeUp" "#BarricadeHelpOff" "#SetPlayer=#Chapter4StartRaceA"
+
+		CreateModule "#Speech" "#Yikes" "#speech=#A5_ch4_obj3" "#AutoDestroy"
+		
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#Yikes" "#param=#start" "#delay=12" "#times=1" 
+
+		
+	}
+}
+
+state Chapter4_SecondPartOnFirePC
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter4_ThirdPartIntroPC
+		if module "Timer FailMission" == 1.0 goto Chapter4_FailMission
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder" 
+		DestroyModule "#Yikes" 
+		SendToModule "#General" "#SetMessage=KEY_LOC_WARNING" "#SetMessageTimer=20" "#DisplayTimerTime"
+		CreateModule "#Timer" "#Timer" "#Time=30" "#NoRender"
+		SendToModule "#BarricadeCreature" "#Script=StopAndSmoke" "#AddToRadarOff" "#SuppressShield"
+	}
+}
+
+state Chapter4_ThirdPartIntroPC
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_ThirdPartPC
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1"
+		SendToModule "#General" "#StartVideo=#A5C4Midtro2"
+	}
+}
+
+state Chapter4_ThirdPartPC
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "BarricadeCreature IsEnergyAtMin" == 1.0 goto Chapter4_FourthPartIntroPC
+
+		
+	}
+	actions
+	{
+		DestroyAllModules
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A5C4BarricadeB" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit" "#Script=Barricade" "#SetPosition=#BarricadeSpawn2"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=1799.0" "#SetEnergy=1799.0" "#SetEnergyMin=2.0"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A5C4BarricadeB" "#Radius=125" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key14Return" "#HeadType=#Ironhide" 
+		CreateModule "#Speech" "#A5C4StopBarricade"  "#PlayDelay=2"  "#speech=#A5_ch4_obj4" "#Start" "#AutoDestroy" 
+		CreateModule "#SplineExplode" "#RadarSplinePoint" "#Spline=A5C4SamB" "#MilesPerHour=60" "#AddToRadar" "#Start"
+		SendToModule "#General" "#PhysObj"  "#FadeUp" "#SetPlayer=#Chapter4StartB" "#BarricadeHelpOn"
+		
+		
+	}
+}
+
+
+state Chapter4_FourthPartIntroPC
+{
+	conditions
+	{
+		
+
+		if module "General VideoFinished" == 1.0 goto Chapter4_FourthPartPC
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#StartVideo=#A5C4Midtro3"
+	}
+}
+
+state Chapter4_FourthPartPC
+{
+	conditions
+	{
+		if module "BarricadeCreature Complete" == 1.0 goto Chapter4_FailMission
+		if module "Trigger InArea" == 1.0 goto Chapter4_FifthPartIntroPC
+		if module "BarricadeCreature TransformMeter" == 1.0 goto Chapter4_AltFifthPartPC
+	}
+	actions
+	{
+		DestroyAllModules ;"#IncludeProtected"
+		
+		CreateModule "#Goto" "#BarricadeCreature" "#SpawnSpline=A5C4RaceB"  "#DirectSpline=A5C4RaceB"  "#Object=#GreenMediumDot" "#Warning" "#type=Barricade" "#UnStoppableAndTransform=3.0" "#TransformForceCar" "#SuppressShield" "#Speed=120" "#BlockDeath"
+
+		CreateModule "#Speech" "#A5C4StopBarricade"  "#PlayDelay=2"  "#speech=#A5_ch4_obj5" "#Start" "#AutoDestroy" 
+		
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=2399.0" "#SetEnergy=2399.0"
+		
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#A5C4TriggerB" "#AddToRadar" "#ParticleRing"
+		SendToModule "#General" "#PhysObj" "#FadeUp" "#SetPlayer=#Chapter4StartRaceB"
+	}
+}
+
+state Chapter4_FifthPartIntroPC
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_FifthPartPC
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1"
+		SendToModule "#General" "#StartVideo=#A5C4Midtro4"
+	}
+}
+state Chapter4_FifthPartPC
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "BarricadeCreature Dead" == 1.0 goto Chapter4_CompleteDelay
+			
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A5C4BarricadeC" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit" "#BlockDeath" "#Script=Barricade"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=2399.0" "#SetEnergy=2399.0"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BarricadeCreature" "#Radius=125" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" 
+		;CreateModule "#Speech" "#MissionStartSpeech"  "#PlayDelay=2"  "#speech=#A5_ch4_obj3" "#Start" "#AutoDestroy"
+		SendToModule "#General" "#PhysObj" "#FadeUp" "#SetPlayer=#Chapter4StartC" "#BarricadeHelpOn"
+
+		
+		
+	}
+}
+state Chapter4_AltFifthPartPC
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter4_FailMission
+		if module "BarricadeCreature Dead" == 1.0 goto Chapter4_CompleteDelay
+			
+	}
+	actions
+	{
+		SetMusic "ACTION Mission4_1 QUIET Generic Play Action"
+		DestroyModule "#Trigger"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=2399.0" "#SetEnergy=2399.0" "#Boss=#Barricade" "#Type=Barricade" "#BlockDeath" "#TransformForceRobot" "#Script=Barricade" "#SuppressShieldOff" "#Stoppable" "#HideTransformMeter" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BarricadeCreature" "#Radius=125" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" 
+		
+	}
+}
+
+state Chapter4_CompleteDelay
+{
+	conditions
+	{
+		if Timer > 1.0 goto Chapter4_Complete
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder" 
+		SendToModule "#General"  "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder" 
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=Barricade"
+	SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+    	;SendToModule "#General" "#LoadCreature=DroneDefault"
+    	
+		SendToModule "#General" "#PlayerType=IronHide,Jazz,IronHide,BumbleBee07,IronHide"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter4Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#EndOfMission"  "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		SendToModule #General #UnlockBonus=Mission_FourthMission
+		SendToModule #General #UnlockBonus=Character_BumbleBee
+		SendToModule "#General" "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		SendToModule "#General" "#CompleteMission" "#BarricadeHelpOff" "#LevelCompleteAchievement" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A5C4Outro"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=Barricade"
+    	;SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+
+		SendToModule "#General" "#PlayerType=IronHide,Jazz,IronHide,BumbleBee07,IronHide"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		SetState Chapter4_Leave
+	}
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule #General #AllowPlayerMovement
+		SetState PickGoto
+	}
+}

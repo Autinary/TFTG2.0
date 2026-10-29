@@ -1,0 +1,79 @@
+state base
+{
+	conditions
+	{
+		;if CurrentUser "grichards" == 1.0 goto Empty
+		;if CurrentUser "sharding" == 1.0 goto Empty
+		;if CurrentUser "awhite" == 1.0 goto MainWithDebug
+		;if CurrentUser "challiday" == 1.0 goto Empty
+		;if CurrentUser "popdam" == 1.0 goto Empty
+		;if CurrentUser "DWalker" == 1.0 goto MainWithDebug
+		if AlwaysTrue == 1.0 goto StartLevelInit
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+	}
+}
+state EmptyDeath
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Empty"
+	}
+}
+state Empty
+{
+	Actions
+	{
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#StartMission"
+		SetDeathPoint "EmptyDeath"
+	}
+}
+
+state StartLevelInit
+{
+	Conditions
+	{
+
+	}
+
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SetState StartLevel
+	}
+}
+
+state StartLevel
+{
+	Conditions
+	{
+		if module "General LevelVar" <= 1.0 goto Chapter1_Enter
+		if module "General LevelVar" == 2.0 goto Chapter2_Enter
+		if module "General LevelVar" == 3.0 goto Chapter3_Enter
+		if module "General LevelVar" == 4.0 goto Chapter4_Enter
+	
+	}
+
+	Actions
+	{
+		DestroyAllModules
+	}
+}
+
+state FinishedLevel
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedLevel"
+	}
+}
+

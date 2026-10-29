@@ -1,0 +1,52 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+	Actions
+	{
+		SetPhysicsState "static=false" "immunetoshots=false" "immunetomelee=false" "immunetothrown=false"
+		
+	}		
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto RobotInit
+		if CarForm == 1.0 goto Wait
+	}
+}
+
+state RobotInit
+{
+	Conditions
+	{
+		
+	}
+	Actions
+	{
+		
+		Transform Car UntilDone
+		SetState Wait
+	}
+}
+
+state Wait
+{
+	Conditions
+	{
+
+		
+	}
+	Actions
+	{
+		SetPhysicsState "static=false" "immunetoshots=false" "immunetomelee=false" "immunetothrown=false"
+		ResetTimer
+	}
+}
+
+

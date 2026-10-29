@@ -1,0 +1,45 @@
+
+CONST SpeedEscapeMin				10.0
+CONST SpeedEscapeMax				12.0
+
+ConditionMacro RuleVehicle
+{
+	if TolsRemainAsCar == 1.0 AND
+	if WalkToLocatorTime == 0.0
+}
+
+ConditionMacro RuleCombat
+{
+	if TolsRemainAsRobot == 1.0
+	; OR
+	if WalkToLocatorTime > 0.0
+}
+
+ConditionMacro RuleEscapeVehicle
+{
+	if PlayerHurtingTime < 10.0
+	; OR
+	if TolsTransToCar == 1.0
+	; OR
+	if Speed >= SpeedEscapeMax
+	; OR
+	if Age <= 4.0
+}
+
+ConditionMacro RuleEscapeCombat
+{
+	if PlayerHurtingTime >= 10.0 AND
+	if TolsTransToRobot == 1.0 AND
+	if Speed < SpeedEscapeMin AND
+	if Age > 4.0
+}
+
+ConditionMacro RuleFollowVehicle
+{
+	if TolsRemainAsCar == 1.0
+}
+
+ConditionMacro RuleFollowRobot
+{
+	if TolsRemainAsRobot == 1.0
+}

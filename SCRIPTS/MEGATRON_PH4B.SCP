@@ -1,0 +1,100 @@
+
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRange			5.0
+CONST MeleeRangeMin				10.0
+CONST MeleeRangeMax				12.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto FallOnRoof
+		if CarForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		  SetPhysicsState "static=false"
+		; SetState Alert
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto FallOnRoof 
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+state FallOnRoof 
+{
+	Conditions
+	{
+		if Timer > 2.5 goto AttackRangedSecondary
+	}
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "static=false" "immunetoshots=false" 
+	}
+}
+
+
+
+state AttackRangedSecondary
+{
+	Conditions
+	{
+		
+		if BeenStruckTime < 2.0 AND
+		if DistanceBetweenOpponent < 5 goto PrepareAI
+
+		if OpponentRange < AutoMeleeRange goto PrepareAI
+
+		OnMacro StuckTime goto StuckEscape
+
+		
+	}
+	Actions
+	{
+		SetStrafe
+		EngageOpponentTC "goalrange=1.0" "firerange=1000.0" "RapidShootRange=10.0" "fireId=0" "firetimemin=0.3" "firetimemax=0.5"
+		
+	}
+}
+
+state PrepareAI
+{
+    	ReferenceScript {
+        Script=Megatron_PH2
+        Source=Global
+        ReturnState=PrepareAI
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}

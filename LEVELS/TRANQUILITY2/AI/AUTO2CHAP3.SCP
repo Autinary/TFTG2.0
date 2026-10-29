@@ -1,0 +1,486 @@
+state Chapter3_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=0" "#TrafficLv=5" "#PatrolLv=1" "#RoadBlocks=RoadBlock1"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch3_Goto" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch3_Goto2" "#AutoDestroy" 
+		Idle 3.0
+		
+		DestroyModule "#MissionStartSpeech"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		SetMusic "ACTION Mission3_1 QUIET Generic"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A2C3Intro1" "#CountASet=0" "#CountBSet=0"
+	}
+}
+state Chapter3_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		
+		SendToModule "#General" "#PlayerType=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=IronHide"
+		SendToModule "#General" "#LoadCreature=Jazz"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+	}
+}
+;;state Chapter3_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter3_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartVideo=#A2C3Intro1"
+;;	}
+;;}
+state Chapter3_Main
+{
+	conditions
+	{
+	if module "Ratchet GetPercentageComplete" == 1.0 goto Chapter3_FailMission
+	if module "IronHide GetPercentageComplete" == 1.0 goto Chapter3_FailMission
+	if module "Jazz GetPercentageComplete" == 1.0 goto Chapter3_FailMission
+        if timer > 0.2 goto Chapter3_Main_Delay
+	if module "Ratchet BeenHit" == 1.0 goto Chapter3_DONOTMOVE
+    }
+	actions
+	{
+        ResetTimer
+
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter3_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones"  "#PlayDelay=2"  "#speech=#A2_ch3_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#PhysObj" "#SetVehicle=#A2C3StartA" "#FadeUp"
+		SendToModule "#General" "#CountASet=0" "#CountBSet=0" "#CountCSet=2" 
+
+        CreateModule "#SpecialObj" "#SpecialObj" "#Placement=A2C3"
+
+		CreateModule "#Creature" "#IronHide" "#Spline=Spawn3" "#count=1" "#maxalive=1" "#Type=IronHide" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsVehicle" "#Unstoppable" "#Friend"
+		CreateModule "#Creature" "#Jazz" "#Spline=A2C2SpawnC" "#count=1" "#maxalive=1" "#Type=Jazz" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsVehicle" "#Unstoppable" "#Friend" 
+		CreateModule "#Creature" "#Ratchet" "#Script=D3Follow" "#Spline=A2C2SpawnC" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsVehicle" "#Unstoppable" "#Friend" 
+		SendToModule "#Ratchet" "#TransformForceCar"
+
+		
+
+        CreateModule "#KeyLocation" "#KeyLocation" "#Radius=200.0" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key3Return" "#HEADTYPE=#JAZZ"
+        CreateModule "#Dragnet" "#Dragnet" "#VehicleTypes=DDRIVETYPE_HELISMALL" "#DragnetCarrierHeight=15.0" "#Spline=A2C3Heli" "#SpeedValueMin=50" "#SpeedValueMax=200" "#RangeMin=50" "#RangeMax=125" "#ModuleTag=#KeyLocation" "#PhysObj=PHYSOBJTYPE_TRQ_GENERIC19" "#vPosLocal=0.0,-6.5,0.0" "#vConnectLocal=0.0,-2.5,0.0"
+   	}
+}
+state Chapter3_DONOTMOVE
+{
+	conditions
+	{
+	if module "Dragnet GetPercentageComplete" > 0.94 and
+		if module "KeyLocation InArea" == 1.0 goto Chapter3_Complete
+
+        if module "Dragnet GetPercentageComplete" > 0.94 and
+          if module  "KeyLocation InArea" == 0.0 goto Chapter3_FailMission
+
+		if module  "KeyLocation InArea" == 0.0 and
+			if module "General GetCountA" == 0 goto Chapter3_DialogA2
+			
+		if module  "KeyLocation InArea" == 0.0 and
+			if module "General GetCountB" == 0 and
+				if module "KeyLocation Time" < 10.0 goto Chapter3_DialogB2
+			
+		if module "KeyLocation InArea" == 1.0 and
+			if module "General GetCountB" == 1 goto Chapter3_Inside2
+
+        if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+	if module "Ratchet GetPercentageComplete" == 1.0 goto Chapter3_FailMission
+	if module "IronHide GetPercentageComplete" == 1.0 goto Chapter3_FailMission
+	if module "Jazz GetPercentageComplete" == 1.0 goto Chapter3_FailMission
+	
+    }
+	actions
+	{
+         	SendToModule "#Ratchet" "#Script=StandAndWait"
+   	}
+}
+
+state Chapter3_Main_Delay
+{
+	actions
+	{
+      CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=3" "#TrafficLv=2" "#PatrolLv=0" "#RoadBlocks=RoadBlock1"
+
+      SetState Chapter3_Watch
+    }
+}
+
+
+state Chapter3_Watch
+{
+	conditions
+	{
+	
+     	if module "Dragnet GetPercentageComplete" > 0.94 and
+		if module "KeyLocation InArea" == 1.0 goto Chapter3_Complete
+
+	if module "Dragnet GetPercentageComplete" > 0.94 and
+          if module  "KeyLocation InArea" == 0.0 goto Chapter3_FailMission
+
+		if module  "KeyLocation InArea" == 0.0 and
+			if module "General GetCountA" == 0 goto Chapter3_DialogA
+			
+		if module  "KeyLocation InArea" == 0.0 and
+			if module "General GetCountB" == 0 and
+				if module "KeyLocation Time" < 10.0 goto Chapter3_DialogB
+			
+		if module "KeyLocation InArea" == 1.0 and
+			if module "General GetCountB" == 1 goto Chapter3_Inside
+
+        if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+	if module "Ratchet GetPercentageComplete" == 1.0 goto Chapter3_FailMission
+	if module "IronHide GetPercentageComplete" == 1.0 goto Chapter3_FailMission
+	if module "Jazz GetPercentageComplete" == 1.0 goto Chapter3_FailMission
+	if module "Ratchet BeenHit" == 1.0 goto Chapter3_DONOTMOVE
+	}
+
+
+}
+state Chapter3_DialogA
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch3_obj2"  "#PlayDelay=1" "#speech=#A2_ch3_obj2" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#CountASet=1"
+		SetState Chapter3_Watch
+	}
+}
+
+state Chapter3_DialogB
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch3_obj3"  "#PlayDelay=1"  "#speech=#A2_ch3_obj3" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#CountBSet=1"
+		SetState Chapter3_Watch
+	}
+}
+
+state Chapter3_Inside
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0"
+		SetState Chapter3_Watch
+	}
+}
+state Chapter3_DialogA2
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch3_obj2"  "#PlayDelay=1" "#speech=#A2_ch3_obj2" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#CountASet=1"
+		SetState Chapter3_DONOTMOVE
+	}
+}
+
+state Chapter3_DialogB2
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch3_obj3"  "#PlayDelay=1"  "#speech=#A2_ch3_obj3" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#CountBSet=1"
+		SetState Chapter3_DONOTMOVE
+	}
+}
+
+state Chapter3_Inside2
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0"
+		SetState Chapter3_DONOTMOVE
+	}
+}
+state Chapter3Alt_Enter
+{
+	
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SendToModule "#SubMissions" "#TurnOff"
+		
+		SetState Chapter3Alt_EnterInit
+	}
+}
+state Chapter3Alt_EnterInit
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3Alt_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A2C5Intro"
+	}
+}
+state Chapter3Alt_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3Alt_Main
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+		SendToModule "#General" "#PlayerType=OptimusPrime"
+		
+		
+	}
+}
+state Chapter3Alt_Main
+{
+	conditions
+	{
+	
+        if timer > 0.2 goto Chapter3AltMain_Delay
+	}
+	actions
+	{
+        ResetTimer
+
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter3_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones"  "#PlayDelay=2"  "#speech=#A2_ch3_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#PhysObj" "#SetVehicle=#Chapter3Start" "#FadeUp"
+		SendToModule "#General" "#CountASet=0" "#CountBSet=0" "#CountCSet=2" 
+
+        CreateModule "#SpecialObj" "#SpecialObj" "#Placement=A2C3"
+
+		
+        CreateModule "#KeyLocation" "#KeyLocation" "#Radius=200.0" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key3Return" "#HEADTYPE=#JAZZ"
+        CreateModule "#Dragnet" "#Dragnet" "#VehicleTypes=DDRIVETYPE_HELISMALL" "#DragnetCarrierHeight=15.0" "#Spline=A2C3HeliOld" "#SpeedValueMin=50" "#SpeedValueMax=200" "#RangeMin=50" "#RangeMax=125" "#ModuleTag=#KeyLocation" "#PhysObj=PHYSOBJTYPE_TRQ_GENERIC19" "#vPosLocal=0.0,-6.5,0.0" "#vConnectLocal=0.0,-2.5,0.0"
+   	}
+}
+
+
+state Chapter3AltMain_Delay
+{
+	actions
+	{
+      CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=3" "#TrafficLv=2" "#PatrolLv=0" "#RoadBlocks=RoadBlock1"
+
+      SetState Chapter3Alt_Watch
+    }
+}
+
+
+state Chapter3Alt_Watch
+{
+	conditions
+	{
+	
+     	if module "Dragnet GetPercentageComplete" > 0.94 and
+		if module "KeyLocation InArea" == 1.0 goto Chapter3_Complete
+
+	if module "Dragnet GetPercentageComplete" > 0.94 and
+          if module  "KeyLocation InArea" == 0.0 goto Chapter3_FailMission
+
+		if module  "KeyLocation InArea" == 0.0 and
+			if module "General GetCountA" == 0 goto Chapter3Alt_DialogA
+			
+		if module  "KeyLocation InArea" == 0.0 and
+			if module "General GetCountB" == 0 and
+				if module "KeyLocation Time" < 10.0 goto Chapter3Alt_DialogB
+			
+		if module "KeyLocation InArea" == 1.0 and
+			if module "General GetCountB" == 1 goto Chapter3Alt_Inside
+
+        if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+	
+	}
+
+
+}
+state Chapter3Alt_DialogA
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch3_obj2"  "#PlayDelay=1" "#speech=#A2_ch3_obj2" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#CountASet=1"
+		SetState Chapter3Alt_Watch
+	}
+}
+
+state Chapter3Alt_DialogB
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch3_obj3"  "#PlayDelay=1"  "#speech=#A2_ch3_obj3" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#CountBSet=1"
+		SetState Chapter3Alt_Watch
+	}
+}
+
+state Chapter3Alt_Inside
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0"
+		SetState Chapter3Alt_Watch
+	}
+}
+
+state Chapter3_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter3_Restart
+{
+	actions
+	{
+		SendToModule "#VehicleLevels" "#RoadBlocks=Off"
+		DestroyAllModules "#IncludeProtected"
+
+		
+		SendToModule "#General" "#UnLoadCreature=IronHide"
+		SendToModule "#General" "#UnLoadCreature=Jazz"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+
+		SendToModule "#General" "#PlayerType=Jazz,Ironhide,OptimusPrime,OptimusPrime,Jazz"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter3Restart" "#FadeUp"
+	
+		SetState "GlobalActionRing4"
+	}
+}
+state Chapter3_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing"  "#EndOfMission" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+	}
+}
+state Chapter3_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A2C3Outro1"
+	}
+}
+state Chapter3_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=IronHide"
+		SendToModule "#General" "#UnLoadCreature=Jazz"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#PlayerType=Jazz,Ironhide,OptimusPrime,OptimusPrime,Jazz" "#SetPlayer=#A2C3_FINISH" 
+		
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave
+{
+	actions
+	{
+		SendToModule "#VehicleLevels" "#RoadBlocks=Off"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter4"
+		IncreasePlayerHealth max
+		setstate "PickGoto"
+	}
+}

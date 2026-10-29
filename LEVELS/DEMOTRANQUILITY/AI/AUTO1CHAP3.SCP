@@ -1,0 +1,496 @@
+state Chapter3_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+                SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+                SendToModule "#MissionStartSpeech" "#Start"
+                SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		Idle 2.0
+                CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A1_ch3_Goto"  "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A1_ch3_Goto2" "#AutoDestroy"
+		Idle 3.0
+		
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=45" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+               	DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A1C3Intro" "#SetPlayerDeathPoint=#Chapter3Restart"
+	}
+}
+state Chapter3_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+
+
+    	SendToModule "#General" "#UnLoadCreature=DroneDefault"
+    	SendToModule "#General" "#LoadCreature=Barricade"
+	SendToModule "#General" "#LoadCreature=DroneDefault_a"
+	SendToModule "#General" "#PlayerType=Bumblebee"
+	}
+}
+;;state Chapter3_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter3_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartVideo=#A1C3Intro"
+;;	}
+;;}
+state Chapter3_Main
+{
+	conditions
+	{
+		if Timer > 1.3 goto Chapter3_PreMain
+	}
+	actions
+	{
+		ResetTimer
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter3_DeathFailMission"
+		
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A1_ch3_obj4" "#Start" "#AutoDestroy" "#GermanWiiAudioFudge"
+          
+
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3FMV_PositionsABEE" ; "#FadeUp"
+	}
+}
+state Chapter3_PreMain
+{
+	conditions
+	{
+		if Timer > 0.5 goto Chapter3_BeeStruck
+	}
+	actions
+	{
+		ResetTimer
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A1C3SpawnA" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=Barricade" "#SpawnInLosInit" 
+		SendToModule "#BarricadeCreature" "#SetPosition=#Chapter3FMV_PositionsABAR"
+		CreateModule "#Creature" "#DroneCreature" "#Spline=A1C3RouteA" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneDefault_a" "#SpawnInLosInit" 
+		SendToModule "#DroneCreature" "#SetPosition=#Chapter3WeakenObj" "#Script=Kick"
+		
+	}
+}
+state Chapter3_BeeStruck
+{
+	conditions
+	{
+		if Timer > 0.8 goto Chapter3_BeeStruck2
+	}
+	actions
+	{
+		ResetTimer 
+		DestroyModule "#DroneCreature"
+		;SendToModule "BumbleBeeCreature" "#Script=Jump"
+		
+		
+	}
+	
+}
+state Chapter3_BeeStruck2
+{
+	conditions
+	{
+		if Timer > 0.5 goto Chapter3_BeeStruck3
+	}
+	actions
+	{
+		ResetTimer 
+		
+		SendToModule "#General"  "#FadeUp"
+		
+	}
+	
+}
+state Chapter3_BeeStruck3
+{
+	conditions
+	{
+		if Timer > 0.4 goto Chapter3_FakeFmv
+	}
+	actions
+	{
+		ResetTimer 
+		DestroyAllModules
+		
+	}
+	
+}
+state Chapter3_FakeFmv
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_MainStart
+		if Timer > 1.5 goto Chapter3_MainStart
+	}
+	Actions
+	{
+		ResetTimer
+		
+		SendToModule "#General" "#StartVideo=#D2C2Midtro1"
+	}
+	
+}
+state Chapter3_MainStart
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BarricadeCreature IsEnergyAtMin" == 1.0 goto Chapter3_SecondPartMidtro
+	}
+	actions
+	{
+		DestroyAllModules
+		;SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		;SetDeathPoint "Chapter3_DeathFailMission"
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A1C3SpawnA" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit" 
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=299.0" "#SetEnergy=299.0" "#SetEnergyMin=2.0" "#Script=BarrEarly"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BarricadeCreature" "#Radius=200" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key1Return"
+		;CreateModule "#Speech" "#MissionStartSpeech" "#PlayDelay=1" "#speech=#A1_ch3_obj4" "#Start" "#AutoDestroy" "#GermanWiiAudioFudge"
+                CreateModule "#Speech" "#MissionStartSpeech"  "#PlayDelay=2"  "#speech=#A1_ch3_obj1" "#Start" "#AutoDestroy"
+		CreateModule "#SplineExplode" "#RadarSplinePoint" "#Spline=A1C3SamRouteA" "#MilesPerHour=60" "#AddToRadar" "#Start" ; "#moduletag=#healthmeter" "#param=#stopped"
+		
+		SendToModule "#General" "#BarricadeHelpOn"
+
+		SendToModule "#General" "#SetPlayer=#Chapter3Start" ; "#FadeUp"
+	}
+}
+state Chapter3_SecondPartMidtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_SecondPart
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A1C3Midtro1"
+	}
+}
+state Chapter3_SecondPart
+{
+	conditions
+	{
+		if module "BarricadeCreature Complete" == 1.0 goto Chapter3_FailMission
+		if module "Trigger InArea" == 1.0 goto Chapter3_ThirdPartIntro
+		if module "BarricadeCreature TransformMeter" == 1.0 goto Chapter3_SecondPartOnFire
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_2 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Goto" "#BarricadeCreature" "#SpawnSpline=A1C3SpawnA" "#DirectSpline=A1C3RouteA" "#Object=#GreenMediumDot" "#Warning" "#type=Barricade" "#UnStoppableAndTransform=6.0" "#TransformForceCar" "#HideTransformMeter" "#SuppressShield" "#InhibitRubble"
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#A1C3TriggerA" "#AddToRadar" "#Beacon"
+		CreateModule "#Speech" "#A1C3GetToSam" "#speech=#A1_ch3_obj7" "#Start" "#AutoDestroy"
+                CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A1_ch3_obj2" "#AutoDestroy"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3FMV_PositionsAEND" "#FadeUp" "#BarricadeHelpOff"
+
+                CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=32" "#times=1"
+	}
+}
+state Chapter3_SecondPartOnFire
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter3_ThirdPartIntro
+		if module "Timer FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_3 QUIET Generic Play Action"
+                DestroyModule "#DelayedSend"
+		DestroyModule "#DelayedSendReminder"
+                CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A1_ch3_obj9" "#Start" "#AutoDestroy"
+		SendToModule "#General" "#SetMessage=KEY_LOC_WARNING" "#SetMessageTimer=30" "#DisplayTimerTime"
+		CreateModule "#Timer" "#Timer" "#Time=30" "#NoRender"
+		SendToModule "#BarricadeCreature" "#Script=StopAndSmoke" "#AddToRadarOff" "#SuppressShield"
+	}
+}
+state Chapter3_ThirdPartIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_ThirdPart
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1"
+		SendToModule "#General" "#StartVideo=#A1C3Midtro2"
+	}
+}
+state Chapter3_ThirdPart
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BarricadeCreature IsEnergyAtMin" == 1.0 goto Chapter3_FourthPartIntro
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A1C3SpawnB" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=599.0" "#SetEnergy=599.0" "#SetEnergyMin=2.0" "#Script=BarrEarly" "#SetPosition=#Chapter3FMV_PositionsBBAR"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BarricadeCreature" "#Radius=200" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key1Return"
+		CreateModule "#Speech" "#A1C3StopBarricade" "#speech=#A1_ch3_obj6" "#Start" "#AutoDestroy"
+		CreateModule "#SplineExplode" "#RadarSplinePoint" "#Spline=A1C3SamRouteB" "#MilesPerHour=60" "#AddToRadar" "#Start"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3FMV_PositionsBBEE" "#FadeUp" ;"#BarricadeHelpOn"
+	}
+}
+state Chapter3_FourthPartIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_FourthPart
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A1C3Midtro3"
+	}
+}
+state Chapter3_FourthPart
+{
+	conditions
+	{
+		if module "BarricadeCreature Complete" == 1.0 goto Chapter3_FailMission
+		if module "Trigger InArea" == 1.0 goto Chapter3_FifthPartIntro
+		if module "BarricadeCreature TransformMeter" == 1.0 goto Chapter3_FourthPartOnFire
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_2 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Goto" "#BarricadeCreature" "#SpawnSpline=A1C3RouteB" "#SplineStep=4"  "#DirectSpline=A1C3RouteB" "#Object=#GreenMediumDot" "#Warning" "#type=Barricade" "#UnStoppableAndTransform=6.0" "#TransformForceCar" "#HideTransformMeter" "#SuppressShield" "#InhibitRubble"
+		CreateModule "#Speech"  "#GotoReminderSpeech" "#A1C3GetToSam" "#speech=#A1_ch3_obj3" "#AutoDestroy" "#Start" 
+                CreateModule "#Speech"  "#GotoReminderSpeech" "#speech=#A1_ch3_obj8" "#AutoDestroy"
+                CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=30" "#times=1"
+               	CreateModule "#AreaRange" "#Trigger" "#Trigger=#A1C3TriggerB" "#AddToRadar" "#Beacon"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3FMV_PositionsBEND" "#FadeUp" "#BarricadeHelpOff"
+	}
+}
+state Chapter3_FourthPartOnFire
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter3_FifthPartIntro
+		if module "Timer FailMission" == 1.0 goto Chapter3_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission3_3 QUIET Generic Play Action"
+                DestroyModule "#DelayedSend"
+		DestroyModule "#DelayedSendReminder"
+                CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A1_ch3_obj9" "#Start" "#AutoDestroy"
+		SendToModule "#General" "#SetMessage=KEY_LOC_WARNING" "#SetMessageTimer=30" "#DisplayTimerTime"
+		CreateModule "#Timer" "#Timer" "#Time=30" "#NoRender"
+		SendToModule "#BarricadeCreature" "#Script=StopAndSmoke" "#AddToRadarOff" "#SuppressShield"
+	}
+}
+state Chapter3_FifthPartIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_FifthPart
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1"
+		SendToModule "#General" "#StartVideo=#A1C3Midtro4"
+	}
+}
+state Chapter3_FifthPart
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter3_FailMission
+		if module "BarricadeCreature IsEnergyAtMin" == 1.0 goto Chapter3_BarricadeEscape
+;		if module "BarricadeCreature Health" <= 0.0 goto Chapter3_CompleteDelay
+		if module "BarricadeCreature Dead" == 1.0 goto Chapter3_CompleteDelay
+		
+	}
+	actions
+	{
+		 
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#Creature" "#BarricadeCreature" "#Spline=A1C3SpawnC" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit" "#BlockDeath"
+		;CreateModule "#Goto" "#BarricadeCreature" "#SpawnSpline=A1C3SpawnC" "#count=1" "#maxalive=1" "#addtoradar" "#Boss=#Barricade" "#Type=Barricade" "#SpawnInLosInit" "#SpawnAsCreature" "#SetEnergyMax=899.0" "#SetEnergy=899.0" "#SetEnergyMin=2.0" "#BlockDeath" "#Script=BarrEarly" "#TransformForceRobot" "#InhibitRubble" 
+		;CreateModule "#CreatureBombingRun" "#CreatureBombingRun" "#ModuleTag=#BarricadeCreature" "#Spline=A1C3SpawnC" "#Protect"
+		;SendToModule "#CreatureBombingRun" "#NumRuns=1" "#UseFirstSpline" "#SpeedValueMin=60" "#SpeedValueMax=120" "#MeleeScript=BarrEarly" "#MeleeTime=9999" "#MeleeEnergyLeave=0.99" "#MeleeLeaveScript=BarrEarly" "#ForceTransformEnergy=1.0"
+		SendToModule "#BarricadeCreature" "#SetEnergyMax=899.0" "#SetEnergy=899.0" "#Script=BarrEarly" ;"#SetEnergyMin=2.0"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Creature=#BarricadeCreature" "#Radius=200" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key1Return"
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A1_ch3_obj5" "#Start" "#AutoDestroy"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter3StartD" "#FadeUp"
+	}
+}
+
+
+state Chapter3_BarricadeEscape
+{
+	conditions
+	{
+		if Timer > 8.0 goto Chapter3_CompleteDelay
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#KeyLocation"
+		SendToModule "#BarricadeCreature" "#RemoveBoss" "#DirectSpline=A1C3RouteA" "#Script=FollowSplineVeh" "#Unstoppable" "#AddToRadarOff" "#TransformForceCar" "#InhibitRubble" "#Speed=120"
+		SendToModule "#General" "#ForcePlayerFlyBackRecover"
+	}
+
+
+}
+state Chapter3_CompleteDelay
+{
+	conditions
+	{
+		if Timer > 1.0 goto Chapter3_Complete
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter3_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter3_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=Barricade"
+	SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+    	SendToModule "#General" "#LoadCreature=DroneDefault"
+    	SendToModule "#General" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT3" "#Spline=COMCAM3" "#SetFocus=CAMFOCUS3"
+		SendToModule "#General" "#CompleteMission" "#BarricadeHelpOff"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+	}
+}
+state Chapter3_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A1C3Outro"
+	}
+}
+state Chapter3_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=Barricade"
+	SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+    	SendToModule "#General" "#LoadCreature=DroneDefault"
+	   	SendToModule "#General" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT3"
+		SendToModule "#ActionRing" "#Unlock=#Chapter4"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+		setstate "PickGoto"
+	}
+}

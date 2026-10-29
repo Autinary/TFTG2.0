@@ -1,0 +1,224 @@
+state SubMissionEX_Init
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission_EnterExtra1
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#FadeDown" 
+	}
+}
+
+state SubMission_EnterExtra1
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto NextCheckpoint
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMissionEX_Death"
+		
+		CreateModule "#Timer" "#Timer" "#Time=120" "#Protect"
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=A3C2RacePointA" "#Range=25"
+
+		SendToModule "#General" "#SetVehicle=#ExtraStart"
+		SendToModule "#General" "#FadeUp"		
+			
+	}
+
+}
+state NextCheckpoint
+{
+	conditions
+	{
+		if Timer > 0.1 and
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto NextCheckpoint2
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyModule "#RaceNodes"
+		
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=A3C2RacePointB" "#Range=25"
+		
+			
+	}
+
+}
+state NextCheckpoint2
+{
+	conditions
+	{
+		if Timer > 0.1 and
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto NextCheckpoint3
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyModule "#RaceNodes"
+		
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=A3C2RacePointC" "#Range=25"
+		
+			
+	}
+
+}
+state NextCheckpoint3
+{
+	conditions
+	{
+		if Timer > 0.1 and
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto NextCheckpoint4
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyModule "#RaceNodes"
+		
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=A3C1RacePointA" "#Range=25"
+		
+			
+	}
+
+}
+state NextCheckpoint4
+{
+	conditions
+	{
+		if Timer > 0.1 and
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto NextCheckpoint5
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyModule "#RaceNodes"
+		
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=A3C2RacePointD" "#Range=25"
+		
+			
+	}
+
+}
+state NextCheckpoint5
+{
+	conditions
+	{
+		if Timer > 0.1 and
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto NextCheckpoint6
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyModule "#RaceNodes"
+		
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=A3C2RacePointE" "#Range=25"
+		
+			
+	}
+
+}
+state NextCheckpoint6
+{
+	conditions
+	{
+		if Timer > 0.1 and
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMissionEX_Finish
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyModule "#RaceNodes"
+		
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=A3C2RacePointF" "#Range=25"
+		
+			
+	}
+
+}
+
+state SubMissionEX_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionEX_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMissionEX_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=5"
+		;SetState "SubMissionEX_Leave"
+	}
+}
+state SubMissionEX_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMissionEX_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMissionEX_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#ExtraRestart" "#FadeUp"
+		SendToModule "#General" "#FadeUp"		
+		SetState "LevelSpecialInit6"
+	}
+}

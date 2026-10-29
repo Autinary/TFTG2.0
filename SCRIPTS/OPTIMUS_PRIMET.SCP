@@ -1,0 +1,169 @@
+
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRangeMin				1.0
+CONST AutoMeleeRangeMax				2.0
+CONST ClosestApproachRangedMin		30.0
+CONST ClosestApproachRangedMax		32.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+ConditionMacro StuckJump
+{
+	if GetFlag "StuckByObstacle" == 1.0
+}
+
+ConditionMacro StuckRoll
+{
+	if GetFlag "StuckByObstacle" == 2.0
+}
+
+ConditionMacro AttackPOI
+{
+	if BeenStruckTime > 5.0 and
+	if HasActivePOI == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto TransformCarInit
+		if CarForm == 1.0 goto RollOut
+		if SecondaryForm == 1.0 goto RollOut
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=true" "TakeHit=false" "StuckEscape=true"
+		SetFlag "TakeHitSave"
+		SetPhysicsState "static=false" "immunetoshots=True" 
+	}
+}
+
+
+state TransformCarInit
+{
+	Conditions
+	{
+		
+	}
+	Actions
+	{
+		Transform Car UntilDone
+		SetState RollOut
+	}
+}
+state RollOut
+{
+	Conditions
+	{
+		if AlwaysTrue > "RAND*5.0" AND
+		if DistanceBetweenOpponent < 10 goto TransformInit
+
+		if DistanceBetweenOpponent < 5 goto Ram
+
+		if AlwaysTrue > "RAND*2.0" AND
+		if DistanceBetweenOpponent < 25 goto StartVehicleShooting
+		if OnRoofTime > 1.0 goto TransformInit
+	}
+	Actions
+	{
+		CarDrive "gotoopponent" "speed=150" "ignorelights" 
+	}
+}
+state StartVehicleShooting
+{
+	Conditions
+	{
+		if AlwaysTrue > "RAND*5.0" goto RollOut
+		if DistanceBetweenOpponent < 10 goto TransformInit
+		if DistanceBetweenOpponent < 25 goto ForceTranVehicleShoot
+		if DistanceBetweenOpponent > 25 goto RollOut
+		if OnRoofTime > 1.0 goto TransformInit
+	}
+	Actions
+	{
+		CarDrive "gotoopponent" "speed=120" "ignorelights" "shootatopp"
+	}
+}
+state ForceTranVehicleShoot
+{
+	Conditions
+	{
+		if AlwaysTrue > "RAND*5.0" goto RollOut
+		
+		if DistanceBetweenOpponent < 10 goto TransformInit
+		if DistanceBetweenOpponent < 25 goto StartVehicleShooting
+		if DistanceBetweenOpponent > 25 goto RollOut
+		if OnRoofTime > 1.0 goto TransformInit
+	}
+	Actions
+	{
+		EngageOpponentTC
+	}
+}
+state Ram
+{
+	Conditions
+	{
+		if Timer > 1.7 goto TransformInit
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state ForceBlock
+{
+	Conditions
+	{
+		if OnRoofTime > 1.0 goto TransformInit
+		if RobotForm == 0.0 goto RollOut
+
+		
+	}
+	Actions
+	{
+		SetPhysicsState "static=false" "immunetoshots=True"
+		SetState RollOut
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto ChooseAttackStyle
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+state ChooseAttackStyle
+{
+    	ReferenceScript {
+        Script=Optimus_M
+        Source=Global
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}

@@ -1,0 +1,95 @@
+
+state SubMission3_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission3_Death"
+		SetState "SubMission3_Init"
+	}
+}
+state SubMission3_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission3_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#SubMissions" "#SetTitle=#Attack"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission""
+    		SendToModule "#General" "#LoadCreature=DroneForkLift"
+		CreateModule "#Creature" "#Creature" "#Type=DroneForkLift" "#Spline=TestSpawn" "#count=6" "#maxalive=4" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=5" 
+		CreateModule "#Timer" "#Timer" "#Time=45.0"
+
+	}
+}
+state SubMission3_Main
+{
+	conditions
+	{
+		if module "creature getpercentagecomplete" == 1.0 goto SubMission3_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission3_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission3_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission3_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission3_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMission3_FinishWait
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=3"
+		SetState "SubMission3_Leave"
+	}
+}
+state SubMission3_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state SubMission3_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission3_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state SubMission3_Leave
+{
+	actions
+	{
+	    	SendToModule "#General" "#UnLoadCreature=DroneForkLift"
+		SetState "Main"
+	}
+}
+

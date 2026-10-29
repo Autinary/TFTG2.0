@@ -1,0 +1,96 @@
+;Destroy all drones within time limit
+
+state SubMission1_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission1_Death"
+		SetState "SubMission1_Init"
+	}
+}
+state SubMission1_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#SubMissions" "#SetTitle=#Attack"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission""
+    		SendToModule "#General" "#LoadCreature=DroneForkLift"
+		CreateModule "#Creature" "#Creature" "#Type=DroneForkLift" "#Spline=TestSpawn" "#count=6" "#maxalive=4" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=5" 
+		CreateModule "#Timer" "#Timer" "#Time=45.0"
+
+	}
+}
+state SubMission1_Main
+{
+	conditions
+	{
+		if module "creature getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeUp"
+	}
+}
+state SubMission1_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission1_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMission1_FinishWait
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=1"
+		SetState "SubMission1_Leave"
+	}
+}
+state SubMission1_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state SubMission1_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state SubMission1_Leave
+{
+	actions
+	{
+	    	SendToModule "#General" "#UnLoadCreature=DroneForkLift"
+		SetState "Main"
+	}
+}
+

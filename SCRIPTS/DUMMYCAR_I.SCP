@@ -1,0 +1,10 @@
+
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetPhysicsState "immunetoshots=true" "immunetomelee=true" "immunetothrown=true"
+		Transform Car UntilDone
+	}
+}

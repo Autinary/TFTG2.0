@@ -1,0 +1,42 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Run
+		if AlwaysTrue == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		  SetPhysicsState "static=false"
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Run
+	}
+	Actions
+	{
+		Transform UntilDone
+		SetState Run
+	}
+}
+
+state Run
+{
+	Actions
+	{
+		GoToKeyLocation
+	}
+}

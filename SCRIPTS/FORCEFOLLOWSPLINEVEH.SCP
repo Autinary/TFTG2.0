@@ -1,0 +1,93 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto RobotInit
+		if CarForm == 1.0 goto FollowSpline
+	}
+	Actions
+	{
+		SetPhysicsState "static=false"
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+	}
+}
+
+state RobotInit
+{
+	Conditions
+	{
+		;if YawToSplinePoint < 20 goto RobotExit
+		if OnRoofTime > 1.0 AND
+		if UseTransformMeter == 0.0 goto FlipMe
+
+		if ForceCar == 1.0 goto ForceCar
+	}
+	Actions
+	{
+		SetFlag "ReachedSplineEnd=false" "FollowingSpline=false"
+		SetStrafe false	; FIXME: This doesn't work as expected
+		DropCurrentPickup
+		SetBlocking "time=0.1"  
+		ApproachSpline
+		Transform Car UntilDone
+		SetFlag "FollowingSpline=true"
+		FollowSpline
+		SetFlag "ReachedSplineEnd=true" "FollowingSpline=false"
+		Transform Car UntilDone
+		CarDrive park
+	}
+}
+
+state RobotExit
+{
+	Actions
+	{
+		Transform Car UntilDone
+		SetState FollowSpline
+	}
+}
+
+state ForceCar
+{
+	Actions
+	{
+		Transform Car UntilDone
+		SetState FollowSpline
+	}
+}
+
+state FollowSpline
+{
+	Conditions
+	{
+		if OnRoofTime > 1.0 goto FlipMe
+	}
+	Actions
+	{
+		SetFlag "ReachedSplineEnd=false" "FollowingSpline=false"
+		ApproachSpline
+		SetFlag "FollowingSpline=true"
+		FollowSpline
+		SetFlag "ReachedSplineEnd=true" "FollowingSpline=false"
+		CarDrive park
+	}
+}
+
+state FlipMe
+{
+	Actions
+	{
+		Transform UntilDone
+		Transform Car UntilDone
+		SetState FollowSpline
+	}
+}

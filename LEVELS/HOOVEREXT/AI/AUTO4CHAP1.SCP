@@ -1,0 +1,1034 @@
+state Chapter1_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter1_InitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_GotoWaitSpeech
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected" 
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A4_ch1_Goto" "#AutoDestroy"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A4_ch1_Goto"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#StartMission"
+	}
+}
+state Chapter1_GotoWaitSpeech
+{
+	conditions
+	{
+		if module "MissionStartSpeech" == 0.0 goto Chapter1_Goto
+	}
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		SendToModule "#MissionStartSpeech" "#Start"
+	}
+}
+state Chapter1_Goto
+{
+	actions
+	{
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter1Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter1_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+
+state Chapter1_LoadCreatures
+{
+	conditions
+	{
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+    	SendToModule "#General" "#LoadCreature=DronePickupTruck"
+    	SendToModule "#General" "#LoadCreature=DroneCement"
+    	SendToModule "#General" "#LoadCreature=DroneMig"
+		SendToModule "#General" "#PlayerType=BumbleBee07"
+
+	}
+}
+state Chapter1_VideoIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_Main
+	}
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#A4C1Intro"
+	}
+}
+state Chapter1_Main
+{
+	actions
+	{
+		SetDeathPoint "Chapter1_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A4_ch1_obj1" "#AutoDestroy" "#Start"
+
+
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter1Start" "#FadeUp"
+	;	SendToModule "#General" "#AddTerrainFilter=4" "#SetPlayerTerrainFilter=0"
+		
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=A4C1SpawnA" "#maxalive=3" "#count=3" "#FollowSpline=A4C1RouteA1" "#WaitEnd" "#spacing=20.0" "#goalrange=5.0" "#AddToRadar" "#SpawnInLosInit" "#CanShoot=0" "#ConfineToPath" "#Protect" "#Invulnerable" ;"#type=CommTruck" 
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=A4C1SpawnB" "#maxalive=3" "#count=3" "#FollowSpline=A4C1RouteB1" "#WaitEnd" "#spacing=20.0" "#goalrange=5.0" "#AddToRadar" "#SpawnInLosInit" "#CanShoot=0" "#ConfineToPath" "#Protect" "#Invulnerable" ;"#type=CommTruck" 
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=A4C1SpawnC" "#maxalive=3" "#count=3" "#FollowSpline=A4C1RouteC1" "#WaitEnd" "#spacing=20.0" "#goalrange=5.0" "#AddToRadar" "#SpawnInLosInit" "#CanShoot=0" "#ConfineToPath" "#Protect" "#Invulnerable" ;"#type=CommTruck" 
+		
+		CreateModule "#Creature" "#CreatureWaveA" "#count=0" "#maxalive=0" "#ExtraTerrColl=65532"
+		CreateModule "#Creature" "#CreatureWaveB" "#count=0" "#maxalive=0" "#ExtraTerrColl=65532" 
+		CreateModule "#Creature" "#CreatureWaveC" "#count=0" "#maxalive=0" "#ExtraTerrColl=65532"
+		
+		CreateModule "#Creature" "#CreatureWaveD" "#count=0" "#maxalive=0"	
+		CreateModule "#Creature" "#CreatureWaveE" "#count=0" "#maxalive=0" 
+		CreateModule "#Creature" "#CreatureWaveF" "#count=0" "#maxalive=0" 
+		
+		CreateModule "#Creature" "#CreatureWaveG" "#count=0" "#maxalive=0" 
+		CreateModule "#Creature" "#CreatureWaveH" "#count=0" "#maxalive=0" 
+		CreateModule "#Creature" "#CreatureWaveI" "#count=0" "#maxalive=0" 
+		
+					
+		CreateModule "#Timer" "#TimerA" "#Time=210.0" "#Stop" "#Protect" "#NoDraw"
+		CreateModule "#Timer" "#TimerB" "#Time=210.0" "#Stop" "#Protect" "#NoDraw"
+		CreateModule "#Timer" "#TimerC" "#Time=210.0" "#Stop" "#Protect" "#NoDraw"
+		
+		CreateModule "#Timer" "#AmbushTimer" "#Time=3.0" "#Stop" "#Protect" "#NoDraw"
+
+		
+		SendToModule "#General" "#CountASet=1" "#CountBset=1" "#CountCset=1" "#CountDset=0"
+		
+		CreateModule "#AreaRange" "#TriggerA" "#Trigger=#A4C1TriggerA1" "#Protect"
+		CreateModule "#AreaRange" "#TriggerB" "#Trigger=#A4C1TriggerB1" "#Protect"
+		CreateModule "#AreaRange" "#TriggerC" "#Trigger=#A4C1TriggerC1" "#Protect"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#NoProcess" "#NoRender"
+		
+		SetState "Chapter1_CheckForTriggers"
+	}
+}
+
+
+
+state Chapter1_CheckForTriggers_BLAH ;;;;;NOT USED AT THE MO, BUT DO NOT DELETE PLEASE!;;;;;
+{
+	conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		;mission progression A
+		if module "General GetCountA" == 1.0 and
+			if module "GoToDroneA Finish" >= 1.0 goto Chapter1_AreaA1
+		
+		if module "General GetCountA" == 2.0 and
+			if module "TriggerA InArea" == 1.0 goto Chapter1_KeyA1
+			
+		if module "General GetCountA" >= 3.0 and
+			if module "General GetCountA" <= 4.0 and
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayA1
+	
+		if module "General GetCountA" >= 3.0 and
+			if module "General GetCountA" <= 4.0 and
+				if module "CreatureWaveA CompleteTrigger" == 1.0 and
+					if module "CreatureWaveD CompleteTrigger" == 1.0 goto Chapter1_KeyA1Finished	
+			
+	
+		if module "General GetCountA" == 3.0 and
+			if module "GoToDroneA Finish" >= 1.0 goto Chapter1_AreaA2
+			
+	
+		if module "General GetCountA" == 4.0 and
+			if module "TriggerA InArea" == 1.0 goto Chapter1_KeyA2
+			
+		if module "General GetCountA" >= 5.0 and
+			if module "General GetCountA" <= 6.0 and
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayA2			
+			
+		if module "General GetCountA" >= 5.0 and
+			if module "General GetCountA" <= 6.0 and
+				if module "CreatureWaveA CompleteTrigger" == 1.0 and
+					if module "CreatureWaveG CompleteTrigger" == 1.0 goto Chapter1_KeyA2Finished	
+		
+		if module "General GetCountA" == 6.0 and
+			if module "GoToDroneA Finish" >= 1.0 goto Chapter1_AreaA3
+			
+		;mission progression B
+				
+		if module "General GetCountB" == 1.0 and
+			if module "GoToDroneB Finish" >= 1.0 goto Chapter1_AreaB1
+		
+		if module "General GetCountB" == 2.0 and
+			if module "TriggerB InArea" == 1.0 goto Chapter1_KeyB1
+			
+		if module "General GetCountB" >= 3.0 and
+			if module "General GetCountB" <= 4.0 and
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayB1
+		
+		if module "General GetCountB" >= 3.0 and
+			if module "General GetCountB" <= 4.0 and
+				if module "CreatureWaveB CompleteTrigger" == 1.0 goto Chapter1_KeyB1Finished	
+			
+	
+		if module "General GetCountB" == 3.0 and
+			if module "GoToDroneB Finish" >= 1.0 goto Chapter1_AreaB2
+			
+	
+		if module "General GetCountB" == 4.0 and
+			if module "TriggerB InArea" == 1.0 goto Chapter1_KeyB2
+	
+		if module "General GetCountB" >= 5.0 and
+			if module "General GetCountB" <= 6.0 and
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayB2		
+			
+		if module "General GetCountB" >= 5.0 and
+			if module "General GetCountB" <= 6.0 and
+				if module "CreatureWaveB CompleteTrigger" == 1.0 goto Chapter1_KeyB2Finished	
+		
+		if module "General GetCountB" == 6.0 and
+			if module "GoToDroneB Finish" >= 1.0 goto Chapter1_AreaB3
+		
+		;mission progression C
+
+		if module "General GetCountC" == 1.0 and
+			if module "GoToDroneC Finish" >= 1.0 goto Chapter1_AreaC1
+		
+		if module "General GetCountC" == 2.0 and
+			if module "TriggerC InArea" == 1.0 goto Chapter1_KeyC1
+			
+		if module "General GetCountC" >= 3.0 and
+			if module "General GetCountC" <= 4.0 and
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayC1
+		
+		if module "General GetCountC" >= 3.0 and
+			if module "General GetCountC" <= 4.0 and
+				if module "CreatureWaveC CompleteTrigger" == 1.0 goto Chapter1_KeyC1Finished	
+			
+	
+		if module "General GetCountC" == 3.0 and
+			if module "GoToDroneC Finish" >= 1.0 goto Chapter1_AreaC2
+			
+	
+		if module "General GetCountC" == 4.0 and
+			if module "TriggerC InArea" == 1.0 goto Chapter1_KeyC2
+			
+		if module "General GetCountC" >= 5.0 and
+			if module "General GetCountC" <= 6.0 and
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayC2		
+			
+		if module "General GetCountC" >= 5.0 and
+			if module "General GetCountC" <= 6.0 and
+				if module "CreatureWaveC CompleteTrigger" == 1.0 goto Chapter1_KeyC2Finished	
+		
+		if module "General GetCountC" == 6.0 and
+			if module "GoToDroneC Finish" >= 1.0 goto Chapter1_AreaC3
+		
+		;mission complete
+		if module "General GetCountA" == 7.0 and
+			if module "General GetCountB"  == 7.0 and
+				if module "General GetCountC" == 7.0 goto Chapter1_Complete
+	}
+}
+
+state Chapter1_CheckForTriggers
+{
+	Actions
+	{
+		SetState Chapter1_Watch_Triggers_A
+	}
+}
+
+;;STATES
+;; Starting off   : CountA = 1
+;; Reached Area 1 : CountA = 2
+;; Key Area 1     : CountA = 3
+;; Get Away 1	  : CountA = 4
+;; Reached Area 2 : CountA = 5
+;; Key Area 2	  : CountA = 6
+;; Get Away 2     : CountA = 7
+;; Reached Area 3 : CountA = 8
+
+;;Count D tells us whether a key location is active or not ; we don't want two being set up at the same time...
+
+state Chapter1_Watch_Triggers_A
+{
+	Conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+		;if module "GoToDroneA GetPercentageComplete" > 0.0 goto Chapter1_FailMission ;; have any drones died
+		;if module "GoToDroneB GetPercentageComplete" > 0.0 goto Chapter1_FailMission ;; have any drones died
+		;if module "GoToDroneC GetPercentageComplete" > 0.0 goto Chapter1_FailMission ;; have any drones died
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	
+		;mission progression A
+		if module "General GetCountA" == 1.0 and
+			if module "GoToDroneA Finish" >= 3.0 goto Chapter1_AreaA1
+		
+		if module "General GetCountA" == 2.0 and
+			if module "TriggerA InArea" == 1.0 and
+				if module "General GetCountD" != 1.0 goto Chapter1_KeyA1
+			
+		if module "General GetCountA" == 3.0 and
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayA1
+	
+		if module "General GetCountA" >= 4.0 and												;; Got Away
+			if module "General GetCountA" <= 5.0 and											;; or Reached Area2 already
+				if module "CreatureWaveA CompleteTrigger" == 1.0 and
+					if module "CreatureWaveD CompleteTrigger" == 1.0 goto Chapter1_KeyA1Finished	    ;; Cleared Area	
+			
+	
+		if module "General GetCountA" == 4.0 and											    ;; Got Away
+			if module "GoToDroneA Finish" >= 3.0 goto Chapter1_AreaA2							;; has Reached Area 2
+	
+		if module "General GetCountA" == 5.0 and												;; Has Reached Area 2
+			if module "TriggerA InArea" == 1.0 and
+				if module "General GetCountD" != 1.0 goto Chapter1_KeyA2								;; Player has reached Area 2
+			
+		if module "General GetCountA" == 6.0 and												;; Has setup key location
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayA2			;; Get Away Npw
+			
+		if module "General GetCountA" >= 7.0 and												;; Has Got Away
+			if module "General GetCountA" <= 8.0 and											;; or Reached Area 3 Already
+				if module "CreatureWaveA CompleteTrigger" == 1.0 and
+					if module "CreatureWaveG CompleteTrigger" == 1.0 goto Chapter1_KeyA2Finished		;; cleared area 2
+		
+		if module "General GetCountA" == 7.0 and												;; Has Got away
+			if module "GoToDroneA Finish" >= 1.0 goto Chapter1_AreaA3							;; has reached area 3
+	
+	
+			;mission complete
+		if module "General GetCountA" == 8.0 and
+			if module "General GetCountB"  == 8.0 and
+				if module "General GetCountC" == 8.0 goto Chapter1_Complete
+		
+		if Timer > 0.2 goto Chapter1_Watch_Triggers_B
+	}
+
+		
+	Actions
+	{
+		ResetTimer
+	}
+}
+
+state Chapter1_Watch_Triggers_B
+{
+	Conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+		;if module "GoToDroneA GetPercentageComplete" > 0.0 goto Chapter1_FailMission ;; have any drones died
+		;if module "GoToDroneB GetPercentageComplete" > 0.0 goto Chapter1_FailMission ;; have any drones died
+		;if module "GoToDroneC GetPercentageComplete" > 0.0 goto Chapter1_FailMission ;; have any drones died
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	
+		;mission progression B
+				
+		if module "General GetCountB" == 1.0 and
+			if module "GoToDroneB Finish" >= 3.0 goto Chapter1_AreaB1
+		
+		if module "General GetCountB" == 2.0 and
+			if module "TriggerB InArea" == 1.0 and
+				if module "General GetCountD" != 1.0 goto Chapter1_KeyB1
+			
+		if module "General GetCountB" == 3.0 and
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayB1
+	
+		if module "General GetCountB" >= 4.0 and												;; Got Away
+			if module "General GetCountB" <= 5.0 and											;; or Reached Area2 already
+				if module "CreatureWaveB CompleteTrigger" == 1.0 and
+					if module "CreatureWaveE CompleteTrigger" == 1.0 goto Chapter1_KeyB1Finished	    ;; Cleared Area	
+			
+	
+		if module "General GetCountB" == 4.0 and											    ;; Got Away
+			if module "GoToDroneB Finish" >= 3.0 goto Chapter1_AreaB2							;; has Reached Area 2
+	
+		if module "General GetCountB" == 5.0 and												;; Has Reached Area 2
+			if module "TriggerB InArea" == 1.0 and
+				if module "General GetCountD" != 1.0 goto Chapter1_KeyB2								;; Player has reached Area 2
+			
+		if module "General GetCountB" == 6.0 and												;; Has setup key location
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayB2			;; Get Away Npw
+			
+		if module "General GetCountB" >= 7.0 and												;; Has Got Away
+			if module "General GetCountB" <= 8.0 and											;; or Reached Area 3 Already
+				if module "CreatureWaveB CompleteTrigger" == 1.0 and
+					if module "CreatureWaveH CompleteTrigger" == 1.0 goto Chapter1_KeyB2Finished	    ;; Cleared Area	2
+		
+		if module "General GetCountB" == 7.0 and												;; Has Got away
+			if module "GoToDroneB Finish" >= 1.0 goto Chapter1_AreaB3							;; has reached area 3
+	
+	
+			;mission complete
+		if module "General GetCountA" == 8.0 and
+			if module "General GetCountB"  == 8.0 and
+				if module "General GetCountC" == 8.0 goto Chapter1_Complete
+		
+		if Timer > 0.2 goto Chapter1_Watch_Triggers_C
+	}
+
+		
+	Actions
+	{
+		ResetTimer
+	}
+}
+
+state Chapter1_Watch_Triggers_C
+{
+	Conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+		;if module "GoToDroneA GetPercentageComplete" > 0.0 goto Chapter1_FailMission ;; have any drones died
+		;if module "GoToDroneB GetPercentageComplete" > 0.0 goto Chapter1_FailMission ;; have any drones died
+		;if module "GoToDroneC GetPercentageComplete"  > 0.0 goto Chapter1_FailMission ;; have any drones died
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	
+		;mission progression C
+
+		if module "General GetCountC" == 1.0 and
+			if module "GoToDroneC Finish" >= 3.0 goto Chapter1_AreaC1
+		
+		if module "General GetCountC" == 2.0 and
+			if module "TriggerC InArea" == 1.0 and
+				if module "General GetCountD" != 1.0 goto Chapter1_KeyC1
+			
+		if module "General GetCountC" == 3.0 and
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayC1
+	
+		if module "General GetCountC" >= 4.0 and												;; Got Away
+			if module "General GetCountC" <= 5.0 and											;; or Reached Area2 already
+				if module "CreatureWaveC CompleteTrigger" == 1.0 and
+					if module "CreatureWaveF CompleteTrigger" == 1.0 goto Chapter1_KeyC1Finished	    ;; Cleared Area	
+			
+	
+		if module "General GetCountC" == 4.0 and											    ;; Got Away
+			if module "GoToDroneC Finish" >= 3.0 goto Chapter1_AreaC2							;; has Reached Area 2
+	
+		if module "General GetCountC" == 5.0 and												;; Has Reached Area 2
+			if module "TriggerC InArea" == 1.0 and
+				if module "General GetCountD" != 1.0 goto Chapter1_KeyC2								;; Player has reached Area 2
+			
+		if module "General GetCountC" == 6.0 and												;; Has setup key location
+				if module "AmbushTimer JustFinished" == 1.0 goto Chapter1_GetAwayC2			;; Get Away Npw
+			
+		if module "General GetCountC" >= 7.0 and												;; Has Got Away
+			if module "General GetCountC" <= 8.0 and											;; or Reached Area 3 Already
+				if module "CreatureWaveC CompleteTrigger" == 1.0 and
+					if module "CreatureWaveI CompleteTrigger" == 1.0 goto Chapter1_KeyC2Finished	    ;; Cleared Area	2
+		
+		if module "General GetCountC" == 7.0 and												;; Has Got away
+			if module "GoToDroneC Finish" >= 1.0 goto Chapter1_AreaC3							;; has reached area 3
+	
+	
+			;mission complete
+		if module "General GetCountA" == 8.0 and
+			if module "General GetCountB"  == 8.0 and
+				if module "General GetCountC" == 8.0 goto Chapter1_Complete
+				
+		if Timer > 0.2 goto Chapter1_Watch_Triggers_A
+	}
+
+		
+	Actions
+	{
+		ResetTimer
+		
+	}	
+}
+
+;;;;MISSION PROGRESSION A;;;;;
+state Chapter1_AreaA1
+{
+	conditions
+	{
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+	
+	}
+	actions
+	{
+		;DestroyAllModules
+
+		SendToModule "#TimerA" "#Time=210.0" "#Start"
+		SendToModule "#CreatureWaveD" "#Spline=A4C1SpawnA1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DronePickupTruck" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=StandAndShoot" "#TargetLinkedMod=#GotoDroneA"
+		;SendToModule "#GotoDroneA" "#FollowSpline=A4C1RouteA2"
+		SendToModule "#GotoDroneA" "#Critical"  "TimerTag=TimerA"
+		SendToModule "#General" "#CountASet=2.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_KeyA1
+{
+	Actions
+	{
+		SendToModule "#TriggerA" "#Trigger=#A4C1TriggerA2"
+		SendToModule "#CreatureWaveA" "#Spline=A4C1SpawnMIGA1" "#count=3" "#maxalive=3" "#addtoradar" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A4C1MIGPATHA1" "ExtraTerrColl=65532"
+		SendToModule "#KeyLocation" "#Spline=A4C1KeyLocA1" "#Process" "#Render"
+		SendToModule "#General" "#CountASet=3.0"
+		SendToModule "#TimerA" "#Time=210.0" "#Stop"
+		SendToModule "#General" "#CountDSet=1.0" 
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Start" "#Protect" "#NoDraw"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_GetAwayA1
+{
+	Actions 
+	{
+		;SendToModule "#CreatureWaveA"  "#Script=Combat" "#TargetLinkedMod=Off"
+		SendToModule "#CreatureWaveD"  "#Script=Combat" "#TargetLinkedMod=Off"
+		
+		SendToModule "#GotoDroneA" "#FollowSpline=A4C1RouteA2" "#NotCritical"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Stop" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountASet=4.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_KeyA1Finished
+{
+	Actions
+	{
+		SendToModule "#KeyLocation" "#NoProcess" "#NoRender"
+		SendToModule "#CreatureWaveA" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountDSet=0.0" 
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+
+state Chapter1_AreaA2
+{
+	conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		;DestroyAllModules
+
+		SendToModule "#CreatureWaveG" "#Spline=A4C1SpawnA2" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneCement" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=StandAndShoot" "#TargetLinkedMod=#GotoDroneA"
+		SendToModule "#TimerA" "#Time=210.0" "#Start"
+		SendToModule "#GotoDroneA" "#Critical" "TimerTag=TimerA"
+		;SendToModule "#GotoDroneA" "#DirectSpline=A4C1RouteA3"
+		SendToModule "#General" "#CountASet=5.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_KeyA2
+{
+	Actions
+	{
+		DestroyModule "#CreatureWaveA"		"#Creature" 
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A4C1SpawnMIGA2" "#count=3" "#maxalive=3" "#addtoradar" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A4C1MIGPATHA2" "ExtraTerrColl=65532"
+		SendToModule "#KeyLocation" "#Spline=A4C1KeyLocA2" "#Process" "#Render"
+		SendToModule "#TriggerA" "#Trigger=#A4C1TriggerA3"
+		SendToModule "#General" "#CountASet=6.0"
+		SendToModule "#TimerA" "#Time=210.0" "#Stop"
+		SendToModule "#General" "#CountDSet=1.0" 
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Start" "#Protect" "#NoDraw"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_GetAwayA2
+{
+	Actions 
+	{
+		SendToModule "#CreatureWaveG"  "#Script=Combat" "#TargetLinkedMod=Off"
+		
+		SendToModule "#GotoDroneA" "#FollowSpline=A4C1RouteA3" "#NotCritical"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Stop" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountASet=7.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_KeyA2Finished
+{
+	Actions
+	{
+		SendToModule "#KeyLocation" "#NoProcess" "#NoRender"
+		SendToModule "#CreatureWaveA" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountDSet=0.0" 
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+
+state Chapter1_AreaA3
+{
+	conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		;DestroyAllModules
+		SendToModule "#General" "#CountASet=8.0"
+		SendToModule "#TimerA" "#Time=210.0" "#Stop"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+;;;;;;;END OF MISSION PROGRESSION A;;;;;
+
+
+;;;;MISSION PROGRESSION B;;;;;
+state Chapter1_AreaB1
+{
+	conditions
+	{
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+	
+	}
+	actions
+	{
+		;DestroyAllModules
+
+		SendToModule "#CreatureWaveE" "#Spline=A4C1SpawnB1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DronePickupTruck" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=StandAndShoot" "#TargetLinkedMod=#GotoDroneB"
+		SendToModule "#TimerB" "#Time=210.0" "#Start"
+		;SendToModule "#GotoDroneB" "#FollowSpline=A4C1RouteB2"
+		SendToModule "#GotoDroneB" "#Critical"   "TimerTag=TimerB" 
+		SendToModule "#General" "#CountBSet=2.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_KeyB1
+{
+	Actions
+	{
+		SendToModule "#TriggerB" "#Trigger=#A4C1TriggerB2"
+		SendToModule "#CreatureWaveB"  "#Spline=A4C1SpawnMIGB1" "#count=3" "#maxalive=3" "#addtoradar" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A4C1MIGPATHB1"
+		SendToModule "#KeyLocation" "#Spline=A4C1KeyLocB1" "#Process" "#Render"
+		SendToModule "#General" "#CountBSet=3.0"
+		SendToModule "#TimerB" "#Time=210.0" "#Stop"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Start" "#Protect" "#NoDraw"
+		SendToModule "#General" "#CountDSet=1.0" 
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_GetAwayB1
+{
+	Actions 
+	{
+		SendToModule "#CreatureWaveE"  "#Script=Combat" "#TargetLinkedMod=Off"
+		
+		SendToModule "#GotoDroneB" "#FollowSpline=A4C1RouteB2" "#NotCritical"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Stop" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountBSet=4.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_KeyB1Finished
+{
+	Actions
+	{
+		SendToModule "#KeyLocation" "#NoProcess" "#NoRender"
+		SendToModule "#CreatureWaveB" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountDSet=0.0" 
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+
+state Chapter1_AreaB2
+{
+	conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		;DestroyAllModules
+
+		SendToModule "#CreatureWaveH" "#Spline=A4C1SpawnB2" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=StandAndShoot" "#TargetLinkedMod=#GotoDroneB"
+		SendToModule "#TimerB" "#Time=210.0" "#Start"
+		SendToModule "#GotoDroneB" "#Critical" "TimerTag=TimerB"
+		;SendToModule "#GotoDroneB" "#DirectSpline=A4C1RouteB3"
+		SendToModule "#General" "#CountBSet=5.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+
+state Chapter1_KeyB2
+{
+	Actions
+	{
+		DestroyModule "#CreatureWaveB"		
+		CreateModule "#Creature"  "#CreatureWaveB"  "#Spline=A4C1SpawnMIGB2" "#count=3" "#maxalive=3" "#addtoradar" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A4C1MIGPATHB2"
+		SendToModule "#KeyLocation" "#Spline=A4C1KeyLocB2" "#Process" "#Render"
+		SendToModule "#TriggerB" "#Trigger=#A4C1TriggerB3"
+		SendToModule "#General" "#CountBSet=6.0"
+		SendToModule "#TimerB" "#Time=210.0" "#Stop"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Start" "#Protect" "#NoDraw"
+		SendToModule "#General" "#CountDSet=1.0" 
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_GetAwayB2
+{
+	Actions 
+	{
+		SendToModule "#CreatureWaveH"  "#Script=Combat" "#TargetLinkedMod=Off"
+		
+		SendToModule "#GotoDroneB" "#FollowSpline=A4C1RouteB3" "#NotCritical"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Stop" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountBSet=7.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+
+state Chapter1_KeyB2Finished
+{
+	Actions
+	{
+		SendToModule "#KeyLocation" "#NoProcess" "#NoRender"
+		SendToModule "#CreatureWaveB" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountDSet=0.0" 
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+
+state Chapter1_AreaB3
+{
+	conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		;DestroyAllModules
+		SendToModule "#General" "#CountBSet=8.0"
+		SendToModule "#TimerB" "#Time=210.0" "#Stop"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+;;;;;;;END OF MISSION PROGRESSION B;;;;;
+
+
+;;;;MISSION PROGRESSION C;;;;;
+state Chapter1_AreaC1
+{
+	conditions
+	{
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+	
+	}
+	actions
+	{
+		;DestroyAllModules
+
+		SendToModule "#CreatureWaveF" "#Spline=A4C1SpawnC1" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneCement" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=StandAndShoot" "#TargetLinkedMod=#GotoDroneC"
+		SendToModule "#TimerC" "#Time=210.0" "#Start"
+		;SendToModule "#GotoDroneC" "#FollowSpline=A4C1RouteC2"
+		SendToModule "#GotoDroneC" "#Critical"  "TimerTag=TimerC"
+		SendToModule "#General" "#CountCSet=2.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_KeyC1
+{
+	Actions
+	{
+		SendToModule "#TriggerC" "#Trigger=#A4C1TriggerC2"
+		SendToModule "#CreatureWaveC" "#Spline=A4C1SpawnC1" "#count=3" "#maxalive=3" "#addtoradar" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=StandAndShoot" "#TargetLinkedMod=#GotoDroneC"
+		SendToModule "#CreatureWaveC" "#Spline=A4C1SpawnMIGC1" "#count=3" "#maxalive=3" "#addtoradar" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A4C1MIGPATHC1"
+		SendToModule "#KeyLocation" "#Spline=A4C1KeyLocC1" "#Process" "#Render"
+		SendToModule "#General" "#CountCSet=3.0"
+		SendToModule "#General" "#CountDSet=1.0" 
+		SendToModule "#TimerC" "#Time=210.0" "#Stop"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Start" "#Protect" "#NoDraw"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_GetAwayC1
+{
+	Actions 
+	{
+		SendToModule "#CreatureWaveF"  "#Script=Combat" "#TargetLinkedMod=Off"
+		SendToModule "#GotoDroneC" "#FollowSpline=A4C1RouteC2" "#NotCritical"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Stop" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountCSet=4.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_KeyC1Finished
+{
+	Actions
+	{
+		SendToModule "#KeyLocation" "#NoProcess" "#NoRender"
+		SendToModule "#CreatureWaveC" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountDSet=0.0" 
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+
+
+
+state Chapter1_AreaC2
+{
+	conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		;DestroyAllModules
+
+		SendToModule "#CreatureWaveI" "#Spline=A4C1SpawnC2" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=StandAndShoot" "#TargetLinkedMod=#GotoDroneC"
+		SendToModule "#TimerC" "#Time=210.0" "#Start"
+		SendToModule "#GotoDroneC" "#Critical"  "TimerTag=TimerC"
+		;SendToModule "#GotoDroneC" "#DirectSpline=A4C1RouteC3"
+		SendToModule "#General" "#CountCSet=5.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_KeyC2
+{
+	Actions
+	{
+		DestroyModule "#CreatureWaveC"		
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=A4C1SpawnMIGC1" "#count=3" "#maxalive=3" "#addtoradar" "#Type=DroneMig" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A4C1MIGPATHC1"
+		SendToModule "#KeyLocation" "#Spline=A4C1KeyLocC2" "#Process" "#Render"
+		SendToModule "#TriggerC" "#Trigger=#A4C1TriggerC3"
+		SendToModule "#General" "#CountCSet=6.0"
+		SendToModule "#TimerC" "#Time=210.0" "#Stop"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Start" "#Protect" "#NoDraw"
+		SendToModule "#General" "#CountDSet=1.0" 
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+state Chapter1_GetAwayC2
+{
+	Actions 
+	{
+		SendToModule "#CreatureWaveI"  "#Script=Combat" "#TargetLinkedMod=Off"
+		SendToModule "#GotoDroneC" "#FollowSpline=A4C1RouteC3" "#NotCritical"
+		SendToModule "#AmbushTimer" "#Time=3.0" "#Stop" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountCSet=7.0"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+
+state Chapter1_KeyC2Finished
+{
+	Actions
+	{
+		SendToModule "#KeyLocation" "#NoProcess" "#NoRender"
+		SendToModule "#CreatureWaveC" "#ClearTriggeredComplete"
+		SendToModule "#General" "#CountDSet=0.0" 
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+
+state Chapter1_AreaC3
+{
+	conditions
+	{
+		;mission fail
+		if module "TimerA" <= 0.0 goto Chapter1_FailMission
+		if module "TimerB" <= 0.0 goto Chapter1_FailMission
+		if module "TimerC" <= 0.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		;DestroyAllModules
+		SendToModule "#General" "#CountCSet=8.0"
+		SendToModule "#TimerC" "#Time=210.0" "#Stop"
+		SetState Chapter1_CheckForTriggers
+	}
+}
+
+;;;;;;;END OF MISSION PROGRESSION C;;;;;
+
+state Chapter1_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter1_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter1_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+    	SendToModule "#General" "#UnLoadCreature=DroneCement"
+    	SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#RevertPlayerType"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+		SendToModule "#General" "#RemoveTerrainFilter=4" "#SetPlayerTerrainFilter=-1"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#General" "#RemoveTerrainFilter=4" "#SetPlayerTerrainFilter=-1"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter2"
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A4C1Outro"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+    	SendToModule "#General" "#UnLoadCreature=DroneCement"
+    	SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#PlayerType=BumbleBee07"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter2"
+		IncreasePlayerHealth max
+		setstate "Chapter2_InitGoto" ;goto next chapter
+	}
+}

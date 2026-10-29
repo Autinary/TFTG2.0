@@ -1,0 +1,1255 @@
+state Chapter2_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter2_PostC1InitGoto
+{
+	actions
+	{
+
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SendToModule "#General" "#SetPlayer=#COMPPOINT5" 
+		
+
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch2_Goto" "#AutoDestroy" "#Start" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A5_ch2_Goto2" "#AutoDestroy"
+		
+		Idle 3.0
+		
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter2Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter2_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter2_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A5C2Intro"
+	}
+}
+state Chapter2_LoadCreatures
+{
+	conditions
+	{
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=Jazz"
+		SendToModule "#General" "#UnLoadCreature=EnergonDrone"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=StarScream"
+        SendToModule "#General" "#LoadCreature=DroneMig"
+	
+	SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+	SendToModule "#General" "#LoadCreature=DroneForklift_a"
+       ; SendToModule "#General" "#LoadCreature=Blackout"
+	}
+}
+ActionMacro MigAction
+{
+	CreateModule "#Creature" "#CreatureWaveC" "#Type=DroneMig" "#Spline=A5C2MigJetStart1" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A5C2MigJetLand1" "#SetEnergyMax=1500" "#SetEnergy=1500"
+	CreateModule "#Creature" "#CreatureWaveD" "#Type=DroneMig" "#Spline=A5C2MigJetStart2" "#SetPosition=#MigSpawn2" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=SpawnIntro" "#FollowSpline=A5C2MigJetLand2" "#SetEnergyMax=1500" "#SetEnergy=1500"
+	Idle 0.7
+	SendToModule "#A5C2DefeatStarscream" "#StartOneShot"  
+	Idle 5.0 
+	SendToModule "#CreatureWaveC" "#Script=Mig29Drone"
+	SendToModule "#CreatureWaveD" "#Script=Mig29Drone"
+	SendToModule "#General" "#CountCSet=1"
+
+} 
+
+
+state Chapter2_Main
+{
+	conditions
+	{
+		if Timer > 4.0 goto Chapter2_StarScreamBombingRun_Enter
+
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+    }
+
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		ResetTimer
+		SetDeathPoint "Chapter2_DeathFailMission"
+
+        DestroyModule "#GotoReminderSpeech" 
+		CreateModule "#Speech" "#A5C2DefeatStarscream" "#speech=#A5_ch2_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chapter2Start" "#FadeUp"
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+		CreateModule "#KeyLocation" "#A5C2KeyLoc" "#Spline=A5C2KeyLocCentre" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#HeadType=#Optimus" ; "#UseHeight"
+
+		
+		CreateModule "#Creature" "#Ratchet" "#Spline=A5C1KeyLoc" "#Type=DroneArmouredCar_a" "#count=1" "#maxalive=1" "#AddToRadar" "#SpawnAsCreature" "#Script=Ratchet"  "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#SetPosition=#RatchetSpawn2"
+		CreateModule "#Goto" "#RangeTracker" "#Spline=A5C2KeyLocCentre" "#SetPosition=#A5C2RangeTracker" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" 
+		
+
+		SendToModule "#General" "#CountSet=0" "#CountASet=0" "#CountBSet=0" "#CountCSet=0" "#CountDSet=1"
+
+		SendToModule "#General" "#TrafficLv = 0"                        ; lock traffic level (1-5) (0=OFF)
+		SendToModule "#General" "#PatrolLv = 0"                         ; patrol level (1=ON, 0=OFF)
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 2"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 2"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+	}
+}
+
+
+state Chapter2_StarScreamBombingRun_Enter
+{
+	conditions
+	{
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+    }
+
+	actions
+	{
+		CreateModule "#Goto" "#Creature" "#Type=StarScream" "#Spline=A5C2StarScreamStart" "#addtoradar" "#Count=1" "#MaxAlive=1" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=DummyAircraft" "#SetEnergyMin=100" "#BlockDeath" ; "#SetEnergyMin=1425"
+
+		
+		SendToModule "#RangeTracker" "#Link=#Creature"
+
+		CreateModule "#CreatureBombingRun" "#CreatureBombingRun" "#ModuleTag=#Creature" "#Spline=A5C2brun_sn" "#Spline=A5C2brun_ns" "#Spline=A5C2brun_ew" "#Spline=A5C2brun_we1"  "#DrawHealthBar" "#HeadType=#Starscream" "#SetHealthHeadIndex=1" "#NoDraw"
+ 
+        ;; spline roll points
+		SendToModule "#CreatureBombingRun" "#AddSplineRollPoint=A5C2brun_sn 400  360"
+		SendToModule "#CreatureBombingRun" "#AddSplineRollPoint=A5C2brun_sn 800 -360"
+
+        ;; spline roll points
+		SendToModule "#CreatureBombingRun" "#AddSplineRollPoint=A5C2brun_ns 500  360"
+	
+        ;; spline roll points
+		SendToModule "#CreatureBombingRun" "#AddSplineRollPoint=A5C2brun_ew 600  -360"
+
+        ;; spline roll points
+		SendToModule "#CreatureBombingRun" "#AddSplineRollPoint=A5C2brun_we1 600 360"
+
+        SetState "Chapter2_StarScreamBombingRun"
+	}
+}
+
+state Chapter2_StarScreamBombingRun
+{
+	
+
+	actions
+	{
+		SendToModule "#Creature" "#SetEnergy=#Maximum"
+		SendToModule "#CreatureBombingRun" "#NumRuns=9999" "#UseFirstSpline" "#SpeedValueMin=225" "#SpeedValueMax=600" "#MeleeScript=StarScream" "#MeleeTime=45" "#MeleeEnergyLeave=0.1" "#MeleeLeaveScript=FlyOff_I" "#ForceTransformEnergy=0.80"
+   		CreateModule "#Speech" "#StarScreamStillInAir1" "#speech=#A5_ch2_obj6" "#AutoDestroy" 
+		CreateModule "#Speech" "#StarScreamStillInAir2" "#speech=#A5_ch2_obj3" "#AutoDestroy" 	
+		SetState Chapter2_StarScreamFlightProcess
+	 }
+}
+state Chapter2_StarScreamFlightProcess
+{
+	conditions
+	{
+
+		;;;Bombing Run Process
+
+		if module "Creature Health" < 0.79 and
+				if module "General GetCountA" == 0.0 goto StarscreamRobotMode
+
+		if module "RangeTracker GetLinkedDist" < 70 and 
+			if module "General GetCountB" == 0.0 and
+				if module "General GetCountA" == 0.0 goto StarscreamFlyingIn
+		if module "RangeTracker GetLinkedDist" > 200 and 
+			if module "General GetCountB" == 1.0 and
+				if module "General GetCountA" == 0.0 goto StarscreamFlewBy
+
+		if module "General GetCountC" == 2.0 and
+				if module "General GetCountA" == 0.0 goto Chapter2_ShootHimDown
+
+		if module "General GetCountC" == 6.0 and
+				if module "General GetCountA" == 0.0 goto Chapter2_ShootHimDownAlready
+
+		;if module "Creature IsEnergyAtMin" == 1.0 and
+		;	if module "General GetCountA" == 0.0 goto CheckStarScreamHealth
+
+		;;;Ratchet
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountD" == 1.0 goto Chapter2_HealP1A
+		
+
+
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+	}
+}
+ActionMacro AutoHeal2
+{
+	
+	SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+	SendToModule "#General" "#CountDSet=0"
+	IncreasePlayerHealth 65.0
+	Idle 2.8
+	SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+	Idle 7.0
+	SendToModule "#Ratchet" "#AddToRadar" 
+	SendToModule "#General" "#CountDSet=1"	
+
+}
+state Chapter2_HealP1A
+{
+	
+	actions
+	{
+		DoMacro AutoHeal2
+		SetState Chapter2_StarScreamFlightProcess
+		
+	}
+}
+state Chapter2_StarScreamBossProcess
+{
+	conditions
+	{
+
+		;;;Boss Process
+
+		
+
+		if module "MigIncoming FailMission" == 1.0 goto Chapter2_MigJetAction
+		
+
+		if module "CreatureBombingRun Finish" == 1.0 and
+				if module "General GetCountA" == 1.0 goto Chapter2_StarscreamBail
+		if module "CreatureWaveC Complete" == 1.0 and
+				if module "CreatureWaveD Complete" == 1.0 and
+					if module "General GetCountC" == 1.0 goto Chapter2_MigDead
+
+		if module "General GetCount" == 2.0 goto Chapter2_StarScreamBombingRunSurvive
+
+		
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+
+		;;;Ratchet
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountD" == 1.0 and
+				if module "General GetCountC" == 1.0 goto Chapter2_HealP1B
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountD" == 1.0 and
+				if module "General GetCountC" == 2.0 goto Chapter2_HealP1B
+
+	}
+}
+state Chapter2_HealP1B
+{
+	
+	actions
+	{
+		DoMacro AutoHeal2
+		SetState Chapter2_StarScreamBossProcess
+		
+	}
+}
+;state CheckStarScreamHealth
+;{
+;	conditions
+;	{
+;		if module "General GetCountC" == 0.0 goto StarScreamHealth95
+;		if module "General GetCountC" == 1.0 goto StarScreamHealth90
+;		if module "General GetCountC" == 2.0 goto StarScreamHealth85
+;		if module "General GetCountC" == 3.0 goto StarScreamHealth80
+;		if module "General GetCountC" == 4.0 goto StarScreamHealth75 
+;		if module "General GetCountC" == 5.0 goto StarScreamHealth70
+;		if module "General GetCountC" == 6.0 goto StarScreamHealth65
+;		
+;	}
+;}
+state Chapter2_ShootHimDown
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountCInc"
+		SendToModule "#StarScreamStillInAir1" "#StartOneShot" 
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state Chapter2_ShootHimDownAlready
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountCSet=0"
+		SendToModule "#StarScreamStillInAir2" "#StartOneShot" 
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarscreamFlyingIn
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=1" 
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarscreamFlewBy
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=2" "#CountCInc"
+		SetState Chapter2_StarScreamFlightHealth ;CheckStarScreamHealth
+	}
+}
+state Chapter2_StarScreamFlightHealth
+{
+	conditions
+	{
+		
+
+		if module "Creature Health" > 0.95 goto StarScreamHealth100
+		if module "Creature Health" == 0.95 goto StarScreamHealth95
+		if module "Creature Health" > 0.90 goto StarScreamHealth95
+		if module "Creature Health" == 0.90 goto StarScreamHealth90
+		if module "Creature Health" > 0.85 goto StarScreamHealth90
+		if module "Creature Health" == 0.85 goto StarScreamHealth85
+		if module "Creature Health" > 0.80 goto StarScreamHealth85
+		if module "Creature Health" == 0.80 goto StarScreamHealth80
+		if module "Creature Health" > 0.75 goto StarScreamHealth80 
+		if module "Creature Health" == 0.75 goto StarScreamHealth75
+		if module "Creature Health" > 0.70 goto StarScreamHealth75
+		if module "Creature Health" == 0.70 goto StarScreamHealth70
+		if module "Creature Health" > 0.65 goto StarScreamHealth70
+
+	
+		if module "Creature Health" < 0.64 and
+				if module "General GetCountA" == 0.0 goto StarscreamRobotMode
+	
+		
+	}
+}
+state StarScreamHealth100
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0"
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarScreamHealth95
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0" ; "#CountCSet=1"
+		SendToModule "#Creature" "#SetEnergy=1425" ;"#SetEnergyMin=1350"
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarScreamHealth90
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0" ; "#CountCSet=2"
+		;Idle 5.0 
+		SendToModule "#Creature" "#SetEnergy=1350" ; "#SetEnergyMin=1275"
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarScreamHealth85
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0" ; "#CountCSet=3"
+		;Idle 5.0 
+		SendToModule "#Creature" "#SetEnergy=1275" ; "#SetEnergyMin=1200"
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarScreamHealth80
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0" ; "#CountCSet=4"
+		;Idle 5.0 
+		SendToModule "#Creature" "#SetEnergy=1200" ; "#SetEnergyMin=1125"
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarScreamHealth75
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0" ; "#CountCSet=5"
+		;Idle 5.0 
+		SendToModule "#Creature" "#SetEnergy=1125" ; "#SetEnergyMin=1050"
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarScreamHealth70
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0" ; "#CountCSet=6"
+		;Idle 5.0 
+		SendToModule "#Creature" "#SetEnergy=1050" ; "#SetEnergyMin=975"
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarScreamHealth65
+{
+	actions
+	{
+		
+		;Idle 5.0 
+		SendToModule "#Creature" "#SetEnergy=975" "#SetEnergyMin=100"
+		SetState Chapter2_StarScreamFlightProcess
+	}
+}
+state StarscreamRobotMode
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0" "#CountASet=1" 
+		DestroyModule "#StarScreamStillInAir1" 
+		DestroyModule "#StarScreamStillInAir2" 
+		;SendToModule "#CreatureBombingRun" "#DrawHealthBar" "#HeadType=#Starscream" "#SetHealthHeadIndex=1" "#NoDraw" ; "#SetEnergy=975"
+		CreateModule "#Timer" "#MigIncoming" "#Time=5" "#NoRender"
+		SetState Chapter2_StarScreamBossProcess
+	}
+}
+state Chapter2_StarscreamBail
+{
+	conditions
+	{
+		if Timer > 5.0 goto Chapter2_StarscreamBail2
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+    }
+	actions
+	{
+        ResetTimer
+	SendToModule "#General" "#CountASet=2" 
+        SendToModule "#Creature" "#SetEnergy=#Maximum"
+    }
+}
+state Chapter2_StarscreamBail2
+{
+	
+	actions
+	{
+        ResetTimer
+	SendToModule "#General" "#CountInc"
+        SendToModule "#Creature" "#AddToRadarOff"
+	SetState Chapter2_StarScreamBombingRunB ;Chapter2_StarScreamBossProcess
+    }
+}
+state Chapter2_MigDead
+{
+	
+	actions
+	{
+       
+	SendToModule "#General" "#CountInc" "#CountCSet=2"
+	;SendToModule "#CreatureBombingRun" "#MeleeTime=20"
+        SetState Chapter2_StarScreamBossProcess
+    }
+}
+
+state Chapter2_MigJetAction
+{
+	
+	actions
+	{
+		DestroyModule "#MigIncoming" 
+		CreateModule "#Speech" "#A5C2DefeatStarscream" "#speech=#A5_ch2_obj7" "#AutoDestroy"
+		;SendToModule "#General" "#CountCSet=1"
+
+		DoMacro MigAction
+		
+		SetState Chapter2_StarScreamBossProcess
+    }
+}
+
+
+state Chapter2_StarScreamBombingRunB
+{
+	
+	actions
+	{
+		;DestroyModule "CreatureWaveC"
+		;DestroyModule "CreatureWaveD"
+		
+		DestroyModule "#CreatureBombingRun"
+
+
+		CreateModule "#CreatureBombingRun" "#CreatureBombingRun" "#ModuleTag=#Creature" "#Spline=A5C2brun_sn" "#Spline=A5C2brun_ns" "#Spline=A5C2brun_ew" "#Spline=A5C2brun_we1" "#DrawHealthBar" "#HeadType=#Starscream" "#SetHealthHeadIndex=1" "#NoDraw"
+ 
+		SendToModule "#Creature" "#AddToRadar" "#SetEnergy=#Maximum" "#SetEnergyMin=100" "#Unstoppable" ; "#Script=DummyAircraft_I"
+		SendToModule "#CreatureBombingRun" "#NumRuns=9999" "#SpeedValueMin=425" "#SpeedValueMax=800" "#MeleeScript=Combat" "#MeleeTime=45" "#MeleeEnergyLeave=0.1" "#MeleeLeaveScript=FlyOff_I"  "#ForceTransformEnergy=0.65"
+		;SendToModule "#General" "#CountSet=0" "#CountASet=0" "#CountBSet=0" "#CountCSet=0"
+		SetState Chapter2_StarScreamBossProcess
+	}
+}
+state Chapter2_StarScreamBombingRunSurvive
+{
+	
+	actions
+	{
+		DestroyModule "CreatureWaveC"
+		DestroyModule "CreatureWaveD"
+		
+		SendToModule "#General" "#CountSet=0" "#CountASet=0" "#CountBSet=0" "#CountCSet=0"
+		SetState Chapter2_StarScreamReturnProcess
+	}
+}
+state Chapter2_StarScreamReturnProcess
+{
+	conditions
+	{
+
+		;;;Bombing Run Process
+
+		if module "RangeTracker GetLinkedDist" < 70 and 
+			if module "General GetCountB" == 0.0 goto StarscreamFlyingIn2
+		if module "RangeTracker GetLinkedDist" > 200 and 
+			if module "General GetCountB" == 1.0 goto StarscreamFlewBy2
+
+		
+
+		if module "General GetCount" == 2.0 goto Chapter2_Blackout_Midtro
+
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+		
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountD" == 1.0 goto Chapter2_HealP1C
+
+		if Timer > 60 goto Chapter2_Blackout_Midtro
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter2_HealP1C
+{
+	
+	actions
+	{
+		DoMacro AutoHeal2
+		SetState Chapter2_StarScreamReturnProcess
+		
+	}
+}
+state StarscreamFlyingIn2
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=1" 
+		SetState Chapter2_StarScreamReturnProcess
+	}
+}
+state StarscreamFlewBy2
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=0" "#CountInc"
+		SetState Chapter2_StarScreamReturnProcess
+	}
+}
+state Chapter2_Blackout_Midtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_Blackout
+	}
+
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A5C2Midtro1"
+    }
+}
+
+
+state Chapter2_Blackout
+{
+	actions
+	{
+		
+		DestroyModule "#Creature" 
+		DestroyModule "#RangeTracker"
+		DestroyModule "#CreatureBombingRun" 
+		;SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#UnLoadCreature=StarScream"
+		SendToModule "#General" "#LoadCreature=Blackout"
+		SendToModule "#General" "#LoadCreature=Scorponok"
+		Idle 0.1
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		
+		SendToModule "#General" "#SetPlayer=#A5C2_PlayerPhase2"
+
+		SendToModule "#General" "#CountSet=0" "#CountASet=0" "#CountBSet=0" "#CountCSet=0" "#CountDSet=1"
+		;SendToModule "#Ratchet" "#AddToRadar"
+
+        DestroyModule "#A5C2DefeatStarscream" 
+		CreateModule "#Speech" "#A5C2DefeatStarscream" "#speech=#A5_ch2_obj2" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#A5C2Advice" "#speech=#A5_ch2_obj5" "#AutoDestroy"
+		CreateModule "#Speech" "#A5C2Extra" "#speech=#A5_ch2_obj10" "#AutoDestroy"
+
+		CreateModule "#Timer" "#Iron" "#Time=11"  "#Start" "#NoRender"
+
+		SendToModule "#Creature" "#AddToRadarOff"
+
+		CreateModule "#Creature" "#CreatureWaveB" "#Boss=#Blackout" "#Type=Blackout" "#Type=Blackout" "#Spline=A5C2BlackoutStart" "#addtoradar" "#Count=1" "#MaxAlive=1" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=DummyAircraft_I" "#SetEnergyMin=100" "#BlockDeath" 
+		CreateModule "#Goto" "#RangeTracker" "#Spline=A5C2KeyLocCentre" "#SetPosition=#A5C2RangeTracker" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" 
+		SendToModule "#RangeTracker" "#Link=#CreatureWaveB"
+		
+		CreateModule "#CreatureBombingRun" "#CreatureBombingRunB" "#ModuleTag=#CreatureWaveB" "#Spline=A5C2blackoutAttack1" "#ArrivalSpline=A5C2BlackoutArrive" ; "#DrawHealthBar" "#HeadType=#Blackout" "#SetHealthHeadIndex=2" "#NoDraw"
+		SendToModule "#CreatureBombingRunB" "#NumRuns=1" "#LandAtEndOfSpline" "#AttackFiringMode" "#LookAtBias=1.0" "#UseFirstSpline" "#SpeedValueMin=75" "#SpeedValueMax=300" "#MeleeScript=Blackout" "#MeleeTime=45" "#MeleeEnergyLeave=0.1" "#MeleeLeaveScript=FlyOff_I"  "#ForceTransformEnergy=0.80" 
+		Idle 0.1
+		
+		SetState Chapter2_ForceRatchet
+    }
+}
+state Chapter2_ForceRatchet
+{
+	actions
+	{
+		DestroyModule "#Ratchet"
+		CreateModule "#Creature" "#Ratchet" "#Spline=A5C1KeyLoc" "#Type=DroneArmouredCar_a" "#count=1" "#maxalive=1" "#AddToRadar" "#SpawnAsCreature" "#SpawnInLOSInit" "#Script=Ratchet"  "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#SetPosition=#RatchetSpawn2"
+		;SendToModule "#Ratchet" "#Link=#CreatureWaveB"
+		SetState Chapter2_Phase2Process
+	}
+}
+state Chapter2_Phase2Process
+{
+	conditions
+	{
+		if module "CreatureWaveB IsEnergyAtMin" == 1.0 and 
+			if module "General GetCountA" == 1.0 goto Chapter2_BlackoutRetreat
+
+		if module "Scorp Energy" < 0.01 and
+			if module "General GetCountC" == 1.0 goto Chapter2_ScorponokDead
+
+		if module "General GetCount" == 2.0 goto Chapter2_Phase2Complete
+
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+
+		if module "Iron FailMission" == 1.0 goto Chapter2_Encourage
+		
+		
+		if module "RangeTracker GetLinkedDist" < 47 and 
+			if module "General GetCountC" == 0.0 goto DeployScorponok
+
+		if module "CreatureWaveB BeenHit" == 1.0 and
+			if module "CreatureWaveB Health" == 1.0 and 
+				if module "General GetCountB" == 0.0 goto Chapter2_Advice
+
+		if module "CreatureWaveB Health" < 0.80 and 
+			if module "General GetCountA" == 0.0 goto Chapter2_Phase2ForceTran
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountD" == 1.0 and  
+				if module "General GetCountC" >= 1.0 goto Chapter2_HealP2A
+
+		
+	}
+	actions
+	{
+		
+		
+	}
+}
+state DeployScorponok
+{
+	actions
+	{
+		DestroyModule "#RangeTracker"
+		SetMusic "ACTION Mission2_3 QUIET Generic Play Action"
+		CreateModule "#Creature" "#Scorp" "#Type=Scorponok" "#Spline=A5C2BlackoutStart" "#SetPosition=#ScorponokSpawn" "#addtoradar" "#Count=1" "#MaxAlive=1" "#SpawnInLosInit" "#Script=Scorponok" "#BlockDeath" 
+		SendToModule "#General" "#CountCSet=1"
+		SetState Chapter2_Phase2Process
+		
+	}
+}
+state Chapter2_ScorponokDead
+{
+	actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		SendToModule "#Scorp" "#SetEnergy=0.0" 
+		SendToModule "#General" "#CountCSet=2" "#CountInc"
+		CreateModule "#Speech" "#A5C2DefeatStarscream" "#speech=#A5_ch2_obj8" "#AutoDestroy" "#Start"
+		SetState Chapter2_Phase2Process
+		
+	}
+}
+state Chapter2_HealP2A
+{
+	
+	actions
+	{
+		DoMacro AutoHeal2
+		SetState Chapter2_Phase2Process
+		
+	}
+}
+state Chapter2_Phase2ForceTran
+{
+	
+	actions
+	{
+		DestroyModule "#CreatureBombingRunB"
+		SendToModule "#General" "#CountASet=1" 
+		SendToModule "#CreatureWaveB" "#TransformForceRobot" "#Script=Blackout"	;"#Boss=#Blackout" 
+		SetState Chapter2_Phase2Process
+	}
+}
+state Chapter2_Advice
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=1"
+		SendToModule "#A5C2Advice" "#StartOneShot"   
+		SetState Chapter2_Phase2Process
+    }
+}
+state Chapter2_Encourage
+{
+	conditions
+	{		
+		if module "CreatureWaveB Health" < 0.80 goto Chapter2_DisableI
+	}
+	actions
+	{
+		DestroyModule "#Iron"
+		SendToModule "#A5C2Extra" "#StartOneShot"
+		SendToModule "#CreatureWaveB" "#Script=DummyAircraft_I"
+
+		Idle 0.1 
+		SetState Chapter2_Phase2Process
+    }
+}
+state Chapter2_DisableI
+{
+	
+	actions
+	{
+		SendToModule "#CreatureWaveB" "#Script=Blackout"
+
+		SetState Chapter2_Phase2Process
+ 	}
+}
+state Chapter2_BlackoutRetreat
+{
+	conditions
+	{
+		if module "Scorp Energy" < 0.01 and
+			if module "General GetCountC" == 1.0 goto Chapter2_ScorpDeadBlackoutGone
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+
+	}
+
+	actions
+	{
+        ResetTimer
+        SendToModule "#CreatureWaveB" "#SetEnergy=#Maximum" "#Script=FlyOff_I" "#RemoveBoss"
+	Idle 5.0 
+	SendToModule "#CreatureWaveB" "#AddToRadarOff"
+	SendToModule "#General" "#CountASet=2" "#CountInc"
+	SetState Chapter2_Phase2Process
+    }
+}
+state Chapter2_ScorpDeadBlackoutGone
+{
+	actions
+	{
+		SetMusic "ACTION Mission2_2 QUIET Generic Play Action"
+		SendToModule "#Scorp" "#SetEnergy=0.0" 
+		SendToModule "#CreatureWaveB" "#AddToRadarOff"
+		SendToModule "#General" "#CountASet=2" "#CountCSet=2" "#CountSet=2"
+		CreateModule "#Speech" "#A5C2DefeatStarscream" "#speech=#A5_ch2_obj8" "#AutoDestroy" "#Start"
+		SetState Chapter2_Phase2Process
+		
+	}
+}
+state Chapter2_Phase2Complete
+{
+	conditions
+	{
+    		if module "General FadeDown" == 1.0 goto Chapter2_Phase3Init
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+	}
+
+	actions
+	{
+		Idle 3.0 
+		SendToModule "#General" "#FadeDown"
+		
+		
+		
+		
+    }
+}
+state Chapter2_Phase3Init
+{
+	conditions
+	{
+    		
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+	}
+
+	actions
+	{
+		DestroyModule "Scorp"
+		DestroyModule "RangeTracker"
+
+		SendToModule "#General" "#UnLoadCreature=Scorponok" 
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a" 
+		SendToModule "#General" "#LoadCreature=StarScream"
+		SendToModule "#General" "#FadeUp" 
+		SetState Chapter2_Phase3_Enter
+    }
+}
+
+state Chapter2_Phase3_Enter
+{
+	actions
+	{
+        DestroyModule "#CreatureWaveC"
+        DestroyModule "#CreatureWaveD"
+	DestroyModule "#CreatureWaveB" 
+
+	CreateModule "#Goto" "#Creature2" "#Type=StarScream" "#Spline=A5C2StarScreamStart" "#addtoradar" "#Count=1" "#MaxAlive=1" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=DummyAircraft"  "#SetEnergyMax=2500" "#BlockDeath" ; "#SetEnergyMin=1425"
+	CreateModule "#Creature" "#CreatureWaveB2" "#Type=Blackout" "#Spline=A5C2BlackoutStart" "#addtoradar" "#Count=1" "#MaxAlive=1" "#SpawnInLosInit" "#SpawnAsVehicle" "#Script=DummyAircraft_I" "#SetEnergyMax=3000" "#BlockDeath"
+		
+
+	SendToModule "#General" "#CountSet=0" "#CountASet=0" "#CountCSet=0" "#CountDSet=1"
+
+	SendToModule "#Ratchet" "#AddToRadar"
+	
+
+	Idle 0.1
+
+        SendToModule  "#Creature2" "#AddToRadar" "#SetEnergy=#Maximum" "#SetEnergyMin=-1"
+		SendToModule  "#CreatureWaveB2" "#AddToRadar" "#SetEnergy=#Maximum" "#SetEnergyMin=-1" "#Script=DummyAircraft_I"
+
+        ;; StarScream
+        DestroyModule "#CreatureBombingRun"
+		CreateModule "#CreatureBombingRun" "#CreatureBombingRun" "#ModuleTag=#Creature2" "#Spline=A5C2brun_sn" "#Spline=A5C2brun_ns" "#Spline=A5C2brun_ew" "#Spline=A5C2brun_we1"  "#DrawHealthBar" "#HeadType=#Starscream" "#SetHealthHeadIndex=1" "#AlwaysDrawHealthBar"
+		SendToModule "#CreatureBombingRun" "#AddSplineRollPoint=A5C2brun_we1 400 -360"
+		SendToModule "#CreatureBombingRun" "#AddSplineRollPoint=A5C2brun_we1 800 360"
+		SendToModule "#CreatureBombingRun" "#NumRuns=3" "#UseFirstSpline" "#SpeedValueMin=225" "#SpeedValueMax=600" "#MeleeScript=StarScream" "#MeleeTime=53" "#MeleeEnergyLeave=0.0" "#MeleeLeaveScript=FlyOff_I"  "#ForceTransformEnergy=0.95"
+
+        ;; Blackout
+        DestroyModule "#CreatureBombingRunB"
+		
+		CreateModule "#CreatureBombingRun" "#CreatureBombingRunB" "#ModuleTag=#CreatureWaveB2" "#Spline=A5C2blackoutAttack1" "#ArrivalSpline=A5C2BlackoutArrive"  "#DrawHealthBar" "#HeadType=#Blackout" "#SetHealthHeadIndex=2" "#AlwaysDrawHealthBar"
+		SendToModule "#CreatureBombingRunB" "#NumRuns=1" "#LandAtEndOfSpline" "#AttackFiringMode" "#LookAtBias=1.0" "#UseFirstSpline" "#SpeedValueMin=75" "#SpeedValueMax=300" "#MeleeScript=Blackout" "#MeleeTime=60" "#MeleeEnergyLeave=0.0" "#MeleeLeaveScript=FlyOff_I"  "#ForceTransformEnergy=0.80"
+
+        DestroyModule "#A5C2DefeatStarscream" 
+        CreateModule "#Speech" "#A5C2DefeatStarscream" "#speech=#A5_ch2_obj4" "#AutoDestroy" "#Start"
+
+	CreateModule "#Timer" "#TimerI" "#Time=11" "#Start" "#NoRender"
+
+
+        SetState "Chapter2_Phase3_Process"
+    }
+}
+
+state Chapter2_Phase3_Process
+{
+	conditions
+	{
+
+		if module "Creature2 Health" < 0.01 and
+			if module "General GetCount" == 0.0 goto Chapter2_StarscreamDead
+		if module "CreatureWaveB2 Health" < 0.01 and
+			if module "General GetCountA" == 0.0 goto Chapter2_BlackoutDead
+
+
+
+		if module "Creature2 Dead" == 1.0 and
+			if module "General GetCount" == 0.0 goto Chapter2_StarscreamDead
+
+		if module "CreatureWaveB2 Dead" == 1.0 and
+			if module "General GetCountA" == 0.0 goto Chapter2_BlackoutDead
+
+		if module "CreatureWaveB2 BeenHit" == 1.0 and
+			if module "CreatureWaveB2 Health" == 1.0 and 
+				if module "General GetCountB" == 0.0 goto Chapter2_Advice2
+
+		if module "Creature2 Health" < 0.95 and
+			if module "CreatureWaveB2 Health" < 0.88 and
+				if module "Creature2 Health" > 0.15 and
+					if module "CreatureWaveB2 Health" > 0.15 and
+						if module "Creature2 PlayerRange" < 20 and
+							if module "CreatureWaveB2 PlayerRange" < 15 and 
+								if module "General GetCountC" == 0.0 goto Chapter2_Taunt	
+
+
+		if module "CreatureWaveB2 Health" < 0.60 and 
+			if module "General GetCountB" < 1.0 goto Chapter2_TimerIDest
+		if module "TimerI FailMission" == 1.0 goto Chapter2_TimerIEnd
+
+
+		if module "Creature2 Dead" == 1.0 and
+    		if module "CreatureWaveB2 Dead" == 1.0 goto Chapter2_Phase3_Complete
+
+		if module "CreatureBombingRun Finish" == 1.0 and
+            if module "Creature2 Dead" == 0.0 goto Chapter2_Phase3_StarScreamLoop_Delay
+
+		if module "CreatureBombingRunB Finish" == 1.0 and
+            if module "CreatureWaveB2 Dead" == 0.0 goto Chapter2_Phase3_BlackoutLoop_Delay
+
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountD" == 1.0 goto Chapter2_HealP3A
+
+		if module "A5C2KeyLoc FailMission" == 1.0 goto Chapter2_FailMission
+	}
+}
+state Chapter2_TimerIEnd
+{
+	conditions
+	{		
+		if module "CreatureWaveB2 Health" < 0.60 goto Chapter2_DisableI2
+	}
+	actions
+	{
+		DestroyModule "#TimerI"
+		SendToModule "#CreatureWaveB2" "#Script=DummyAircraft_I"
+		Idle 0.1
+		SetState Chapter2_Phase3_Process
+	}
+}
+state Chapter2_DisableI2
+{
+	
+	actions
+	{
+		SendToModule "#CreatureWaveB2" "#Script=Blackout"
+
+		SetState Chapter2_Phase3_Process
+ 	}
+}
+state Chapter2_TimerIDest
+{
+	actions
+	{
+		DestroyModule "#TimerI"
+		SendToModule "#General" "#CountBSet=3"
+		SetState Chapter2_Phase3_Process
+	}
+}
+state Chapter2_StarscreamDead
+{
+	actions
+	{
+		SendToModule "#Creature2" "#SetEnergy=0.0"
+		SendToModule "#General" "#CountSet=1" 
+		DestroyModule "CreatureBombingRun"
+		SetState Chapter2_Phase3_Process
+		
+	}
+}
+state Chapter2_BlackoutDead
+{
+	actions
+	{
+		SendToModule "#CreatureWaveB2" "#SetEnergy=0.0"
+		SendToModule "#General" "#CountASet=1" 
+		DestroyModule "CreatureBombingRunB"
+		SetState Chapter2_Phase3_Process
+		
+	}
+}
+state Chapter2_Taunt	
+{
+	actions
+	{
+		
+		SendToModule "#General" "#CountCSet=1" 
+		CreateModule "#Speech" "#A5C2DefeatStarscream" "#speech=#A5_ch2_obj9" "#AutoDestroy" "#Start"
+		SetState Chapter2_Phase3_Process
+		
+	}
+}
+state Chapter2_HealP3A
+{
+	
+	actions
+	{
+		DoMacro AutoHeal2
+		SetState Chapter2_Phase3_Process
+		
+	}
+}
+state Chapter2_Advice2
+{
+	actions
+	{
+		SendToModule "#General" "#CountBSet=1"
+		SendToModule "#A5C2Advice" "#StartOneShot"  
+		SetState Chapter2_Phase3_Process
+    }
+}
+state Chapter2_Phase3_StarScreamLoop_Delay
+{
+	conditions
+	{
+		if Timer > 3.0 goto Chapter2_Phase3_StarScreamLoop
+	}
+	actions
+	{
+        	ResetTimer
+	}
+}
+
+
+state Chapter2_Phase3_StarScreamLoop
+{
+    actions
+    {
+        ;; StarScream
+        DestroyModule "#CreatureBombingRun"
+
+       
+		CreateModule "#CreatureBombingRun" "#CreatureBombingRun" "#ModuleTag=#Creature2" "#Spline=A5C2brun_sn" "#Spline=A5C2brun_ns" "#Spline=A5C2brun_ew" "#Spline=A5C2brun_we1" "#DrawHealthBar" "#HeadType=#Starscream" "#SetHealthHeadIndex=1" "#AlwaysDrawHealthBar"
+	
+		 SendToModule  "#Creature2" "#Script=DummyAircraft"
+	
+		SendToModule "#CreatureBombingRun" "#AddSplineRollPoint=A5C2brun_we1 400 -360"
+		SendToModule "#CreatureBombingRun" "#AddSplineRollPoint=A5C2brun_we1 800 360"
+		SendToModule "#CreatureBombingRun" "#NumRuns=3" "#UseFirstSpline" "#SpeedValueMin=225" "#SpeedValueMax=600" "#MeleeScript=Starscream" "#MeleeTime=53" "#MeleeEnergyLeave=0.0" "#MeleeLeaveScript=FlyOff_I"  "#ForceTransformEnergy=0.60"
+
+        setstate "Chapter2_Phase3_Process"
+    }
+}
+
+
+state Chapter2_Phase3_BlackoutLoop_Delay
+{
+	conditions
+	{
+		if Timer > 3.0 goto Chapter2_Phase3_BlackoutLoop
+    }
+
+    actions
+    {
+        ResetTimer
+    }
+}
+
+state Chapter2_Phase3_BlackoutLoop
+{
+    conditions
+    {
+	if module "CreatureWaveB2 Health" < 0.60 goto Chapter2_Phase3_Process
+    }
+    actions
+    {
+        ;; Blackout
+        DestroyModule "#CreatureBombingRunB"
+
+        SendToModule  "#CreatureWaveB2" "#Script=DummyAircraft_I" 
+
+		CreateModule "#CreatureBombingRun" "#CreatureBombingRunB" "#ModuleTag=#CreatureWaveB2" "#Spline=A5C2blackoutAttack1" "#ArrivalSpline=A5C2BlackoutArrive" "#DrawHealthBar" "#HeadType=#Blackout" "#NoDraw" "#SetHealthHeadIndex=2" "#AlwaysDrawHealthBar"
+		SendToModule "#CreatureBombingRunB" "#NumRuns=1" "#LandAtEndOfSpline" "#AttackFiringMode" "#LookAtBias=1.0" "#UseFirstSpline" "#SpeedValueMin=75" "#SpeedValueMax=300" "#MeleeScript=Blackout" "#MeleeTime=60" "#MeleeEnergyLeave=0.0" "#MeleeLeaveScript=FlyOff_I"  "#ForceTransformEnergy=0.60"
+
+		Idle 0.1
+
+		CreateModule "#Timer" "#TimerI" "#Time=11"  "#Start" "#NoRender"
+
+
+        setstate "Chapter2_Phase3_Process"
+    }
+}
+
+
+
+
+state Chapter2_Phase3_Complete
+{
+	actions
+	{
+        DestroyModule "#CreatureBombingRun"
+        DestroyModule "#CreatureBombingRunB"
+       ;DestroyModule "#Creature"
+        ;DestroyModule "#CreatureWaveB2"
+
+        setstate "Chapter2_Complete"
+	}
+}
+
+
+
+state Chapter2_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+		
+		
+	}
+}
+state Chapter2_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission"  "#FailMission"
+		
+	}
+}
+state Chapter2_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#UnLoadCreature=StarScream"
+		SendToModule "#General" "#UnLoadCreature=Blackout"
+		SendToModule "#General" "#UnLoadCreature=Scorponok"
+		SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+
+		SendToModule "#General" "#PlayerType=IronHide,Jazz,IronHide,BumbleBee07,IronHide"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter2Restart" "#FadeUp" 
+
+		SetState GlobalActionRing 
+	}
+}
+state Chapter2_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT2" "#Spline=COMCAM2" "#SetFocus=CAMFOCUS2"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+		CreateModule "#Speech" "#Honor" "#speech=#A5_ch2_cmplt" "#PlayDelay=1.2" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter2_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		SendToModule "#General" "#StartOutroVideo=#A5C2Outro"
+	}
+}
+state Chapter2_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter2_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		
+		SendToModule "#General" "#UnLoadCreature=StarScream"
+		SendToModule "#General" "#UnLoadCreature=Blackout"
+		SendToModule "#General" "#UnLoadCreature=Scorponok"
+		SendToModule "#General" "#UnLoadCreature=DroneMig"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+
+		SendToModule "#General" "#PlayerType=IronHide,Jazz,IronHide,BumbleBee07,IronHide"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter2_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter3"
+		SendToModule #General #ResetLevel
+		IncreasePlayerHealth max
+		setstate "PickGoto"
+	}
+}

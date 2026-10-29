@@ -1,0 +1,476 @@
+state Adv_Tutorial
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto Adv_Tutorial1
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#SubMissions" "#TurnOff"
+		;DestroyAllModules "#IncludeProtected"
+		
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+	}
+
+
+
+}
+
+state Adv_Tutorial1
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto LeaveAdv_Tutorial3
+		;if module "Dummy1 GetCountAlive" == 0.0 and
+		;	if module "Dummy2 GetCountAlive" == 0.0 and
+		;		if module "Dummy3 GetCountAlive" == 0.0 goto Adv_Tutorial2
+	
+		;if Timer > 1.0 and
+		;	if module "General FadeDown" == 1.0 goto Adv_Tutorial2
+	}
+	actions
+	{
+		ResetTimer
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		
+		SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		DestroyAllModules "#IncludeProtected"
+		;CreateModule "#Creature" "#Dummy" "#Type=DroneDefault" "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#SubMission4" "#Count=1" "#MaxAlive=1" "#Script=StandAndWait" "#AddToRadarOff" "#SetEnergyMax=300" "#SetEnergy=300"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc4" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key17Return" "#Protect" "#TimeOut=5"
+		SendToModule "#General "#SetPlayer=#PlayerTutorial"
+		SendToModule "#General" "#FadeUp"
+		SendToModule "#General" "#CountBSet=1"
+
+		SendToModule "#General" "#SetMessage=ADVCOMT1" "#SetMessageTimer=7"
+
+		Idle 9.0
+		SendToModule "#General" "#SetMessage=ADVCOMT6" "#SetMessageTimer=7"
+
+		Idle 9.0
+		SendToModule "#General" "#SetMessage=ADVCOMT6a" "#SetMessageTimer=7"
+		Idle 9.0
+		SendToModule "#General" "#SetMessageTimer=-1"
+		;Idle 1.0
+		;SendToModule "#General" "#SetMessage=ADVCOMT4" "#SetMessageTimer=7"
+		;Idle 9.0
+		;SendToModule "#General" "#SetMessage=ADVCOMT4a" "#SetMessageTimer=7" ;(Insert Midtro after this)
+		;Idle 9.0 
+		;SendToModule "#General" "#SetMessage=ADVCOMT5" "#SetMessageTimer=7" ;(Insert Midtro after this)
+		;Idle 9.0
+		;SendToModule "#General" "#SetMessage=ADVCOMT5a" "#SetMessageTimer=7"
+		;Idle 9.0
+		;SendToModule "#General" "#FadeDown"
+		SetState Adv_TutorialMidtro
+
+	}
+
+
+
+}
+state Adv_TutorialMidtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Adv_Tutorial2
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMessageTimer=-1"
+		SendToModule "#General" "#StartVideo=#A1Tutorial"
+	}
+}
+state Adv_Tutorial2
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto LeaveAdv_Tutorial3
+		if module "Dummy1 GetCountAlive" == 0.0 and
+			if module "Dummy2 GetCountAlive" == 0.0 and
+				if module "Dummy3 GetCountAlive" == 0.0 goto Adv_Tutorial3
+	
+
+	}
+	actions
+	{
+		DestroyAllModules
+
+		SendToModule "#General "#SetPlayer=#PlayerTutorial"
+		;SendToModule "#General" "#CountASet=1"
+
+		SendToModule "#General "#SetPlayer=#PlayerTutorial"
+		
+		SendToModule "#General" "#FadeUp"
+		CreateModule "#Creature" "#Dummy1" "#Type=DroneRedVeryWeak"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy1" "#Count=1" "#MaxAlive=1" "#Script=Early_Combat" "#AddToRadarOff" "#SuppressShield" "#KeyLocation=On"
+		CreateModule "#Creature" "#Dummy2" "#Type=DroneRedVeryWeak"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy2" "#Count=1" "#MaxAlive=1" "#Script=Early_Combat" "#AddToRadarOff" "#SuppressShield" "#KeyLocation=On"
+		CreateModule "#Creature" "#Dummy3" "#Type=DroneRedVeryWeak"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy3" "#Count=1" "#MaxAlive=1" "#Script=Early_Combat" "#AddToRadarOff" "#SuppressShield" "#KeyLocation=On"
+		Idle 0.1 
+		;SendToModule "#Dummy1" "#Script=StandAndWait"
+		;SendToModule "#Dummy2" "#Script=StandAndWait"
+		;SendToModule "#Dummy3" "#Script=StandAndWait"
+
+
+		SendToModule "#General" "#SetMessage=ADVCOMT14" "#SetMessageTimer=3"
+		
+
+		;CreateModule "#Creature" "#Dummy1" "#Type=DroneRedWeak"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy1" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		;CreateModule "#Creature" "#Dummy2" "#Type=DroneRedWeak"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy2" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		;CreateModule "#Creature" "#Dummy3" "#Type=DroneRedWeak"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy3" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		;Idle 0.1 
+		;SendToModule "#Dummy1" "#Script=StandAndWait"
+		;SendToModule "#Dummy2" "#Script=StandAndWait"
+		;SendToModule "#Dummy3" "#Script=StandAndWait"
+
+		
+
+	}
+
+
+
+}
+state Adv_Tutorial3
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto LeaveAdv_Tutorial3
+		
+
+		if module "Dummy1 GetCountAlive" == 0.0 and
+			if module "Dummy2 GetCountAlive" == 0.0 and
+				if module "Dummy3 GetCountAlive" == 0.0 goto Adv_Tutorial4
+	
+		;if Timer > 1.0 and
+		;	if module "General FadeDown" == 1.0 goto Adv_Tutorial4
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyAllModules
+		;SendToModule "#General" "#ResetAll"
+
+		;Idle 2.0 
+
+		;SendToModule "#General" "#SetMessage=ADVCOMT6" "#SetMessageTimer=7"
+
+		;Idle 9.0
+		;SendToModule "#General" "#SetMessage=ADVCOMT6a" "#SetMessageTimer=7"
+
+		;Idle 9.0
+		;SendToModule "#General" "#SetMessageTimer=-1"
+		
+		;SendToModule "#General" "#SetMessage=ADVCOMT8" "#SetMessageTimer=7"
+		;Idle 9.0
+		;SendToModule "#General" "#SetMessage=ADVCOMT9" "#SetMessageTimer=7"
+		;Idle 9.0
+		;SendToModule "#General" "#FadeDown"
+
+		CreateModule "#Creature" "#Dummy1" "#Type=DroneRedWeak"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy1" "#Count=1" "#MaxAlive=1" "#Script=Early_Combat" "#AddToRadarOff" "#SuppressShield" "#KeyLocation=On"
+		CreateModule "#Creature" "#Dummy2" "#Type=DroneRedWeak"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy2" "#Count=1" "#MaxAlive=1" "#Script=Early_Combat" "#AddToRadarOff" "#SuppressShield" "#KeyLocation=On"
+		CreateModule "#Creature" "#Dummy3" "#Type=DroneRedWeak"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy3" "#Count=1" "#MaxAlive=1" "#Script=Early_Combat" "#AddToRadarOff" "#SuppressShield" "#KeyLocation=On"
+		Idle 0.1 
+		;SendToModule "#Dummy1" "#Script=StandAndWait"
+		;SendToModule "#Dummy2" "#Script=StandAndWait"
+		;SendToModule "#Dummy3" "#Script=StandAndWait"
+
+		
+
+	}
+
+
+
+}
+state Adv_Tutorial4
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto LeaveAdv_Tutorial3
+		if module "Dummy1 GetCountAlive" == 0.0 and
+			if module "Dummy2 GetCountAlive" == 0.0 and
+				if module "Dummy3 GetCountAlive" == 0.0 goto Adv_Tutorial7
+	
+
+	}
+	actions
+	{
+		DestroyAllModules
+		;SendToModule "#General" "#FadeUp"
+		
+		CreateModule "#Creature" "#Dummy1" "#Type=DroneRedMedium"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy1" "#Count=1" "#MaxAlive=1" "#Script=Early_Combat" "#AddToRadarOff" "#SuppressShield" "#KeyLocation=On"
+		CreateModule "#Creature" "#Dummy2" "#Type=DroneRedMedium"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy2" "#Count=1" "#MaxAlive=1" "#Script=Early_Combat" "#AddToRadarOff" "#SuppressShield" "#KeyLocation=On"
+		CreateModule "#Creature" "#Dummy3" "#Type=DroneRedMedium"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy3" "#Count=1" "#MaxAlive=1" "#Script=Early_Combat" "#AddToRadarOff" "#SuppressShield" "#KeyLocation=On"
+		Idle 0.1 
+		;SendToModule "#Dummy1" "#Script=StandAndWait"
+		;SendToModule "#Dummy2" "#Script=StandAndWait"
+		;SendToModule "#Dummy3" "#Script=StandAndWait"
+
+		;CreateModule "#Creature" "#Dummy1" "#Type=DroneRed"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy1" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		;CreateModule "#Creature" "#Dummy2" "#Type=DroneRed"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy2" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		;CreateModule "#Creature" "#Dummy3" "#Type=DroneRed"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy3" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		;Idle 0.1 
+		;SendToModule "#Dummy1" "#Script=StandAndWait"
+		;SendToModule "#Dummy2" "#Script=StandAndWait"
+		;SendToModule "#Dummy3" "#Script=StandAndWait"
+
+		
+
+	}
+
+
+
+}
+state Adv_Tutorial5
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto LeaveAdv_Tutorial3
+		
+	
+		if Timer > 1.0 and
+			if module "General FadeDown" == 1.0 goto Adv_Tutorial6
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyAllModules
+		SendToModule "#General" "#ResetAll"
+
+		SendToModule "#General" "#SetMessage=ADVCOMT10" "#SetMessageTimer=7"
+
+		Idle 9.0
+		SendToModule "#General" "#SetMessage=ADVCOMT11" "#SetMessageTimer=7"
+
+		Idle 9.0
+		
+		SendToModule "#General" "#FadeDown"
+
+		;CreateModule "#Creature" "#Dummy1" "#Type=DroneRedMedium"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy1" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		;CreateModule "#Creature" "#Dummy2" "#Type=DroneRedMedium"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy2" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		;CreateModule "#Creature" "#Dummy3" "#Type=DroneRedMedium"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy3" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		;Idle 0.1 
+		;SendToModule "#Dummy1" "#Script=StandAndWait"
+		;SendToModule "#Dummy2" "#Script=StandAndWait"
+		;SendToModule "#Dummy3" "#Script=StandAndWait"
+
+		
+
+	}
+
+
+
+}
+state Adv_Tutorial6
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto LeaveAdv_Tutorial3
+		if module "Dummy1 GetCountAlive" == 0.0 and
+			if module "Dummy2 GetCountAlive" == 0.0 and
+				if module "Dummy3 GetCountAlive" == 0.0 goto Adv_Tutorial7
+	
+		
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyAllModules
+		SendToModule "#General" "#FadeUp" "#ResetAll"
+
+		
+
+		CreateModule "#Creature" "#Dummy1" "#Type=DroneRedMedium"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy1" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		CreateModule "#Creature" "#Dummy2" "#Type=DroneRedMedium"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy2" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		CreateModule "#Creature" "#Dummy3" "#Type=DroneRedMedium"  "#SpawnInLosInit" "#Spline=Spawn4a" "#SetPosition=#Dummy3" "#Count=1" "#MaxAlive=1" "#Script=Combat" "#AddToRadarOff" "#SuppressShield"
+		Idle 0.1 
+		SendToModule "#Dummy1" "#Script=StandAndWait"
+		SendToModule "#Dummy2" "#Script=StandAndWait"
+		SendToModule "#Dummy3" "#Script=StandAndWait"
+
+		
+
+	}
+
+
+
+}
+state Adv_Tutorial7
+{
+	conditions
+	{
+		;if module "KeyLocation FailMission" == 1.0 goto LeaveAdv_Tutorial3
+		
+	
+		;if Timer > 1.0 and
+		;	if module "General FadeDown" == 1.0 goto Adv_Tutorial6
+	}
+	actions
+	{
+
+		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+
+		;SendToModule "#General" "#CountASet=1"
+
+		SendToModule "#General" "#SetMessage=ADVCOMT12" "#SetMessageTimer=7"
+
+		Idle 9.0
+		
+		;Idle 3.0
+		
+		
+		SetState LeaveAdv_Tutorial
+		
+
+	}
+
+
+
+}
+state LeaveAdv_Tutorial
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto LeaveAdv_Tutorial2
+	}
+	actions
+	{
+
+
+		SendToModule "#General" "#CountASet=1"
+
+		
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" 
+
+		SendToModule "#General" "#FadeDown"
+
+	}
+
+
+
+}
+state LeaveAdv_Tutorial2
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto LeaveAdv_Tutorial22
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=5"	
+		
+
+	}
+
+
+
+}
+state LeaveAdv_Tutorial22
+{
+	
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		
+
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#PlayerTutorialEnd"
+
+
+
+		SendToModule "#General" "#SetMessage=ADVCOMT13" "#SetMessageTimer=3"
+
+		SetState GlobalActionRing
+
+	}
+
+
+
+}
+state LeaveAdv_Tutorial3
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto LeaveAdv_Tutorial33
+		;if module "General GetFinishedMissionFail" == 1.0 goto LeaveAdv_Tutorial4
+	}
+	actions
+	{
+
+
+		SendToModule "#General" "#SetMessageTimer=-1"
+
+		
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SendToModule "#General" "#StartSubMission" 
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" 
+
+		SendToModule "#General" "#FadeDown"
+
+	}
+
+
+
+}
+state LeaveAdv_Tutorial33
+{
+	conditions
+	{
+		;if module "General GetFinishedMissionFail" == 1.0 goto LeaveAdv_Tutorial4
+		if module "General GetSubMissionComplete" == 1.0 goto LeaveAdv_Tutorial4
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=5"	
+		;SendToModule "#General" "#FadeDown"
+
+	}
+
+
+
+}
+state LeaveAdv_Tutorial4
+{
+	
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		
+
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#PlayerTutorialEnd"
+
+
+		
+		
+		SetState GlobalActionRing
+
+	}
+
+
+
+}

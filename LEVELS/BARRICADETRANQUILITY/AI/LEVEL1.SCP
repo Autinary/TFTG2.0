@@ -1,0 +1,12 @@
+include "DCon2Hub.scp"
+include "DCon2Chap1.scp"
+include "DCon2Chap2.scp"
+include "DCon2Chap3.scp"
+include "Dcon2Chap4.scp"
+
+include "CreatureSwap.scp"
+include "SubMission_EXTRA.scp"
+include "SubMission1_DESTRUCTION.scp"
+include "SubMission2_SCAVENGER.scp"
+include "SubMission3_HUNT.scp"
+include "SubMission4_SUMO.scp"

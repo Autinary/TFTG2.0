@@ -1,0 +1,28 @@
+state Base
+{
+	Conditions
+	{
+		if OnPath == 0.0 goto FindPath
+		if AlwaysTrue == 1.0 goto DoStuff
+	}
+}
+state FindPath
+{
+	Conditions
+	{
+		if OnPath == 1.0 goto DoStuff
+	}
+	Actions
+	{
+		Transform UntilDone
+		GoToNearestNode
+	}
+}
+state DoStuff
+{
+	Actions
+	{
+		Transform UntilDone
+		AttackPOI "firerange=35" "goalrange=25" "fireinterval=0.01"
+	}
+}

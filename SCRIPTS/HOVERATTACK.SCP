@@ -1,0 +1,118 @@
+CONST TooCloseForComfort	15.0
+CONST AttackPeriodA			15.0
+CONST AttackPeriodB			5.0
+
+;;;;;;;;;;;;INIT;;;;;;;;;;;;;
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto RobotInit
+		if CarForm == 1.0 goto HoverMain
+	}
+	Actions
+	{
+		SetPhysicsState "static=false"
+		SetFlag "TakeHitPhysics=true" "TakeHitMelee=true" "TakeHit=false" "StuckEscape=false"
+	}
+}
+
+state RobotInit
+{
+	Actions
+	{
+		Transform Car UntilDone
+		SetState HoverMain
+	}
+}
+
+;;;;;;;;;;;;END OF INIT;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;HOVER;;;;;;;;;;;;;;;;;;;;
+
+
+
+state HoverMain
+{
+	Conditions
+	{
+		if TransformMeter == 1.0 goto FindNewHoverPositionAndIncVar
+		if OpponentRange < TooCloseForComfort goto FindNewHoverPosition
+		if Timer > AttackPeriodA goto FindNewHoverPositionB
+	}
+	Actions
+	{
+		ResetTimer
+		HoverAttack "speed=60.0" "height=13.0" "desiredrange=40" "range=10.0" "fireRate=0.15" "AttackType=1"
+	}
+}
+
+state HoverMainRockets
+{
+	Conditions
+	{
+		if TransformMeter == 1.0 goto FindNewHoverPositionAndIncVar
+		if OpponentRange < TooCloseForComfort goto FindNewHoverPosition
+		if Timer > AttackPeriodB goto FindNewHoverPositionA
+	}
+	Actions
+	{
+		ResetTimer
+		HoverAttack "speed=60.0" "height=13.0" "desiredrange=60" "range=10.0" "fireRate=1.0" "AttackType=0"
+	}
+}
+
+state FindNewHoverPosition
+{
+	Conditions
+	{
+	
+	}
+	Actions
+	{
+		;Get New Hover Place
+		hoveravoid "Range=40.0" "height=17.0" 
+		SetState HoverMain
+	}
+}
+
+state FindNewHoverPositionA
+{
+	Actions
+	{
+		;Get New Hover Place
+		hoveravoid "Range=40.0" "height=17.0" 
+		SetState HoverMain
+	}
+}
+
+state FindNewHoverPositionB
+{
+	Actions
+	{
+		;Get New Hover Place
+		hoveravoid "Range=60.0" "height=17.0" 
+		SetState HoverMainRockets
+	}
+}
+
+state FindNewHoverPositionAndIncVar
+{
+	Actions
+	{
+		BeenHitHard
+		SetTransformMeter "value=0.0"
+		SetState HoverMain
+	}
+}
+
+;;;;;;;;;;;End of HOVER;;;;;;;;;;;;;;;;;;;;

@@ -1,0 +1,128 @@
+
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRange			1.0
+CONST MeleeRangeMin				10.0
+CONST MeleeRangeMax				12.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	
+	Actions
+	{
+		  SetPhysicsState "static=false"
+		SetState Alert
+	}
+}
+
+
+state Alert
+{
+	
+	Actions
+	{
+		
+		
+
+		SetState AttackRanged
+	}
+}
+
+state AttackRanged
+{
+	Conditions
+	{
+		if CanOperateSpecialMove == 1.0 goto SetShieldOn
+		if CanOperateSpecialMove == 0.0 goto SetShieldOff
+
+
+		if AlwaysTrue > "RAND*4.0" goto AttackRangedSecondary
+		if Timer > 2.0 goto WeaponCycle
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		
+		EngageOpponent "goalrange=30.0" "fireinterval=0.1" "firerange=70.0" "dodgeiftarget=0.2" "static"
+	}
+}
+state SetShieldOn
+{
+	Conditions
+	{
+		if CanOperateSpecialMove == 0.0 goto SetShieldOff
+
+
+		if AlwaysTrue > "RAND*4.0" goto AttackRangedSecondary
+		if Timer > 2.0 goto WeaponCycle
+	}
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "immunetoshots=true" 
+		
+		SetStrafe
+		
+		EngageOpponent "goalrange=30.0" "fireinterval=0.1" "firerange=70.0" "dodgeiftarget=0.2" "static"
+	}
+}
+state SetShieldOff
+{
+	Conditions
+	{
+		if CanOperateSpecialMove == 1.0 goto SetShieldOn
+
+
+		if AlwaysTrue > "RAND*4.0" goto AttackRangedSecondary
+		if Timer > 2.0 goto WeaponCycle
+	}
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "immunetoshots=false" 
+		
+		SetStrafe
+		
+		EngageOpponent "goalrange=30.0" "fireinterval=0.1" "firerange=70.0" "dodgeiftarget=0.2" "static"
+	}
+}
+state WeaponCycle
+{
+	
+	Actions
+	{
+		SetState AttackRanged
+	}
+}
+state AttackRangedSecondary
+{
+	Conditions
+	{
+		
+
+		if Timer > 0.7 goto AttackRanged
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponentTC "goalrange=1.0" "firerange=10.0" "RapidShootRange=10.0" "fireId=0" "firetimemin=0.3" "firetimemax=0.5"
+		
+	}
+}

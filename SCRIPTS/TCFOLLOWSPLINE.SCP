@@ -1,0 +1,70 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto RobotInit
+		if CarForm == 1.0 goto FollowSpline
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+	}
+}
+
+state RobotInit
+{
+	Conditions
+	{
+		if YawToSplinePoint < 20 goto RobotExit
+	}
+	Actions
+	{
+		Transform Car UntilDone
+		SetState FollowSpline
+	}
+}
+
+state RobotExit
+{
+	Actions
+	{
+		Transform Car UntilDone
+		SetState FollowSpline
+	}
+}
+
+state FollowSpline
+{
+	Conditions
+	{
+		if OnRoofTime > 1.0 goto FlipMe
+	}
+	Actions
+	{
+		SetFlag "ReachedSplineEnd=false" "FollowingSpline=false"
+		ApproachSpline
+		SetFlag "FollowingSpline=true"
+		FollowSpline "PostSeekTime=5.0"
+		SetFlag "ReachedSplineEnd=true" "FollowingSpline=false"
+		CarDrive park
+	}
+}
+
+state FlipMe
+{
+	Actions
+	{
+		Transform UntilDone
+		Transform Car UntilDone
+		SetState FollowSpline
+	}
+}

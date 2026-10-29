@@ -1,0 +1,380 @@
+state Chapter3_HubRestart_Alt
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath_Alt
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto_Alt
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		CreateModule "#VehicleLevels" "#VehicleLevels"
+		SendToModule "#VehicleLevels" "#TrafficLv=1" "#PatrolLv=1"
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 2"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		
+    	DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		SetState "Chapter3_Goto_Alt"
+	}
+}
+state Chapter3_Goto_Alt
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		
+		Idle 2.0
+		 
+		Idle 3.0
+		
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter2Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing_Alt"
+	}
+}
+state Chapter3_Enter_Alt
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter3_LoadCreatures_Alt
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures_Alt
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#ResponseLvPlayerDetected=0"
+		
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#Protect"
+		SendToModule "#VehicleLevels" "#TrafficLv=1" "#PatrolLv=1"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 1"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		SendToModule "#General" "#StartMissionIntro=" "#SetPlayerDeathPoint=#Chapter2Restart"
+	}
+}
+state Chapter3_LoadCreatures_Alt
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro_Alt
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_Main_Alt
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=Blackout"
+	}
+}
+;;state Chapter3_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter3_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D1C2Intro1"
+;;	}
+;;}
+state Chapter3_Main_Alt
+{
+
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter2_DeathFailMission"
+
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=Route3a" "#maxalive=1" "#count=1" "#FollowSpline=Route3a" "#WaitEnd" "#spacing=20.0" "#goalrange=25.0" "#AddToRadarAlways" "#type=CommTruck" "#CanShoot=0" "#object=#RedMediumDot" "#IgnorePaths" "#Energy=500" #DeathVFX=VFX_EMP "#Critical" #DrawHealthBar #DistanceScale
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=Route3b" "#maxalive=1" "#count=1" "#FollowSpline=Route3b" "#WaitEnd" "#spacing=20.0" "#goalrange=25.0" "#AddToRadarAlways" "#type=CommTruck" "#CanShoot=0" "#object=#RedMediumDot" "#IgnorePaths" "#Energy=500" #DeathVFX=VFX_EMP "#Critical" #DrawHealthBar #DistanceScale
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=Route3c" "#maxalive=1" "#count=1" "#FollowSpline=Route3c" "#WaitEnd" "#spacing=20.0" "#goalrange=25.0" "#AddToRadarAlways" "#type=CommTruck" "#CanShoot=0" "#object=#RedMediumDot" "#IgnorePaths" "#Energy=500" #DeathVFX=VFX_EMP "#Critical" #DrawHealthBar #DistanceScale
+		CreateModule "#DriverDrone" "#GotoDroneD" "#spline=Route3d" "#maxalive=1" "#count=1" "#FollowSpline=Route3d" "#WaitEnd" "#spacing=20.0" "#goalrange=25.0" "#AddToRadarAlways" "#type=CommTruck" "#CanShoot=0" "#object=#RedMediumDot" "#IgnorePaths" "#Energy=500" #DeathVFX=VFX_EMP "#Critical" #DrawHealthBar #DistanceScale
+		CreateModule "#DriverDrone" "#GotoDroneE" "#spline=Route3e" "#maxalive=1" "#count=1" "#FollowSpline=Route3e" "#WaitEnd" "#spacing=20.0" "#goalrange=25.0" "#AddToRadarAlways" "#type=CommTruck" "#CanShoot=0" "#object=#RedMediumDot" "#IgnorePaths" "#Energy=500" #DeathVFX=VFX_EMP "#Critical" #DrawHealthBar #DistanceScale
+		CreateModule "#DriverDrone" "#GotoDroneF" "#spline=Route3f" "#maxalive=1" "#count=1" "#FollowSpline=Route3f" "#WaitEnd" "#spacing=20.0" "#goalrange=25.0" "#AddToRadarAlways" "#type=CommTruck" "#CanShoot=0" "#object=#RedMediumDot" "#IgnorePaths" "#Energy=500" #DeathVFX=VFX_EMP "#Critical" #DrawHealthBar #DistanceScale
+		CreateModule "#DriverDrone" "#GotoDroneG" "#spline=Route3g" "#maxalive=1" "#count=1" "#FollowSpline=Route3g" "#WaitEnd" "#spacing=20.0" "#goalrange=25.0" "#AddToRadarAlways" "#type=CommTruck" "#CanShoot=0" "#object=#RedMediumDot" "#IgnorePaths" "#Energy=500" #DeathVFX=VFX_EMP "#Critical" #DrawHealthBar #DistanceScale
+		CreateModule "#DriverDrone" "#GotoDroneH" "#spline=Route3h" "#maxalive=1" "#count=1" "#FollowSpline=Route3h" "#WaitEnd" "#spacing=20.0" "#goalrange=25.0" "#AddToRadarAlways" "#type=CommTruck" "#CanShoot=0" "#object=#RedMediumDot" "#IgnorePaths" "#Energy=500" #DeathVFX=VFX_EMP "#Critical" #DrawHealthBar #DistanceScale
+		
+		
+		CreateModule "#DroneCounter" "#DroneCounter"  "#DronesToDefeat=8" "#IconType=#CommTower" 
+		
+		CreateModule "#Timer" "#Timer" "#Time=45.0" "#Start"
+ 
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D1_ch2_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter2Start" "#FadeUp"  "#CountBSet=0"	
+		Idle 2.0 
+		CreateModule "#DriverDrone" "#CreatureWaveA" "#spline=Route3a" "#maxalive=2" "#count=2" "#FollowSpline=Route3a" "#spacing=25.0" "#goalrange=25.0" #type=Jeep #IgnorePaths #WaitEnd
+		CreateModule "#DriverDrone" "#CreatureWaveC" "#spline=Route3c" "#maxalive=2" "#count=2" "#FollowSpline=Route3c" "#spacing=25.0" "#goalrange=25.0" #type=Jeep #IgnorePaths #WaitEnd
+		CreateModule "#DriverDrone" "#CreatureWaveF" "#spline=Route3f" "#maxalive=2" "#count=2" "#FollowSpline=Route3f" "#spacing=25.0" "#goalrange=25.0" #type=Jeep #IgnorePaths #WaitEnd
+		CreateModule "#DriverDrone" "#CreatureWaveH" "#spline=Route3h" "#maxalive=2" "#count=2" "#FollowSpline=Route3h" "#spacing=25.0" "#goalrange=25.0" #type=Jeep #IgnorePaths #WaitEnd
+	
+
+		SetState Chapter3_Watch_Alt
+	}
+}
+
+
+
+state Chapter3_AddOnTimeA_Alt
+{
+	actions {
+		
+		SendToModule "#Timer" "#AddTime=15.0"
+		SendToModule "#GoToDroneA" "#ClearTriggeredComplete"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetState Chapter3_Watch_Alt
+	}
+}
+
+state Chapter3_AddOnTimeB_Alt
+{
+	actions {
+		
+		SendToModule "#Timer" "#AddTime=15.0"
+		SendToModule "#GoToDroneB" "#ClearTriggeredComplete"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetState Chapter3_Watch_Alt
+	}
+}
+
+state Chapter3_AddOnTimeC_Alt
+{
+	actions {
+		
+		SendToModule "#Timer" "#AddTime=15.0"
+		SendToModule "#GoToDroneC" "#ClearTriggeredComplete"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetState Chapter3_Watch_Alt
+	}
+}
+
+state Chapter3_AddOnTimeD_Alt
+{
+	actions {
+		
+		SendToModule "#Timer" "#AddTime=15.0"
+		SendToModule "#GoToDroneD" "#ClearTriggeredComplete"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetState Chapter3_Watch_Alt
+	}
+}
+
+state Chapter3_AddOnTimeE_Alt
+{
+	actions {
+		
+		SendToModule "#Timer" "#AddTime=15.0"
+		SendToModule "#GoToDroneE" "#ClearTriggeredComplete"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetState Chapter3_Watch_Alt
+	}
+}
+
+state Chapter3_AddOnTimeF_Alt
+{
+	actions {
+		
+		SendToModule "#Timer" "#AddTime=15.0"
+		SendToModule "#GoToDroneF" "#ClearTriggeredComplete"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetState Chapter3_Watch_Alt
+	}
+}
+
+state Chapter3_AddOnTimeG_Alt
+{
+	actions {
+		
+		SendToModule "#Timer" "#AddTime=15.0"
+		SendToModule "#GoToDroneG" "#ClearTriggeredComplete"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetState Chapter3_Watch_Alt
+	}
+}
+
+state Chapter3_AddOnTimeH_Alt
+{
+	actions {
+		
+		SendToModule "#Timer" "#AddTime=15.0"
+		SendToModule "#GoToDroneH" "#ClearTriggeredComplete"
+		SendToModule "#DroneCounter" "#Increment=1"
+		SetState Chapter3_Watch_Alt
+	}
+}
+
+
+state Chapter3_Watch_Alt
+{
+	conditions
+	{
+		;;;LEVEL COMPLETE STATES;;;; --- if all dead ----
+		if module "GotoDroneA GetPercentageComplete" == 1.0 and
+			if module "GotoDroneB GetPercentageComplete" == 1.0 and
+				if module "GotoDroneC GetPercentageComplete" == 1.0 and
+					if module "GotoDroneD GetPercentageComplete" == 1.0 and
+						if module "GotoDroneE GetPercentageComplete" == 1.0 and
+							if module "GotoDroneF GetPercentageComplete" == 1.0 and
+								if module "GotoDroneG GetPercentageComplete" == 1.0 and
+									if module "GotoDroneH GetPercentageComplete" == 1.0 goto Chapter3_Complete_Alt
+						
+		;;;GAME OVER STATES;;;;; --- if timer reaches end -----		
+		if module "Timer FailMission" == 1.0 goto Chapter3_FailMission_Alt						
+
+		;;STOP TIMER STATES;;;;; -- if dead add time on
+		if module "GotoDroneA CompleteTrigger" == 1.0 goto Chapter3_AddOnTimeA_Alt
+		if module "GotoDroneB CompleteTrigger" == 1.0 goto Chapter3_AddOnTimeB_Alt
+		if module "GotoDroneC CompleteTrigger" == 1.0 goto Chapter3_AddOnTimeC_Alt
+		if module "GotoDroneD CompleteTrigger" == 1.0 goto Chapter3_AddOnTimeD_Alt
+		if module "GotoDroneE CompleteTrigger" == 1.0 goto Chapter3_AddOnTimeE_Alt
+		if module "GotoDroneF CompleteTrigger" == 1.0 goto Chapter3_AddOnTimeF_Alt
+		if module "GotoDroneG CompleteTrigger" == 1.0 goto Chapter3_AddOnTimeG_Alt
+		if module "GotoDroneH CompleteTrigger" == 1.0 goto Chapter3_AddOnTimeH_Alt
+	}
+
+}
+
+state Chapter3_DeathFailMission_Alt
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart_Alt
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission_Alt
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart_Alt
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter3_Restart_Alt
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		
+		SendToModule "#General" "#PlayerType=Blackout,Blackout,Blackout,Blackout"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		
+		SendToModule "#General" "#ResponseLvPlayerDetected=5"
+
+		SetState "Exit"
+	}
+}
+state Chapter3_Complete_Alt
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo_Alt
+	}
+	actions
+	{
+		DestroyModule "#Timer"
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT25" "#Spline=COMCAM2" "#SetFocus=CAMFOCUS2"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+               
+	}
+}
+state Chapter3_CompleteVideo_Alt
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished_Alt
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#StartOutroVideo=#D1C3Outro1" ;#D1C2Outro1"
+	}
+}
+state Chapter3_CompleteVideoFinished_Alt
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave_Alt
+	}
+	actions
+	{
+		SendToModule "#General" "#PlayerType=Blackout,Blackout,Scorponok,Blackout"
+		SendToModule "#General" "#SetPlayer=#COMPPOINT25"
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave_Alt
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter4"
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT2"
+		
+		SendToModule "#General" "#ResponseLvPlayerDetected=5"
+
+		IncreasePlayerHealth max
+		setstate "PickGoto2"
+	}
+}

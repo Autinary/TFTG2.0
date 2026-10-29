@@ -1,0 +1,39 @@
+;INCLUDE "TripChgRules.scp"
+
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Main
+	}
+}
+
+state Main
+{
+	ReferenceScript
+	{
+		Script=Combat
+		Source=Global
+		ReturnState=Main
+		Conditions
+		{
+			if GetEnergy < 0.5 goto FlyAwayState
+		}
+	}
+}
+
+state FlyAwayState
+{
+	ReferenceScript
+	{
+		Script=TC_TURRET
+		Source=Global
+		ReturnState=FlyAwayState
+		Conditions
+		{
+			;if GetEnergy < 0.35 goto FlyAwayState
+			;OnMacro RuleArt
+		}
+	}
+}

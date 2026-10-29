@@ -1,0 +1,206 @@
+state Chapter2_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D4_ch2_Goto"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter2_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D4_ch2_Goto" "#Start"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter2Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.4 goto Chapter2_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter2_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter2_LoadCreatures
+{
+	conditions
+	{
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_VideoIntro
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=Blackout"
+	}
+}
+state Chapter2_VideoIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_Main
+	}
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D4C2Intro1"
+	}
+}
+state Chapter2_Main
+{
+	conditions
+	{
+		if module "PowerPlant1Generators GetPercentageComplete" == 1 and
+			if module "PowerPlant2Generators GetPercentageComplete" == 1 and
+				if module "PowerPlant3Generators GetPercentageComplete" == 1 and
+					if module "PowerPlant4Generators GetPercentageComplete" == 1 and
+						if module "PowerPlant5Generators GetPercentageComplete" == 1 goto Chapter2_Complete
+
+		if message "MissionMessage" == 2.0 goto Chapter2_FailMission 
+	}
+	actions
+	{
+		SetDeathPoint "Chapter3_DeathFailMission"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D4_ch2_obj1" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter2Start" "#FadeUp"
+
+		CreateModule "#HardBuildings" "PowerPlants" "#Spline=PowerPlants" "#PhysObj=PHYSOBJTYPE_HVE_GENERIC11" "#PhysObj=PHYSOBJTYPE_HVE_GENERIC18" "#PhysObj=PHYSOBJTYPE_HVE_GENERIC21" "#Scale=5"
+
+		CreateModule #BuildingSpecialLink #Build1 #Building=#PowerPlant1 #Special=BuildTer_Build1_!!_ #ProtectSystem
+		SendToModule                      #Build1 #Building=#PowerPlant2 #Special=BuildTer_Build2_!!_ #ProtectSystem
+		CreateModule #BuildingSpecialLink #Build2 #Building=#PowerPlant3 #Special=BuildTer_Build3_!!_ #ProtectSystem
+		SendToModule                      #Build2 #Building=#PowerPlant4 #Special=BuildTer_Build4_!!_ #ProtectSystem
+		CreateModule #BuildingSpecialLink #Build3 #Building=#PowerPlant5 #Special=BuildTer_Build5_!!_ #ProtectSystem
+
+		CreateModule "#SpecialObj" "#PowerPlant1Generators" "#Spline=PP1_Generators" "#Breakable" "#PhysObjGlow" "#Radius=5" "#NoHealthBar" "#Pinned"
+		CreateModule "#SpecialObj" "#PowerPlant2Generators" "#Spline=PP2_Generators" "#Breakable" "#PhysObjGlow" "#Radius=5" "#NoHealthBar" "#Pinned"
+		CreateModule "#SpecialObj" "#PowerPlant3Generators" "#Spline=PP3_Generators" "#Breakable" "#PhysObjGlow" "#Radius=5" "#NoHealthBar" "#Pinned"
+		CreateModule "#SpecialObj" "#PowerPlant4Generators" "#Spline=PP4_Generators" "#Breakable" "#PhysObjGlow" "#Radius=5" "#NoHealthBar" "#Pinned"
+		CreateModule "#SpecialObj" "#PowerPlant5Generators" "#Spline=PP5_Generators" "#Breakable" "#PhysObjGlow" "#Radius=5" "#NoHealthBar" "#Pinned"
+
+		CreateModule "#SpecialObj" "#PP1_Canisters" "#Type=PHYSOBJTYPE_HVE_GENERIC11" "#Spline=PP1_Canisters" "#RespawnDelay=5" "#NoHealthBar"
+		CreateModule "#SpecialObj" "#PP2_Canisters" "#Type=PHYSOBJTYPE_HVE_GENERIC11" "#Spline=PP2_Canisters" "#RespawnDelay=5" "#NoHealthBar"
+		CreateModule "#SpecialObj" "#PP3_Canisters" "#Type=PHYSOBJTYPE_HVE_GENERIC11" "#Spline=PP3_Canisters" "#RespawnDelay=5" "#NoHealthBar"
+		CreateModule "#SpecialObj" "#PP4_Canisters" "#Type=PHYSOBJTYPE_HVE_GENERIC11" "#Spline=PP4_Canisters" "#RespawnDelay=5" "#NoHealthBar"
+		CreateModule "#SpecialObj" "#PP5_Canisters" "#Type=PHYSOBJTYPE_HVE_GENERIC11" "#Spline=PP5_Canisters" "#RespawnDelay=5" "#NoHealthBar"
+	}
+}
+state Chapter2_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter2_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter2_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#RevertPlayerType"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter2Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter2_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+	}
+}
+state Chapter2_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D4C2Outro1"
+	}
+}
+state Chapter2_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter2_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#PlayerType=Blackout"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter2_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		;Destroy the special links
+		DestroyModule "#Build1"
+		DestroyModule "#Build2"
+		DestroyModule "#Build3"
+		
+		SendToModule "#ActionRing" "#Unlock=#Chapter3"
+		IncreasePlayerHealth max
+		setstate "Chapter3_InitGoto"
+	}
+}

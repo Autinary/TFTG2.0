@@ -1,0 +1,245 @@
+
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRange			1.0
+CONST MeleeRangeMin				10.0
+CONST MeleeRangeMax				12.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto PreAlert
+		if CarForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		  SetPhysicsState "static=false"
+		; SetState Alert
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto PreAlert
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+
+
+;allow for FALLING!
+state PreAlert 
+{
+	Conditions
+	{
+		if Timer >= 1.5 goto Alert
+
+		
+	}
+	Actions
+	{
+		ResetTimer
+;		SetPhysicsState "static=false"
+		
+	}
+}
+
+
+state Alert
+{
+	Conditions
+	{
+
+		if OpponentRange < AutoMeleeRange goto MeleeAttack
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=true" "TakeHit=false" "StuckEscape=true"
+		SetPhysicsState "immunetomelee=false"
+
+		SetState AttackRanged
+	}
+}
+
+state AttackRanged
+{
+	Conditions
+	{
+		
+
+		if OpponentRange < AutoMeleeRange goto MeleeAttack
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		
+		EngageOpponent "goalrange=30.0" "fireinterval=1.7" "firerange=70.0" "dodgeiftarget=0.2" "static"
+	}
+}
+
+
+state MeleeAttack
+{
+	Conditions
+	{
+
+		if MoodForMelee == 0.0 AND
+		if OpponentRange > AutoMeleeRange goto Alert
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		SetStrafe false
+		
+		EngageOpponent "goalrange=1.0" "firerange=2.0" "instant" "chainwithdelay=0.8" "numshots=1" "static"
+		SetState AttackCloseInit
+	}
+}
+
+state AttackCloseInit
+{
+	Conditions
+	{
+		
+
+		if MoodForMelee == 0.0 AND
+		if OpponentRange > AutoMeleeRange goto Alert
+
+		if Timer > 2.0 goto AttackCloseWait
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		MoveAwayFromPlayer "face" "100.0"
+	}
+}
+
+state AttackCloseWait
+{
+	Conditions
+	{
+		
+
+		if MoodForMelee == 0.0 AND
+		if OpponentRange > AutoMeleeRange goto Alert
+
+		if OpponentRange < AutoMeleeRange goto MeleeAttack
+
+		OnMacro StuckTime goto StuckEscape
+	}
+
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponent "goalrange=15.0" "firerange=20.0" "spread=0.1" "retreat" "static"
+	}
+}
+
+
+
+state BlockAttackBegin
+{
+	Conditions
+	{
+		if OpponentRange > 6.0 goto BlockAttackEnd
+	}
+	Actions
+	{
+		SetBlocking "time=2.0"
+		SetState BlockAttackDo
+	}
+}
+
+state BlockAttackDo
+{
+	Actions
+	{
+		Idle "frames=1"		; As SetStrafe cannot be easily undone
+		SetStrafe false
+		DoAttack "slammove"
+		SetState BlockAttackEnd
+	}
+}
+
+state BlockAttackEnd
+{
+	Actions
+	{
+		SetState Alert
+	}
+}
+
+state BeenStruck
+{
+	Conditions
+	{
+		if StuckTime > 1.0 goto BeenStruckExit
+		if GotOpponent == 1.0 goto BeenStruckExit
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=true"
+		SetWalkToLocatorTimer Max
+		GoToLocator "run" "goalrange=3.0" "xz_rangecheck"
+		SetState BeenStruckExit
+	}
+}
+
+state BeenStruckExit
+{
+	Conditions
+	{
+		if GotOpponent == 1.0 goto Alert
+	}
+	Actions
+	{
+		Idle 3.0
+		SetWalkToLocatorTimer 0.0
+		SetFlag "TakeHitPhysics=false"
+		SetState Alert
+	}
+}
+
+state StuckEscape
+{
+	Actions
+	{
+		SetFlag "TempBlock=true"
+		SetStrafe false
+		DoAttack "kickmove"
+		SetFlag "TempBlock=false"
+		SetState Alert
+	}
+}

@@ -1,0 +1,1532 @@
+state Chapter2_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter2_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#PlayerType=IronHide"
+		CreateModule "#VehicleLevels" "#RoadBlocks=A2C1RoadBlocks"
+		SetState "Chapter2_Goto"
+	}
+}
+state Chapter2_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		SendToModule "#General" "#AllowPlayerMovement" "#VehicleRollingStart_MPH=-15.0"
+		Idle 2.0
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch2_Goto" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch2_Goto2" "#AutoDestroy"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch1_obj8" "#AutoDestroy"
+		Idle 3.0
+
+		DestroyModule "#MissionStartSpeech"
+		SetMusic "ACTION Mission2_1 QUIET Generic"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=2" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter2Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+
+state Chapter2_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter2_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter2_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A2C2Intro1"
+	}
+}
+state Chapter2_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter2_PreMain
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+	SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		
+	SendToModule "#General" "#LoadCreature=DroneDefault"
+    	SendToModule "#General" "#PlayerType=IronHide"
+	}
+}
+;;state Chapter2_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter2_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartVideo=#A2C2Intro1"
+;;	}
+;;}
+state Chapter2_PreMain
+{
+	conditions
+	{
+		if Timer > 5.5 goto Chapter2_Main
+	}
+	actions
+	{
+		ResetTimer
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		
+		CreateModule "#Speech" "#ExcessiveForce" "#PlayDelay=0.2" "#speech=#A2_ch2_intro" "#AutoDestroy" "#Start" 
+		
+	}
+}
+state Chapter2_Main
+{
+	conditions
+	{
+		if module "TriggerA InArea" == 1.0 goto Chapter2_SecondPartMidtro
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+	}
+	actions
+	{
+		;SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter2_DeathFailMission"
+		CreateModule "#Timer" "#JazzHealth" "#HeadType=#Jazz" "#DrawHealthBar" "#Protect" "#Time=30.0" "#Random" #StartLoseHealth
+		CreateModule "#AreaRange" "#TriggerA" "#Trigger=#A2C2TriggerA" "#AddToRadar" "#ParticleRing" 
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A2_ch2_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		CreateModule "#SplineExplode" "#RadarSplinePoint" "#Spline=A2C2JazzStart" "#AddToRadar=#Jazz" "#SetAtEnd" "#Protect"
+		;CreateModule "#Creature" "#CreatureWaveR" "#Spline=A2C2SpawnC" "#count=1" "#maxalive=1" "#addtoradar" "#Type=Jazz" "#SpawnInLosInit" "#SpawnAsVehicle" "#Unstoppable" "#Friend"
+		SendToModule "#General" "#CountASet=1" "#CountBSet=0" "#CountCSet=1"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter2Start" "#FadeUp" 
+	}
+}
+ActionMacro AutoHeal
+{
+	IncreasePlayerHealth 65.0
+	SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+	SendToModule "#General" "#CountASet=0"
+	Idle 2.8
+	SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+	Idle 7.0
+	SendToModule "#Ratchet" "#AddToRadar"	
+	SendToModule "#General" "#CountASet=1"	
+
+}
+state Chapter2_SecondPartMidtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_SecondPart
+	}
+	actions
+	{
+		DestroyModule "#TriggerA"
+		SendToModule "#General" "#StartVideo=#A2C2Midtro1"
+		SendToModule #JazzHealth "#StopLoseHealth"
+	}
+}
+state Chapter2_SecondPart
+{
+	conditions
+	{
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		;if module "CreatureWaveA GetCountAlive" == 2.0 goto Chapter2_RatchetSpawn
+;		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter2_FailMission
+		if module "CreatureWaveR GetPercentageComplete" == 1.0 goto Chapter2_FailMission
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 1.0 goto Chapter2_SetEnd1
+	}
+	actions
+	{
+		DestroyAllModules
+		SendToModule #JazzHealth "#StopLoseHealth" "#NoDraw" 
+		SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar_a"
+		
+		CreateModule "#Speech" "#A2_ch2_Obj2" "#speech=#A2_ch2_Obj0" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#A2_ch2_Obj2" "#speech=#A2_ch2_Obj11" "#AutoDestroy" "#Start"
+		
+		CreateModule "#Timer" "#Timer" "#Time=25" "#Protect" "#NoRender"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A2C2SpawnA" "#count=4" "#maxalive=4" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" 
+		CreateModule "#KeyLocation" "#KeyLocation1" "#Spline=A2C2KeyLocA" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER"
+		SendToModule "#RadarSplinePoint" "#Reset" "#Spline=A2C2JazzRouteA" "#MilesPerHour=90" "#Start" "#moduletag=#JazzHealth" "#param=#StartLoseHealth"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#A2C2StartA" "#FadeUp"		
+	}
+}
+state Chapter2_RatchetSpawn
+{
+	conditions
+	{
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		;if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 1.0 goto Chapter2_SetEnd12
+		if Timer > 4.0 goto Chapter2_Idle
+		if module "Ratchet BeenHit" == 1.0 goto Chapter2_Idle
+	}
+	actions
+	{
+		
+		ResetTimer
+		CreateModule "#Creature" "#Ratchet" "#Spline=A2C2KeyLocA" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#AddToRadarOff"  "#SpawnAsVehicle" "#SpawnAsleep"  "#Friend" "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#Protect"
+		
+		
+
+	}
+}
+state Chapter2_RatchetSpawn2
+{
+	conditions
+	{
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		;if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter2_FailMission
+		if Timer > 4.0 goto Chapter2_Idle2
+		if module "Ratchet BeenHit" == 1.0 goto Chapter2_Idle2
+	}
+	actions
+	{
+		
+		ResetTimer
+		CreateModule "#Creature" "#Ratchet" "#Spline=A2C2KeyLocA" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#AddToRadarOff" "#SpawnAsVehicle" "#SpawnAsleep"  "#Friend" "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#Protect"
+		
+		
+
+	}
+}
+state Chapter2_Idle
+{
+	conditions
+	{
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 1.0 goto Chapter2_SetEnd1
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_FirstHeal
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		
+	}
+	actions
+	{
+		SendToModule "#Ratchet" "#Script=Ratchet" 
+				
+
+	}
+}
+state Chapter2_FirstHeal
+{
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter2_EarlyMedicProcess1
+	}
+}
+state Chapter2_EarlyMedicProcess1
+{
+	conditions
+	{
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 1.0 goto Chapter2_SetEnd1
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_FirstHeal
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+	}	
+
+
+}
+state Chapter2_Idle2
+{
+	conditions
+	{
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter2_FailMission
+		if module "CreatureWaveE GetPercentageComplete" == 1.0 goto Chapter2_FourthPartKilledTowTruck
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and 
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal3
+	}
+	actions
+	{
+		SendToModule "#Ratchet" "#Script=Ratchet"
+				
+
+	}
+}
+state Chapter2_Key1Wait
+{
+	conditions
+	{
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter2_FailMission
+
+	}
+	
+}
+state Chapter2_Key2Wait
+{
+	conditions
+	{
+		if module "CreatureWaveB GetPercentageComplete" == 1.0 and 
+			if module "CreatureWaveD GetPercentageComplete" == 1.0 and 
+				if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter2_ThirdPartGoto
+		if module "KeyLocation2 FailMission" == 1.0 goto Chapter2_FailMission
+		;if module "Ratchet PlayerRange" < 30 and  
+		;	if module "General GetCountA" == 1.0 goto Chapter2_Heal2
+
+	}
+	actions
+	{
+		SendToModule "#Ratchet" "#AddToRadar" "#SuppressShieldOff"
+	}
+	
+}
+state Chapter2_SetEnd1
+{
+	conditions
+	{
+		if module "TriggerB InArea" == 1.0 goto Chapter2_ThirdPartMidtro
+		if module "TriggerC InArea" == 1.0 goto Chapter2_FourthPartMidtro
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		;if module "CreatureWaveA GetCountAlive" == 2.0 goto Chapter2_RatchetSpawn
+		if module "CreatureWaveB GetPercentageComplete" == 1.0 and 
+			if module "CreatureWaveD GetPercentageComplete" == 1.0 and 
+				if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter2_ThirdPartGoto
+		if module "KeyLocation1 InArea" == 1.0 goto Chapter2_Key1Wait
+		if module "KeyLocation2 InArea" == 1.0 goto Chapter2_Key2Wait
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 and
+			if module "Ratchet GetCountAlive" == 1.0 goto Chapter2_FailMission
+		if module "RangeTracker PlayerRange" < 250 and 
+			if module "General GetCountB" == 1.0 goto Chapter2_ClosingIn
+		if module "RangeTracker2 PlayerRange" < 350 and
+			if module "General GetCountB" == 2.0 goto Chapter2_ClosingIn2
+		if module "AmbushArea FailMission" == 1.0 Chapter2_FailMission
+		if module "Ambush1 InArea" == 1.0 goto Chapter2_Ambush1
+		if module "Ambush2a InArea" == 1.0 goto Chapter2_Ambush2a
+		if module "Ambush2b InArea" == 1.0 goto Chapter2_Ambush2b
+		if module "Ambush2c InArea" == 1.0 goto Chapter2_Ambush2c
+		if module "AmbusherA GetPercentageComplete" == 1.0 and
+			if module "AmbusherB GetPercentageComplete" == 1.0 and
+				if module "AmbusherC GetPercentageComplete" == 1.0 goto Chapter2_DoneAmbush1
+
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "Ratchet GetCountAlive" == 1.0 and  
+				if module "General GetCountA" == 1.0 goto Chapter2_SetEndHeal
+			
+	}
+	actions
+	{
+		SendToModule "#RadarSplinePoint" "#SetAtEnd"
+		SendToModule "#General" "#CountCSet=0"
+	}
+}
+state Chapter2_SetEndHeal
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter2_SetEnd1
+	}
+
+}
+state Chapter2_SetEnd12
+{
+	conditions
+	{
+		;if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		;if module "KeyLocation1 InArea" == 1.0 goto Chapter2_Key1Wait
+		
+	}
+	actions
+	{
+		
+		SendToModule "#RadarSplinePoint" "#SetAtEnd"
+		SendToModule "#General" "#CountCSet=0"
+		SetState Chapter2_Idle2
+	}
+}
+state Chapter2_SetEnd13
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 2.0 goto Chapter2_RatchetSpawn2
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter2_FailMission
+		
+	}
+	actions
+	{
+		
+		SendToModule "#RadarSplinePoint" "#SetAtEnd"
+		SendToModule "#General" "#CountCSet=0"
+		
+	}
+}
+state Chapter2_SecondPartGoto
+{
+	
+	actions
+	{
+		DestroyAllModules
+
+		 
+		SendToModule "#JazzHealth" #Time=50.0 "#StartLoseHealth" "#Draw" 
+		
+		CreateModule "#AreaRange" "#TriggerB" "#Trigger=#A2C2TriggerB" "#AddToRadar" "#ParticleRing" 
+		CreateModule "#AreaRange" "#Ambush1" "#Trigger=#A2Ambush1" ; "#AddToRadar" 
+
+		CreateModule "#Creature" "#RangeTracker" "#Type=DroneDefault" "#spline=A2C1CARSP1" "#SetPosition=#A2TrackPlayerRange" "#count=1" "#maxalive=1" "#addtoradaroff" "#Friend" "#SpawnInLOSInit"
+		
+		SendToModule "#RadarSplinePoint" "#SetAtEnd"
+		
+		SendToModule "#General" "#SetMessage=Tran2D1" "#SetMessageTimer=5" "#CountBSet=1"
+
+
+		
+    	SendToModule "#General" "#BG_LoadCreature=DroneTowTruck"
+		SetState Chapter2_SecondPartGotoProcess
+		
+
+	}
+}
+state Chapter2_Ambush1
+{
+	conditions
+	{
+		
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 1.0 goto Chapter2_SetEnd3
+		if module "AmbushArea FailMission" == 1.0 Chapter2_FailMission
+		if module "AmbusherA GetPercentageComplete" == 1.0 and
+			if module "AmbusherB GetPercentageComplete" == 1.0 and
+				if module "AmbusherC GetPercentageComplete" == 1.0 goto Chapter2_DoneAmbush1
+
+		if Timer > 1.3 goto Chapter2_AmbushKeyLocReset3
+			
+		
+	}
+	actions
+	{
+		
+		
+		 
+		
+		SendToModule "#TriggerB" "#AddToRadaroff" 
+		DestroyModule "#Ambush1" 
+		;DestroyModule "#RangeTracker" 
+		DestroyModule "#Ratchet"		
+
+		CreateModule "#Speech" "#A2_ch2_obj5" "#speech=#A2_ch2_obj5" "#AutoDestroy" "#Start"
+
+		CreateModule "#Creature" "#KeyLocCre" "#Spline=A2C2SpawnA" "#count=1" "#maxalive=1" "#addtoradaroff" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat" "#SetPosition=#A2C2KeyAmbushAreaSpawn_01" "#SetEnergyMin=1.0"
+	
+		CreateModule "#KeyLocation" "#AmbushArea" "#Creature=#KeyLocCre" "#Radius=120" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" 
+		
+		;CreateModule "#KeyLocation" "#AmbushArea" "#Spline=A2C4KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#Radius=220" 
+		CreateModule "#Creature" "#AmbusherA" "#Spline=A2C2SpawnA" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsVehicle" "#SetPosition=#A2Ambush1Spawn1" ; "#SpawnAsleep" "#Script=Melee" 
+		CreateModule "#Creature" "#AmbusherB" "#Spline=A2C2SpawnA" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsVehicle" "#SetPosition=#A2Ambush1Spawn2" ; "#SpawnAsleep" "#Script=Melee"
+		CreateModule "#Creature" "#AmbusherC" "#Spline=A2C2SpawnA" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsVehicle" "#SetPosition=#A2Ambush1Spawn3" ; "#SpawnAsleep" "#Script=Melee"
+		Idle 1.3
+		SendToModule "#AmbusherA" "#TransformForceRobot"
+		SendToModule "#AmbusherB" "#TransformForceRobot"
+		SendToModule "#AmbusherC" "#TransformForceRobot"
+		
+
+	}
+}
+state Chapter2_AmbushKeyLocReset
+{
+	conditions
+	{
+		
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 1.0 goto Chapter2_SetEnd3
+		if module "AmbushArea FailMission" == 1.0 Chapter2_FailMission
+		if module "AmbusherA GetPercentageComplete" == 1.0 and
+			if module "AmbusherB GetPercentageComplete" == 1.0 and
+				if module "AmbusherC GetPercentageComplete" == 1.0 goto Chapter2_DoneAmbush1
+
+		if Timer > 0.1 goto Chapter2_AmbushKeyLocReset2
+			
+		
+	}
+	actions
+	{
+		
+		
+		 
+		
+		SendToModule "#KeyLocCre" "#Script=StandAndWait" "#SetPosition=#A2C2KeyAmbushAreaSpawn_01" 
+	
+		
+		
+
+	}
+}
+state Chapter2_AmbushKeyLocReset2
+{
+	conditions
+	{
+		
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 1.0 goto Chapter2_SetEnd3
+		if module "AmbushArea FailMission" == 1.0 Chapter2_FailMission
+		if module "AmbusherA GetPercentageComplete" == 1.0 and
+			if module "AmbusherB GetPercentageComplete" == 1.0 and
+				if module "AmbusherC GetPercentageComplete" == 1.0 goto Chapter2_DoneAmbush1
+
+		if Timer > 0.1 goto Chapter2_AmbushKeyLocReset
+			
+		
+	}
+	actions
+	{
+		
+		
+		 
+		
+		SendToModule "#KeyLocCre" "#Script=StandAndWait" "#SetPosition=#A2C2KeyAmbushAreaSpawn_01" 
+	
+		
+		
+
+	}
+}
+state Chapter2_AmbushKeyLocReset3
+{
+	conditions
+	{
+		
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 1.0 goto Chapter2_SetEnd3
+		if module "AmbushArea FailMission" == 1.0 Chapter2_FailMission
+		if module "AmbusherA GetPercentageComplete" == 1.0 and
+			if module "AmbusherB GetPercentageComplete" == 1.0 and
+				if module "AmbusherC GetPercentageComplete" == 1.0 goto Chapter2_DoneAmbush1
+
+		if Timer > 0.1 goto Chapter2_AmbushKeyLocReset2
+			
+		
+	}
+	actions
+	{
+		
+		
+		 
+		SendToModule "#AmbusherA" "#TransformForceRobot"
+		SendToModule "#AmbusherB" "#TransformForceRobot"
+		SendToModule "#AmbusherC" "#TransformForceRobot"
+		SendToModule "#KeyLocCre" "#Script=StandAndWait" "#SetPosition=#A2C2KeyAmbushAreaSpawn_01" 
+	
+		
+		
+
+	}
+}
+state Chapter2_SetEnd3
+{
+	conditions
+	{
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "AmbushArea FailMission" == 1.0 Chapter2_FailMission
+		if module "AmbusherA GetPercentageComplete" == 1.0 and
+			if module "AmbusherB GetPercentageComplete" == 1.0 and
+				if module "AmbusherC GetPercentageComplete" == 1.0 goto Chapter2_DoneAmbush1
+
+		if Timer > 0.1 goto Chapter2_AmbushKeyLocReset
+		
+			
+		
+	}
+	actions
+	{
+		
+		SendToModule "#RadarSplinePoint" "#SetAtEnd"
+		SendToModule "#General" "#CountCSet=0"
+		SendToModule "#AmbusherA" "#TransformForceRobot"
+		SendToModule "#AmbusherB" "#TransformForceRobot"
+		SendToModule "#AmbusherC" "#TransformForceRobot"
+		
+	}
+}
+state Chapter2_DoneAmbush1
+{
+	
+	actions
+	{
+		SendToModule "#TriggerB" "#AddToRadar" 
+		DestroyModule "#AmbusherA"
+		DestroyModule "#AmbusherB"
+		DestroyModule "#AmbusherC"
+		DestroyModule "#AmbushArea"
+		DestroyModule "#KeyLocCre"
+
+		;CreateModule "#Creature" "#RangeTracker" "#Type=DroneDefault" "#spline=A2C1CARSP1" "#SetPosition=#A2TrackPlayerRange" "#count=1" "#maxalive=1" "#addtoradaroff" "#Friend" "#SpawnAsVehicle" "#SpawnInLOSInit"
+		
+		
+		SetState Chapter2_SecondPartGotoProcess
+		
+
+	}
+}
+state Chapter2_ClosingIn
+{
+	
+	actions
+	{
+		DestroyModule "#RangeTracker" 
+		SendToModule "#General" "#CountBSet=0"
+		CreateModule "#Speech" "#A2_ch2_obj4" "#speech=#A2_ch2_obj8" "#AutoDestroy" "#Start"
+		SendToModule "#Ratchet" "#AddToRadarOff"
+		
+		SetState Chapter2_SecondPartGotoProcess
+		
+
+	}
+}
+state Chapter2_SecondPartGotoProcess
+{
+	conditions
+	{
+		if module "TriggerB InArea" == 1.0 goto Chapter2_ThirdPartMidtro
+		if module "Ambush1 InArea" == 1.0 goto Chapter2_Ambush1
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 1.0 goto Chapter2_SetEnd1
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		if module "RangeTracker PlayerRange" < 220 and 
+			if module "General GetCountB" == 1.0 goto Chapter2_ClosingIn
+	}
+	
+}
+
+state Chapter2_ThirdPartMidtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_ThirdPart
+	}
+	actions
+	{
+		DestroyModule "#TriggerB"
+		SendToModule "#General" "#StartVideo=#A2C2Midtro2"
+		SendToModule #JazzHealth "#StopLoseHealth"
+		;SendToModule "#RadarSplinePoint" "#SetAtEnd"
+	}
+}
+state Chapter2_ThirdPart
+{
+	conditions
+	{
+		if module "CreatureWaveB GetPercentageComplete" == 1.0 and 
+			if module "CreatureWaveD GetPercentageComplete" == 1.0 and 
+				if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter2_ThirdPartGoto
+;		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "KeyLocation2 FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 2.0 goto Chapter2_SetEnd1
+		;if module "Ratchet GetCountAlive" == 0.0 goto Chapter2_FailMission
+		;if module "Ratchet PlayerRange" < 30 and  
+		;	if module "General GetCountA" == 1.0 goto Chapter2_Heal
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		DestroyAllModules
+		DestroyModule "#Ratchet"
+		DestroyModule "#DelayedSend"
+		DestroyModule "#DelayedSendReminder"
+
+    	SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+	SendToModule "#General" "#LoadCreature=DronePickupTruck"
+
+		SendToModule #JazzHealth "#StopLoseHealth" "#NoDraw" 
+		
+		CreateModule "#Speech" "#A2_ch2_Obj3" "#speech=#A2_ch2_Obj3" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#A2_ch2_Obj3" "#speech=#A2_ch2_Obj10" "#AutoDestroy" "#Start"
+		;CreateModule "#Speech" "#A2_ch2_Obj3" "#speech=#A2_ch2_Obj4" "#AutoDestroy" "#Start"
+
+		;CreateModule "#Timer" "#Timer" "#Time=30"
+		SendToModule "#Timer" "#AddTime=30.0"
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A2C2SpawnB" "#count=2" "#maxalive=2" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" 
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A2C2SpawnC" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DronePickupTruck" "#SpawnInLosInit" "#SpawnAsCreature" 
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=A2C2SpawnC" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneTowTruck" "#SpawnInLosInit" "#SpawnAsVehicle" "#SpawnAsleep"
+		;CreateModule "#Creature" "#Ratchet" "#Spline=A2C2KeyLocB" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#SpawnAsCreature" "#Script=Ratchet"  "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#Protect" "#SetPosition=#RatchetSpawn1"  ; "#Friend"
+		CreateModule "#KeyLocation" "#KeyLocation2" "#Spline=A2C2KeyLocB" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER"
+		SendToModule "#RadarSplinePoint" "#Reset" "#Spline=A2C2JazzRouteB" "#MilesPerHour=90" "#Start" "#moduletag=#JazzHealth" "#param=#StartLoseHealth"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#A2C2StartB" "#FadeUp"	
+		SendToModule "#General" "#CountCSet=2"	
+	}
+}
+state Chapter2_PostMedicProcess1
+{
+	conditions
+	{
+		if module "CreatureWaveB GetPercentageComplete" == 1.0 and 
+		if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter2_ThirdPartGoto
+		if module "KeyLocation2 FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 2.0 goto Chapter2_SetEnd1
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal
+		if module "Ratchet GetCountAlive" == 0.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+	}	
+
+
+}
+state Chapter2_PostMedicProcess2
+{
+	conditions
+	{
+		if module "CreatureWaveB GetPercentageComplete" == 1.0 and 
+		if module "CreatureWaveC GetPercentageComplete" == 1.0 goto Chapter2_ThirdPartGoto
+		if module "KeyLocation2 FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal2
+		if module "Ratchet GetCountAlive" == 0.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+	}	
+
+
+}
+state Chapter2_PostMedicProcess3
+{
+	conditions
+	{
+		if module "CreatureWaveA GetPercentageComplete" == 1.0 goto Chapter2_SecondPartGoto
+		if module "KeyLocation1 FailMission" == 1.0 goto Chapter2_FailMission
+		if module "CreatureWaveE GetPercentageComplete" == 1.0 goto Chapter2_FourthPartKilledTowTruck
+
+		;if module "General GetCountD" == 2.0 goto Chapter2_FourthPartFodderDeadA
+			
+
+		;if module "General GetCountD" == 1.0 and
+		;	if module "CreatureWaveD Energy" <= 0.0 and
+		;		if module "CreatureWaveG Energy" <= 0.0 and 
+		;			if module "CreatureWaveF Energy" <= 0.0 goto Chapter2_FourthPartFodderDead
+
+		;if module "General GetCountD" == 3.0 and
+		if module "CreatureWaveD GetCountAlive" == 0.0 and
+			if module "CreatureWaveG GetCountAlive" == 0.0 and 
+				if module "CreatureWaveF GetCountAlive" == 0.0 goto Chapter2_FourthPartKilledTowTruck2
+
+		if module "CreatureWaveH GetPercentageComplete" == 1.0 and 
+			if module "CreatureWaveI GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveJ GetPercentageComplete" == 1.0 and 
+					if module "CreatureWaveK GetPercentageComplete" == 1.0 goto Chapter2_FourthPartGoto
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal3
+		if module "Ratchet GetCountAlive" == 0.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+
+
+		
+	}	
+
+
+}
+state Chapter2_PostMedicProcess4
+{
+	conditions
+	{
+		if module "TriggerC InArea" == 1.0 goto Chapter2_FourthPartMidtro
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 2.0 goto Chapter2_SetEnd2
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal4
+		if module "Ratchet GetCountAlive" == 0.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		if module "RangeTracker2 PlayerRange" < 350 and
+			if module "General GetCountB" == 2.0 goto Chapter2_ClosingIn2
+
+		;if module "Ambush2a InArea" == 1.0 goto Chapter2_Ambush2a
+		;if module "Ambush2b InArea" == 1.0 goto Chapter2_Ambush2b
+		;if module "Ambush2c InArea" == 1.0 goto Chapter2_Ambush2c
+		
+	
+	}	
+
+
+}
+state Chapter2_PostMedicProcess5
+{
+	conditions
+	{
+		if module "TriggerC InArea" == 1.0 goto Chapter2_FourthPartMidtro
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal5
+		if module "Ratchet GetCountAlive" == 0.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		
+		if module "RangeTracker2 PlayerRange" < 350 and
+			if module "General GetCountB" == 2.0 goto Chapter2_ClosingIn2
+
+		;if module "Ambush2a InArea" == 1.0 goto Chapter2_Ambush2a
+		;if module "Ambush2b InArea" == 1.0 goto Chapter2_Ambush2b
+		;if module "Ambush2c InArea" == 1.0 goto Chapter2_Ambush2c
+	}	
+
+
+}
+state Chapter2_PostMedicProcess6
+{
+	conditions
+	{
+		if module "TriggerD InArea" == 1.0 goto Chapter2_FifthPartMidtro
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal6
+		if module "Ratchet GetCountAlive" == 0.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+	}	
+
+
+}
+state Chapter2_PostMedicProcess7
+{
+	conditions
+	{
+		if module "CreatureWaveH GetPercentageComplete" == 1.0 and 
+			if module "CreatureWaveI GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveJ GetPercentageComplete" == 1.0 and 
+					if module "CreatureWaveK GetPercentageComplete" == 1.0 goto Chapter2_FourthPartGoto
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal7
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+	}	
+
+
+}
+
+state Chapter2_Heal
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter2_PostMedicProcess1
+		
+	}
+}
+
+state Chapter2_Heal2
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter2_PostMedicProcess2
+		
+		
+	}
+}
+
+state Chapter2_ClosingIn2
+{
+	
+	actions
+	{
+		DestroyModule "#RangeTracker2" 
+		SendToModule "#General" "#CountBSet=0"
+		CreateModule "#Speech" "#ClosingInIH" "#speech=#A2_ch2_obj12" "#AutoDestroy" "#Start"
+		SendToModule "#Ratchet" "#AddToRadarOff"
+		;SendToModule "#RangeTracker2" "#SetPosition=#Chapter2Start"
+		;Idle 4.0
+		SetState Chapter2_ThirdPartGotoProcess
+		
+
+	}
+}
+state Chapter2_ThirdPartGotoProcess
+{
+	conditions
+	{
+		if module "TriggerC InArea" == 1.0 goto Chapter2_FourthPartMidtro
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission
+		if module "Timer FailMission" == 1.0 and 
+			if module "General GetCountC" == 2.0 goto Chapter2_SetEnd1
+		;if module "Ambush2a InArea" == 1.0 goto Chapter2_Ambush2a
+		;if module "Ambush2b InArea" == 1.0 goto Chapter2_Ambush2b
+		;if module "Ambush2c InArea" == 1.0 goto Chapter2_Ambush2c
+		
+		;if module "Ratchet PlayerRange" < 30 and  
+		;	if module "Ratchet GetCountAlive" == 1.0 and  
+		;		if module "General GetCountA" == 1.0 goto Chapter2_Heal4
+		;if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		if module "RangeTracker2 PlayerRange" < 350 and
+			if module "General GetCountB" == 2.0 goto Chapter2_ClosingIn2
+	}
+	
+}
+state Chapter2_ThirdPartGoto
+{
+	
+	actions
+	{
+		DestroyModule "#CreatureWaveB"
+		DestroyModule "#CreatureWaveC"
+		DestroyModule "#KeyLocation2"
+
+		;SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+    	SendToModule "#General" "#BG_UnLoadCreature=DroneDefault"
+    	SendToModule "#General" "#BG_LoadCreature=DroneForkLift"
+	SendToModule "#General" "#BG_LoadCreature=DroneArmouredCar_a"
+
+		;SendToModule "#Ratchet" "#AddToRadarOff"
+ 		SendToModule "#JazzHealth" #Time=65.0 "#StartLoseHealth" "#Draw" 
+		SendToModule "#RadarSplinePoint" "#SetAtEnd"
+		CreateModule "#AreaRange" "#TriggerC" "#Trigger=#A2C2TriggerC" "#AddToRadar" "#ParticleRing" 
+		
+		
+	
+		CreateModule "#Speech" "#A2_ch2_obj2Goto" "#speech=#A2_ch2_obj2" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetMessage=Tran2D1" "#SetMessageTimer=5" "#CountBSet=2"
+
+		CreateModule "#Creature" "#RangeTracker2" "#Type=DroneForklift" "#spline=A2C1CARSP1" "#SetPosition=#A2TrackPlayerRange2" "#count=1" "#maxalive=1" "#addtoradaroff" "#Friend" "#SpawnAsVehicle" "#SpawnInLOSInit"
+		CreateModule "#Creature" "#RoadBlockers" "#Type=DroneForklift" "#spline=RoadBlock1" "#count=1" "#maxalive=1" "#addtoradaroff" "#SpawnAsVehicle" "#SpawnInLOSInit" "#Script=Early_CombatVeh"
+		CreateModule "#Creature" "#RoadBlockers" "#Type=DroneForklift" "#spline=RoadBlock2" "#count=2" "#maxalive=2" "#addtoradaroff" "#SpawnAsVehicle" "#SpawnInLOSInit" "#Script=Early_CombatVeh"
+		CreateModule "#Creature" "#RoadBlockers" "#Type=DroneForklift" "#spline=RoadBlock3" "#count=1" "#maxalive=1" "#addtoradaroff" "#SpawnAsVehicle" "#SpawnInLOSInit" "#Script=Early_CombatVeh"
+		
+		SetState Chapter2_ThirdPartGotoProcess
+
+		
+	
+	}
+}
+state Chapter2_Heal4
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter2_PostMedicProcess4
+		
+		
+	}
+}
+
+state Chapter2_SetEnd2
+{
+	conditions
+	{
+		if module "TriggerC InArea" == 1.0 goto Chapter2_FourthPartMidtro
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal5
+
+		if module "Ambush2a InArea" == 1.0 goto Chapter2_Ambush2a
+		if module "Ambush2b InArea" == 1.0 goto Chapter2_Ambush2b
+		if module "Ambush2c InArea" == 1.0 goto Chapter2_Ambush2c
+		
+		
+		if module "RangeTracker2 PlayerRange" < 350 and
+			if module "General GetCountB" == 2.0 goto Chapter2_ClosingIn2
+	}
+	actions
+	{
+		SendToModule "#RadarSplinePoint" "#SetAtEnd"
+		SendToModule "#General" "#CountCSet=0"
+		SendToModule "#Ratchet" "#AddToRadar" "#SuppressShieldOff"
+	}
+}
+state Chapter2_Heal5
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter2_PostMedicProcess5
+		
+	}
+}
+
+state Chapter2_FourthPartMidtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_FourthPart
+	}
+	actions
+	{
+		DestroyModule "#TriggerC"
+		SendToModule "#General" "#StartVideo=#A2C2Midtro3"
+		SendToModule #JazzHealth "#StopLoseHealth"
+		;SendToModule "#RadarSplinePoint" "#SetAtEnd"
+		
+	}
+}
+
+
+state Chapter2_FourthPart
+{
+	conditions
+	{
+		;if module "General GetCountD" == 1.0 and
+		;	if module "CreatureWaveD Energy" <= 0.0 and
+		;		if module "CreatureWaveG Energy" <= 0.0 and 
+		;			if module "CreatureWaveF Energy" <= 0.0 goto Chapter2_FourthPartFodderDead
+
+		if module "CreatureWaveE GetPercentageComplete" == 1.0 goto Chapter2_FourthPartKilledTowTruck
+			; if module "CreatureWaveD GetPercentageComplete" == 1.0 goto Chapter2_FourthPartKilledTowTruck
+;		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		;if Timer > 2.0 goto Chapter2_Idle2
+		;if module "Ratchet BeenHit" == 1.0 goto Chapter2_Idle2
+		if module "Ratchet PlayerRange" < 30 and 
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal3
+
+		
+		
+	}
+	actions
+	{
+		DestroyAllModules
+		DestroyModule "#Ratchet"
+		DestroyModule "#Heal"
+		DestroyModule "#DelayedSend"
+		DestroyModule "#DelayedSendReminder"
+
+		SendToModule #JazzHealth "#StopLoseHealth" "#NoDraw" 
+		
+		CreateModule "#Speech" "#A2_ch2_obj6" "#speech=#A2_ch2_obj7" "#AutoDestroy" "#Start"
+
+		SendToModule "#General" "#CountDSet=1"
+		ResetTimer
+		;CreateModule "#Creature" "#Ratchet" "#Spline=A2C2KeyLocC" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#SpawnAsCreature" "#Script=Ratchet" "#InVulnerable" "#SetEnergyMin=899.0" "#SetPosition=#RatchetSpawn2"
+		CreateModule "#Creature" "#Ratchet" "#Spline=A2C2KeyLocC" "#SetPosition=#RatchetSpawn2" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#SpawnAsCreature" "#Friend" "#Protect" "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" "#SetEnergyMin=899.0" "#Script=Ratchet"
+		;CreateModule "#Timer" "#RatchetHealth" "#HeadType=#Ratchet" "#Time=45.0" "#DrawHealthBar" "#Protect" "#Random" "#StartLoseHealth"
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A2C2SpawnD" "#count=2000" "#wiicount=1" "#maxalive=1" "#Delay=4.0" "#addtoradar" "#Type=DroneForkLift" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat" "#KeyLocation=On"
+		CreateModule "#Creature" "#CreatureWaveE" "#Spline=A2C2SpawnE" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneTowTruck" "#SpawnInLosInit" "#SpawnAsCreature"
+		CreateModule "#Creature" "#CreatureWaveF" "#Spline=A2C2SpawnF" "#count=2000" "#wiicount=1" "#maxalive=1" "#Delay=4.0" "#addtoradar" "#Type=DroneForkLift" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat" "#KeyLocation=On"
+		CreateModule "#Creature" "#CreatureWaveG" "#Spline=A2C2SpawnG" "#count=2000" "#wiicount=1" "#maxalive=1" "#Delay=4.0" "#addtoradar" "#Type=DroneForkLift" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Early_Combat" "#KeyLocation=On"
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A2C2KeyLocC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=Key13Return"
+		SendToModule "#RadarSplinePoint" "#Reset" "#Spline=A2C2JazzRouteC" "#MilesPerHour=120" "#Start" "#moduletag=#JazzHealth" "#param=#StartLoseHealth"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#A2C2StartC" "#FadeUp"	
+
+		SendToModule "#General" "#SetMessage=RatchetAlert" "#SetMessageTimer=3.0"
+			
+	}
+}
+state Chapter2_FourthPartFodderDead
+{
+	conditions
+	{
+		if module "CreatureWaveE GetPercentageComplete" == 1.0 goto Chapter2_FourthPartKilledTowTruck
+			
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and 
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal3
+
+		if Timer > 10 goto Chapter2_FourthPartFodderDeadA
+	}
+	actions
+	{
+
+		ResetTimer
+		SendToModule "#General" "#CountDSet=2"
+		
+		Idle 10.0 
+		SetState Chapter2_FourthPartFodderDeadA
+		
+	}
+}
+state Chapter2_FourthPartFodderDeadA
+{
+	conditions
+	{
+
+		if module "CreatureWaveD Energy" <= 0.0 and
+			if module "CreatureWaveG Energy" <= 0.0 and 
+				if module "CreatureWaveF Energy" <= 0.0 goto Chapter2_FourthPartFodderDead
+
+		if module "CreatureWaveE GetPercentageComplete" == 1.0 goto Chapter2_FourthPartKilledTowTruck
+			
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet PlayerRange" < 30 and 
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal3
+
+		
+	}
+	actions
+	{
+
+		ResetTimer
+		SendToModule "#General" "#CountDSet=1"
+		
+		SendToModule "#CreatureWaveD" "#count=2" "#wiicount=2" 
+		SendToModule "#CreatureWaveF" "#count=2" "#wiicount=2" 
+		SendToModule "#CreatureWaveG" "#count=2" "#wiicount=2" 
+
+	}
+}
+state Chapter2_Heal3
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter2_PostMedicProcess3
+		
+		
+		
+	}
+}
+
+state Chapter2_FourthPartKilledTowTruck
+{
+	conditions
+	{
+		;if module "CreatureWaveD GetCountAlive" == 0.0 and
+			;if module "CreatureWaveG GetCountAlive" == 0.0 and 
+				;if module "CreatureWaveF GetCountAlive" == 0.0 goto Chapter2_FourthPartKilledTowTruck2
+		if module "CreatureWaveD Energy" <= 0.0 and
+			if module "CreatureWaveG Energy" <= 0.0 and 
+				if module "CreatureWaveF Energy" <= 0.0 goto Chapter2_FourthPartKilledTowTruck2
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal3
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		DestroyModule "#CreatureWaveE"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck"
+		;SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		SendToModule "#CreatureWaveD" "#count=2" "#wiicount=2" 
+		SendToModule "#General" "#SetMessage=Tran2D1" "#SetMessageTimer=5"
+		SendToModule "#CreatureWaveG" "#count=2" "#wiicount=2" 
+		SendToModule "#CreatureWaveF" "#count=2" "#wiicount=2" 
+		SendToModule "#General" "#CountDSet=3"
+		
+		CreateModule "#Speech" "#A2_ch2_obj4" "#speech=#A2_ch2_obj6" "#AutoDestroy" "#Start"
+		SendToModule "#JazzHealth" #Time=70.0 "#StartLoseHealth" "#Draw" 
+		SendToModule "#Ratchet" "#AddToRadar" "#SuppressShieldOff"
+		
+	}
+}
+
+state Chapter2_FourthPartKilledTowTruck2
+{
+	conditions
+	{
+		if module "CreatureWaveH GetPercentageComplete" == 1.0 and 
+			if module "CreatureWaveI GetPercentageComplete" == 1.0 and
+				if module "CreatureWaveJ GetPercentageComplete" == 1.0 and 
+					if module "CreatureWaveK GetPercentageComplete" == 1.0 goto Chapter2_FourthPartGoto
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal7
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission
+	}
+	actions
+	{
+		DestroyModule "#CreatureWaveG"
+		DestroyModule "#CreatureWaveF"
+		DestroyModule "#CreatureWaveD"
+		
+		;DestroyModule "#Heal"
+		
+		CreateModule "#Speech" "#A2_ch2_Obj4" "#speech=#A2_ch2_Obj4" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#CountDSet=3"
+		
+		CreateModule "#Creature" "#CreatureWaveH" "#Spline=A2C2SpawnD" "#count=2" "#maxalive=2" "#addtoradar" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=Early_Combat" "#KeyLocation=On"
+		CreateModule "#Creature" "#CreatureWaveI" "#Spline=A2C2SpawnE" "#count=2" "#maxalive=2" "#addtoradar" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=Early_Combat" "#KeyLocation=On"
+		CreateModule "#Creature" "#CreatureWaveJ" "#Spline=A2C2SpawnF" "#count=2" "#maxalive=2" "#addtoradar" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=Early_Combat" "#KeyLocation=On"
+		CreateModule "#Creature" "#CreatureWaveK" "#Spline=A2C2SpawnG" "#count=2" "#maxalive=2" "#addtoradar" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=Early_Combat" "#KeyLocation=On"
+		
+		SendToModule "#Ratchet" "#AddToRadar" "#SuppressShieldOff" 
+		
+	}
+}
+state Chapter2_Heal7
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter2_PostMedicProcess7
+		
+		
+		
+	}
+}
+
+;Chapter2_FourthPartGotoSync
+;{
+;	actions
+;	{
+;		CreatureBGLoadSync
+;		SetState "Chapter2_FourthPartGoto"
+;	}
+;}
+state Chapter2_FourthPartGoto
+{
+	conditions
+	{
+		if module "TriggerD InArea" == 1.0 goto Chapter2_FifthPartMidtro
+		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "Ratchet PlayerRange" < 30 and  
+			if module "General GetCountA" == 1.0 goto Chapter2_Heal6
+		if module "Ratchet GetCountAlive" == 0.0 goto Chapter2_FailMission
+		if module "Ratchet IsEnergyAtMin" == 1.0 goto Chapter2_FailMission	
+	}
+	actions
+	{
+		DestroyModule "#CreatureWaveD"
+		DestroyModule "#CreatureWaveH"
+		DestroyModule "#CreatureWaveI"
+		DestroyModule "#KeyLocation"
+		SendToModule "#Ratchet" "#AddToRadar" "#SuppressShieldOff"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneTowTruck"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneForkLift"
+		SendToModule "#General" "#BG_LoadCreature=DroneCement"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		
+		;SendToModule "#JazzHealth" #Time=60.0 "#StartLoseHealth" "#Draw" 
+
+		CreateModule "#Speech" "#A2_ch2_obj7" "#speech=#A2_ch2_obj9" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#A2_ch2_obj7" "#speech=#A2_ch2_obj14" "#PlayDelay=5" "#AutoDestroy" "#Start"
+		;CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch2_obj12" "#AutoDestroy" 
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A2_ch2_obj8" "#AutoDestroy" 
+
+		;CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=7" "#times=2"
+
+		SendToModule "#RadarSplinePoint" "#SetAtEnd"
+		CreateModule "#AreaRange" "#TriggerD" "#Trigger=#A2C2TriggerD" "#AddToRadar" "#ParticleRing" 
+		
+		;CreateModule "#Speech" "#DefeatDrones" "#speech=#A2_ch2_obj3" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter2_Heal6
+{
+	
+	actions
+	{
+		DoMacro AutoHeal
+		SetState Chapter2_PostMedicProcess6
+		
+		
+	}
+}
+
+state Chapter2_FifthPartMidtro1
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto Chapter2_FifthPartMidtro
+	}
+	actions
+	{
+		DestroyAllModules
+		
+
+		
+		CreateModule "#Timer" "#Timer" "#Time=1.5" "#NoRender" "#Start"
+		
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A2_ch2_obj13" "#AutoDestroy" "#Start"
+		
+	}
+}
+state Chapter2_FifthPartMidtro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_FifthPart
+	}
+	actions
+	{
+		DestroyModule "#TriggerD"
+		SendToModule "#General" "#StartVideo=#A2C2Midtro4"
+		SendToModule #JazzHealth "#StopLoseHealth"
+	}
+}
+state Chapter2_FifthPart
+{
+	conditions
+	{
+		if module "CreatureWaveH GetPercentageComplete" == 1.0 and
+			if module "CreatureWaveA GetPercentageComplete" == 1.0 and 
+				if module "CreatureWaveB GetPercentageComplete" == 1.0 goto Chapter2_FifthPart2
+
+;		if module "JazzHealth Finished" == 1.0 goto Chapter2_FailMission 
+		if module "KeyLocation FailMission" == 1.0 goto Chapter2_FailMission
+		;if module "Timer FailMission" == 1.0 goto Chapter2_FifthPart2
+	}
+	actions
+	{
+		DestroyAllModules
+
+;;    	SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+;;    	SendToModule "#General" "#LoadCreature=DroneCement"
+
+		SendToModule #JazzHealth "#StopLoseHealth" "#NoDraw" 
+		DestroyAllModules "#IncludeProtected" 
+		DestroyModule "#Ratchet"
+		DestroyModule "#RadarSplinePoint"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A2_ch2_obj13" "#AutoDestroy" "#Start"
+		CreateModule "#Creature" "#CreatureWaveH" "#Spline=A2C2SpawnH" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneCement" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=CACCombat"
+		CreateModule "#Creature" "#CreatureWaveA" "#Spline=A2C2SpawnD" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#SetPosition=#A2C2FinalDroneSpawn1" "#KeyLocation=On" 
+		CreateModule "#Creature" "#CreatureWaveB" "#Spline=A2C2SpawnF" "#count=1" "#maxalive=1" "#addtoradar" "#Type=DroneDefault" "#SpawnInLosInit" "#SpawnAsCreature" "#SetPosition=#A2C2FinalDroneSpawn2" "#KeyLocation=On" 
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A2C2KeyLocD" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#Radius=125.0" ;"#Spline=A2C2KeyLocD" 
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#A2C2StartD" "#FadeUp"	
+		CreateModule "#SpecialObj" "#SpecialObj" "#Placement=LO_A2C2" "#Pinned" "#Terrain"
+		CreateModule "#SpecialObj" "#A2_ch2_obj1" "#Placement=GC_A2C2" "#Type=PHYSOBJTYPE_TRQ_GENERIC18" "#RespawnDelay=10"
+		CreateModule "#SpecialObj" "#A2_ch2_obj2" "#Placement=LP_A2C2" "#Type=PHYSOBJTYPE_TRQ_GENERIC21" "#RespawnDelay=10"
+	}
+}
+state Chapter2_FifthPart2
+{
+	conditions
+	{
+	
+		if module "CheckPlayerPOS1 InArea" == 1.0 goto Chapter2_FinalRatSpawn1
+		if module "CheckPlayerPOS2 InArea" == 1.0 goto Chapter2_FinalRatSpawn2
+		if Timer > 1.5 goto Chapter2_FifthPart3
+
+	}
+	actions
+	{
+		ResetTimer
+		CreateModule "#AreaRange" "#CheckPlayerPOS1" "#Trigger=#PlayerPositionTracker1" ; "#AddToRadar" 
+		CreateModule "#AreaRange" "#CheckPlayerPOS2" "#Trigger=#PlayerPositionTracker2" ; "#AddToRadar" 
+		
+		
+	}
+}
+state Chapter2_FinalRatSpawn1
+{
+	conditions
+	{
+	
+		if module "Timer FailMission" == 1.0 goto Chapter2_CompleteIntro
+	}
+	actions
+	{
+		
+		CreateModule "#Timer" "#Timer" "#Time=3.7" "#NoRender" "#Start"
+		CreateModule "#Creature" "#Ratchet" "#SpawnSpline=A2C2SpawnD" "#type=DroneArmouredCar_a" "#AddToRadarOff" "#SpawnAsVehicle" "#Speed=120" "#Unstoppable" "#Friend" "#SetPosition=#BackupRatchetSpawn6" "#SetEnergyMax=1500" "#SetEnergy=1500" ; "#Invulnerable" 
+		SendToModule "#Ratchet" "#TransformForceRobot"
+		SendToModule "#Ratchet" "#SetEnergyMax=9000.0" "#SetEnergy=9000.0" 
+		
+		
+	}
+}
+state Chapter2_FinalRatSpawn2
+{
+	conditions
+	{
+	
+		if module "Timer FailMission" == 1.0 goto Chapter2_CompleteIntro
+	}
+	actions
+	{
+		
+		CreateModule "#Timer" "#Timer" "#Time=3.7" "#NoRender" "#Start"
+		CreateModule "#Creature" "#Ratchet" "#SpawnSpline=A2C2SpawnD" "#type=DroneArmouredCar_a" "#AddToRadarOff" "#SpawnAsVehicle" "#Speed=120" "#Unstoppable" "#Friend" "#SetPosition=#BackupRatchetSpawn5" "#SetEnergyMax=1500" "#SetEnergy=1500" ; "#Invulnerable" 
+		SendToModule "#Ratchet" "#TransformForceRobot"
+		SendToModule "#Ratchet" "#SetEnergyMax=9000.0" "#SetEnergy=9000.0" 
+		
+		
+	}
+}
+state Chapter2_FifthPart3
+{
+	conditions
+	{
+	
+		if module "Timer FailMission" == 1.0 goto Chapter2_CompleteIntro
+	}
+	actions
+	{
+		
+		CreateModule "#Timer" "#Timer" "#Time=3.7" "#NoRender" "#Start"
+		CreateModule "#Creature" "#Ratchet" "#SpawnSpline=A2C2SpawnD" "#type=DroneArmouredCar_a" "#AddToRadarOff" "#SpawnAsVehicle" "#Speed=120" "#Unstoppable" "#Friend" "#SetPosition=#BackupRatchetSpawn5" "#SetEnergyMax=1500" "#SetEnergy=1500" ; "#Invulnerable" 
+		SendToModule "#Ratchet" "#TransformForceRobot"
+		SendToModule "#Ratchet" "#SetEnergyMax=9000.0" "#SetEnergy=9000.0" 
+		
+		
+	}
+}
+state Chapter2_CompleteIntro
+{
+	conditions
+	{
+	
+		
+	}
+	actions
+	{
+		
+		SendToModule "#Ratchet" "#Script=Ratchet"
+		SetState Chapter2_Complete
+		
+		
+	}
+}
+state Chapter2_FifthPart3
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto Chapter2_Complete
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+		CreateModule "#Timer" "#Timer2" "#Time=6.5" "#NoRender" "#Start"
+	}
+}
+state Chapter2_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter2_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter2_Restart
+	}
+	actions
+	{
+		DestroyModule "#DelayedSendReminder"
+		SendToModule "#General"  "#EndOfMission"  "#FailMission"
+	}
+}
+state Chapter2_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+	SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+	SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+    	SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+    	SendToModule "#General" "#UnLoadCreature=DroneForkLift"
+    	SendToModule "#General" "#UnLoadCreature=DroneDefault"
+    	SendToModule "#General" "#UnLoadCreature=DroneCement"
+	SendToModule "#General" "#UnLoadCreature=Jazz"
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		
+		SendToModule "#General" "#PlayerType=Jazz,Ironhide,OptimusPrime,OptimusPrime,Jazz"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter2Restart" "#FadeUp"
+		SetState "GlobalActionRing3"
+	}
+}
+state Chapter2_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter2_CompleteVideo
+	}
+	actions
+	{
+		
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT2" "#Spline=COMCAM2" "#SetFocus=CAMFOCUS2"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+	}
+}
+state Chapter2_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter2_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A2C2Outro1"
+	}
+}
+state Chapter2_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter2_Leave
+	}
+	actions
+	{
+    	SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+	SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+
+    	SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+    	SendToModule "#General" "#UnLoadCreature=DroneForkLift"
+    	SendToModule "#General" "#UnLoadCreature=DroneDefault"
+    	SendToModule "#General" "#UnLoadCreature=DroneCement"
+    	SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+	
+		SendToModule "#General" "#PlayerType=Jazz,Ironhide,OptimusPrime,OptimusPrime,Jazz"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter2_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter3"
+		SetMusic "ACTION Mission3_1 QUIET Generic"
+		IncreasePlayerHealth max
+		setstate "PickGoto"
+	}
+}

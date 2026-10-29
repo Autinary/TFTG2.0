@@ -1,0 +1,217 @@
+state SubMissionEX_Init
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionEX_Race
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMissionEX2_Init
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionEX_Chase
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#FadeDown"
+	}
+}
+
+state SubMissionEX_Race
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMissionEX_Finish
+		if module "Timer FailMission" == 1.0 goto SubMissionEX_Fail
+		
+		
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		ResetTimer
+		
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMissionEX_Death"
+		Idle 0.1
+		SendToModule "#General" "#ResetLevel" "#PlayerType=Blackout" "#SetVehicle=#Race"
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=RaceNodes4" "#Range=25"
+		Idle 0.1 
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		
+		SendToModule "#General" "#FadeUp"
+		
+	}
+
+}
+state SubMissionEX_Chase
+{
+	conditions
+	{
+		if module "General GetCountB" == 1.0 goto SubMissionEX_Scorp
+		if module "General GetCountB" == 3.0 goto SubMissionEX_EvilBee
+		if Timer > 1.0 and
+			if module "Drone GetCountAlive" == 0.0 goto SubMissionEX_Finish
+		if module "Drone Complete" == 1.0 goto SubMissionEX_Fail
+
+		;if module "Escape InArea" == 1.0 goto SubMissionEX_Fail
+		
+		
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		ResetTimer
+		
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMissionEX_Death"
+		Idle 0.1
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chase"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		CreateModule "#Goto" "#Drone" "#SpawnSpline=DCPath" "#SplineStep=0" "#DirectSpline=DCPath" "#Transform=2.0" "#Location=#GreenMediumDot" "#Object=#RedMediumDot" "#type=DroneDefault_a" "#Speed=150"  
+		;CreateModule "#AreaRange" "#Escape" "#Trigger=#ChaseEnd" "#AddToRadarOff" "#AllCreatures"
+		
+		Idle 0.1 
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		
+		SendToModule "#General" "#FadeUp"
+		
+	}
+
+}
+state SubMissionEX_Scorp
+{
+	conditions
+	{
+		if Timer > 1.0 and
+			if module "Drone GetCountAlive" == 0.0 goto SubMissionEX_Finish
+		if module "Drone Complete" == 1.0 goto SubMissionEX_Fail
+
+		;if module "Escape InArea" == 1.0 goto SubMissionEX_Fail
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+		
+		Idle 0.1
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chase"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		CreateModule "#Goto" "#Drone" "#SpawnSpline=DCPath" "#SplineStep=0" "#DirectSpline=DCPath" "#Transform=2.0" "#Location=#GreenMediumDot" "#Object=#RedMediumDot" "#type=DroneDefault_a" "#Speed=30"  
+		;CreateModule "#AreaRange" "#Escape" "#Trigger=#ChaseEnd" "#AddToRadarOff" "#AllCreatures"
+		
+		Idle 0.1 
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		
+		SendToModule "#General" "#FadeUp"
+		
+	}
+
+}
+state SubMissionEX_EvilBee
+{
+	conditions
+	{
+		if Timer > 1.0 and
+			if module "Drone GetCountAlive" == 0.0 goto SubMissionEX_Finish
+		if module "Drone Complete" == 1.0 goto SubMissionEX_Fail
+
+		;if module "Escape InArea" == 1.0 goto SubMissionEX_Fail
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+		
+		Idle 0.1
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#Chase"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		CreateModule "#Goto" "#Drone" "#SpawnSpline=DCPath" "#SplineStep=0" "#DirectSpline=DCPath" "#Transform=2.0" "#Location=#GreenMediumDot" "#Object=#RedMediumDot" "#type=DroneDefault_a" "#Speed=80"  
+		;CreateModule "#AreaRange" "#Escape" "#Trigger=#ChaseEnd" "#AddToRadarOff" "#AllCreatures"
+		
+		Idle 0.1 
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		
+		SendToModule "#General" "#FadeUp"
+		
+	}
+
+}
+
+state SubMissionEX_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionEX_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMissionEX_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=5"
+		;SetState "SubMissionEX_Leave"
+	}
+}
+state SubMissionEX_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMissionEX_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMissionEX_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#StartSubMission"
+		Idle 0.3
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMissionEX_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		
+		;
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#COMPPOINT3" "#FadeUp"
+		SendToModule "#General" "#FadeUp"		
+		SetState "Exit"
+	}
+}

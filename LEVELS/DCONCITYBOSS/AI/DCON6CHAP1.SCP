@@ -1,0 +1,1867 @@
+state Chapter1_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState GlobalActionRing
+	}
+}
+state Chapter1_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter1_Part2Enter
+{
+	conditions
+	{
+	
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState Chapter1_Part2IntroVideo
+	}
+}
+state Chapter1_Part2IntroVideo
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_Part2LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D6C1Midtro1"
+	}
+}
+state Chapter1_Part2LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Fight1Start
+	}
+	actions
+	{
+		;SendToModule "#ActionRing" "#RemoveCreatures"
+
+		
+		SendToModule "#General" "#LoadCreature=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=DroneCement_a"
+		SendToModule "#General" "#LoadCreature=StarScream"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		
+	}
+}
+state Chapter1_Enter
+{
+	conditions
+	{
+	
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState Chapter1_IntroVideo
+	}
+}
+state Chapter1_EnterInstantly
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_IntroVideo2
+	}
+	actions
+	{
+
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#General" "#StartIntroVideo=#D6C1LevelIntro"
+	}
+}
+state Chapter1_StartMission
+{
+	actions
+	{
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SetState Chapter1_IntroVideo2
+	}
+}
+state Chapter1_IntroVideo2
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D7C1LevelIntro"
+	}
+}
+state Chapter1_IntroVideo
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D6C1LevelIntro"
+	}
+}
+state Chapter1_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Main 
+	}
+	actions
+	{
+		;SendToModule "#ActionRing" "#RemoveCreatures"
+
+		
+		SendToModule "#General" "#LoadCreature=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		
+	}
+}
+state LevelIntroAfterDeath
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_DeathMain
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Chapter1_DeathMain"
+		SendToModule "#General" "#StartIntroVideo=#D6C1LevelIntro"
+	}
+}
+
+state Chapter1_DeathMain
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#AllowPlayerMovement"
+		SetState "Chapter1_Main"
+	}
+}
+
+
+state Chapter1_Main
+{
+	conditions
+	{
+		if Timer > 0.0 goto Chapter1_MainDelay
+	}
+	actions
+	{
+		ResetTimer
+		SetDeathPoint "Chapter1_DeathFailMission"		
+	}
+}
+
+
+state Chapter1_MainDelay
+{
+	actions
+	{		
+		;SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		;SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+
+		SetMusic "ACTION Mission1_1 Play Action"
+		
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=3" "#TrafficLv=2" "#PatrolLv=0" 
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter1Start" "#FadeUp" "#PlayerType=Megatron"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		SetState "Chapter1_Fight0Start"
+		;SetState "Chapter1_Fight0StartDelay"
+	}
+}
+
+
+;;Location 0
+state Chapter1_Fight0StartDelay
+{
+	conditions
+	{
+		if Timer > 2.0 goto Chapter1_Fight0Start
+	}
+	actions
+	{
+		
+	}	
+}
+
+state Chapter1_Fight0Start
+{
+	Conditions
+	{
+		if module "Optimus Health" <= 0.80 goto Chapter1_Meteors0Start
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if module "General ChapterFadeScreenFinished" == 1.0 and
+			if Timer > 2.0 goto Chapter1_Fight0StartBWait
+	}
+	Actions
+	{
+		ResetTimer
+		DestroyAllModules
+		CreateModule "#Speech" "#D6_ch1_obj11" "#speech=#D6_ch1_obj11" "#PlayDelay=2.0" "#AutoDestroy" "#Start"
+		CreateModule "#Goto" "#Optimus" "#Spline=D6C1Spawn" "#Script=Optimus_PrimeM" "#count=1" "#maxalive=1" "#Type=OptimusPrime" "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#SetEnergyMax=15000" "#SetEnergy=15000" "#SetEnergyMin=12000.0" "#ForcePlayerAsOpp" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6LOC0_KEYLOC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#GreyKeyLoc"
+
+		;Move AllSpark	
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM1" "#Wobble=2.0" "#Time=99999.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference"
+	}
+}
+
+state Chapter1_Fight0StartBWait
+{
+	Conditions
+	{
+		if module "Optimus Health" <= 0.80 goto Chapter1_Meteors0Start
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		
+		SendToModule "#Optimus" "#Boss" "#Type=OptimusPrime"
+	}
+}
+
+state Chapter1_Meteors0Start
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "Creature GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "Creature2 GetCountAlive" == 0.0 goto Chapter1_AllSparkHunt1
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#AllowPlayerMovement"
+		
+		SendToModule "#Optimus" "#DirectSpline=D6LOC0_OPTIMUSGOTO" "#Script=FollowSplineM" "#AddToRadarOff" "#NoHealthBar" "#KeyLocation=Off"
+		
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DroneDefault_a" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1000" "#Script=CarDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=D6LOC0_Meteors" "#Time=3" "#Time=6" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DronePickupTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=D6LOC0_Meteors" "#Time=10" "#Time=13"
+	}
+}
+
+state Chapter1_OptimusArrived0
+{
+	conditions
+	{
+		;if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#Optimus"
+		CreateModule "#Creature" "#Optimus" "#Spline=D6LOC1_Spawn" "#Script=Optimus_WI" "#count=1" "#maxalive=1" "#Type=OptimusPrime" "#Invulnerable" "#SpawnInLosInit" "#ADDTORADAROFF" "#ForcePlayerAsOpp"
+		SetState Chapter1_GetToLoc1
+	}
+}
+state Chapter1_GlobalRadarJam
+{
+	conditions
+	{	
+		if module "General GetCountA" == 1.0 and
+			if module "Optimus IsEnergyAtMin" == 1.0 goto Chapter1_GlobalRadarClear 
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_GlobalRadarClear
+		
+		if module "KeyLocation InArea" == 1.0 goto Chapter1_GlobalRadarClear
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=1"
+		
+	}
+}
+state Chapter1_GlobalRadarClear
+{
+	conditions
+	{	
+		if module "General GetCountA" == 1.0 and
+			if module "Optimus IsEnergyAtMin" == 1.0 goto Chapter1_EnergonDroneAssault 
+		if module "General GetCountA" == 1.0 and
+			if module "EnergonDrone Energy" <= 0.0 goto Chapter1_AllSparkHunt3
+		if module "General GetCountA" == 2.0 and
+			if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt5
+		if module "General GetCountA" == 3.0 and
+			if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt7
+		if module "General GetCountA" == 4.0 and
+			if module "CubeSecret FoundRand" == 1.0 goto Chapter1_Meteors1Start
+		if module "General GetCountA" == 5.0 and
+			if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt11
+		if module "General GetCountA" == 6.0 and
+			if module "CubeSecret FoundRand" == 1.0 goto Chapter1_Midtro2
+		if module "General GetCountA" == 7.0 and
+			if module "CubeSecret FoundRand" == 1.0 goto Chapter1_Meteors3Start
+		if module "General GetCountA" == 8.0 and
+			if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt17
+		if module "General GetCountA" == 9.0 and
+			if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt19
+		if module "General GetCountA" == 10.0 and
+			if module "CubeSecret FoundRand" == 1.0 goto Chapter1_Midtro4
+		
+
+		;if module "General GetCountB" == 1.0 and
+		;	if module "Optimus GetLinkedDist" < 123 goto Chapter1_OptimusFollowPath
+		;if module "General GetCountB" == 2.0 and
+		;	if module "Optimus GetLinkedDist" < 485 goto Chapter1_OptimusStop
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"
+		
+	}
+}
+state Chapter1_AllSparkHunt1
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt2
+		if module "Optimus BeenHit" == 1.0 goto Chapter1_AllSparkHunt2
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#SplineObj"
+		DestroyModule "#Optimus"
+		CreateModule "#Goto" "#Optimus" "#Spline=D6LOC2_Spawn" "#Script=Optimus_W" "#count=1" "#maxalive=1" "#Type=OptimusPrime" "#Invulnerable" "#SpawnInLosInit" "#ADDTORADAROFF" "#ForcePlayerAsOpp" "#SetEnergyMax=15000" "#SetEnergy=12000" "#SetEnergyMin=12000.0" "#SetPosition=#D6C1_SAM1" "#Protect"
+		
+		SendToModule "#General" "#BG_UnLoadCreature=DroneDefault_a"
+
+		SendToModule "#General" "#BG_LoadCreature=DroneCement_a"
+		SendToModule "#General" "#BG_LoadCreature=StarScream"
+
+		
+		;CreateModule "#Speech" "#D6_ch1_goto" "#speech=#D6_ch1_obj1" "#AutoDestroy" "#Start"
+		
+		
+			
+		SendToModule "#General" "#SetMessage=DCB1" "#SetMessageTimer=7" 
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+	
+		;CreateModule "#AreaRange" "#AreaRange" "#Trigger=#D6LOC2_AREA" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC1" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM1" "#Wobble=2.0" "#Creature=#Creature" "#Time=9999.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference"
+		
+	}
+
+}
+state Chapter1_AllSparkHunt2
+{
+	Conditions
+	{
+
+		if module "Optimus IsEnergyAtMin" == 1.0 goto Chapter1_EnergonDroneAssault ;Chapter1_AllSparkHunt3
+		
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		
+		;DestroyModule "#SplineObj"
+		
+		DestroyAllModules 
+		CreateModule "#Creature" "#EnergonDrone" "#Spline=D6C1BUILD10" "#Count=10000" "#MaxAlive=1" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadarOff" "#DontClampRadar" "#Script=EnergonDrone" ; "#SetEnergyMax=350"
+		
+		SendToModule "#Optimus" "#SetEnergyMin=10500.0" "#Script=Optimus_PrimeM" "#Vulnerable" "#Boss" "#Type=OptimusPrime" "#KeyLocation=On" "#AddToRadar"
+		CreateModule "#Speech" "#D6_ch1_obj13" "#speech=#D6_ch1_obj13" "#PlayDelay=2.0" "#AutoDestroy" "#Start"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC1" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+		SendToModule "#General" "#ResetLevel" "#CountASet=1" "#CountBSet=0"
+		SendToModule "#General" "#ForceHealthSpawnMin=0.8" "#ForceHealthSpawnMed=0.45" "#ForceHealthSpawnMax=0.1"
+		
+		SendToModule "#General" "#SetMessageTimer=-1"
+		Idle 0.1 
+		SendToModule "#General" "#SetMessage=DCB2" "#SetMessageTimer=3"
+		
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		;SetState Chapter1_AllSparkHunt3
+	}
+
+}
+state Chapter1_EnergonDroneAssault
+{
+	Conditions
+	{
+		if module "EnergonDrone Energy" <= 0.0 goto Chapter1_AllSparkHunt3
+
+		
+		;if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		
+
+
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		ResetTimer 
+		
+		SendToModule "#General" "#SetMaxOpponents=19" "#SetMaxApproachers=19" "#SetAttackRingSize=20" "#CountBSet=1"
+		SendToModule "#EnergonDrone" "#Count=25" "#MaxAlive=15" "#KeyLocation=On" ;"#AddToRadarOff"
+		SendToModule "#Optimus" "#DirectSpline=D6LOC3_OPTIMUSGOTO" "#Script=FollowSplineM" "#AddToRadarOff" "#NoHealthBar" "#KeyLocation=Off"
+		
+		;CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD1" "#FuzzyRange=1" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1KEYLOC1" "#Wobble=2.0" "#Creature=#EnergonDrone" "#SpawnTime=0.0" "#Radar" "#NoDraw"
+		
+		;Idle 0.1
+		;SendToModule "#SplineObj" "#Creature=#EnergonDrone" "#MaxAlive=19" "#StartSpawn=7" "#SpawnSpline=D6C1BUILD1" "#ForcePlayerAsOpp"
+
+		
+	}
+
+}
+
+state Chapter1_AllSparkHunt3
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt4
+		if module "Optimus BeenHit" == 1.0 goto Chapter1_AllSparkHunt4
+		if module "Optimus PlayerRange" < 50 goto Chapter1_AllSparkHunt4
+		if module "Starscream BeenHit" == 1.0 goto Chapter1_AllSparkHunt4
+		if module "Starscream PlayerRange" < 50 goto Chapter1_AllSparkHunt4
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		
+		DestroyModule "#SplineObj"
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#CubeSecret"
+		DestroyModule "#EnergonDrone"
+		DestroyModule "#Optimus" 
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+	
+
+		CreateModule "#Goto" "#Optimus" "#Spline=D6C1FIGHT1OPTIMUS" "#Script=Megatron_PH2I" "#count=1" "#maxalive=1" "#Type=OptimusPrime"  "#SpawnAsCreature" "#SpawnInLOSInit" "#SetEnergyMax=15000" "#SetEnergy=10500" "#SetEnergyMin=10500.0" "#Protect" "#AddToRadarOff"
+		CreateModule "#Creature" "#Starscream" "#Spline=D6C1FIGHT1STARSCREAM" "#Script=Megatron_PH2I" "#count=1" "#maxalive=1" "#Type=Starscream" "#SpawnAsCreature" "#SpawnInLOSInit" "#SetEnergyMax=4000" "#SetEnergy=4000" "#SetEnergyMin=1000" "#Friend" "#Protect" "#AddToRadarOff"
+		
+		CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC2" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM1" "#Wobble=2.0" "#Creature=#Creature" "#Time=5.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		;CreateModule "#Creature" "#EnergonDrone" "#Count=0" "#MaxAlive=10" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadar" "#Script=EnergonDrone" "#DontClampRadar" "#Protect" ; "#SetEnergyMax=350"
+		
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM1" "#Wobble=2.0" "#Creature=#EnergonDrone" "#Time=5.0" "#SpawnTime=0.0" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		
+	}
+
+}
+state Chapter1_AllSparkHunt4
+{
+	Conditions
+	{
+		;if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter1_AllSparkHunt5
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt5
+
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	Actions
+	{
+		
+		
+		DestroyAllModules ;"#IncludeProtected" 
+		
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		
+		SendToModule "#Starscream" "#Script=D6Allies" 
+		SendToModule "#Optimus" "#Script=D6Allies" 
+		CreateModule "#Speech" "#D6_ch1_obj1" "#speech=#D6_ch1_obj1" "#AutoDestroy" "#Start"
+		
+		;SendToModule "#Optimus" "#KeyLocation=On" "#Script=Optimus_PrimeM" "#AddToRadarOff"
+		SendToModule "#General" "#SetMessageTimer=-1" "#CountAInc"
+		
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD2" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC2" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		
+		
+	}
+
+}
+state Chapter1_AllSparkHunt5
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt6
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		
+		DestroyModule "#SplineObj"
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#CubeSecret"
+				
+			
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+		;SendToModule "#Optimus" "#DirectSpline=D6LOC0_OPTIMUSGOTO" "#Script=FollowSplineM" "#AddToRadarOff" "#NoHealthBar" "#KeyLocation=Off"
+		
+		;CreateModule "#Creature" "#Lure" "#Spline=D6LOC1_Spawn" "#Script=StandAndWait" "#count=10000" "#maxalive=1" "#Type=DronePickupTruck_a" "#SpawnAsCreature" "#SpawnInLOSInit" "#SetEnergyMax=1200" "#SetEnergy=1200" "#Invulnerable"
+		;SendToModule "#Optimus" "#Script=StandAndShoot" "#TargetLinkedMod=#Lure" "#AddToRadarOff" "#NoHealthBar" "#KeyLocation=Off"
+		SendToModule "#Optimus" "#DirectSpline=D6LOC1_OPTIMUSGOTO" "#Script=FollowSplineM" "#AddToRadarOff" "#NoHealthBar" "#KeyLocation=Off"
+		SendToModule "#Starscream" "#KeyLocation=Off"
+		CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC3" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM2" "#Wobble=2.0" "#Creature=#Creature" "#Time=5.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM2" "#Wobble=2.0" "#Creature=#EnergonDrone" "#Time=5.0" "#SpawnTime=0.0" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		
+	}
+
+}
+state Chapter1_AllSparkHunt6
+{
+	Conditions
+	{
+		;if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter1_AllSparkHunt7
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt7
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	Actions
+	{
+		
+		
+		DestroyAllModules ;"#IncludeProtected"
+		
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		
+		SendToModule "#General" "#SetMessageTimer=-1" "#CountAInc"
+		
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD3" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC3" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		
+		
+	}
+
+}
+state Chapter1_AllSparkHunt7
+{
+	Conditions
+	{
+		;if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt8
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyAllModules
+		DestroyModule "#SplineObj"
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#CubeSecret"
+				
+			
+		;SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		;DestroyModule "#Timer"
+		;CreateModule "#Timer" "#Timer" "Time=60.0"
+	
+		;CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC4" "#AddToRadar" "#DontClampRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM3" "#Wobble=2.0" "#Creature=#Creature" "#Time=3.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM3" "#Wobble=2.0" "#Creature=#EnergonDrone" "#Time=3.0" "#SpawnTime=0.0" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		
+		DestroyModule "#Optimus"
+		CreateModule "#Creature" "#Optimus" "#Spline=D6LOC1_Spawn" "#Script=Optimus_WI" "#count=1" "#maxalive=1" "#Type=OptimusPrime" "#Invulnerable" "#SpawnInLosInit" "#ADDTORADAROFF" "#ForcePlayerAsOpp"
+		Idle 3.0
+		SetState Chapter1_GetToLoc1
+	}
+
+}
+
+state Chapter1_GetToLoc1
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_Midtro1
+		if module "Optimus BeenHit" == 1.0 goto Chapter1_Midtro1
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#SplineObj"
+		DestroyModule "#Optimus"
+		CreateModule "#Creature" "#Optimus" "#Spline=D6LOC1_Spawn" "#Script=Optimus_WI" "#count=1" "#maxalive=1" "#Type=OptimusPrime" "#Invulnerable" "#SpawnInLosInit" "#ADDTORADAROFF" "#ForcePlayerAsOpp"  "#SetEnergyMax=15000" "#SetEnergy=10500" "#SetEnergyMin=10500.0"
+		
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC1_ALLSPARK" "#Wobble=2.0" "#Creature=#Creature" "#Time=9999.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		SendToModule "#General" "#SetMessageTimer=-1"
+		
+		;SendToModule "#General" "#SetMessage=A5_ch3_obj1" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+
+		CreateModule "#AreaRange" "#AreaRange" "#Trigger=#D6LOC1_AREA" "#AddToRadarOff" "#DontClampRadar"
+		;CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6LOC1_KEYLOC" "#AddToRadar" "#DontClampRadar"
+	}
+
+}
+
+state Chapter1_Midtro1
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_Fight1Start
+	}
+	actions
+	{	
+		SendToModule "#General" "#StartVideo=#D6C1Midtro1" "#FadeDown"
+	}
+}
+
+
+;;end of Location 0
+
+;;Location 1
+
+state Chapter1_Fight1Start
+{
+
+	Conditions
+	{
+		if module "Optimus Health" <= 0.60 goto Chapter1_AllSparkHunt8Init
+		;if module "Meteorite GetPercentage" == 1.0 and
+		;	if module "Creature GetCountAlive" == 0.0 and
+		;		if module "Meteorite2 GetPercentage" == 1.0 and
+		;			if module "Creature2 GetCountAlive" == 0.0 goto Chapter1_Meteors1Start
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+
+		SendToModule "#General" "#LoadCreature=DroneCement_a"
+		SendToModule "#General" "#LoadCreature=StarScream"
+		
+		;SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter2"
+
+		SendToModule "#General" "#SetMaxOpponents=18" "#SetMaxApproachers=18" "#SetAttackRingSize=20"
+
+		CreateModule "#Speech" "#D6_ch1_obj10" "#speech=#D6_ch1_obj10" "#AutoDestroy" "#Start"
+		
+		SendToModule "#General" "#AllowPlayerMovement" "#SetPlayer=#D6C1_LOC1" "#FadeUp"
+		CreateModule "#Goto" "#Optimus" "#Spline=D6C1FIGHT1OPTIMUS" "#Script=Optimus_PrimeM" "#count=1" "#maxalive=1" "#Boss" "#Type=OptimusPrime" "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#SetEnergyMax=15000" "#SetEnergy=10500" "#SetEnergyMin=8000.0" "#ForcePlayerAsOpp" "#Protect" "#SetPosition=#D6C1_OptimusVsStarscream1"
+		CreateModule "#Creature" "#Starscream" "#Spline=D6C1FIGHT1STARSCREAM" "#Script=Starscream" "#count=1" "#maxalive=1" "#Type=Starscream" "#SpawnAsCreature" "#SpawnInLOSInit" "#SetEnergyMax=4000" "#SetEnergy=500" "#SetEnergyMin=100" "#Friend" "#SetPosition=#D6C1_Starscream1" "#AddToRadarOff"
+		CreateModule "#Creature" "#EnergonDrone" "#Script=EnergonDrone" "#count=10000" "#maxalive=3" "#Type=EnergonDrone" "#SpawnAsCreature" "#SpawnInLOSInit" "#ForcePlayerAsOpp" "#Protect" "#DontClampRadar"  "#Spline=D6C1BUILD1" "#KeyLocation=On" "#AddToRadarOff"
+		CreateModule "#Creature" "#EnergonDrone2" "#Script=EnergonDrone" "#count=10000" "#maxalive=2" "#Type=EnergonDrone" "#SpawnAsCreature" "#SpawnInLOSInit" "#ForcePlayerAsOpp" "#Protect" "#DontClampRadar"  "#Spline=D6C1BUILD1" "#Friend" "#KeyLocation=On" "#AddToRadarOff"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6LOC1_KEYLOC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#GreyKeyLoc" 
+
+		;CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DronePickupTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#Script=TruckDrone"
+		;CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=D6LOC1_Meteors" "#Time=3" "#Time=5" 
+		;CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneCement_a" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=400" "#Script=MixerDrone"
+		;CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=D6LOC1_Meteors" "#Time=7"
+
+		;Move AllSpark	
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM4" "#Wobble=2.0" "#Creature=#Creature" "#Time=9999.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM4" "#Wobble=2.0" "#Creature=#EnergonDrone" "#Time=9999.0" "#SpawnTime=0.0" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		
+		Idle 0.7
+		SendToModule "#Starscream" "#Script=FlyOff_M"
+		
+	}
+}
+
+state Chapter1_AllSparkHunt8Init
+{
+	Conditions
+	{
+		if module "Starscream PlayerRange" > 350 goto Chapter1_AllSparkHunt8
+		
+	}
+	Actions
+	{
+		
+		
+		SendToModule "#Optimus" "#DirectSpline=D6LOC1_OPTIMUSGOTO" "#Script=FollowSplineM" "#AddToRadarOff" "#NoHealthBar" "#KeyLocation=Off"
+		
+		
+		
+	}
+
+}
+state Chapter1_AllSparkHunt8
+{
+	Conditions
+	{
+		;if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter1_AllSparkHunt9
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_Meteors1Start
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		
+	}
+	Actions
+	{
+		
+		
+		DestroyAllModules ;"#IncludeProtected"
+		SendToModule "#General" "#BG_UnLoadCreature=Starscream"
+		SendToModule "#General" "#BG_LoadCreature=Blackout"
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		SendToModule "#General" "#CountAInc"
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD4" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC4" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		
+	}
+
+}
+state Chapter1_Meteors1Start
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		;if module "Optimus Health" <= 0.60 goto Chapter1_AllSparkHunt8
+		
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "Creature GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "Creature2 GetCountAlive" == 0.0 goto Chapter1_AllSparkHunt9
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#AllowPlayerMovement"
+		SendToModule "#EnergonDrone" "#count=3"
+		SendToModule "#EnergonDrone2" "#count=2"
+		
+		DestroyAllModules
+		DestroyModule "#Starscream"
+		DestroyModule "#SplineObj"
+		;
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=2" "#addtoradaralways" "#Type=DronePickupTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=1200" "#Script=TruckDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=D6LOC1_Meteors" "#Time=3" "#Time=5" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneCement_a" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=400" "#Script=MixerDrone"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=D6LOC1_Meteors" "#Time=7"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6LOC1_KEYLOC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#GreyKeyLoc" 
+		;CreateModule "#Creature" "#EnergonDrone" "#Count=0" "#MaxAlive=10" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadar" "#Script=EnergonDrone" "#DontClampRadar" "#Protect" ; "#SetEnergyMax=350"
+		
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM4" "#Wobble=2.0" "#Creature=#Creature" "#Time=10.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#Protect"
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM4" "#Wobble=2.0" "#Creature=#EnergonDrone" "#Time=10.0" "#SpawnTime=0.0" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		
+	}
+}
+
+state Chapter1_AllSparkHunt9
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt10
+		if module "Optimus BeenHit" == 1.0 goto Chapter1_AllSparkHunt10
+		if module "Blackout BeenHit" == 1.0 goto Chapter1_AllSparkHunt10
+		if module "Optimus PlayerRange" < 50 goto Chapter1_AllSparkHunt10
+		if module "Blackout PlayerRange" < 50 goto Chapter1_AllSparkHunt10
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyAllModules ;"#IncludeProtected"
+		DestroyModule "#Optimus"
+		;DestroyModule "#SplineObj"
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#CubeSecret"
+				
+		SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck_a"
+		;SendToModule "#General" "#UnLoadCreature=Starscream"
+		SendToModule "#General" "#BG_LoadCreature=DroneTowTruck_a"
+		;SendToModule "#General" "#LoadCreature=Blackout"
+		SendToModule "#EnergonDrone2" "#SetEnergy=0"
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+		CreateModule "#Goto" "#Optimus" "#Spline=D6C1FIGHT2OPTIMUS" "#Script=Megatron_PH2I" "#count=1" "#maxalive=1" "#Type=OptimusPrime"  "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#SetEnergyMax=15000" "#SetEnergy=8000" "#SetEnergyMin=8000.0" "#Protect" "#AddToRadarOff"
+		CreateModule "#Creature" "#Blackout" "#Spline=D6C1FIGHT2BLACKOUT" "#Script=Megatron_PH2I" "#count=1" "#maxalive=1" "#Type=Blackout" "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#SetEnergyMax=4500" "#SetEnergy=4500" "#SetEnergyMin=1250" "#Friend" "#Unstoppable" "#Protect" "#AddToRadarOff"
+		
+		CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC5" "#AddToRadarOff" "#DontClampRadar"
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM4" "#Wobble=2.0" "#Creature=#Creature" "#Time=10.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference"
+		
+	}
+
+}
+state Chapter1_AllSparkHunt10
+{
+	Conditions
+	{
+		;if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter1_GetToLoc2
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt11
+		
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		
+	}
+	Actions
+	{
+		
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=Starscream"
+		SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#LoadCreature=Blackout"
+		DestroyAllModules ;"#IncludeProtected"
+		DestroyModule "#EnergonDrone2"
+		DestroyModule "#SplineObj"
+		CreateModule "#Speech" "#D6_ch1_obj2" "#speech=#D6_ch1_obj2" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#SetMessageTimer=-1" "#CountAInc"
+		
+		SendToModule "#Optimus" "#Script=D6Allies" 
+		SendToModule "#Blackout" "#Script=D6Allies" 
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD5" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC5" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		
+	}
+
+}
+state Chapter1_AllSparkHunt11
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt12
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#SplineObj"
+		DestroyModule "#CubeSecret"
+		SendToModule "#Optimus" "#AddToRadarOff" "#DirectSpline=D6LOC2_OPTIMUSGOTO" "#Script=FollowSplineM"
+		SendToModule "#Blackout" "#AddToRadarOff" "#KeyLocation=Off"
+		SendToModule "#Creature" "#AddToRadarOff" "#TargetLinkedMod=#Blackout"
+		SendToModule "#Creature2" "#AddToRadarOff" "#TargetLinkedMod=#Blackout"
+		
+		
+		
+			
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+	
+		CreateModule "#AreaRange" "#AreaRange" "#Trigger=#D6LOC2_AREA" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC6" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC1_ALLSPARK" "#Wobble=2.0" "#Creature=#Creature" "#Time=1.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		
+	}
+
+}
+state Chapter1_OptimusArrived1
+{
+	conditions
+	{
+		;if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#Optimus"
+		CreateModule "#Creature" "#Optimus" "#Spline=D6LOC2_Spawn" "#Script=Optimus_WI" "#count=1" "#maxalive=1" "#Type=OptimusPrime" "#Invulnerable" "#SpawnInLosInit" "#ADDTORADAROFF" "#ForcePlayerAsOpp"
+		SetState Chapter1_GetToLoc2
+	}
+}
+
+
+state Chapter1_GetToLoc2
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt12
+		;if module "Optimus BeenHit" == 1.0 goto Chapter1_Midtro2
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyModule "#KeyLocation" 
+		DestroyAllModules "#IncludeProtected" 
+		SendToModule "#General" "#BG_UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#BG_UnLoadCreature=Starscream"
+		SendToModule "#General" "#BG_LoadCreature=DroneTowTruck_a"
+		
+		
+		
+		CreateModule "#Speech" "#D6_ch1_obj2" "#speech=#D6_ch1_obj2" "#AutoDestroy" "#Start"
+		
+			
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+	
+		CreateModule "#AreaRange" "#AreaRange" "#Trigger=#D6LOC2_AREA" "#AddToRadar" "#DontClampRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC1_ALLSPARK" "#Wobble=2.0" "#Creature=#Creature" "#Time=1.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#Protect"
+
+	}
+
+}
+state Chapter1_AllSparkHunt12
+{
+	Conditions
+	{
+		;if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter1_AllSparkHunt13
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_Midtro2
+
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		
+	}
+	Actions
+	{
+		
+		
+		DestroyAllModules 
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD6" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		SendToModule "#General" "#SetMessageTimer=-1" "#CountAInc"
+		
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC6" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		
+		
+	}
+
+}
+state Chapter1_Midtro2
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_Fight2Start
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D6C1Midtro2" "#FadeDown"
+	}
+}
+
+
+;;end of Location 1
+
+;;Location 2
+
+state Chapter1_Fight2Start
+{
+	Conditions
+	{
+		if module "Optimus Health" <= 0.40 goto Chapter1_Meteors2Start
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=Starscream"
+		SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		
+
+		SendToModule "#General" "#AllowPlayerMovement" "#SetPlayer=#D6C1_LOC2"
+		CreateModule "#Goto" "#Optimus" "#Spline=D6LOC2_Spawn" "#Script=Optimus_PrimeM" "#count=1" "#maxalive=1" "#Boss" "#Type=OptimusPrime" "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#SetEnergyMax=15000" "#SetEnergy=8000" "#SetEnergyMin=6000.0" "#ForcePlayerAsOpp"
+
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6LOC2_KEYLOC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#GreyKeyLoc"
+
+		CreateModule "#Speech" "#D6_ch1_obj12" "#speech=#D6_ch1_obj12" "#AutoDestroy" "#Start"
+
+		;Move AllSpark	
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC2_ALLSPARK" "#Wobble=2.0" "#Creature=#Creature" "#Time=20.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#Protect"
+		;CreateModule "#Creature" "#EnergonDrone" "#Count=0" "#MaxAlive=10" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadar" "#Script=EnergonDrone" "#DontClampRadar" "#Protect" ; "#SetEnergyMax=350"
+		
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC2_ALLSPARK" "#Wobble=2.0" "#Creature=#EnergonDrone" "#Time=20.0" "#SpawnTime=0.0" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		
+		
+	}
+}
+
+
+state Chapter1_Meteors2Start
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		if Timer > 2.2 and
+			if module "Meteorite GetPercentage" == 1.0 and
+				if module "Creature GetCountAlive" == 0.0 and
+					if module "Meteorite2 GetPercentage" == 1.0 and
+						if module "Creature2 GetCountAlive" == 0.0 goto Chapter1_OptimusArrived2
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#AllowPlayerMovement"
+		CreateModule "#Creature" "#Blackout" "#Spline=D6C1FIGHT2BLACKOUT" "#Script=Blackout" "#count=1" "#maxalive=1" "#Type=Blackout" "#SpawnAsVehicle" "#SpawnInLOSInit" "#SetEnergyMax=4500" "#SetEnergy=2500" "#Friend" "#Unstoppable" "#Protect" "#SetPosition=#D6C1_Blackout1" "#AddToRadarOff"
+		Idle 0.1 
+		SendToModule "#Blackout" "#Script=D6Allies" "#TargetLinkedMod=#Optimus" "#KeyLocation=Off"
+		Idle 3.0
+		SendToModule "#Optimus" "#DirectSpline=D6LOC2_OPTIMUSGOTO" "#Script=FollowSplineM" "#AddToRadarOff" "#NoHealthBar" "#KeyLocation=Off"
+		
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneCement_a" "#TransformForceRobot" "#KeyLocation=On" "#SetEnergyMax=400" "#Script=MixerDrone" "#ForcePlayerAsOpp"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=D6LOC2_Meteors" "#Time=3"
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneTowTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=TowTruckDrone" "#ForcePlayerAsOpp"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=D6LOC2_Meteors" "#Time=10" 
+		Idle 4.0 
+		SendToModule "#Creature" "#ForcePlayerAsOpp"
+		Idle 7.0
+		SendToModule "#Creature2" "#ForcePlayerAsOpp"
+		Idle 20.0
+		SendToModule "#Blackout" "#Script=FlyOff_I"
+	}
+}
+
+state Chapter1_OptimusArrived2
+{
+	conditions
+	{
+		;if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		DestroyModule "#Optimus"
+		DestroyModule "#Blackout"
+		CreateModule "#Goto" "#Blackout" "#Spline=D6C1FIGHT2BLACKOUT" "#Script=StandAndWait" "#count=1" "#maxalive=1" "#Type=Blackout" "#SpawnAsVehicle" "#SpawnInLOSInit" "#KeyLocation=On" "#SetEnergyMax=4500" "#SetEnergy=500" "#Friend" "#Unstoppable" "#AddToRadarOff"
+		Idle 0.1
+		SendToModule "#Blackout" "#SetPosition=#D6C1_Blackout2"
+		
+		CreateModule "#Creature" "#Optimus" "#Spline=D6LOC3_Spawn" "#Script=Optimus_WI" "#count=1" "#maxalive=1" "#Type=OptimusPrime" "#Invulnerable" "#SpawnInLosInit" "#ADDTORADAROFF" "#ForcePlayerAsOpp" "#SetPosition=#D6C1_SAM2"
+		SetState Chapter1_GetToLoc3
+	}
+}
+
+state Chapter1_GetToLoc3
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_Midtro3
+		if module "Optimus BeenHit" == 1.0 goto Chapter1_Midtro3
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyModule "#KeyLocation" 
+		
+		SendToModule "#General" "#BG_UnLoadCreature=DroneCement_a"
+		
+		SendToModule "#General" "#BG_LoadCreature=DroneMig_a"
+		;SendToModule "#General" "#BG_LoadCreature=Blackout"
+		
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		
+		;SendToModule "#General" "#SetMessage=A5_ch3_obj3" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+		SendToModule "#Blackout" "#SetPosition=#D6C1_Blackout2"
+		
+		CreateModule "#AreaRange" "#AreaRange" "#Trigger=#D6LOC3_AREA" "#AddToRadarOff" "#DontClampRadar"
+		;CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6LOC3_KEYLOC" "#AddToRadar" "#DontClampRadar"
+	}
+}
+
+state Chapter1_Midtro3
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto Chapter1_Fight3Prep
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state Chapter1_Fight3Prep
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#Goto" "#Blackout" "#Spline=D6C1FIGHT2BLACKOUT" "#Script=KillCreature" "#count=1" "#maxalive=1" "#Type=Blackout" "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#SetEnergyMax=4500" "#SetEnergy=0" "#Friend" "#Unstoppable" "#Protect" "#BlockDeath" "#SetPosition=#D6C1_Blackout3"
+		Idle 0.7 
+		SetState Chapter1_Midtro3Video
+		
+	}
+}	
+state Chapter1_Midtro3Video
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_Fight3Start
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D6C1Midtro3" "#FadeDown"
+	}
+}
+state Chapter1_Part3Enter
+{
+	conditions
+	{
+	
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState Chapter1_Part3IntroVideo
+	}
+}
+state Chapter1_Part3IntroVideo
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_Part3LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D6C1Midtro3"
+	}
+}
+state Chapter1_Part3LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Fight3Start
+	}
+	actions
+	{
+		;SendToModule "#ActionRing" "#RemoveCreatures"
+
+		
+		SendToModule "#General" "#LoadCreature=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=DroneMig_a"
+		SendToModule "#General" "#LoadCreature=Blackout"
+		SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		
+		
+	}
+}
+;;end of Location 2
+
+;;Location 3
+
+state Chapter1_Fight3Start
+{
+
+	Conditions
+	{
+		if module "Optimus Health" <= 0.20 goto Chapter1_AllSparkHunt14
+		;if module "Meteorite GetPercentage" == 1.0 and
+		;	if module "Creature GetCountAlive" == 0.0 and
+		;		if module "Meteorite2 GetPercentage" == 1.0 and
+		;			if module "Creature2 GetCountAlive" == 0.0 goto Chapter1_Meteors3Start
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+		
+		SendToModule "#General" "#LoadCreature=DroneMig_a"
+		;SendToModule "#General" "#LoadCreature=Blackout"
+		;SendToModule "#ActionRing" "#SetCompleted=#Chapter2" "#Unlock=#Chapter3"
+
+		SendToModule "#General" "#AllowPlayerMovement" "#SetPlayer=#D6C1_LOC3" ;"#FadeUp"
+		CreateModule "#Goto" "#Optimus" "#Spline=D6LOC3_Spawn" "#Script=Optimus_PrimeM" "#count=1" "#maxalive=1" "#Boss" "#Type=OptimusPrime"  "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#SetEnergyMax=15000" "#SetEnergy=6000" "#SetEnergyMin=3000.0" "#ForcePlayerAsOpp" "#Protect"
+		CreateModule "#Creature" "#EnergonDrone" "#Spline=D6C1BUILD10" "#Script=EnergonDrone" "#count=10000" "#maxalive=3" "#Type=EnergonDrone" "#SpawnAsCreature" "#SpawnInLOSInit" "#ForcePlayerAsOpp" "#Protect" "#DontClampRadar" "#KeyLocation=On" "#AddToRadarOff"
+		CreateModule "#Creature" "#EnergonDrone2" "#Spline=D6C1BUILD10" "#Script=EnergonDrone" "#count=10000" "#maxalive=2" "#Type=EnergonDrone" "#SpawnAsCreature" "#SpawnInLOSInit" "#ForcePlayerAsOpp" "#Protect" "#DontClampRadar" "#KeyLocation=On" "#Friend" "#AddToRadarOff"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6LOC3_KEYLOC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#GreyKeyLoc" 
+		
+		;CreateModule "#Speech" "#D6_ch1_obj13" "#speech=#D6_ch1_obj13" "#AutoDestroy" "#Start"
+
+		;CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneTowTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=TowTruckDrone"
+		;CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=D6LOC3_Meteors" "#Time=3" 
+		;CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneMig_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=Mig29Drone" "#SetEnergyMax=1500"
+		;CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=D6LOC3_Meteors" "#Time=7"
+
+		;Move AllSpark	
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM6" "#Wobble=2.0" "#Creature=#Creature" "#Time=0.1" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		;CreateModule "#Creature" "#EnergonDrone" "#Count=0" "#MaxAlive=10" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadar" "#Script=EnergonDrone" "#DontClampRadar" "#Protect" ; "#SetEnergyMax=350"
+		
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC2_ALLSPARK" "#Wobble=2.0" "#Creature=#EnergonDrone" "#Time=20.0" "#SpawnTime=0.0" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		Idle 1.5
+		SendToModule "#General" "#FadeUp"
+	}
+	
+}
+state Chapter1_AllSparkHunt14
+{
+	Conditions
+	{
+		;if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter1_AllSparkHunt15
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_Meteors3Start
+
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		
+	}
+	Actions
+	{
+		
+		
+		DestroyAllModules 
+		
+		SendToModule "#General" "#CountAInc"
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD7" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		SendToModule "#Optimus" "#DirectSpline=D6LOC3_OPTIMUSGOTO" "#Script=FollowSplineM" "#AddToRadarOff" "#NoHealthBar" "#KeyLocation=Off"
+		
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC7" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		
+	}
+
+}
+state Chapter1_Meteors3Start
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		;if module "Optimus Health" <= 0.20 goto Chapter1_AllSparkHunt14
+		if module "Meteorite GetPercentage" == 1.0 and
+			if module "Creature GetCountAlive" == 0.0 and
+				if module "Meteorite2 GetPercentage" == 1.0 and
+					if module "Creature2 GetCountAlive" == 0.0 goto Chapter1_AllSparkHunt15
+	}
+	actions
+	{
+		DestroyAllModules
+		DestroyModule "#SplineObj"
+		SendToModule "#EnergonDrone" "#count=3"
+		SendToModule "#EnergonDrone2" "#count=2"
+		SendToModule "#General" "#AllowPlayerMovement"
+		
+		;
+		CreateModule "#Creature" "#Creature" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneTowTruck_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=TowTruckDrone"
+		CreateModule "#Meteorite" "#Meteorite" "#ModuleTag=#Creature" "#Spline=D6LOC3_Meteors" "#Time=3" 
+		CreateModule "#Creature" "#Creature2" "#count=0" "#maxalive=1" "#addtoradaralways" "#Type=DroneMig_a" "#TransformForceRobot" "#KeyLocation=On" "#Script=Mig29Drone" "#SetEnergyMax=1500"
+		CreateModule "#Meteorite" "#Meteorite2" "#ModuleTag=#Creature2" "#Spline=D6LOC3_Meteors" "#Time=7"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM7" "#Wobble=2.0" "#Creature=#Creature" "#Time=5.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		;CreateModule "#Creature" "#EnergonDrone" "#Count=0" "#MaxAlive=5" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadar" "#Script=EnergonDrone" "#DontClampRadar" "#Protect" ; "#SetEnergyMax=350"
+		
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM7" "#Wobble=2.0" "#Creature=#EnergonDrone" "#Time=5.0" "#SpawnTime=0.0" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6LOC3_KEYLOC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#GreyKeyLoc" 
+	}
+}
+
+
+state Chapter1_AllSparkHunt13
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt14
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		
+		DestroyModule "#SplineObj"
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#CubeSecret"
+				
+		
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+	
+		CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC7" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM6" "#Wobble=2.0" "#Creature=#Creature" "#Time=10.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		
+	}
+
+}
+
+state Chapter1_AllSparkHunt15
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt16
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		
+		;DestroyModule "#SplineObj"
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#CubeSecret"
+			
+		SendToModule "#EnergonDrone2" "#SetEnergy=0"
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+	
+		CreateModule "#AreaRange" "#AreaRange" "#Trigger=#Hunt8Area" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC8" "#AddToRadarOff" "#DontClampRadar"
+		
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM7" "#Wobble=2.0" "#Creature=#Creature" "#Time=5.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference"
+		
+	}
+
+}
+state Chapter1_AllSparkHunt16
+{
+	Conditions
+	{
+		if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter1_AllSparkHunt17
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt17
+
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		
+	}
+	Actions
+	{
+		
+		
+		DestroyAllModules ;"#IncludeProtected"
+		DestroyModule "#Blackout"
+		DestroyModule "#EnergonDrone2"
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD8" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		SendToModule "#General" "#SetMessageTimer=-1" "#CountAInc"
+		
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC8" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		
+		
+	}
+
+}
+state Chapter1_AllSparkHunt17
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt18
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		
+		DestroyModule "#SplineObj"
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#CubeSecret"
+				
+			
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+	
+		CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC9" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM8" "#Wobble=2.0" "#Creature=#Creature" "#Time=4.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6C1SAM8" "#Wobble=2.0" "#Creature=#EnergonDrone" "#Time=4.0" "#SpawnTime=0.0" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		
+	}
+
+}
+state Chapter1_AllSparkHunt18
+{
+	Conditions
+	{
+		if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter1_AllSparkHunt19
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_AllSparkHunt19
+
+		if module "KeyLocation InArea" == 0.0 goto Chapter1_GlobalRadarJam
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		
+	}
+	Actions
+	{
+		
+		
+		DestroyAllModules ;"#IncludeProtected"
+		
+		
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD9" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		SendToModule "#General" "#SetMessageTimer=-1" "#CountAInc"
+		
+		;CreateModule "#GABIChange" "#Destruction" "#GABIChange=-15000"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC9" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		
+	}
+
+}
+state Chapter1_AllSparkHunt19
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_Midtro4
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		
+		DestroyModule "#SplineObj"
+		DestroyModule "#KeyLocation" 
+		DestroyModule "#CubeSecret"
+				
+			
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+		CreateModule "#AreaRange" "#AreaRange" "#Trigger=#D6LOC4_AREA" "#AddToRadarOff" "#DontClampRadar"
+		
+		;CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1KEYLOC10" "#AddToRadarOff" "#DontClampRadar"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC3_ALLSPARK" "#Wobble=2.0" "#Creature=#Creature" "#Time=1.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" 
+		
+	}
+
+}
+
+state Chapter1_OptimusArrived3
+{
+	conditions
+	{
+		;if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		DestroyModule "#Optimus"
+		CreateModule "#Creature" "#Optimus" "#Spline=D6LOC4_Spawn" "#Script=Optimus_WI" "#count=1" "#maxalive=1" "#Type=OptimusPrime" "#Invulnerable" "#SpawnInLosInit" "#ADDTORADAROFF" "#ForcePlayerAsOpp"
+		SetState Chapter1_GetToLoc4
+	}
+}
+
+
+state Chapter1_GetToLoc4
+{
+	Conditions
+	{
+		if module "AreaRange InArea" == 1.0 goto Chapter1_AllSparkHunt20
+		;if module "Optimus BeenHit" == 1.0 goto Chapter1_Midtro4
+		
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		DestroyModule "#KeyLocation"
+		DestroyAllModules "#IncludeProtected" 
+		
+		SendToModule "#General" "#SetMessage=Find_The_Cube" "#SetMessageTimer=7"
+		
+		;SendToModule "#General" "#SetMessage=A5_ch3_obj4" "#SetMessageTimer=7"
+		DestroyModule "#Timer"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+	
+		CreateModule "#AreaRange" "#AreaRange" "#Trigger=#D6LOC4_AREA" "#AddToRadar" "#DontClampRadar"
+		;CreateModule "#AreaRange" "#AreaRange" "#KeyLocSpline=D6C1BUILD10" "#AddToRadarOff" "#DontClampRadar"
+
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC0_ALLSPARK" "#Wobble=2.0" "#Creature=#Creature" "#Time=0.1" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#Protect"
+
+	}
+}
+
+state Chapter1_Midtro4
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_Fight4Start
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D6C1Midtro4" "#FadeDown"
+	}
+}
+
+state Chapter1_Part4Enter
+{
+	conditions
+	{
+	
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetState Chapter1_Part4IntroVideo
+	}
+}
+state Chapter1_Part4IntroVideo
+{
+	conditions
+	{
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_Part4LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#D6C1Midtro4"
+	}
+}
+state Chapter1_Part4LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Fight4Start
+	}
+	actions
+	{
+		;SendToModule "#ActionRing" "#RemoveCreatures"
+
+		
+		SendToModule "#General" "#LoadCreature=OptimusPrime"
+		
+		
+		
+	}
+}
+;;end of Location 3
+
+;;Location 4
+state Chapter1_AllSparkHunt20
+{
+	Conditions
+	{
+		;if module "Destruction GetPercentageComplete" >= 1.0 goto Chapter1_GetToLoc4
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_Midtro4
+
+
+		
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+		
+	}
+	Actions
+	{
+		
+		
+		DestroyAllModules 
+		
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD10" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		SendToModule "#General" "#SetMessageTimer=-1" "#CountAInc"
+		
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6C1KEYLOC10" "#String=Key12Goto" "#ReEnterMsg=Key16Return" "#GreyKeyLoc" 
+		SendToModule "#SplineObj" "#AddToRadarOff"
+		
+		
+	}
+
+}
+state Chapter1_Fight4Start
+{
+	Conditions
+	{
+		;if module "Optimus Health" <= 0.00 goto Chapter1_AllSparkHunt20
+
+		
+	}
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		;SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+		;CreateModule "#Speech" "#D6_ch1_obj10" "#speech=#D6_ch1_obj10" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#AllowPlayerMovement" "#SetPlayer=#D6C1_LOC4" "#FadeUp"
+		CreateModule "#Goto" "#Optimus" "#Spline=D6LOC4_Spawn" "#Script=Optimus_PrimeM" "#count=1" "#maxalive=1" "#Boss" "#Type=OptimusPrime"  "#SpawnAsCreature" "#SpawnInLOSInit" "#KeyLocation=On" "#SetEnergyMax=15000" "#SetEnergy=3000" "#BlockDeath" "#ForcePlayerAsOpp" "#Protect"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=D6LOC4_KEYLOC" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#GreyKeyLoc"
+		CreateModule "#BuildingSecret" "#CubeSecret" "#Spline=D6C1BUILD10" "#FuzzyRange=20" "#MinRand=0.3" "#MaxRand=0.4" ;"#DrawHealthBar"
+		
+		
+		;Move AllSpark	
+		;CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC4_ALLSPARK" "#Wobble=2.0" "#Creature=#Creature" "#Time=20.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference"
+		CreateModule "#Creature" "#EnergonDrone" "#Spline=D6C1Build10"  "#Count=10000" "#MaxAlive=10" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadarOff" "#Script=EnergonDrone" "#KeyLocation=On" "#DontClampRadar" "#ForcePlayerAsOpp" ; "#SetEnergyMax=350"
+		CreateModule "#Creature" "#EnergonDrone2" "#Spline=D6C1Build10" "#Count=10000" "#MaxAlive=8" "#Type=EnergonDrone" "#SpawnInLosInit" "#SpawnAsCreature" "#AddToRadarOff" "#Script=EnergonDrone" "#KeyLocation=On" "#Friend" "#DontClampRadar" ; "#SetEnergyMax=350"
+		
+		CreateModule "#SplineObj" "#AllSpark" "#String=EnergonCube" "#Spline=D6C1BUILD10" "#Wobble=2.0" "#Creature=#Creature" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference" "#NoDraw"
+		
+		SetState Chapter1_EnergonDroneAssault3
+	}
+}
+state Chapter1_EnergonDroneAssault3
+{
+	Conditions
+	{
+		;if timer >= 6.0 and
+		;if module "EnergonDrone GetCountAlive" == 0.0 goto Chapter1_AllSparkHunt3
+
+		;if Timer > 6.0 and 
+		;	if module "SplineObj StopSpawn" == 1.0 goto Chapter1_EnergonDroneAssault4
+
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_StopAssault
+
+		if module "Optimus Dead" == 1.0 goto Chapter1_LastOneStanding
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+	}
+	Actions
+	{
+		ResetTimer 
+		
+		
+		Idle 0.1
+		SendToModule "#SplineObj" "#Creature=#EnergonDrone" "#MaxAlive=10" "#StartSpawn=7" "#SpawnSpline=D6C1BUILD10" "#ForcePlayerAsOpp"
+
+		
+	}
+
+}
+state Chapter1_EnergonDroneAssault4
+{
+	Conditions
+	{
+		;if timer >= 6.0 and
+		;if module "EnergonDrone GetCountAlive" == 0.0 goto Chapter1_AllSparkHunt3
+
+		if Timer > 6.0 and 
+			if module "SplineObj StopSpawn" == 1.0 goto Chapter1_EnergonDroneAssault3
+
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_StopAssault
+
+		if module "Optimus Dead" == 1.0 goto Chapter1_LastOneStanding
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	Actions
+	{
+		ResetTimer 
+		
+		SendToModule "#SplineObj" "#Creature=#EnergonDrone" "#MaxAlive=10" "#StartSpawn=7" "#SpawnSpline=D6C1BUILD10" "#ForcePlayerAsOpp"
+
+		
+	}
+
+}
+state Chapter1_StopAssault
+{
+	Conditions
+	{
+		
+
+		if module "Optimus Dead" == 1.0 goto Chapter1_Complete
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+	}
+	Actions
+	{
+		DestroyModule "#CubeSecret"
+		DestroyModule "#AllSpark"
+		CreateModule "#SplineObj" "#SplineObj" "#String=EnergonCube" "#Spline=D6LOC4_ALLSPARK" "#Wobble=2.0" "#Creature=#Creature" "#Time=20.0" "#NoDraw" "#Wobble=0.3" "#Start" "#Radar" "#SetRadarInterference"
+		
+		SendToModule "#General" "#SetMessage=DCB3" "#SetMessageTimer=3"
+		SendToModule "#EnergonDrone2" "#count=8"
+	}
+
+}
+state Chapter1_LastOneStanding
+{
+	Conditions
+	{
+		
+		if module "CubeSecret FoundRand" == 1.0 goto Chapter1_Complete2
+
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+
+	}
+	Actions
+	{
+		
+		CreateModule "#Speech" "#D6_ch1_obj14" "#speech=#D6_ch1_obj14" "#AutoDestroy" "#Start"
+		Idle 4.0
+		SendToModule "#General" "#SetMessage=DCB4" "#SetMessageTimer=3"
+		SendToModule "#EnergonDrone2" "#count=8" "#SetEnergy=0" "#ForcePlayerAsOpp"
+	}
+
+}
+;end of location 4
+
+
+
+state Chapter1_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter1_FailMission
+{
+	
+	actions
+	{
+		SendToModule "#General" "#SetRadarInterference=0"
+		SetState Chapter1_FailMission2
+	}
+}
+state Chapter1_FailMission2
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter1_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+		SendToModule "#General" "#UnLoadCreature=OptimusPrime"
+		
+		SendToModule "#General" "#UnLoadCreature=StarScream"
+		SendToModule "#General" "#UnLoadCreature=Blackout"
+		
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+    	SendToModule "#General" "#UnloadCreature=DroneMig_a"
+		SendToModule "#General" "#UnloadCreature=DroneCement_a"
+		SendToModule "#General" "#UnloadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnloadCreature=DroneTowTruck_a"
+
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+		SetState GlobalActionRing
+	}
+}
+state Chapter1_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		DestroyModule "#KeyLocation"
+		SendToModule #General #UnlockBonus=Character_DecepticonCampaign
+		CreateModule "#ActionRing" "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter1"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter1"
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+
+		CreateModule "#Speech" "#D6_ch1_obj14" "#speech=#D6_ch1_obj14" "#PlayDelay=1.2" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter1_Complete2
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		DestroyModule "#KeyLocation"
+		SendToModule #General #UnlockBonus=Character_DecepticonCampaign
+		CreateModule "#ActionRing" "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter1"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter1"
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartCampaignOutro=#D6C1LevelOutro"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#HoldOnBlackScreen"
+		SendToModule "#General" "#FinishedLevel"
+		;SetState Chapter1_Leave	Go Back to front end so dont do this
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT1"
+		SendToModule #General #AllowPlayerMovement
+		SetState GlobalActionRing
+	}
+}

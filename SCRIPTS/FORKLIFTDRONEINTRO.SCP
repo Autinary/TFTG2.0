@@ -1,0 +1,43 @@
+
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Slam
+	}
+}
+state Slam
+{
+	conditions
+	{
+		if Timer > 1.5 goto StartAttack
+
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+		;SetStrafe
+		;CloseStrafe "MinAngle=80" "MaxAngle=140" "Range=8.0" "Time=4.0" "Jump" "Slam" 
+		DoAttack "slammove"
+	}
+}
+
+
+state StartAttack
+{
+    	ReferenceScript {
+        Script=ForkliftDrone
+        Source=Global
+        ReturnState=StartAttack
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}

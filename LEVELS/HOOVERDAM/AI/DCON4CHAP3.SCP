@@ -1,0 +1,228 @@
+state Chapter3_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D4_ch3_Goto"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter3_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#D4_ch3_Goto" "#Start"
+		SetState "Chapter3_Goto"
+	}
+}
+state Chapter3_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=60" "#times=10" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter3Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.4 goto Chapter3_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter3_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro"
+	}
+}
+state Chapter3_LoadCreatures
+{
+	conditions
+	{
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter3_VideoIntro
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#LoadCreature=BumbleBee"
+		SendToModule "#General" "#PlayerType=Blackout"
+	}
+}
+state Chapter3_VideoIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_Main
+	}
+	actions
+	{
+		DestroyAllModules 
+		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D4C3Intro1"
+	}
+}
+state Chapter3_Main
+{
+	conditions
+	{
+		if module "BumbleBee Complete" == 1.0 goto Chapter3_FailMission
+		if module "BumbleBee GetHealth" < 0.66 goto Chapter3_Midtro1
+	}
+	actions
+	{
+		SetDeathPoint "Chapter3_DeathFailMission"
+		SendToModule "#General" "#AddTerrainFilter=6" "#SetPlayerTerrainFilter=-1"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D4_ch3_obj1" "#AutoDestroy" "#Start"
+		SendToModule "#General" "#PhysObj" "#SetVehicle=#Chapter3Start" "#FadeUp"
+		
+		CreateModule "#Goto" "#BumbleBee" "#Boss" "#SpawnSpline=D4C3Route" "#SplineStep=0" "#DirectSpline=D4C3Route" "#Transform=2.5" "#Location=#GreenMediumDot" "#Object=#GreenMediumDot" "#type=Bumblebee" "#Speed=50"  "#ExtraTerrColl=0"
+	}
+}
+state Chapter3_Midtro1
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_Part2
+	}
+	actions
+	{
+		SendToModule "#General" "#EndMissionIntro" "#StartVideo=#D4C3Midtro1"
+		SendToModule "#BumbleBee" "#TransformMeterReset"  "#SetHealth=0.66"
+	}
+}
+state Chapter3_Part2
+{
+	conditions
+	{
+		if module "BumbleBee Complete" == 1.0 goto Chapter3_FailMission
+		if module "BumbleBee GetHealth" < 0.33 goto Chapter3_Midtro2
+	}
+	actions
+	{
+		SendToModule "#General" "#ForcePlayerFlyBackRecover"
+	}
+}
+state Chapter3_Midtro2
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_Part3
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#D4C3Midtro1"
+		SendToModule "#BumbleBee" "#TransformMeterReset" "#SetHealth=0.33"
+	}
+}
+state Chapter3_Part3
+{
+	conditions
+	{
+		if module "BumbleBee Complete" == 1.0 goto Chapter3_FailMission
+		if module "BumbleBee GetPercentageComplete" == 1.0 goto Chapter3_Complete
+	}
+	actions
+	{
+		SendToModule "#General" "#ForcePlayerFlyBackRecover"
+	}
+}
+state Chapter3_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state Chapter3_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter3_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state Chapter3_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#UnLoadCreature=BumbleBee"
+		SendToModule "#General" "#RevertPlayerType"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter3Restart" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter3_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter3_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter3" "#Unlock=#Chapter4"
+	}
+}
+state Chapter3_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter3_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D4C3Outro1"
+	}
+}
+state Chapter3_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter3_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=BumbleBee"
+		SendToModule "#General" "#PlayerType=Blackout"
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter3_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter4"
+		IncreasePlayerHealth max
+		setstate "Chapter4_InitGoto"
+	}
+}

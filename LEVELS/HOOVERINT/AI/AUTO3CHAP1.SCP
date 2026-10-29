@@ -1,0 +1,1126 @@
+state Chapter1_HubRestart
+{
+	conditions
+	{
+		;if timer > 0.2 goto LevelSpecialTune
+		;if module "General ChapterProgress" >= 1.0 goto LevelSpecialTune2
+		;if module "General ChapterProgress" >= 2.0 goto LevelSpecialTune2
+		;if module "General ChapterProgress" >= 3.0 goto GlobalActionRing
+		;if module "General ChapterProgress" >= 4.0 goto GlobalActionRing
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "WhereTo1B"
+	}
+}
+state WhereTo1B
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo1C
+		if module "General ChapterProgress" >= 3.0 goto GlobalActionRing
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo1C
+{
+	conditions
+	{
+		if timer > 0.2 goto WhereTo1D
+		if module "General ChapterProgress" >= 2.0 goto LevelSpecialTune2
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state WhereTo1D
+{
+	conditions
+	{
+		if timer > 0.2 goto LevelSpecialTune
+		if module "General ChapterProgress" >= 1.0 goto LevelSpecialTune2
+		
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+	}
+}
+state Chapter1_MusicRestart
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto Chapter1_MusicRestart2
+	}
+	actions
+	{
+		CreateModule "#Timer" "#Timer" "#Time=9" "#NoRender"
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+	}
+}
+state Chapter1_MusicRestart2
+{
+	actions
+	{
+		
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter1_InitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_GotoWaitSpeech
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		CreateModule "#Speech" "#GotoReminderSpeech" "#speech=#A3_ch1_Goto"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#StartMission"
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+
+
+		SendToModule "#General" "#TrafficLv = 0"                       
+		SendToModule "#General" "#PatrolLv = 0"                        
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 1"          
+		SendToModule "#General" "#ResponseLv_Detection  = 0"  
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"     
+	}
+}
+state Chapter1_GotoWaitSpeech
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		Idle 2.0
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#Auto3LevelIntro" "#Start" "#AutoDestroy"
+		Idle 3.0
+		
+		SetState Chapter1_Goto
+	}
+}
+state Chapter1_Goto
+{
+	actions
+	{
+		CreateModule "#DelayedSend" "#DelayedSendReminder" "#moduletag=#GotoReminderSpeech" "#param=#start" "#delay=45" "#times=1" 
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter1Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Enter
+{
+	conditions
+	{
+
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+
+		DestroyAllModules 
+		SendToModule "#General" "#StartMissionIntro=#A3C1Intro1"
+	}
+}
+state Chapter1_LoadCreatures
+{
+	conditions
+	{
+
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=Barricade"
+		SendToModule "#General" "#LoadCreature=DroneCement"
+		SendToModule "#General" "#PlayerType=BumbleBee07"
+	}
+}
+
+state Chapter1_Main
+{
+	conditions
+	{
+		if Timer > 0.1 and
+			if module "General GetCountD" == 1.0 goto Chapter1SkipToBarr
+		if Timer > 0.1 and
+			if module "General GetCountD" == 2.0 goto Chapter1_SkipToFinalChase
+
+
+
+		if timer > 0.3 goto Chapter1_SmashADoor
+		if message "MissionMessage" == 1.0 goto Chapter1_Complete
+		if message "MissionMessage" == 2.0 goto Chapter1_FailMission 
+	}
+	actions
+	{
+		ResetTimer
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		SendToModule "#General" "#PhysObj" "#SetPlayer=#Chapter1Start" "#FadeUp"
+
+		SendToModule "#General" "#TrafficLv = 0"                       
+		SendToModule "#General" "#PatrolLv = 0"                        
+
+		SendToModule "#General" "#ResponseLv_Mission"                   
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            
+		SendToModule "#General" "#ResponseLv_ClampMax   = 1"            
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            
+		SendToModule "#General" "#ResponseLv_MissionSet"                
+
+		CreateModule "#SpecialObj" "#DoorA" "#Spline=A3C1A" "#PhysObjGlow" "#Breakable" "#Radius=10" "#Protect" "#NoWeaponDamage" "#SetClampHealth=400" "#InhibitTransformTrigger=#A3C1NoTrans1"
+		CreateModule "#SpecialObj" "#DoorB" "#Spline=A3C1B" "#Radius=10" "#Protect" "#NoDamage" "#NoWeaponDamage"  "#SetClampHealth=400" "#InhibitTransformTrigger=#A3C1NoTrans2"
+		CreateModule "#SpecialObj" "#DoorC" "#Spline=A3C1C" "#Radius=10" "#Protect" "#NoDamage" "#NoWeaponDamage"  "#SetClampHealth=400" "#InhibitTransformTrigger=#A3C1NoTrans3"
+
+		CreateModule "#AAGun" "#AAGunA" "#Protect"
+		SendToModule "#AAGunA" "#Type=AAGUNTYPE_BULLITS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.0" "#Energy=100.0" "#RespawnDelay=3000" "#Ammo=0" "#Create"
+		
+		Idle 0.2
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#A3_ch1_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		
+	}
+}
+
+state Chapter1_SmashADoor
+{
+	conditions
+	{
+		
+		if module "DoorA EnergyLessThanClamp" == 1.0 goto Chapter1_DroneReveal
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		ResetTimer
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C1KeyLoc" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		
+	}
+}
+state Chapter1_DroneReveal
+{
+	conditions
+	{
+		if module "GotoDroneA Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneA GetPercentageComplete" == 1.0 goto Chapter1_SmashADoor2ndAttempt
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		DestroyModule "#KeyLocation"
+		SendToModule "#DoorA" "#NoDamage"
+		SendToModule "#General" "#SetMessage=HIntD4" "#SetMessageTimer=2"
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch1_obj3" "#AutoDestroy" "#Start"
+		CreateModule "#AAGun" "#AAGunB" "#Protect"
+		SendToModule "#AAGunB" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketControlA" "#Range=250.0" "#Delay=0.6" "#Energy=100.0" "#RespawnDelay=3000" "#Ammo=0" "#Create"
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=A3C1SS7Drone1" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone1" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65"  "#IgnorePaths" "#energy=150"
+		SendToModule "#General" "#TriggerObjectSwitch=8"
+	}
+}
+state Chapter1_SmashADoor2ndAttempt
+{
+	conditions
+	{
+		if module "DoorA GetPercentageComplete" == 1.0 goto Chapter1_DoorASmashed2
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if module "KeyLocation InArea" == 1.0 goto Chapter1_MidtroA
+	}
+	actions
+	{
+		ResetTimer
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		DestroyModule "#GotoDroneA"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C1KeyLoc" "#String=Key7Goto" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60"
+		
+		
+	}
+}
+
+state Chapter1_MidtroA
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_DoorASmashed
+	}
+	actions
+	{
+		DestroyModule "#KeyLocation"
+		SendToModule "#General" "#StartVideo=#A3C1Midtro1"
+		
+	}
+}
+state Chapter1_DoorASmashed
+{
+	conditions
+	{
+		if module "GotoDroneA Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneA GetPercentageComplete" == 1.0 goto Chapter1_Return1
+	}
+	actions
+	{
+		
+
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		DestroyModule "#DoorA"
+		
+		SendToModule "#General" "#SetVehicle=#A3C1VehicleStart"
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch1_obj5" "#AutoDestroy" "#Start"
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=A3C1SS7Drone1" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone2" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65"  "#IgnorePaths" "#energy=150"
+		SendToModule "#General" "#TriggerObjectSwitch=8"
+	}
+}
+state Chapter1_DoorASmashed2
+{
+	conditions
+	{
+		if module "GotoDroneA Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneA GetPercentageComplete" == 1.0 goto Chapter1_Return1
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		DestroyModule "#DoorA"
+		DestroyModule "#KeyLocation"
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch1_obj5" "#AutoDestroy" "#Start"
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=A3C1SS7Drone1" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone2" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65"  "#IgnorePaths" "#energy=150"
+		SendToModule "#General" "#TriggerObjectSwitch=8"
+	}
+}
+state Chapter1_Return1
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if module "KeyLocation InArea" == 1.0 goto Chapter1_SmashBDoor
+		if module "Drone Health" <= 0.99 goto Chapter1_SmashBDoor2
+		if module "Drone PlayerRange" <= 60 goto Chapter1_SmashBDoor2
+	}
+	actions
+	{
+		ResetTimer
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		DestroyModule "#GotoDroneA"
+		CreateModule "#AAGun" "#AAGunC" "#Protect"
+		SendToModule "#AAGunC" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketControlB" "#Range=250.0" "#Delay=0.6" "#Energy=100.0" "#RespawnDelay=3000" "#Ammo=0" "#Create"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C1KeyLoc" "#String=Key7Goto" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60"
+		CreateModule "#Creature" "#Drone" "#Type=DroneDefault" "#Spline=A3C1SS7Drone1" "#count=1" "#maxalive=1" "#addtoradaroff" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=AdvDefault"
+		
+	}
+}
+
+state Chapter1_SmashBDoor
+{
+	conditions
+	{
+		
+		if module "DoorB EnergyLessThanClamp" == 1.0 goto Chapter1_DecepticonAmbush1
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if module "Timer FailMission" == 1.0 goto Chapter1_SmashBDoor4
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		
+		
+		SendToModule "#Drone" "#addtoradar"
+		SendToModule "#General" "#SetMessage=HIntD1" "#SetMessageTimer=3"
+		SendToModule "#DoorB" "#ResetDamageFlags"
+		SendToModule "#DoorB" "#PhysObjGlow" "#Breakable" "#NoWeaponDamage"
+		CreateModule "#Timer" "#Timer" "#Time=3" "#NoRender"
+	}
+}
+state Chapter1_SmashBDoor4
+{
+	conditions
+	{
+		
+		if module "DoorB EnergyLessThanClamp" == 1.0 goto Chapter1_DecepticonAmbush1
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+			
+		SendToModule "#General" "#SetMessage=HIntD21" "#SetMessageTimer=3"
+		
+	}
+}
+state Chapter1_SmashBDoor2
+{
+	conditions
+	{
+		
+		if module "DoorB EnergyLessThanClamp" == 1.0 goto Chapter1_DecepticonAmbush1
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if module "Timer FailMission" == 1.0 goto Chapter1_SmashBDoor3
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		
+		 DestroyModule "#KeyLocation"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C1KeyLoc" "#String=KEY_LOC_WARNING2" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60"
+		;SendToModule "#General" "#SetMessage=HIntD1" "#SetMessageTimer=5"
+		SendToModule "#Drone" "#addtoradar"
+		SendToModule "#DoorB" "#ResetDamageFlags"
+		SendToModule "#DoorB" "#PhysObjGlow" "#Breakable" "#NoWeaponDamage"
+		CreateModule "#Timer" "#Timer" "#Time=3" "#NoRender"
+	}
+}
+state Chapter1_SmashBDoor3
+{
+	conditions
+	{
+		
+		if module "DoorB EnergyLessThanClamp" == 1.0 goto Chapter1_DecepticonAmbush1
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+				
+		 DestroyModule "#KeyLocation"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C1KeyLoc" "#String=KEY_LOC_WARNING3" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60"
+		;SendToModule "#General" "#SetMessage=HIntD1" "#SetMessageTimer=5"
+		
+	}
+}
+state Chapter1_DecepticonAmbush1
+{
+	conditions
+	{
+		if module "DoorB GetPercentageComplete" == 1.0 goto Chapter1_DecepticonAmbush12
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if module "Drone GetPercentageComplete" == 1.0 and
+			if module "DroneScout1 GetPercentageComplete" == 1.0 and 
+				if module "DroneScout2 GetPercentageComplete" == 1.0 goto Chapter1_Return2
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		DestroyModule "#KeyLocation"
+		SendToModule "#DoorB" "#NoDamage"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C1SS7Drone1" "#Radius=190" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60"
+		SendToModule "#General" "#SetMessage=HIntD2" "#SetMessageTimer=3"
+		CreateModule "#Creature" "#DroneScout1" "#Type=DroneDefault" "#Spline=A3C1SS7Drone1" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#Script=AdvDefault"
+		CreateModule "#Creature" "#DroneScout2" "#Type=DroneDefault" "#Spline=A3C1SS7Drone2" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#ForcePlayerAsOpp" "#Script=AdvDefault"
+	}
+}
+state Chapter1_Return2
+{
+	conditions
+	{
+		if module "DoorB GetPercentageComplete" == 1.0 goto Chapter1_DecepticonAmbush12
+		if module "Return InArea" == 1.0 goto Chapter1_MidtroB
+		if module "TimerR FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		DestroyModule "#KeyLocation"
+		CreateModule "#AreaRange" "#Return" "#Trigger=#A3C1NoTrans1" 
+		SendToModule "#General" "#SetMessage=Key7Goto" "#SetMessageTimer=3"
+		CreateModule "#Timer" "#TimerR" "Time=60.0"
+	}
+}
+state Chapter1_DecepticonAmbush12
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if module "Drone GetPercentageComplete" == 1.0 and
+			if module "DroneScout1 GetPercentageComplete" == 1.0 and 
+				if module "DroneScout2 GetPercentageComplete" == 1.0 goto Chapter1_DoorBSmashed2
+	}
+	actions
+	{
+		DestroyModule "#TimerR"
+		
+	}
+}
+state Chapter1_MidtroB
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_DoorBSmashed
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A3C1Midtro2"
+	}
+}
+state Chapter1_DoorBSmashed
+{
+	conditions
+	{
+		if module "GotoDroneB Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneC Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneB GetPercentageComplete" == 1.0 and
+			if module "GotoDroneC GetPercentageComplete" == 1.0 goto Chapter1_SmashCDoor
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		DestroyModule "#DroneScout1"
+		DestroyModule "#DroneScout2"
+		DestroyModule "#Return"
+		DestroyModule "#TimerR"
+		DestroyModule "#Drone"
+		DestroyModule "#DoorB"
+		;CreateModule "#AAGun" "#AAGunC" "#Protect"
+		;SendToModule "#AAGunC" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketControlB" "#Range=250.0" "#Delay=0.6" "#Energy=100.0" "#RespawnDelay=3000" "#Ammo=0" "#Create"
+		DestroyModule "#A3C1BlastDoors"
+		SendToModule "#General" "#SetVehicle=#A3C1VehicleStart"
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch1_obj2" "#AutoDestroy" "#Start"
+		DestroyModule "#KeyLocation"
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=A3C1SS7Drone2" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone3" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65" "#IgnorePaths"  "#energy=150"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=A3C1SS7Drone1" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone3" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65" "#IgnorePaths"  "#energy=150"
+		SendToModule "#General" "#TriggerObjectSwitch=8"
+	}
+}
+state Chapter1_DoorBSmashed2
+{
+	conditions
+	{
+		if module "GotoDroneB Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneC Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneB GetPercentageComplete" == 1.0 and
+			if module "GotoDroneC GetPercentageComplete" == 1.0 goto Chapter1_SmashCDoor
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		DestroyModule "#DroneScout1"
+		DestroyModule "#DroneScout2"
+		DestroyModule "#Drone"
+		DestroyModule "#DoorB"
+		;CreateModule "#AAGun" "#AAGunC" "#Protect"
+		;SendToModule "#AAGunC" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketControlB" "#Range=250.0" "#Delay=0.6" "#Energy=100.0" "#RespawnDelay=3000" "#Ammo=0" "#Create"
+		DestroyModule "#A3C1BlastDoors"
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch1_obj2" "#AutoDestroy" "#Start"
+		DestroyModule "#KeyLocation"
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=A3C1SS7Drone2" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone3" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65" "#IgnorePaths"  "#energy=150"
+		CreateModule "#DriverDrone" "#GotoDroneC" "#spline=A3C1SS7Drone1" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone3" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65" "#IgnorePaths"  "#energy=150"
+		SendToModule "#General" "#TriggerObjectSwitch=8"
+	}
+}
+state Chapter1_SmashCDoor
+{
+	conditions
+	{
+		
+		if module "DoorC EnergyLessThanClamp" == 1.0 goto Chapter1_DecepticonAmbush2
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		DestroyAllModules
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C1KeyLoc" "#String=Key7Goto" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60"
+		SendToModule "#DoorC" "#ResetDamageFlags"
+		SendToModule "#DoorC" "#PhysObjGlow" "#Breakable" "#Protect" "#NoWeaponDamage"
+	}
+}
+state Chapter1SkipToBarr
+{
+	conditions
+	{
+		if module "DoorC GetPercentageComplete" == 1.0 goto Chapter1_DecepticonAmbush22
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		;if module "Barricade Dead" == 1.0 goto Chapter1_DecepticonAmbush3
+		if module "Barricade IsEnergyAtMin" == 1.0 goto Chapter1_DecepticonAmbush3
+
+		;if module "DroneScout1 Energy" <= 0.0 and
+		;	if module "DroneScout2 Energy" <= 0.0 goto Chapter1_DecepticonAmbush2Done
+
+		
+				
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		
+		SendToModule "#General" "#SetMaxOpponents=6" "#SetMaxApproachers=6" "#SetAttackRingSize=20"
+		
+		DestroyModule "#KeyLocation"
+		SendToModule "#General" "#SetPlayer=#A3C1VehicleStart"
+		
+
+		SendToModule "#DoorC" "#NoDamage"
+		SendToModule "#General" "#SetMessage=HIntD3" "#SetMessageTimer=3"
+		CreateModule "#Creature" "#DroneScout1" "#Type=DroneDefault" "#Spline=A3C1SS7Drone1" "#count=1000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#Script=AdvDefault" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#DroneScout2" "#Type=DroneDefault" "#Spline=A3C1SS7Drone2" "#count=1000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#Script=AdvDefault" "#ForcePlayerAsOpp"
+		;CreateModule "#Creature" "#DroneScout3" "#Type=DroneDefault" "#Spline=A3C1SS7Drone4" "#count=1000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#Script=AdvDefault" "#ForcePlayerAsOpp"
+		;CreateModule "#Creature" "#Barricade" "#Boss=#Barricade" "#Type=Barricade" "#Spline=A3C1SS7Drone3" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#BlockDeath" "#Script=LeapPunch"
+		CreateModule "#Goto" "#Barricade" "#Boss=#Barricade" "#Spline=A3C1SS7Drone3" "#count=1" "#maxalive=1" "#addtoradar" "#Type=Barricade" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#BlockDeath" "#Script=LeapPunch" "#ForcePlayerAsOpp" "#SetEnergyMin=2.0"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C1SS7Drone1" "#Radius=190" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60"
+	
+		Idle "frames=3"
+		DestroyModule "#DoorA"
+		DestroyModule "#DoorB"
+		
+	}
+
+
+}
+state Chapter1_DecepticonAmbush2
+{
+	conditions
+	{
+		if module "DoorC GetPercentageComplete" == 1.0 goto Chapter1_DecepticonAmbush22
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		;if module "Barricade Dead" == 1.0 goto Chapter1_DecepticonAmbush3
+		if module "Barricade IsEnergyAtMin" == 1.0 goto Chapter1_DecepticonAmbush3
+
+		;if module "DroneScout1 Energy" <= 0.0 and
+		;	if module "DroneScout2 Energy" <= 0.0 goto Chapter1_DecepticonAmbush2Done
+
+		
+				
+	}
+	actions
+	{
+		SetMusic "ACTION Mission2_1 QUIET Generic Play Action"
+		SendToModule "#General" "#SetMaxOpponents=6" "#SetMaxApproachers=6" "#SetAttackRingSize=20"
+		
+		DestroyModule "#KeyLocation"
+		SendToModule "#DoorC" "#NoDamage"
+		SendToModule "#General" "#SetMessage=HIntD3" "#SetMessageTimer=3"
+		SendToModule "#General" "#CountDSet=1"
+		CreateModule "#Creature" "#DroneScout1" "#Type=DroneDefault" "#Spline=A3C1SS7Drone1" "#count=1000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#Script=AdvDefault" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#DroneScout2" "#Type=DroneDefault" "#Spline=A3C1SS7Drone2" "#count=1000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#Script=AdvDefault" "#ForcePlayerAsOpp"
+		;CreateModule "#Creature" "#DroneScout3" "#Type=DroneDefault" "#Spline=A3C1SS7Drone4" "#count=1000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#Script=AdvDefault" "#ForcePlayerAsOpp"
+		;CreateModule "#Creature" "#Barricade" "#Boss=#Barricade" "#Type=Barricade" "#Spline=A3C1SS7Drone3" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#BlockDeath" "#Script=LeapPunch"
+		CreateModule "#Goto" "#Barricade" "#Boss=#Barricade" "#Spline=A3C1SS7Drone3" "#count=1" "#maxalive=1" "#addtoradar" "#Type=Barricade" "#SpawnInLosInit" "#SpawnAsCreature" "#KeyLocation=On" "#BlockDeath" "#Script=LeapPunch" "#ForcePlayerAsOpp" "#SetEnergyMin=2.0"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=A3C1SS7Drone1" "#Radius=190" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=60"
+	}
+
+
+}
+state Chapter1_DecepticonAmbush2Done
+{
+	conditions
+	{
+		if module "DoorC GetPercentageComplete" == 1.0 goto Chapter1_DecepticonAmbush22
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		;if module "Barricade Dead" == 1.0 goto Chapter1_DecepticonAmbush3
+		if module "Barricade IsEnergyAtMin" == 1.0 goto Chapter1_DecepticonAmbush3
+
+		if Timer > 15.0 and
+			if module "DroneScout1 Energy" <= 0.0 and
+				if module "DroneScout2 Energy" <= 0.0 goto Chapter1_DecepticonAmbush2DoneA
+				
+	}
+	actions
+	{	
+
+		ResetTimer
+		Idle 15.0 
+		SetState Chapter1_DecepticonAmbush2DoneA
+
+	}
+
+
+}
+state Chapter1_DecepticonAmbush2DoneA
+{
+	conditions
+	{
+		if module "DoorC GetPercentageComplete" == 1.0 goto Chapter1_DecepticonAmbush22
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		;if module "Barricade Dead" == 1.0 goto Chapter1_DecepticonAmbush3
+		if module "Barricade IsEnergyAtMin" == 1.0 goto Chapter1_DecepticonAmbush3
+
+		if Timer > 1.0 and
+			if module "DroneScout1 Energy" <= 0.0 and
+				if module "DroneScout2 Energy" <= 0.0 goto Chapter1_DecepticonAmbush2Done
+				
+	}
+	actions
+	{	
+
+		ResetTimer
+		SendToModule "#DroneScout1" "#count=1" 
+		SendToModule "#DroneScout2" "#count=1" 
+
+	}
+
+
+}
+
+state Chapter1_DecepticonAmbush22
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		;if module "Barricade Dead" == 1.0 goto Chapter1_DecepticonAmbush32
+		if module "Barricade IsEnergyAtMin" == 1.0 goto Chapter1_DecepticonAmbush32
+	
+		;if module "DroneScout1 Energy" <= 0.0 and
+		;	if module "DroneScout2 Energy" <= 0.0 goto Chapter1_DecepticonAmbush22Done
+	}
+	actions
+	{
+		
+	}
+}
+state Chapter1_DecepticonAmbush22Done
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		;if module "Barricade Dead" == 1.0 goto Chapter1_DecepticonAmbush32
+		if module "Barricade IsEnergyAtMin" == 1.0 goto Chapter1_DecepticonAmbush32
+
+		if Timer > 15.0 and
+			if module "DroneScout1 Energy" <= 0.0 and
+				if module "DroneScout2 Energy" <= 0.0 goto Chapter1_DecepticonAmbush22DoneA
+				
+	}
+	actions
+	{	
+
+		ResetTimer
+		
+
+	}
+
+
+}
+state Chapter1_DecepticonAmbush22DoneA
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		;if module "Barricade Dead" == 1.0 goto Chapter1_DecepticonAmbush32
+		if module "Barricade IsEnergyAtMin" == 1.0 goto Chapter1_DecepticonAmbush32
+
+		if Timer > 1.0 and
+			if module "DroneScout1 Energy" <= 0.0 and
+				if module "DroneScout2 Energy" <= 0.0 goto Chapter1_DecepticonAmbush22Done
+				
+	}
+	actions
+	{	
+
+		ResetTimer
+		SendToModule "#DroneScout1" "#count=1" 
+		SendToModule "#DroneScout2" "#count=1" 
+
+	}
+
+
+}
+
+state Chapter1_DecepticonAmbush3
+{
+	conditions
+	{
+		if module "DoorC GetPercentageComplete" == 1.0 goto Chapter1_DecepticonAmbush33
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if Timer > 1.0 and
+			if module "DroneScout1 Energy" <= 0.0 and
+				if module "DroneScout2 Energy" <= 0.0 and
+					if module "DroneScout4 Energy" <= 0.0 goto Chapter1_Return3
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#DroneScout1" "#count=2"
+		SendToModule "#DroneScout2" "#count=2"
+		SendToModule "#DroneScout3" "#count=2"
+		SendToModule "#General" "#SetMessage=FinishThem" "#SetMessageTimer=3"
+		;CreateModule "#Creature" "#DroneScout4" "#Type=DroneDefault" "#Spline=A3C1SS7Drone3" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnAsCreature" "#Script=Advanced" "#ForcePlayerAsOpp" 
+		CreateModule "#Creature" "#DroneScout4" "#Type=DroneCement" "#Spline=A3C1SS7Drone3" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=CAgile"
+		SendToModule "Barricade" "#NoHealthBar" "#DirectSpline=A3C2TunnelA" "#Script=FollowSplineCre" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+
+		Idle 3.5
+		SendToModule "Barricade" "#DirectSpline=A3C2TunnelA" "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+	}
+}
+state Chapter1_Return3
+{
+	conditions
+	{
+		if module "DoorC GetPercentageComplete" == 1.0 goto Chapter1_DoorCSmashed2
+		if module "Return InArea" == 1.0 goto Chapter1_MidtroC
+		if module "TimerR FailMission" == 1.0 goto Chapter1_FailMission
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		DestroyModule "#KeyLocation"
+		SendToModule "#DroneScout1" "#AddToRadarOff" "#SetEnergy=0.0"
+		SendToModule "#DroneScout2" "#AddToRadarOff" "#SetEnergy=0.0"
+		SendToModule "#DroneScout3" "#AddToRadarOff" "#SetEnergy=0.0"
+		SendToModule "#DroneScout4" "#AddToRadarOff" "#SetEnergy=0.0"
+		CreateModule "#AreaRange" "#Return" "#Trigger=#A3C1NoTrans2"
+		SendToModule "#General" "#SetMessage=Key7Goto" "#SetMessageTimer=3"
+		CreateModule "#Timer" "#TimerR" "Time=60.0"
+		
+	}
+}
+state Chapter1_DecepticonAmbush32
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if module "DroneScout1 Energy" <= 0.0 and
+			if module "DroneScout2 Energy" <= 0.0 and
+				if module "DroneScout4 Energy" <= 0.0 goto Chapter1_DoorCSmashed2
+	}
+	actions
+	{
+		
+		SendToModule "#DroneScout1" "#count=2"
+		SendToModule "#DroneScout2" "#count=2"
+		SendToModule "#DroneScout3" "#count=2"
+		SendToModule "#General" "#SetMessage=FinishThem" "#SetMessageTimer=3"
+		;CreateModule "#Creature" "#DroneScout4" "#Type=DroneDefault" "#Spline=A3C1SS7Drone3" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnAsCreature" "#Script=Advanced" "#ForcePlayerAsOpp"
+		CreateModule "#Creature" "#DroneScout4" "#Type=DroneCement" "#Spline=A3C1SS7Drone3" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=CAgile"
+		SendToModule "Barricade" "#NoHealthBar" "#DirectSpline=A3C2TunnelA" "#Script=FollowSplineCre" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+
+		Idle 3.5
+		SendToModule "Barricade" "#DirectSpline=A3C2TunnelA" "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+	}
+}
+state Chapter1_DecepticonAmbush33
+{
+	conditions
+	{
+		if module "KeyLocation FailMission" == 1.0 goto Chapter1_FailMission
+		if module "DroneScout1 Energy" <= 0.0 and
+			if module "DroneScout2 Energy" <= 0.0 and
+				if module "DroneScout4 Energy" <= 0.0 and
+					if module "DroneScout5 Energy" <= 0.0 goto Chapter1_DoorCSmashed2
+	}
+	actions
+	{
+		CreateModule "#Creature" "#DroneScout5" "#Type=DroneCement" "#Spline=A3C1SS7Drone3" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=CAgile"
+		SendToModule "Barricade" "#NoHealthBar" "#DirectSpline=A3C2TunnelA" "#Script=FollowSplineCre" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+
+		Idle 3.5
+		SendToModule "Barricade" "#DirectSpline=A3C2TunnelA" "#Script=FollowSplineVeh" "#TransformForceCar" "#Speed=150" "#Unstoppable" "#AddToRadarOff" "#InhibitRubble"
+	}
+}
+state Chapter1_MidtroC
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_DoorCSmashed
+	}
+	actions
+	{
+		SendToModule "#General" "#StartVideo=#A3C1Midtro3"
+	}
+}
+state Chapter1_SkipToFinalChase
+{
+	conditions
+	{
+		if module "GotoDroneA Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneB Finish" >= 1.0 goto Chapter1_Alarm
+		;if module "GotoDroneC Finish" >= 1.0 goto Chapter1_Alarm
+		;if module "GotoDroneD Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneA GetPercentageComplete" == 1.0 and 
+			if module "GotoDroneB GetPercentageComplete" == 1.0 goto Chapter1_GotoControlRoom
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		DestroyAllModules
+		DestroyModule "#DoorA"
+		DestroyModule "#DoorB"
+		DestroyModule "#DoorC"
+		SendToModule "#General" "#SetVehicle=#A3C1VehicleStart" "#FadeUp"
+		SendToModule "#General" "#CountDSet=2"
+		
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch1_obj4" "#AutoDestroy" "#Start"
+		CreateModule "#AAGun" "#AAGunD" "#Protect"
+		SendToModule "#AAGunC" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketControlC" "#Range=250.0" "#Delay=0.6" "#Energy=100.0" "#RespawnDelay=3000" "#Ammo=0" "#Create"
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=A3C1SS7Drone1" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone1" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=15" "#IgnorePaths"  "#energy=100"
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=A3C1SS7Drone2" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone2" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=15" "#IgnorePaths"  "#energy=100"
+		;CreateModule "#DriverDrone" "#GotoDroneC" "#spline=A3C1SS7Drone3" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone3" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=15" "#IgnorePaths"  "#energy=100"
+		;CreateModule "#DriverDrone" "#GotoDroneD" "#spline=A3C1SS7Drone4old" "#splinestep=6" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone4old" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65" "#IgnorePaths"  "#energy=100" 
+		SendToModule "#General" "#TriggerObjectSwitch=8"
+	}
+}
+state Chapter1_DoorCSmashed
+{
+	conditions
+	{
+		if module "GotoDroneA Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneB Finish" >= 1.0 goto Chapter1_Alarm
+		;if module "GotoDroneC Finish" >= 1.0 goto Chapter1_Alarm
+		;if module "GotoDroneD Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneA GetPercentageComplete" == 1.0 and 
+			if module "GotoDroneB GetPercentageComplete" == 1.0 goto Chapter1_GotoControlRoom
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		DestroyAllModules
+		DestroyModule "#DoorC"
+		SendToModule "#General" "#SetVehicle=#A3C1VehicleStart"
+		SendToModule "#General" "#CountDSet=2"
+		
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch1_obj4" "#AutoDestroy" "#Start"
+		CreateModule "#AAGun" "#AAGunD" "#Protect"
+		SendToModule "#AAGunC" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketControlC" "#Range=250.0" "#Delay=0.6" "#Energy=100.0" "#RespawnDelay=3000" "#Ammo=0" "#Create"
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=A3C1SS7Drone1" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone1" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=15" "#IgnorePaths"  "#energy=100"
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=A3C1SS7Drone2" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone2" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=15" "#IgnorePaths"  "#energy=100"
+		;CreateModule "#DriverDrone" "#GotoDroneC" "#spline=A3C1SS7Drone3" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone3" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=15" "#IgnorePaths"  "#energy=100"
+		;CreateModule "#DriverDrone" "#GotoDroneD" "#spline=A3C1SS7Drone4old" "#splinestep=6" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone4old" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65" "#IgnorePaths"  "#energy=100" 
+		SendToModule "#General" "#TriggerObjectSwitch=8"
+	}
+}
+state Chapter1_DoorCSmashed2
+{
+	conditions
+	{
+		if module "GotoDroneA Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneB Finish" >= 1.0 goto Chapter1_Alarm
+		;if module "GotoDroneC Finish" >= 1.0 goto Chapter1_Alarm
+		;if module "GotoDroneD Finish" >= 1.0 goto Chapter1_Alarm
+		if module "GotoDroneA GetPercentageComplete" == 1.0 and 
+			if module "GotoDroneB GetPercentageComplete" == 1.0 goto Chapter1_GotoControlRoom
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_2 QUIET Generic Play Action"
+		DestroyAllModules
+		DestroyModule "#DoorC"
+
+		SendToModule "#General" "#CountDSet=2"
+		
+		SendToModule "Barricade" "#NoHealthBar"
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch1_obj4" "#AutoDestroy" "#Start"
+		CreateModule "#AAGun" "#AAGunD" "#Protect"
+		SendToModule "#AAGunC" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketControlC" "#Range=250.0" "#Delay=0.6" "#Energy=100.0" "#RespawnDelay=3000" "#Ammo=0" "#Create"
+		CreateModule "#DriverDrone" "#GotoDroneA" "#spline=A3C1SS7Drone1" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone1" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=15" "#IgnorePaths"  "#energy=100"
+		CreateModule "#DriverDrone" "#GotoDroneB" "#spline=A3C1SS7Drone2" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone2" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=15" "#IgnorePaths"  "#energy=100"
+		;CreateModule "#DriverDrone" "#GotoDroneC" "#spline=A3C1SS7Drone3" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone3" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=15" "#IgnorePaths"  "#energy=100"
+		;CreateModule "#DriverDrone" "#GotoDroneD" "#spline=A3C1SS7Drone4old" "#SplineStep=10" "#maxalive=1" "#count=1" "#FollowSpline=A3C1SS7Drone4old" "#WaitEnd" "#spacing=1.0" "#goalrange=8.0" "#type=Sector7Drone" "#Location=#AlarmDot" "#DontClampRadar" "#Object=#Sector7Dot" "#Warning=A3C1BlastDoors" "#SpawnInLOSInit" "#DrawHealthBar" "#Speed=65" "#IgnorePaths"  "#energy=100"
+		SendToModule "#General" "#TriggerObjectSwitch=8"
+	}
+}
+state Chapter1_Alarm
+{
+	
+	actions
+	{
+		SetMusic "ACTION Mission1_4 QUIET Generic Play Action"
+		SendToModule "#General" "#SetMessage=HIntD14" "#SetMessageTimer=3" "#DangerZoneOn"
+		Idle 1.5
+		CreateModule "#Speech" "#MISLST" "#speech=#A3_ch1_Fail" "#AutoDestroy" "#Start"
+		Idle 0.2
+		SetState Chapter1_FailMission
+	}
+}
+state Chapter1_GotoControlRoom
+{
+	conditions
+	{
+		if module "A3C1TriggerA InArea" == 1.0 goto Chapter1_Complete
+		if module "Timer Timer" < 0.0 goto Chapter1_FailMission
+		
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		DestroyAllModules
+		SendToModule "#General" "#SetMessage=GetToControlRoom" "#SetMessageTimer=7"
+		CreateModule "#Timer" "#Timer" "Time=60.0"
+		CreateModule "#AreaRange" "#A3C1TriggerA" "#Trigger=#A3C1TriggerA" "#SetRadarType=#Critical"
+		
+	}
+}
+state Chapter1_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter1_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#DangerZoneOff" "#EndOfMission"  "#FailMission"
+	}
+}
+state Chapter1_Restart
+{
+	conditions
+	{
+		if timer > 0.2 goto Chapter1_Restart3
+		if module "General ChapterProgress" >= 1.0 goto Chapter1_Restart2
+		if module "General ChapterProgress" >= 2.0 goto Chapter1_Restart2
+		if module "General ChapterProgress" >= 3.0 goto Chapter1_Restart2
+		if module "General ChapterProgress" >= 4.0 goto Chapter1_Restart2
+		
+	}
+	actions
+	{
+		
+		DestroyAllModules "#IncludeProtected"
+
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DroneCement"
+		SendToModule "#General" "#UnLoadCreature=Barricade"
+
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+
+		SendToModule "#General" "#RevertPlayerType"
+
+		ResetTimer
+	}
+}
+state Chapter1_Restart2
+{
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Restart3
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		;SetMusic "ACTION Mission1_1 QUIET Generic Play Action"	
+
+		CreateModule "#AAGun" "#AAGun"
+		SendToModule "#AAGun" "#Type=AAGUNTYPE_ROCKETS" "#Placement=TurretRocketGlobal" "#Range=100.0" "#Delay=1.5" "#Energy=100.0" "#RespawnDelay=30" "#Ammo=0" "#Create"
+
+
+		SendToModule "#General" "#TrafficLv = 0"                       
+		SendToModule "#General" "#PatrolLv = 0"                        
+
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 1"          
+		SendToModule "#General" "#ResponseLv_Detection  = 0"  
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"     
+
+
+		SetState "Chapter1_Restart4"
+	}
+}
+state Chapter1_Restart4
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto Chapter1_Restart2
+	}
+	actions
+	{
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		CreateModule "#Timer" "#Timer" "#Time=4" "#NoRender"
+		;SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		SendToModule "#General" "#CountDSet=0"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" "#Unlock=#Chapter2"
+		CreateModule "#Speech" "#A3C1BlastDoors" "#speech=#A3_ch1_cmplt" "#PlayDelay=1.2" "#AutoDestroy" "#Start"
+		;SetState "Chapter1_CompleteVideo"
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A3C1Outro1"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FinishedOutroVideo"
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter2"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault"
+		SendToModule "#General" "#UnLoadCreature=DroneCement"
+		SendToModule "#General" "#UnLoadCreature=Barricade"
+		IncreasePlayerHealth max
+		setstate "PickGoto" ;goto next chapter
+	}
+}

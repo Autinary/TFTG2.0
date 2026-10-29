@@ -1,0 +1,104 @@
+;race to the end of the path within the time limit
+
+;requires:
+;race spline		Race#
+
+;Changeable params:
+;	TIMELIMIT		time in which to complete the mission
+;   RANGE			distance to each point
+
+
+state SubMissionONE_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMissionONE_Death"
+;		SendToModule "#General" "#PlayerType="
+		SetState "SubMissionONE_Init"
+	}
+}
+state SubMissionONE_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMissionONE_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetAll" "#SetVehicle=#SubMissionONE"
+		CreateModule "#Timer" "#Timer" "#Time=TIMELIMIT"
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=RaceONE" "#Range=RANGE"
+
+	}
+}
+state SubMissionONE_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMissionONE_Finish
+		if module "Timer FailMission" == 1.0 goto SubMissionONE_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMissionONE_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMissionONE_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMissionONE_FinishWait
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=ONE"
+		SetState "SubMissionONE_Leave"
+	}
+}
+state SubMissionONE_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMissionONE_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state SubMissionONE_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMissionONE_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state SubMissionONE_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#RevertPlayerType"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMissionONE" "#FadeUp"
+		SendToModule "#General" "#FadeUp"		
+		SetState "GlobalActionRing"
+	}
+}
+

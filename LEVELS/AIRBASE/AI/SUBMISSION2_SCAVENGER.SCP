@@ -1,0 +1,204 @@
+;scavenger hunt, find all the nodes within the time limit
+
+;requires:
+;Scavenger spline		Scavenger#	;maximum 80 points
+;KeyLocation spline		KeyLoc#
+
+;Changeable params:
+;	300		time in which to complete the mission
+;	15			keylocation timeout
+;	75		distance in which points are added to radar (75)
+
+state SubMission2_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission2_Death"
+;		SendToModule "#General" "#PlayerType="
+		SendToModule "#General" "#ResetAll"
+		SetState "SubMission2_Enter2"
+	}
+}
+state SubMission2_Enter2
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission2_PreInit
+		if module "General ChapterProgress" >= 4.0 goto SubMission2_Init2
+		if module "General ChapterProgress" >= 3.0 goto SubMission2_Enter3
+		if module "General ChapterProgress" >= 1.0 goto SubMission2_Init
+		
+	}
+	actions
+	{
+		ResetTimer
+		
+		
+	}
+}
+
+state SubMission2_Enter3
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=BoneCrusher"
+		SetState "SubMission2_Init2"
+	}
+}
+state SubMission2_PreInit
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Init
+	}
+	actions
+	{
+		SendToModule "#General" "#DeleteRadarFreeInterferenceZones"
+		SendToModule "#General" "#SetRadarInterference=1"
+	}
+}
+state SubMission2_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#SetPlayer=#SubMission2" "#ResetLevel"
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Scavenger2" "#MultiNode" "#RadarRange=75"
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#RaceNodes" "#GetPercentageComplete" "#IgnoreDroneKills" "#DronesToDefeat=10" "#BackwardsCount"
+		SendToModule "#RaceNodes" "#SetupDroneCounter=#DroneCounter"
+	}
+}
+state SubMission2_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission2_Init2
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Main2
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#SetPlayer=#SubMission2" "#ResetLevel"
+		CreateModule "#Timer" "#Timer" "#Time=180"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Scavenger2" "#MultiNode" "#RadarRange=75"
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#RaceNodes" "#GetPercentageComplete" "#IgnoreDroneKills" "#DronesToDefeat=10" "#BackwardsCount"
+		SendToModule "#RaceNodes" "#SetupDroneCounter=#DroneCounter"
+	}
+}
+state SubMission2_Main2
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission4_1 PLAY ACTION"
+		
+		
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission2_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission2_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission2_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission2_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=2"
+		;SetState "SubMission2_Leave"
+	}
+}
+
+state SubMission2_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission2_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission2_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission2_Leave
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission2_Leave
+{	
+	conditions
+	{
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing
+	}
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission2" "#FadeUp"
+		SendToModule "#General" "#FadeUp"	
+		
+		Idle 0.2	
+		SendToModule "#General" "#PlayerType=StarScream" 	
+		SetState "GlobalActionRing"
+	}
+}
+

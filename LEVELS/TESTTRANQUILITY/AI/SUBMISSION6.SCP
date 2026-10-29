@@ -1,0 +1,101 @@
+;Survive within the time limit
+
+state SubMission6_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission6_Death"
+		SetState "SubMission6_Init"
+	}
+}
+state SubMission6_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission6_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#SubMissions" "#SetTitle=#Survival"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission""
+    		SendToModule "#General" "#LoadCreature=DroneForkLift"
+    		SendToModule "#General" "#LoadCreature=DronePickupTruck"
+    		;SendToModule "#General" "#LoadCreature=DroneTowTruck"
+		CreateModule "#Creature" "#CreatureWaveA" "#Type=DroneForkLift"    "#Spline=TestSpawn" "#count=1000" "#maxalive=3" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		CreateModule "#Creature" "#CreatureWaveB" "#Type=DronePickupTruck" "#Spline=TestSpawn" "#count=1000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		;CreateModule "#Creature" "#CreatureWaveC" "#Type=DroneTowTruck" "#Spline=TestSpawn" "#count=1000" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=5" 
+		CreateModule "#Timer" "#Timer" "#Time=45.0"
+
+	}
+}
+state SubMission6_Main
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto SubMission6_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission6_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission6_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission6_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMission6_FinishWait
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=6"
+		SetState "SubMission6_Leave"
+	}
+}
+state SubMission6_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission6_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state SubMission6_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission6_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state SubMission6_Leave
+{
+	actions
+	{
+	    	SendToModule "#General" "#UnLoadCreature=DroneForkLift"
+    		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+    		;SendToModule "#General" "#UnLoadCreature=DroneTowTruck"
+		SetState "Main"
+	}
+}
+

@@ -1,0 +1,164 @@
+
+
+state PrepareSwap
+{
+	conditions
+	{
+		if module "General GetCount" == 1.0 goto DisableBee07
+		if module "General GetCount" == 2.0 goto DisableBee
+		
+	}
+	actions
+	{
+		DestroyModule "#CreatureSwap"
+		SendToModule "#General" "#SetPlayer=#CSReset" 
+		;Idle 2.0
+		CreateModule "#AreaRange" "#SwapToOP" "#Trigger=#CSOptimusPrime" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon"
+		CreateModule "#AreaRange" "#SwapToIH" "#Trigger=#CSIronHide" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon"
+		CreateModule "#AreaRange" "#SwapToJ" "#Trigger=#CSJazz" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBB" "#Trigger=#CSBumblebee" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBB07" "#Trigger=#CSBumblebee07" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon"
+
+		SendToModule "#Ratchet" "#SuppressShieldOff" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		Idle 0.1
+		SendToModule "#General" "#SetMessage=CACS" "#SetMessageTimer=1000" 
+		
+		SetState CreatureSwapProcess
+	}
+}
+state DisableBee07
+{
+	actions 
+	{
+		DestroyModule "#SwapToBB07" 
+		SendToModule "#General" "#SetMessage=CABCS" "#SetMessageTimer=1000" 
+
+		SetState CreatureSwapProcess
+		
+	}
+}
+state DisableBee
+{
+	actions 
+	{
+		DestroyModule "#SwapToBB" 
+		SendToModule "#General" "#SetMessage=CAB07CS" "#SetMessageTimer=1000" 
+
+		SetState CreatureSwapProcess
+		
+	}
+}
+state CreatureSwapProcess
+{
+	conditions
+	{
+		if module "Timer FailMission" == 1.0 goto LeftSwapArea
+
+		if module "SwapToOP InArea" == 1.0 goto SelectOP
+		if module "SwapToIH InArea" == 1.0 goto SelectIH
+		if module "SwapToJ InArea" == 1.0 goto SelectJ
+		if module "SwapToBB InArea" == 1.0 goto SelectBB
+		if module "SwapToBB07 InArea" == 1.0 goto SelectBB07
+
+		;if Timer > 10.0 goto Chapter1_WaitingRoom
+		
+	}
+	actions
+	{
+		ResetTimer
+	}	
+	
+}
+state SelectOP
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=OptimusPrime" "#SetPlayer=#CSReset" 
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state SelectIH
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=IronHide" "#SetPlayer=#CSReset" 
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state SelectJ
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Jazz" "#SetPlayer=#CSReset" 
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state SelectBB
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Bumblebee" "#SetPlayer=#CSReset" 
+		
+		SendToModule "#General" "#CountSet=1"
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+state SelectBB07
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Bumblebee07" "#SetPlayer=#CSReset" 
+		SendToModule "#General" "#CountSet=2"
+		
+		 
+		SetState LeftSwapArea ;Chapter1_WaitingRoom
+	}
+}
+
+state LeftSwapArea
+{
+	conditions
+	{
+		if module "General GetCountA" == 1.0 goto Chapter1_Main
+
+		if module "General GetCountA" == 2.0 goto Chapter1_Phase2Start
+		
+		if module "General GetCountA" == 3.0 goto Chapter1_Phase3Start
+
+		if module "General GetCountA" == 4.0 goto Chapter1_Phase4Start
+
+		if module "General GetCountA" == 5.0 goto Chapter1_Phase5Start
+
+		if module "General GetCountA" == 6.0 goto Chapter1_Phase6Start
+
+				
+	}
+	actions
+	{
+		SendToModule "#Ratchet" "#SuppressShieldOff" "#AddToRadar"	
+		SendToModule "#General" "#CountDSet=1"	
+		DestroyAllModules 
+		DestroyModule "#Timer"
+		SendToModule "#General" "#SetMessageTimer=-1"
+		
+		 
+		;SetState GlobalActionRing
+	}
+}

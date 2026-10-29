@@ -1,0 +1,552 @@
+;Destroy all buildings and physobjs within the time limit
+
+;requires:
+;	Keylocation spline 	KeyLoc#
+;	Spawn spline		Spawn#
+
+;Changeable params:
+;	300		time in which to complete the mission
+;	30		total number of creatures that need to be killed
+;	10000	amount of damage required
+;	15			keylocation timeout
+;	2		total active simultaneously
+;	DronePickupTruck_a		type of creature to fight against
+
+state SubMission1_Enter
+{	
+	conditions
+	{
+		if timer > 0.2 goto SubMission1_Init4
+		if module "General ChapterProgress" >= 1.0 goto SubMission1_Enter4
+	}
+	actions
+	{
+		ResetTimer
+		DestroyModule "#CreatureFreeRoamA"
+		DestroyModule "#CreatureFreeRoamB"
+		DestroyModule "#CreatureFreeRoamC"
+		DestroyModule "#CreatureFreeRoamD"
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SetDeathPoint "SubMission1_Death"
+		;SendToModule "#General" "#PlayerType=Scorponok"
+		;SetState "SubMission1_Init"
+	}
+}
+state SubMission1_EnterTC
+{	
+	conditions
+	{
+		if timer > 0.2 goto SubMission1_Init
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SetDeathPoint "SubMission1_Death"
+		
+	}
+}
+state SubMission1_Enter2
+{	
+	conditions
+	{
+		if timer > 0.2 goto SubMission1_Init3
+		if module "General ChapterProgress" >= 3.0 goto SubMission1_Enter3
+	}
+	actions
+	{
+		ResetTimer
+		
+	}
+}
+state SubMission1_Enter3
+{	
+	
+	actions
+	{
+		
+		
+		;SendToModule "#General" "#PlayerType=TripleC"
+		SetState "SubMission1_Init"
+	}
+}
+state SubMission1_Enter4
+{	
+	conditions
+	{
+		if timer > 0.2 goto SubMission1_Init2
+		if module "General ChapterProgress" >= 2.0 goto SubMission1_Enter2
+	}
+	actions
+	{
+		ResetTimer
+		
+	}
+}
+state SubMission1_Init2
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main2
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission1"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		CreateModule "#Creature" "#Creature" "#Type=DronePickupTruck_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Timer" "#Timer" "#Time=120"	
+	    	;CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone"
+	}
+}
+state SubMission1_Init4
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main2
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission1"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Timer" "#Timer" "#Time=120"	
+	    	;CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature" "#IconType=#Drone"
+	}
+}
+state SubMission1_Main2
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+		;if module "creature getpercentagecomplete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp"	
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-5000"
+	}
+}
+state SubMission1_Init
+{
+	conditions
+	{
+		if module "General GetCountA" == 2.0 goto SubMission1_MainTC
+		if timer > 0.1 goto SubMission1_Main
+		if module "General ChapterProgress" >= 4.0 goto SubMission1_Main3
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission1""
+	    	SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#LoadCreature=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=TripleC"
+		CreateModule "#Creature" "#Creature" "#Type=DronePickupTruck_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		CreateModule "#Creature" "#CreaturePrime" "#Type=OptimusPrime" "#Spline=D2C4SpawnD" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#BlockDeath" "#Script=PrimeCombat"
+		;CreateModule "#Creature" "#CreatureAlly" "#Type=TripleC" "#Spline=D2C3Drones" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Friend"
+		;SendToModule "#CreatureAlly" "#SetEnergyMax=999.0" "#SetEnergy=999.0" "#SetEnergyMin=999.0" 
+		SendToModule "#CreaturePrime" "#SetEnergyMax=10000.0" "#SetEnergy=10000.0" 
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		;CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature1" "#IconType=#Drone"
+	}
+}
+
+state SubMission1_Init3
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission1_Main4
+		
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission1""
+	    	SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#LoadCreature=BumbleBee"
+		CreateModule "#Creature" "#Creature" "#Type=DronePickupTruck_a" "#Spline=Spawn1" "#count=30" "#maxalive=3" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		CreateModule "#Creature" "#CreatureBee" "#Type=BumbleBee" "#Spline=D2C4SpawnD" "#count=10" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#BlockDeath"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Timer" "#Timer" "#Time=120"
+		;CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#Creature1" "#IconType=#Drone"
+	}
+}
+state SubMission1_Main4
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail	
+		;if module "#CreatureAlly GetPercentageComplete" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission3_1 QUIET Generic Play Action"
+		SendToModule "#General" "#FadeUp"
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-5000"
+	}
+}
+state SubMission1_Main
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail	
+		;if module "#CreatureAlly GetPercentageComplete" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission4_4 Play Action"
+		SendToModule "#General" "#PlayerType=Scorponok"
+		SendToModule "#General" "#FadeUp"
+		;CreateModule "#Creature" "#CreatureAlly" "#Type=TripleCTurret" "#Spline=D2C3Drones" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Unstoppable" "#Friend"
+		;SendToModule "#CreatureAlly" "#SetEnergyMax=999.0" "#SetEnergy=999.0" "#SetEnergyMin=800.0" 
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-5000"
+	}
+}
+state SubMission1_MainTC
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail	
+		;if module "#CreatureAlly GetPercentageComplete" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION Mission4_4 Play Action"
+		
+		SendToModule "#General" "#FadeUp"
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-5000"
+	}
+}
+state SubMission1_Main3
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+		;if module "TCT FailMission" == 1.0 goto SubMission1_Main33
+		if module "CreatureAlly IsEnergyAtMin" == 1.0 goto SubMission1_Main33
+		if Timer > 3.0 goto SubMission1_Main311
+	}
+	actions
+	{
+		ResetTimer
+		SetMusic "STOP INMISSION ACTION Mission4_4 Play Action"
+		SendToModule "#General" "#FadeUp"
+		;DestroyModule "#Creature" 
+		;CreateModule "#Creature" "#Creature1" "#Type=DronePickupTruck_a" "#Spline=Spawn1" "#count=15" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		;CreateModule "#Creature" "#Creature2" "#Type=DronePickupTruck_a" "#Spline=Spawn1" "#count=15" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"
+		SendToModule "#CreaturePrime" "#Script=Combat"
+		SendToModule "#Creature" "#Script=Pitcher"
+		;SendToModule "#Creature2" "#Script=TCCombat"
+		CreateModule "#Creature" "#CreatureAlly" "#Type=TripleCTurret" "#Spline=D2C3Drones" "#count=1" "#maxalive=1" "#Script=TC_Turret" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Unstoppable" "#Friend" "#FollowSpline=Spawn1" "#SetPosition=#TCSpawn"
+		SendToModule "#CreatureAlly" "#SetEnergyMax=999.0" "#SetEnergy=999.0" "#SetEnergyMin=600.0" 	
+		CreateModule "#Timer" "#TCT" "Time=90" "#NoRender"		
+		CreateModule "#GABIChange" "#Destruction" "#GABIChange=-5000"
+		SendToModule "#General" "#CountASet=1"
+	}
+}
+state SubMission1_Main311
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+		if module "TCT FailMission" == 1.0 goto SubMission1_Main32
+		if module "CreatureAlly IsEnergyAtMin" == 1.0 goto SubMission1_Main33
+		if Timer > 5.0 goto SubMission1_Main312
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#CreaturePrime" "#Script=Pitcher"
+		SendToModule "#Creature" "#Script=Advanced"
+		;SendToModule "#Creature2" "#Script=TCCombat"
+		
+	}
+}
+state SubMission1_Main312
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+		if module "TCT FailMission" == 1.0 goto SubMission1_Main32
+		if module "CreatureAlly IsEnergyAtMin" == 1.0 goto SubMission1_Main33
+		if Timer > 7.0 goto SubMission1_Main311
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#CreaturePrime" "#Script=Combat"
+		SendToModule "#Creature" "#Script=Pitcher"
+		;SendToModule "#Creature1" "#Script=TCCombat"
+		
+	}
+}
+state SubMission1_Main32
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+		
+		if module "CreatureAlly GetPercentageComplete" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		DestroyModule "CreatureAlly"
+		DestroyModule "ShockSwap"
+		DestroyModule "KeyLocation"
+		SetMusic "STOP INMISSION ACTION Mission4_5 Play Action"
+		
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		CreateModule "#Creature" "#CreatureAlly" "#Type=TripleC" "#Spline=D2C3Drones" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Unstoppable" "#Friend" "#SetPosition=#TCSpawn"
+		SendToModule "#CreatureAlly" "#SetEnergyMax=10000.0" "#SetEnergy=10000.0" 	
+		SendToModule "#CreaturePrime" "#Script=Combat"
+		SendToModule "#Creature" "#Script=Advanced"
+		SendToModule "#CreatureAlly" "#Script=Advanced"
+		
+	}
+}
+state SubMission1_Main33
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		;if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+		if module "ShockSwap FailMission" == 1.0 goto SubMission1_Main32
+		if module "ShockSwap InArea" == 1.0 goto SubMission1_Main35
+		if module "CreatureAlly IsEnergyAtMin" == 1.0 goto SubMission1_Fail
+	}
+	actions
+	{
+		;DestroyModule "KeyLocation"
+		CreateModule "#KeyLocation" "#ShockSwap" "#Creature=#CreatureAlly" "#Radius=45" "#String=Key5Goto" "#ReEnterMsg=KEY_LOC_REENTER" "#InitTimeOut=15" "#TimeOut=15" "#HeadType=#TripleC" 
+		SendToModule "#CreaturePrime" "#Script=Pitcher"
+		SendToModule "#Creature" "#Script=Pitcher"
+		SendToModule "#CreatureAlly"  "#SetEnergyMin=0.1"
+		;SetState SubMission1_Main35 
+		
+	}
+}
+state SubMission1_Main35
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission1_Main36
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#FadeDown"
+		;SetState SubMission1_Main36
+		
+	}
+}
+state SubMission1_Main36
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		;DestroyAllModules
+		DestroyModule "#Creature"
+		DestroyModule "#CreatureAlly"
+		DestroyModule "#CreaturePrime"
+		SendToModule "#General" "#UnLoadCreature=OptimusPrime"
+		SendToModule "#General" "#UnLoadCreature=TripleC"
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck"
+		SendToModule "#General" "#PlayerType=TripleC" "#SetPlayer=#COMPPOINT5" 
+		SendToModule "#General" "#CountASet=2"
+		SetState SubMission1_Main34
+		
+	}
+}
+state SubMission1_Main37
+{
+	conditions
+	{
+		
+	}
+	actions
+	{
+		DestroyModule "ShockSwap"
+		DestroyModule "KeyLocation"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc1" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" 
+		SendToModule "#Timer" "#AddTime=60"
+		SendToModule "#Destruction" "#GABIChange=-10000"
+		SendToModule "#General" "#FadeUp"
+		SetState SubMission1_Main38
+		
+	}
+}
+state SubMission1_Main38
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+		
+		;if module "CreatureAlly Dead" == 1.0 goto SubMission1_Fail
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#FadeUp"
+		;CreateModule "#Creature" "#CreatureAlly" "#Type=Scorponok" "#Spline=D2C3Drones" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Friend" "#Script=Advanced" "#BlockDeath"
+		SetState SubMission1_Main39
+	}
+}
+state SubMission1_Main39
+{
+	conditions
+	{
+		if module "Destruction GetPercentageComplete" == 1.0 goto SubMission1_Finish
+			;if module "DroneCounter Complete" == 1.0 goto SubMission1_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission1_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission1_Fail
+		
+		;if module "CreatureAlly Dead" == 1.0 goto SubMission1_Fail
+		
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#FadeUp"
+		
+	}
+}
+state SubMission1_Main34
+{
+	conditions
+	{
+		if Timer > 0.5 goto SubMission1_Main37
+	}
+	actions
+	{
+		
+		ResetTimer
+		SendToModule "#General" "#LoadCreature=Scorponok"
+		SendToModule "#General" "#LoadCreature=OptimusPrime"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck"
+		
+		CreateModule "#Creature" "#Creature" "#Type=DronePickupTruck_a" "#Spline=Spawn1" "#count=30" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature"  "#Script=TCComp"
+		CreateModule "#Creature" "#CreaturePrime" "#Type=OptimusPrime" "#Spline=D2C4SpawnD" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#BlockDeath" "#Script=TCComp"
+		;CreateModule "#Creature" "#CreatureAlly" "#Type=Scorponok" "#Spline=D2C3Drones" "#count=1" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Friend" "#Script=Advanced" "#BlockDeath"
+		SendToModule "#CreaturePrime" "#SetEnergyMax=5000.0" "#SetEnergy=5000.0"
+		;SetState SubMission1_Main37
+		
+		
+	}
+}
+state SubMission1_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission1_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission1_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=1"
+		;SetState "SubMission1_Leave"
+	}
+}
+
+state SubMission1_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission1_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission1_Leave
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+
+state SubMission1_Leave
+{
+	conditions
+	{
+		if module "General GetCountA" == 2.0 goto GlobalActionRing
+		if Timer > 0.3 and 
+			if module "General ChapterProgress" >= 4.0 goto GlobalActionRing
+	}
+	actions
+	{
+		ResetTimer
+ 		DestroyAllModules "#IncludeProtected"
+		;
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission1" 
+		SendToModule "#General" "#UnLoadCreature=BumbleBee"
+	   	SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=OptimusPrime"
+		SendToModule "#General" "#UnLoadCreature=TripleC"
+		SendToModule "#General" "#UnLoadCreature=Scorponok"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		Idle 0.1 
+		SendToModule "#General" "#UnLoadCreature=TripleC"
+		Idle 0.5
+		SendToModule "#General" "#PlayerType=Barricade,Barricade,Barricade,Barricade,Barricade"
+		SendToModule "#General" "#FadeUp"		
+		SetState "GlobalActionRing"
+	}
+}

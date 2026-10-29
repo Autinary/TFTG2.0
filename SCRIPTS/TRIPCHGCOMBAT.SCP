@@ -1,0 +1,345 @@
+
+; Note: Can always take a melee hit, physics flip/flops though
+
+;     123456789ABCDEF0123456789ABCDEF - Cap of 31 chars
+CONST AutoMeleeRange			6.0
+CONST StuckTimeTol				2.0
+CONST PlayerYRangeMin			4.0
+CONST PlayerYRangeMaxCombat		5.0
+CONST PlayerYRangeMaxRanged		10.0
+CONST MeleeRangeMin				10.0
+CONST MeleeRangeMax				12.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > StuckTimeTol AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+		Probably best you don't use this script, a lot of the behaviours have changed, both in the default
+		script, and the code
+		I have moved the "if SecondaryForm ..." condition over though
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Alert
+		if CarForm == 1.0 goto TransInit
+		if SecondaryForm == 1.0 goto TransInit
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=true" "TakeHit=false" "StuckEscape=true"
+		; SetState Alert
+	}
+}
+
+state TransInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Alert
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+
+state NoOpponent
+{
+	Conditions
+	{
+		if GotOpponent == 1.0 goto Alert
+		if BeenStruckTime < 2.0 goto BeenStruck
+		if WalkToLocatorTime > 0.0 goto BeenStruck
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		SetStrafe false
+		SetFlag "TakeHitPhysics=true"
+		GoToOrigin "xz_rangecheck" "goalrange=2.0" "turntime=5.0"
+	}
+}
+
+state Alert
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if HasPickup "Pole" == 1.0 AND
+		if MoodForMelee == 1.0 goto ApproachCombatInit
+
+		if HasPickup == 1.0 goto PickupAttack
+		if MoodForMelee == 1.0 goto ApproachCombatInit
+		if OpponentRange < AutoMeleeRange goto ApproachCombatInit
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		ResetGlobalTimer timer0
+		ResetGlobalTimer timer1
+		SetFlag "TakeHitPhysics=false"
+		SetState AttackRandom
+	}
+}
+
+state AttackRandom
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if MoodForMelee == 1.0 goto Alert
+
+		if OpponentRangeY > PlayerYRangeMaxRanged goto GetToOpponentPlane
+		if OpponentRange < AutoMeleeRange goto Alert
+
+		if PickupAvailable == 1.0 AND
+		if OpponentRange < 35 AND
+		if OpponentRange > 22 AND
+		if GlobalTimer 1 > "(5.0+(RAND*5.0))" AND
+		if AlwaysTrue 0.8 > "ThrashedPhys" goto PickupAttack
+
+		if RandomPointRangeXZ < 3.0 AND
+		if Timer > 0.3 goto AttackRandom	; changed from "goto Alert" to reduce glitching
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		SelectRandomPoint "dist=27.0" "distrand=8.0" "widthrand=0.9" "distchance=5.0,0.1" "flipchance=-0.1"
+		EngageOpponent "goalrange=0.1" "useglobaltimer0" "fireinterval=1.7" "movetorandom" "firerange=70.0" "dodgeiftarget=0.2"
+	}
+}
+
+
+state PickupAttack
+{
+	Conditions
+	{
+		if StuckTime > 1.0 goto Alert
+		if Timer > 4.0 goto Alert
+
+		if PickupAvailable == 0.0 AND
+		if HasPickup == 0.0 goto Alert
+
+		if HasPickup == 0.0 AND
+		if MoodForMelee == 1.0 goto Alert
+
+		if HasPickup == 0.0 AND
+		if OpponentRange < 15 goto Alert
+
+		if OpponentRange > 45 goto PickupForceThrow
+		if PickupHot == 1.0 goto PickupForceThrow
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe false
+		EngageOpponentWithPickup "acquirerange=1.0" "throwrange=30.0"
+		SetState Alert
+	}
+}
+
+state PickupForceThrow
+{
+	Conditions
+	{
+		if HasPickup == 0.0 goto Alert
+	}
+	Actions
+	{
+		EngageOpponentWithPickup "throwrange=1000000.0"
+	}
+}
+
+state GetToOpponentPlane
+{
+	Conditions
+	{
+		if OpponentRangeY < PlayerYRangeMin goto Alert
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		SetStrafe false
+		FollowOpponent
+	}
+}
+
+state ApproachCombatInit
+{
+	Actions
+	{
+		SetStrafe false
+		SetState ApproachCombat
+	}
+}
+
+state ApproachCombat
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if OpponentRangeY > PlayerYRangeMaxCombat goto GetToOpponentPlane
+
+		if MoodForMelee == 0.0 AND
+		if OpponentRange > AutoMeleeRange goto Alert
+		if OpponentRange < MeleeRangeMin goto Combat
+
+		OnMacro StuckTime goto StuckEscape
+
+		if RandomPointRangeXZ < 3.0 AND
+		if Timer > 0.3 goto ApproachCombat
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponent "goalrange=1.0" "useglobaltimer0" "useattackring" "fireinterval=1.7" "firerange=40.0" "spread=0.1"
+	}
+}
+
+state Combat
+{
+	Conditions
+	{
+		if GotOpponent == 0 goto NoOpponent
+
+		if MoodForMelee == 0.0 AND
+		if OpponentRange > AutoMeleeRange goto Alert
+		if OpponentRange > MeleeRangeMax goto ApproachCombat
+
+		if OpponentRangeY > PlayerYRangeMaxCombat goto GetToOpponentPlane
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		SetStrafe false
+		EngageOpponent "goalrange=1.0" "firerange=2.0" "useattackring" "chainwithdelay=(2.0-Aggression)" "numshots=1" "initdelay=(1.0-(1.5*Aggression))"
+		SetState Combat
+	}
+}
+
+state TakenHitMelee
+{
+	Conditions
+	{
+		if AlwaysTrue 0.75 < "ThrashedMelee" AND
+		if Ability "Block" == 1.0 AND
+		if Param "Aggression" < 0.1 goto BlockAttackBegin
+
+		if AlwaysTrue == 1.0 goto Alert
+	}
+}
+
+state TakenHitPhysics
+{
+	Conditions
+	{
+		if BeenStruck == 1.0 goto BeenStruck
+
+		if AlwaysTrue == 1.0 goto Alert
+	}
+	Actions
+	{
+		SetLocator "strikesource=20.0"
+	}
+}
+
+state BlockAttackBegin
+{
+	Conditions
+	{
+		if OpponentRange > 6.0 goto BlockAttackEnd
+	}
+	Actions
+	{
+		SetBlocking
+		Idle 2.0
+		SetBlocking false
+		SetState BlockAttackDo
+	}
+}
+
+state BlockAttackDo
+{
+	Actions
+	{
+		Idle "frames=1"		; As SetStrafe cannot be easily undone
+		SetStrafe false
+		DoAttack "slammove"
+		SetState BlockAttackEnd
+	}
+}
+
+state BlockAttackEnd
+{
+	Actions
+	{
+		SetBlocking false
+		SetState Alert
+	}
+}
+
+state BeenStruck
+{
+	Conditions
+	{
+		if StuckTime > 1.0 goto BeenStruckExit
+		if GotOpponent == 1.0 goto BeenStruckExit
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=true"
+		SetWalkToLocatorTimer Max
+		GoToLocator "run" "goalrange=3.0" "xz_rangecheck"
+		SetState BeenStruckExit
+	}
+}
+
+state BeenStruckExit
+{
+	Conditions
+	{
+		if GotOpponent == 1.0 goto Alert
+	}
+	Actions
+	{
+		Idle 3.0
+		SetWalkToLocatorTimer 0.0
+		SetFlag "TakeHitPhysics=false"
+		SetState NoOpponent
+	}
+}
+
+state StuckEscape
+{
+	Actions
+	{
+		SetFlag "TempBlock=true"
+		SetStrafe false
+		DoAttack "kickmove"
+		SetFlag "TempBlock=false"
+		SetState Alert
+	}
+}

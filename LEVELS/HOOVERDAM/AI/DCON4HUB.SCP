@@ -1,0 +1,136 @@
+state base
+{
+	conditions
+	{
+		;if CurrentUser "grichards" == 1.0 goto Empty
+		;if CurrentUser "sharding" == 1.0 goto Empty
+		;if CurrentUser "awhite" == 1.0 goto MainWithDebug
+		;if CurrentUser "challiday" == 1.0 goto Empty
+		;if CurrentUser "popdam" == 1.0 goto Empty
+		;if CurrentUser "DWalker" == 1.0 goto MainWithDebug
+		if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+	}
+}
+state EmptyDeath
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Empty"
+	}
+}
+state Empty
+{
+	Actions
+	{
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#StartMission"
+		SetDeathPoint "EmptyDeath"
+	}
+}
+state StartLevelIntro
+{
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#ActionRing"  "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter1" "#placement=#Chapter1Beacon" "#Title=DCon4Chap1" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter2" "#placement=#Chapter2Beacon" "#Title=DCon4Chap2" "#Ring=ActionRing"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter3" "#placement=#Chapter3Beacon" "#Title=DCon4Chap3" "#Ring=ActionRing"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter4" "#placement=#Chapter4Beacon" "#Title=Dcon4Chap4" "#Ring=ActionRing"
+		;SendToModule "#ActionRing" "#maxalive=3" "#spline=RandomDronesA" "#type=DroneDefault_a" "#rangemax=300" "#rangemin=200"
+		;SendToModule "#ActionRing" "#Unlock=#Chapter1"
+		SendToModule "#ActionRing" "#TurnOff"
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SetState "LevelIntro"
+	}
+}
+state LevelIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Chapter1_HubDeath"
+		SendToModule "#General" "#StartIntroVideo=#D4LevelIntro" "#PlayerType=Blackout,Blackout,Blackout,Blackout"
+	}
+}
+
+state PickGoto
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_InitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_InitGoto
+		if module "General ChapterProgress" == 3.0 goto Chapter4_InitGoto
+		
+		if module "General ChapterProgress" == 4.0 goto FinishedLevel
+		}
+
+}
+state FinishedLevel
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SetState GlobalActionRing
+	}
+}
+state GlobalActionRing
+{
+	conditions
+	{
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#AllowCreatures"
+		SendToModule "#ActionRing" "#TurnOn"
+	}
+}
+state GlobalStartChapter
+{
+	conditions
+	{
+		if module "ActionRing Chapter1"  == 1.0 goto Chapter1_Enter
+		if module "ActionRing Chapter2"  == 1.0 goto Chapter2_Enter
+		if module "ActionRing Chapter3"  == 1.0 goto Chapter3_Enter
+		if module "ActionRing Chapter4"  == 1.0 goto Chapter4_Enter
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+	}
+}
+state SkipLevel
+{
+	conditions
+	{
+		if message "MissionMessage" == 1.0 goto Chapter1_InitGoto 
+		if message "MissionMessage" == 2.0 goto Chapter2_InitGoto
+		if message "MissionMessage" == 3.0 goto Chapter3_InitGoto
+		if message "MissionMessage" == 4.0 goto Chapter4_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Start"
+		SendToModule "#General" "#FadeDown"
+	}
+}

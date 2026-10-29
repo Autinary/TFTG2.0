@@ -1,0 +1,313 @@
+;push all drones out of key location within time limit
+;player and drones are invincible
+;if anyone leaves area instant death
+
+;requires:
+;	Keylocation spline 				KeyLoc#
+;	Spawn spline for type 1 creatures		Spawn#a
+;	Spawn spline for type 2 creatures		Spawn#b
+
+;Changeable params:
+;	300		time in which to complete the mission
+;	10	total number of creature type 1 that need to be killed
+;	10	total number of creature type 2 that need to be killed
+;	1		total creature type 1 that are simultaneously active 
+;	2		total creature type 2 that are simultaneously active 
+;	DronePickupTruck_a	type of creature one to fight against
+;	DroneTowTruck_a	type of creature two to fight against
+;						DroneForkLift
+;						DroneTowTruck
+;						DroneArmouredCar
+;						DroneCement
+;						DronePickupTruck
+;						DroneMig
+;						BumbleBee
+;						Barricade
+
+
+state SubMission4_Enter
+{
+	actions
+	{
+		SendToModule "#General" "#DisableLevelCreatures"
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission4_Death"
+		;SendToModule "#General" "#PlayerType=BoneCrusher"
+		SetState "SubMission4_Enter2"
+	}
+}
+state SubMission4_Enter2
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission4_PreInit
+		if module "General ChapterProgress" >= 3.0 goto SubMission4_Enter3
+		if module "General ChapterProgress" >= 1.0 goto SubMission4_Init
+	}
+	actions
+	{
+		ResetTimer
+		;SetState "SubMission4_Init"
+	}
+}
+state SubMission4_PreInit
+{
+	actions
+	{
+		SendToModule "#General" "#DeleteRadarFreeInterferenceZones"
+		SendToModule "#General" "#SetRadarInterference=1"
+		SetState SubMission4_Init
+	}
+}
+state SubMission4_Enter3
+{
+	conditions
+	{
+		if timer > 0.2 goto SubMission4_Enter4
+		if module "General ChapterProgress" >= 4.0 goto SubMission4_Init3
+	}
+	actions
+	{
+		ResetTimer
+		;SetState "SubMission4_Init"
+	}
+}
+state SubMission4_Enter4
+{
+	
+	actions
+	{
+		SendToModule "#General" "#PlayerType=BoneCrusher"
+		SetState "SubMission4_Init2"
+	}
+}
+state SubMission4_Enter5
+{
+	
+	actions
+	{
+		SendToModule "#General" "#PlayerType=Megatron"
+		SetState "SubMission4_Init3"
+	}
+}
+state SubMission4_Init
+{
+	conditions
+	{
+		if timer > 1.0 goto SubMission4_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#SetPlayer=#SubMission4"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		CreateModule "#Timer" "#Timer" "#Time=300"
+	}
+}
+state SubMission4_Main
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+			if module "CreatureWaveB GetCountAlive" == 0.0 goto SubMission4_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission4_Fail
+		if module "General SumoCheck" == 1.0 goto SubMission4_Fail
+		if module "General ChapterProgress" >= 1.0 goto SubMission4_Watch
+	}
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveA" "#Type=DronePickupTruck_a" "#Spline=Spawn4a" "#count=18" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		CreateModule "#Creature" "#CreatureWaveB" "#Type=DroneTowTruck_a" "#Spline=Spawn4b" "#count=2" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		SendToModule "#General" "#SumoKeyLoc=KeyLoc4" "#SumoCreatureModule=#CreatureWaveA"  "#SumoCreatureModule=#CreatureWaveB"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=20" "#IconType=#Drone"
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+		
+		
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		Idle 0.2
+		SendToModule "#General" "#DeleteRadarFreeInterferenceZones"
+		SendToModule "#General" "#SetRadarInterference=1"
+	}
+}
+state SubMission4_Watch
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+			if module "CreatureWaveB GetCountAlive" == 0.0 goto SubMission4_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission4_Fail
+		if module "General SumoCheck" == 1.0 goto SubMission4_Fail
+	}
+	
+}
+state SubMission4_Init2
+{
+	conditions
+	{
+		if timer > 1.0 goto SubMission4_Main2
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission4"
+		SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		;SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#LoadCreature=DroneTowTruck_a"
+		CreateModule "#Timer" "#Timer" "#Time=300"
+	}
+}
+state SubMission4_Main2
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+			if module "CreatureWaveB GetCountAlive" == 0.0 goto SubMission4_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission4_Fail
+		if module "General SumoCheck" == 1.0 goto SubMission4_Fail
+	}
+	actions
+	{
+		CreateModule "#Creature" "#CreatureWaveA" "#Type=DroneDefault_a" "#Spline=Spawn4a" "#count=18" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		CreateModule "#Creature" "#CreatureWaveB" "#Type=DroneTowTruck_a" "#Spline=Spawn4b" "#count=4" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		;CreateModule "#Creature" "#CreatureWaveC" "#Type=DroneArmouredCar_a" "#Spline=Spawn4b" "#count=2" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		SendToModule "#General" "#SumoKeyLoc=KeyLoc4" "#SumoCreatureModule=#CreatureWaveA"  "#SumoCreatureModule=#CreatureWaveB" "#SumoCreatureModule=#CreatureWaveC"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=22" "#IconType=#Drone"
+		SetMusic "STOP INMISSION ACTION Mission4_1 Play Action"
+		
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission4_Init3
+{
+	conditions
+	{
+		if timer > 1.0 goto SubMission4_Main3
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission4"
+		SendToModule "#General" "#UnLoadCreature=DroneMig_a"
+		SendToModule "#General" "#LoadCreature=DroneDefault_a"
+		SendToModule "#General" "#LoadCreature=DroneCement_a"
+		SendToModule "#General" "#LoadCreature=DronePickupTruck_a"
+		CreateModule "#Timer" "#Timer" "#Time=300"
+	}
+}
+state SubMission4_Main3
+{
+	conditions
+	{
+		if module "CreatureWaveA GetCountAlive" == 0.0 and
+			if module "CreatureWaveB GetCountAlive" == 0.0 and
+				if module "CreatureWaveC GetCountAlive" == 0.0 goto SubMission4_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission4_Fail
+		if module "General SumoCheck" == 1.0 goto SubMission4_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+		CreateModule "#Creature" "#CreatureWaveA" "#Type=DronePickupTruck_a" "#Spline=Spawn4a" "#count=12" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		CreateModule "#Creature" "#CreatureWaveB" "#Type=DroneCement_a" "#Spline=Spawn4b" "#count=4" "#maxalive=1" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		CreateModule "#Creature" "#CreatureWaveC" "#Type=DroneDefault_a" "#Spline=Spawn4b" "#count=14" "#maxalive=2" "#addtoradar" "#SpawnInLosInit" "#SpawnAsCreature" "#Script=Combat"
+		SendToModule "#General" "#SumoKeyLoc=KeyLoc4" "#SumoCreatureModule=#CreatureWaveA"  "#SumoCreatureModule=#CreatureWaveB" "#SumoCreatureModule=#CreatureWaveC"
+		CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=30" "#IconType=#Drone"
+		SetMusic "STOP INMISSION ACTION Generic Play Action"
+		
+		
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 1"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 4"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission4_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission4_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission4_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission4_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=4"
+		;SetState "SubMission4_Leave"
+	}
+}
+
+state SubMission4_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission4_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission4_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission4_Leave
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission4_Leave
+{
+	conditions
+	{
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing
+	}
+	actions
+	{
+ 		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission4"
+	   	SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift_a"
+		SendToModule "#General" "#UnLoadCreature=DroneCement_a"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+	   	SendToModule "#General" "#UnLoadCreature=DroneTowTruck_a"
+		SendToModule "#General" "#LoadCreature=DroneMig_a"
+		SendToModule "#General" "#EnableLevelCreatures"
+		SendToModule "#General" "#FadeUp"	
+		Idle 0.2	
+		SendToModule "#General" "#PlayerType=StarScream" 	
+		SetState "GlobalActionRing"
+	}
+}
+

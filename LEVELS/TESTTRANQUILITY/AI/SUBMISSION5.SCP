@@ -1,0 +1,92 @@
+;multi node pickup race
+
+state SubMission5_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission5_Death"
+		SetState "SubMission5_Init"
+	}
+}
+state SubMission5_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission5_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#SubMissions" "#SetTitle=#Collection"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission""
+		CreateModule "#Timer" "#Timer" "#Time=120.0"
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=RaceNode2" "#MultiNode"
+
+	}
+}
+state SubMission5_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission5_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission5_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission5_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission5_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMission5_FinishWait
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=5"
+		SetState "SubMission5_Leave"
+	}
+}
+state SubMission5_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission5_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state SubMission5_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission5_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state SubMission5_Leave
+{
+	actions
+	{
+		SetState "Main"
+	}
+}
+

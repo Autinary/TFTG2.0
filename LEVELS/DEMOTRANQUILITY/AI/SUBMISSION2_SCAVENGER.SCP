@@ -1,0 +1,361 @@
+;scavenger hunt, find all the nodes within the time limit
+
+;requires:
+;Scavenger spline		Scavenger#
+;KeyLocation spline		KeyLoc#
+
+;Changeable params:
+;	TIMELIMIT		time in which to complete the mission
+;	TIMEOUT			keylocation timeout
+;	RADARRANGE		distance in which points are added to radar (75)
+
+state SubMission2_Enter
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Init
+		if module "General ChapterProgress" >= 1.0 goto SubMission2_Enter3
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission2_Death"
+		SendToModule "#General" "#ResetAll"
+		;SetState "SubMission2_Init"
+	}
+}
+state SubMission2_Enter2
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Init2
+		if module "General ChapterProgress" >= 3.0 goto SubMission2_Enter4
+	}
+	actions
+	{
+		ResetTimer
+		
+	}
+}
+state SubMission2_Enter3
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Init4
+		if module "General ChapterProgress" >= 2.0 goto SubMission2_Enter2
+	}
+	actions
+	{
+		ResetTimer
+		
+	}
+}
+state SubMission2_Enter4
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Init5
+		if module "General ChapterProgress" >= 4.0 goto SubMission2_Init3
+	}
+	actions
+	{
+		ResetTimer
+		
+	}
+}
+state SubMission2_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission2"
+		CreateModule "#Timer" "#Timer" "#Time=150"  ;TIMELIMIT
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" ;TIMEOUT
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Scavenger2" "#MultiNode" "#RadarRange=75" ;RADARRANGE
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#RaceNodes" "#GetPercentageComplete" "#IgnoreDroneKills" "#DronesToDefeat=10"  "#BackwardsCount"
+		SendToModule "#RaceNodes" "#SetupDroneCounter=#DroneCounter"
+	}
+}
+state SubMission2_Init2
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Main2
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission2"
+		CreateModule "#Timer" "#Timer" "#Time=150"  ;TIMELIMIT
+		SendToModule "#ActionRing" "#AddToRadar"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" ;TIMEOUT
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Scavenger2" "#MultiNode" "#RadarRange=75" ;RADARRANGE
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#RaceNodes" "#GetPercentageComplete" "#IgnoreDroneKills" "#DronesToDefeat=10"  "#BackwardsCount"
+		SendToModule "#RaceNodes" "#SetupDroneCounter=#DroneCounter"
+	}
+}
+state SubMission2_Init3
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Main3
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission2"
+		CreateModule "#Timer" "#Timer" "#Time=150"  ;TIMELIMIT
+		SendToModule "#ActionRing" "#AddToRadar"
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" ;TIMEOUT
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Scavenger2" "#MultiNode" "#RadarRange=75" ;RADARRANGE
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#RaceNodes" "#GetPercentageComplete" "#IgnoreDroneKills" "#DronesToDefeat=10"  "#BackwardsCount"
+		SendToModule "#RaceNodes" "#SetupDroneCounter=#DroneCounter"
+	}
+}
+state SubMission2_Init4
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#ActionRing" "#AddToRadar"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission2"
+		CreateModule "#Timer" "#Timer" "#Time=150"  ;TIMELIMIT
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" ;TIMEOUT
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Scavenger2" "#MultiNode" "#RadarRange=75" ;RADARRANGE
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#RaceNodes" "#GetPercentageComplete" "#IgnoreDroneKills" "#DronesToDefeat=10"  "#BackwardsCount"
+		SendToModule "#RaceNodes" "#SetupDroneCounter=#DroneCounter"
+	}
+}
+state SubMission2_Init5
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission2_Main4
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#ActionRing" "#AddToRadar"
+		SendToModule "#General" "#ResetLevel" "#SetPlayer=#SubMission2"
+		CreateModule "#Timer" "#Timer" "#Time=150"  ;TIMELIMIT
+		CreateModule "#KeyLocation" "#KeyLocation" "#Spline=KeyLoc2" "#String=KEY_LOC_WARNING" "#ReEnterMsg=KEY_LOC_REENTER" "#TimeOut=15" ;TIMEOUT
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=Scavenger2" "#MultiNode" "#RadarRange=75" ;RADARRANGE
+		CreateModule "#DroneCounter" "#DroneCounter" "#ModuleTag=#RaceNodes" "#GetPercentageComplete" "#IgnoreDroneKills" "#DronesToDefeat=10"  "#BackwardsCount"
+		SendToModule "#RaceNodes" "#SetupDroneCounter=#DroneCounter"
+	}
+}
+state SubMission2_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SetMusic "STOP INMISSION ACTION generic PLAY ACTION"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission2_Main2
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneForklift"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=Barricade"
+		CreateModule "#Creature" "#CreatureWaveC" "#Spline=A1C4SpawnB" "#count=1" "#maxalive=1" "#Type=Barricade" "#SpawnAsCreature" "#BlockDeath" "#Script=Early_CombatBoss"
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A1C3SpawnC" "#count=2000" "#maxalive=2" "#Type=droneforklift" "#SpawnAsCreature" "#Script=Early_CombatVeh"
+		SetMusic "STOP INMISSION ACTION Mission3_1 PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission2_Main3
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+		if module "Ratchet GetCountAlive" == 0.0 goto SubMission2_Fail
+		if module "Ratchet PlayerRange" < 30.0 goto SubMission2_Heal
+		if module "Ratchet GetPercentageComplete" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#LoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#LoadCreature=Blackout"
+		CreateModule "#Creature" "#CreatureWaveE" "#Spline=A1C4SpawnB" "#count=2000" "#maxalive=2" "#Type=DroneArmouredCar" "#SpawnAsCreature"
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A1C3SpawnC" "#count=1" "#maxalive=1" "#Type=Blackout" "#SpawnAsCreature" "#BlockDeath" "#Script=LongCombat"
+		CreateModule "#Creature" "#Ratchet" "#Spline=A1C3SpawnA" "#count=1" "#maxalive=1" "#Type=DroneArmouredCar_a" "#SpawnAsCreature" "#Script=Ratchet" "#InVulnerable" "#SetEnergyMax=1500" "#SetEnergy=1500" ; "#SetEnergyMin=20.0"
+		SendToModule "#General" "#SetMessage=RatchetAlert" "#SetMessageTimer=3.0"
+		
+		;CreateModule "#AreaRange" "#Heal" "#Trigger=#RatchetHeal"
+		SendToModule "#CreatureWaveD" "#SetEnergyMax=12000.0" "#SetEnergy=12000.0" 
+		SetMusic "STOP INMISSION ACTION Mission3_3 PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission2_Main4
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#LoadCreature=DroneForklift"
+		SendToModule "#General" "#LoadCreature=DroneDefault"
+		CreateModule "#Creature" "#CreatureWaveD" "#Spline=A1C3SpawnC" "#count=2000" "#maxalive=2" "#Type=droneforklift" "#SpawnAsCreature" "#Script=Early_CombatVeh"
+		SetMusic "STOP INMISSION ACTION Generic PLAY ACTION"
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission2_Heal
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+		if module "Ratchet GetCountAlive" == 0.0 goto SubMission2_Fail
+		if Timer > 2.8 goto SubMission2_RatchetLeave2
+		if module "Ratchet GetPercentageComplete" == 1.0 goto SubMission2_Fail
+		
+	}
+	actions
+	{
+		ResetTimer
+		IncreasePlayerHealth 65.0
+		SendToModule "#Ratchet" "#Script=Heal" "#SuppressShield"
+		
+		
+	}
+}
+state SubMission2_RatchetLeave
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+		if module "Ratchet PlayerRange" < 30.0 goto SubMission2_Heal
+		if module "Ratchet GetCountAlive" == 0.0 goto SubMission2_Fail
+		if module "Ratchet GetPercentageComplete" == 1.0 goto SubMission2_Fail
+		
+		
+	}
+	actions
+	{
+		
+		SendToModule "#Ratchet" "#AddToRadar"
+		
+	}
+}
+state SubMission2_RatchetLeave2
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission2_Finish
+		if module "KeyLocation FailMission" == 1.0 goto SubMission2_Fail
+		if module "Timer FailMission" == 1.0 goto SubMission2_Fail
+		if module "Ratchet GetCountAlive" == 0.0 goto SubMission2_Fail
+		if module "Ratchet GetPercentageComplete" == 1.0 goto SubMission2_Fail
+		if Timer > 7.0 goto SubMission2_RatchetLeave
+	}
+	actions
+	{
+		
+		ResetTimer
+		SendToModule "#Ratchet" "#AddToRadarOff" "#SuppressShieldOff"
+		
+		
+	}
+}
+
+state SubMission2_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission2_FinishWait
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#AddToRadarOff"
+		SendToModule "#General" "#EndOfMission" "#FadeDown"
+	}
+}
+state SubMission2_FinishWait
+{
+	conditions
+	{
+		if module "General GetSubMissionComplete" == 1.0 goto SubMission2_Leave
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=2"
+		;SetState "SubMission2_Leave"
+	}
+}
+state SubMission2_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission2_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#EndOfMission" "#DeathFailMission"
+	}
+}
+state SubMission2_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission2_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission" "#FailMission"
+	}
+}
+state SubMission2_Leave
+{
+	
+	actions
+	{
+		
+ 		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#AddToRadarOff"
+		SendToModule "#General" "#UnLoadCreature=DroneForklift"
+		SendToModule "#General" "#UnLoadCreature=Barricade"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar"
+		SendToModule "#General" "#UnLoadCreature=DroneArmouredCar_a"
+		SendToModule "#General" "#UnLoadCreature=Blackout"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#SubMission2" "#FadeUp"
+		SetState "GlobalActionRing"
+	}
+}
+

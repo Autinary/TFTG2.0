@@ -1,0 +1,470 @@
+state base
+{
+	conditions
+	{
+		;if CurrentUser "grichards" == 1.0 goto Empty
+		;if CurrentUser "sharding" == 1.0 goto Empty
+		;if CurrentUser "awhite" == 1.0 goto MainWithDebug
+		;if CurrentUser "challiday" == 1.0 goto Empty
+;		if CurrentUser "popdam" == 1.0 goto Empty
+		;if CurrentUser "DWalker" == 1.0 goto MainWithDebug
+		if AlwaysTrue == 1.0 goto StartLevelIntro
+	}
+	actions
+	{
+		DrawConditionsFromThisScript
+	}
+}
+state EmptyDeath
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		SetState "Empty"
+	}
+}
+state Empty
+{
+	Actions
+	{
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#FadeUp" "#SetPlayer=#WorldCenter"
+		SetDeathPoint "EmptyDeath"
+	}
+}
+state StartLevelIntro
+{
+	Actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		CreateModule "#ActionRing"  "#ActionRing" "#ProtectSystem" "#AddToRadarOff"
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter1" "#placement=#Chapter1Beacon" "#Title=Auto1Chap1" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter2" "#placement=#Chapter2Beacon" "#Title=Auto1Chap2" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter3" "#placement=#Chapter3Beacon" "#Title=Auto1Chap3" "#Ring=ActionRing" 
+		SendToModule "#ActionRing" "#CreateChapter=#Chapter4" "#placement=#Chapter4Beacon" "#Title=Auto1Chap4" "#Ring=ActionRing" 
+	
+		SendToModule "#ActionRing" "#maxalive=1" "#spline=RandomDronesA" "#type=DroneDefault" "#rangemax=200" "#rangemin=150" "#Script=Early_CombatVeh"
+		;SendToModule "#ActionRing" "#Unlock=#Chapter1"
+		SendToModule "#ActionRing" "#TurnOff"
+		CreateModule "#General" "#General" "#ProtectSystem"
+		SendToModule "#General" "#HelpOn"
+
+		CreateModule "#SubMissions" "#SubMissions" "#NodeSpline=SubMissionNodes" "#SubmissionSpline=SubMissionGates" "#ProtectSystem"
+		SendToModule "#SubMissions" "#SetTitle=#Race"
+		SendToModule "#SubMissions" "#SetTitle=#Scavenger"
+		SendToModule "#SubMissions" "#SetTitle=#Hunt"
+		SendToModule "#SubMissions" "#SetTitle=#Sumo"
+
+
+;       CreateModule "#Bombing" "#Bombing" "#ProtectSystem"
+
+		;; Baseball ground
+		CreateModule #BuildingSpecialLink #Build1 #Building=#Build1  #Special=BuildTer_Build1_!!_  #ProtectSystem	;; 4 used
+		SendToModule                      #Build1 #Building=#Build2  #Special=BuildTer_Build2_!!_  #ProtectSystem	;; 8 used
+		SendToModule                      #Build1 #Building=#Build3  #Special=BuildTer_Build3_!!_  #ProtectSystem	;; 12 used
+		SendToModule                      #Build1 #Building=#Build4  #Special=BuildTer_Build4_!!_  #ProtectSystem	;; 16 used
+		SendToModule                      #Build1 #Building=#Build5  #Special=BuildTer_Build5_!!_  #ProtectSystem	;; 20 used
+
+		;; Construction site south
+		SendToModule                      #Build1 #Building=#Build6  #Special=BuildTer_Build6_!!_  #ProtectSystem	;; 26 used
+		SendToModule                      #Build1 #Building=#Build11 #Special=BuildTer_Build11_!!_ #ProtectSystem	;; 32 used
+		
+		CreateModule #BuildingSpecialLink #Build2 #Building=#Build7  #Special=BuildTer_Build7_!!_  #ProtectSystem	;; 4 used
+		SendToModule                      #Build2 #Building=#Build8  #Special=BuildTer_Build8_!!_  #ProtectSystem	;; 8 used
+		SendToModule                      #Build2 #Building=#Build9  #Special=BuildTer_Build9_!!_  #ProtectSystem	;; 12 used
+		SendToModule                      #Build2 #Building=#Build10 #Special=BuildTer_Build10_!!_ #ProtectSystem	;; 16 used
+		SendToModule                      #Build2 #Building=#Build12 #Special=BuildTer_Build12_!!_ #ProtectSystem	;; 20 used
+		SendToModule                      #Build2 #Building=#Build13 #Special=BuildTer_Build13_!!_ #ProtectSystem	;; 24 used
+		SendToModule                      #Build2 #Building=#Build14 #Special=BuildTer_Build14_!!_ #ProtectSystem	;; 28 used
+		SendToModule                      #Build2 #Building=#Build15 #Special=BuildTer_Build15_!!_ #ProtectSystem	;; 32 used
+		
+		CreateModule #BuildingSpecialLink #Build3 #Building=#Build16 #Special=BuildTer_Build16_!!_ #ProtectSystem	;; 4 used
+		SendToModule                      #Build3 #Building=#Build17 #Special=BuildTer_Build17_!!_ #ProtectSystem	;; 8 used
+		SendToModule                      #Build3 #Building=#Build18 #Special=BuildTer_Build18_!!_ #ProtectSystem	;; 14 used
+		SendToModule                      #Build3 #Building=#Build19 #Special=BuildTer_Build19_!!_ #ProtectSystem	;; 18 used
+		SendToModule                      #Build3 #Building=#Build20 #Special=BuildTer_Build20_!!_ #ProtectSystem	;; 22 used
+		SendToModule                      #Build3 #Building=#Build21 #Special=BuildTer_Build21_!!_ #ProtectSystem	;; 26 used
+		SendToModule                      #Build3 #Building=#Build22 #Special=BuildTer_Build22_!!_ #ProtectSystem	;; 32 used
+		
+		CreateModule #BuildingSpecialLink #Build4 #Building=#Build23 #Special=BuildTer_Build23_!!_ #ProtectSystem	;; 4 used
+		SendToModule                      #Build4 #Building=#Build24 #Special=BuildTer_Build24_!!_ #ProtectSystem	;; 8 used
+		SendToModule                      #Build4 #Building=#Build25 #Special=BuildTer_Build25_!!_ #ProtectSystem	;; 12 used
+		
+		;; Construction site north
+		SendToModule                      #Build4 #Building=#Build26 #Special=BuildTer_Build26_!!_ #ProtectSystem	;; 18 used
+		SendToModule                      #Build4 #Building=#Build27 #Special=BuildTer_Build27_!!_ #ProtectSystem	;; 22 used
+		SendToModule                      #Build4 #Building=#Build28 #Special=BuildTer_Build28_!!_ #ProtectSystem	;; 26 used
+		SendToModule                      #Build4 #Building=#Build33 #Special=BuildTer_Build33_!!_ #ProtectSystem	;; 32 used
+		
+		CreateModule #BuildingSpecialLink #Build5 #Building=#Build29 #Special=BuildTer_Build29_!!_ #ProtectSystem	;; 4 used
+		SendToModule                      #Build5 #Building=#Build30 #Special=BuildTer_Build30_!!_ #ProtectSystem	;; 8 used
+		SendToModule                      #Build5 #Building=#Build31 #Special=BuildTer_Build31_!!_ #ProtectSystem	;; 12 used
+		SendToModule                      #Build5 #Building=#Build32 #Special=BuildTer_Build32_!!_ #ProtectSystem	;; 16 used
+		SendToModule                      #Build5 #Building=#Build34 #Special=BuildTer_Build34_!!_ #ProtectSystem	;; 20 used
+		SendToModule                      #Build5 #Building=#Build35 #Special=BuildTer_Build35_!!_ #ProtectSystem	;; 24 used
+		SendToModule                      #Build5 #Building=#Build36 #Special=BuildTer_Build36_!!_ #ProtectSystem	;; 28 used
+		SendToModule                      #Build5 #Building=#Build37 #Special=BuildTer_Build37_!!_ #ProtectSystem	;; 32 used
+		
+		CreateModule #BuildingSpecialLink #Build6 #Building=#Build38 #Special=BuildTer_Build38_!!_ #ProtectSystem	;; 4 used
+		SendToModule                      #Build6 #Building=#Build39 #Special=BuildTer_Build39_!!_ #ProtectSystem	;; 8 used
+		SendToModule                      #Build6 #Building=#Build40 #Special=BuildTer_Build40_!!_ #ProtectSystem	;; 12 used
+
+		;; Powerplant
+		SendToModule                      #Build6 #Building=#Build41 #Special=BuildTer_Build41_!!_ #ProtectSystem	;; 14 used
+		SendToModule                      #Build6 #Building=#Build42 #Special=BuildTer_Build42_!!_ #ProtectSystem	;; 16 used
+		SendToModule                      #Build6 #Building=#Build43 #Special=BuildTer_Build43_!!_ #ProtectSystem	;; 18 used
+		SendToModule                      #Build6 #Building=#Build44 #Special=BuildTer_Build44_!!_ #ProtectSystem	;; 20 used
+		SendToModule                      #Build6 #Building=#Build45 #Special=BuildTer_Build45_!!_ #ProtectSystem	;; 22 used
+		SendToModule                      #Build6 #Building=#Build46 #Special=BuildTer_Build46_!!_ #ProtectSystem	;; 24 used
+		SendToModule                      #Build6 #Building=#Build47 #Special=BuildTer_Build47_!!_ #ProtectSystem	;; 26 used
+		SendToModule                      #Build6 #Building=#Build48 #Special=BuildTer_Build48_!!_ #ProtectSystem	;; 28 used
+		SendToModule                      #Build6 #Building=#Build49 #Special=BuildTer_Build49_!!_ #ProtectSystem	;; 30 used
+		SendToModule                      #Build6 #Building=#Build50 #Special=BuildTer_Build50_!!_ #ProtectSystem	;; 32 used
+
+		CreateModule #BuildingSpecialLink #Build7 #Building=#Build51 #Special=BuildTer_Build51_!!_ #ProtectSystem	;; 2 used
+		SendToModule                      #Build7 #Building=#Build52 #Special=BuildTer_Build52_!!_ #ProtectSystem	;; 4 used
+		SendToModule                      #Build7 #Building=#Build53 #Special=BuildTer_Build53_!!_ #ProtectSystem	;; 6 used
+		SendToModule                      #Build7 #Building=#Build54 #Special=BuildTer_Build54_!!_ #ProtectSystem	;; 8 used
+		SendToModule                      #Build7 #Building=#Build55 #Special=BuildTer_Build55_!!_ #ProtectSystem	;; 10 used
+		SendToModule                      #Build7 #Building=#Build56 #Special=BuildTer_Build56_!!_ #ProtectSystem	;; 12 used
+		SendToModule                      #Build7 #Building=#Build57 #Special=BuildTer_Build57_!!_ #ProtectSystem	;; 14 used
+		SendToModule                      #Build7 #Building=#Build58 #Special=BuildTer_Build58_!!_ #ProtectSystem	;; 16 used
+		SendToModule                      #Build7 #Building=#Build59 #Special=BuildTer_Build59_!!_ #ProtectSystem	;; 18 used
+		
+		;; Mall buildings
+		SendToModule                      #Build7 #Building=#Build60 #Special=BuildTer_Build60_!!_ #ProtectSystem	;; 26 used
+		
+		CreateModule #BuildingSpecialLink #Build8 #Building=#Build61 #Special=BuildTer_Build61_!!_ #ProtectSystem	;; 8 used
+		SendToModule                      #Build8 #Building=#Build62 #Special=BuildTer_Build62_!!_ #ProtectSystem	;; 16 used
+
+		;SetState "SubMission_StartTest"
+		;SendToModule "#General" "#InhibitCreatureDWRespawn"
+		SetState "LevelIntro"
+	}
+}
+state LevelIntro
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto PrePickGoto	
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetDeathPoint "Chapter1_HubDeath"
+		SendToModule "#General" "#StartIntroVideo=#A1LevelIntro" "#PlayerType=Bumblebee,Bumblebee,Bumblebee,Bumblebee,Bumblebee07"
+		SendToModule						"#General" "#StartHUB"
+	}
+}
+
+state PrePickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_PreInitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_PreInitGoto
+		if module "General ChapterProgress" == 3.0 goto Chapter4_PreInitGoto
+		if module "General ChapterProgress" == 4.0 goto Chapter1_PreInitGoto
+	}
+}
+
+state PickGoto
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_InitGoto
+		if module "General ChapterProgress" == 1.0 goto Chapter2_InitGoto
+		if module "General ChapterProgress" == 2.0 goto Chapter3_InitGoto
+		if module "General ChapterProgress" == 3.0 goto Chapter4_InitGoto
+		if module "General ChapterProgress" == 4.0 goto FinishedLevel
+	}
+	actions
+	{
+		SendToModule "#General" "#StartHUB"
+	}
+}
+state Chapter1_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_Goto
+                
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#StartMission" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+	
+state Chapter2_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter2_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#COMPPOINT1" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter3_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter3_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetVehicle=#COMPPOINT2" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state Chapter4_PreInitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter4_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartMission" "#SetPlayer=#COMPPOINT3" "#SetPlayerDeathPoint=#StartMission"
+	}
+}
+state FinishedLevel
+{
+	conditions
+	{
+	}
+	actions
+	{       DestroyModule "#GotoReminderSpeech"
+                SetState GlobalActionRing
+	}
+}
+state GlobalActionRing
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		if module "General ChapterProgress" >= 4.0 goto GlobalActionRing2
+		if module "General ChapterProgress" == 1.0 goto GlobalActionRing5
+		if module "General ChapterProgress" == 0.0 goto GlobalActionRing3
+			
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		
+		
+		SendToModule "#General" "#StartHUB"
+		SendToModule "#General" "#ExitMissionText"
+		SendToModule "#ActionRing" "#ClearAnyBeenTriggered"
+		SendToModule "#ActionRing" "#ClearAllChaptersTriggered"
+		SendToModule "#ActionRing" "#AllowCreatures"
+		SendToModule "#ActionRing" "#TurnOn"
+		SendToModule "#SubMissions" "#TurnOn"
+		SendToModule "#General" "#FadeUp"
+	}
+}
+
+state GlobalActionRing2
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		
+		if module "CreatureSwap InArea" == 1.0 goto PrepareSwap	
+		if module "SubAttack InArea" == 1.0 goto SubMissionEX_Start	
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault_a" 
+		
+		SendToModule "#ActionRing" "#maxalive=3" "#spline=RandomDronesA" "#type=DroneDefault_a" "#rangemax=200" "#rangemin=150" "#Script=Early_CombatVeh" "#SuppressShield"
+		
+		CreateModule "#AreaRange" "#SubAttack" "#Trigger=#SubMissionAttack" "#AddToRadar" "#ParticleRing"
+		
+		CreateModule "#AreaRange" "#CreatureSwap" "#Trigger=#CharSwap" "#AddToRadar" "#ParticleRing" "#SetRadarType=#AutobotRadarIcon" "#DontClampRadar"
+
+	}
+}
+state GlobalActionRing3
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		
+		if module "General GetCountA" == 1.0 goto GlobalActionRing4
+
+		if module "CombatTutorial InArea" == 1.0 goto Adv_Tutorial
+
+		if Timer > 7.0 and
+			if module "General GetCountB" == 0.0 goto GlobalActionRing3Goto
+
+			
+	}
+	actions
+	{
+		
+		ResetTimer
+		CreateModule "#AreaRange" "#CombatTutorial" "#Trigger=#Junk" "#AddToRadarOff" ; "#SetRadarType=#ShieldRadarIcon"
+
+
+		;CreateModule "#DriverDrone" "#Goto" "#spline=Spawn4b" "#FollowSpline=Spawn4b" "#maxalive=1" "#count=1" "#type=jeep" "#Object=#JazzMediumDot" "#SpawnInLOSInit" "#IgnorePaths" "#WaitEnd" "#ConfineToPath" "#IgnorePlayer" "#CanShoot=0" 
+		CreateModule "#SplineExplode" "#RadarSplinePoint" "#Spline=Spawn4b" "#AddToRadar=#Jazz" "#SetAtEnd" 
+		
+		
+	}
+}
+state GlobalActionRing3Goto
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		
+		if module "General GetCountA" == 1.0 goto GlobalActionRing4
+
+		if module "CombatTutorial InArea" == 1.0 goto Adv_Tutorial
+
+		
+			
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#SetMessage=TutorialUnlocked" "#SetMessageTimer=10" 
+
+		
+	}
+}
+state GlobalActionRing4
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		
+	
+			
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#UnLoadCreature=DronePickupTruck_a"
+		
+		DestroyModule "#CombatTutorial"
+		DestroyModule "#Goto" 
+		DestroyModule "#RadarSplinePoint" 
+		
+		
+	}
+}
+state GlobalActionRing5
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		
+
+		
+			
+	}
+	actions
+	{
+		Idle 5.0 
+		SendToModule "#General" "#SetMessage=DynamicSubmissionsAlert" "#SetMessageTimer=10" 
+
+		
+	}
+}
+state GlobalStartChapter
+{
+	conditions
+	{
+		if module "ActionRing Chapter1"  == 1.0 goto Chapter1_Enter
+		if module "ActionRing Chapter2"  == 1.0 goto Chapter2_Enter
+		if module "ActionRing Chapter3"  == 1.0 goto Chapter3_Enter
+		if module "ActionRing Chapter4"  == 1.0 goto Chapter4_Enter
+	}
+	actions
+	{
+
+		SendToModule "#General" "#SetMessageTimer=-1" 
+
+		SendToModule "#General" "#StartChapter"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#TurnOff"
+		SendToModule "#General" "#ResetCounters"
+		SendToModule "#SubMissions" "#TurnOff"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+	}
+}
+state SubMission_Init
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission_Start
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#SetMessageTimer=-1" 
+
+		SendToModule "#General" "#FadeDown"
+		SendToModule "#General" "#BG_UnLoadCreature=DroneArmouredCar_a"
+	}
+}
+
+State SubMission_StartTest
+{
+	actions
+	{
+		SendToModule "#General" "#FadeUp" "#AllowPlayerMovement"
+		SetState "SubMission_Start"
+	}
+}
+state SubMission_Start
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionTriggered" == 1.0 goto SubMission1_Enter
+		if module "SubMissions GetSubMissionTriggered" == 2.0 goto SubMission2_Enter
+		if module "SubMissions GetSubMissionTriggered" == 3.0 goto SubMission3_Enter
+		if module "SubMissions GetSubMissionTriggered" == 4.0 goto SubMission4_Enter
+	}
+	actions
+	{
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+
+		SendToModule "#General" "#StartSubMission"
+		SendToModule "#ActionRing" "#TurnOff"
+	}
+}
+
+state SkipLevel
+{
+	conditions
+	{
+		if message "MissionMessage" == 1.0 goto Chapter1_InitGoto 
+		if message "MissionMessage" == 2.0 goto Chapter2_InitGoto
+		if message "MissionMessage" == 3.0 goto Chapter3_InitGoto
+		if message "MissionMessage" == 4.0 goto Chapter4_InitGoto
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Start"
+		SendToModule "#General" "#FadeDown"
+	}
+}
+

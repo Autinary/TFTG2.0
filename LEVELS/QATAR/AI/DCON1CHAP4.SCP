@@ -1,0 +1,371 @@
+state Chapter4_HubRestart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_InitGoto
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		
+;		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=4" "#TrafficLv=0" "#PatrolLv=1"
+		CreateModule "#VehicleLevels" "#VehicleLevels" 
+		SendToModule "#VehicleLevels" "#TrafficLv=0" "#PatrolLv=0"
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+
+
+		DestroyModule "#AAGunLaser".
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		SetState "Chapter4_Goto"
+	}
+}
+state Chapter4_Goto
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement"
+		DestroyModule "#MissionStartSpeech"
+		SetMusic "ACTION Mission3_1 QUIET Generic Play Action"
+		
+		Idle 2.0
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#D1_ch4_obj4" "#AutoDestroy" "#Start"
+		Idle 3.0
+		
+		
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter4Beacon" "#rangeoutside=75"
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter4_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter4_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter4_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules "#IncludeProtected"
+		
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#Protect"
+		SendToModule "#VehicleLevels" "#TrafficLv=0" "#PatrolLv=0"
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		DestroyModule "#AAGunLaser"
+		CreateModule "#AAGun" "#AAGunLaser" "#Protect"
+		SendToModule "#AAGunLaser" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJL" "#Range=100.0" "#Delay=0.5" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunRockets"
+		CreateModule "#AAGun" "#AAGunRockets" "#Protect"
+		SendToModule "#AAGunRockets" "#Type=AAGUNTYPE_ROCKETS" "#Placement=AAJR" "#Range=100.0" "#Delay=2.0" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		DestroyModule "#AAGunBullets"
+		CreateModule "#AAGun" "#AAGunBullets" "#Protect"
+		SendToModule "#AAGunBullets" "#Type=AAGUNTYPE_BULLITS" "#Placement=AAJB" "#Range=100.0" "#Delay=0.1" "#Energy=300.0" "#RespawnDelay=-1" "#Ammo=0" "#Create"
+
+		SendToModule "#General" "#StartMissionIntro=#D1C4Intro1" "#SetPlayerDeathPoint=#Chapter4Restart"
+	}
+}
+state Chapter4_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter4_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#PlayerType=Blackout"
+	}
+}
+;;state Chapter4_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter4_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartIntroVideo=#D1C4Intro1"
+;;	}
+;;}
+state Chapter4_Main
+{
+	conditions
+	{
+		
+		if message "MissionMessage" == 2.0 goto Chapter4_FailMission 
+
+		if module "Timer FailMission" == 1.0 goto Chapter4_FailMission
+		
+
+        if module "AirAttack WaveDestroyed" == 1.0 goto Chapter4_Main2
+	}
+	actions
+	{
+		
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 0"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 0"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 0"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+
+		SetMusic "ACTION Mission4_2 QUIET Generic Play Action"
+		SetDeathPoint "Chapter3_DeathFailMission"
+        CreateModule "#Timer" "#Timer" "Time=360"
+		CreateModule "#Speech" "#DefeatDrones" "#speech=#D1_ch4_obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+		CreateModule "#Bombing" "#Bombing" "#RangeMin=0.0" "#RangeMax=40.0" "#Delay=0.2" "#RandomDelay=0.2" "#VFXmode=VFX_BLITZ"
+
+        CreateModule "#DroneCounter" "#DroneCounter" "#DronesToDefeat=25" "#IconType=#VehiclePlane"
+        CreateModule "#AirAttack" "#AirAttack" "NumWaves=11" "#ModuleTag=#DroneCounter" 
+        SendToModule "#AirAttack" "#Total=3" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C4f22_1" "#SplinePos=0.0"  "#HeightOffset=50.0" "#CruiseSpd=150" "#AttackSpd=100" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#Energy=150.0" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+        SendToModule "#AirAttack" "#Total=5" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C4f22_2" "#SplinePos=1500" "#HeightOffset=60.0" "#CruiseSpd=100" "#AttackSpd=75" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#Energy=150.0" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+	
+		SendToModule "#General" "#PhysObj" "#SetVehicle=#Chapter4Start" "#FadeUp"  "#CountBSet=0"
+	}
+}
+
+state Chapter4_Main2
+{
+	conditions
+	{
+		
+		if message "MissionMessage" == 2.0 goto Chapter4_FailMission 
+
+		if module "Timer FailMission" == 1.0 goto Chapter4_FailMission
+		
+
+        if module "AirAttack WaveDestroyed" == 2.0 goto Chapter4_Main3
+	}
+	actions
+	{
+	CreateModule "#Speech" "#DefeatDrones" "#speech=#D1_ch4_obj2" "#AutoDestroy" "#Start"
+        SendToModule "#AirAttack" "#Total=3" "#VehicleTypes=DDRIVETYPE_STEALTH_B2" "#Spline=D1C4f22_1" "#SplinePos=1500" "#HeightOffset=40.0" "#CruiseSpd=200" "#AttackSpd=70" "#NumBomb=5" "#NumRocket=500" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.9" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+	SendToModule "#AirAttack" "#Total=2" "#VehicleTypes=DDRIVETYPE_STEALTH_B2" "#Spline=DVCreateP1" "#SplinePos=1500" "#HeightOffset=40.0" "#CruiseSpd=200" "#AttackSpd=70" "#NumBomb=5" "#NumRocket=500" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.9" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+	
+	
+	}
+}
+
+
+state Chapter4_Main3
+{
+	conditions
+	{
+		
+		if message "MissionMessage" == 2.0 goto Chapter4_FailMission 
+
+		if module "Timer FailMission" == 1.0 goto Chapter4_FailMission
+		
+        if module "AirAttack WaveDestroyed" == 4.0 goto Chapter4_Main4
+	}
+	actions
+	{
+        SendToModule "#AirAttack" "#Total=3" "#VehicleTypes=DDRIVETYPE_STEALTH_B2" "#Spline=DVCreateP2" "#SplinePos=1500" "#HeightOffset=40.0" "#CruiseSpd=200" "#AttackSpd=70" "#NumBomb=5" "#NumRocket=500" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.9" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+	
+	SendToModule "#AirAttack" "#Total=2" "#VehicleTypes=DDRIVETYPE_STEALTH_B2" "#Spline=AirAssult" "#SplinePos=1500" "#HeightOffset=40.0" "#CruiseSpd=200" "#AttackSpd=70" "#NumBomb=5" "#NumRocket=500" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.9" "#HesitationTime=0.1" #HeatSeekToPlayer "#CreateWave=1"
+	SendToModule "#AirAttack" "#Total=1" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=AirAssult2" "#SplinePos=0" "#HeightOffset=70.0" "#CruiseSpd=200" "#AttackSpd=150" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.7" "#WeaponBias=0.5" "#HesitationTime=0.1" #HeatSeekToPlayer "#CreateWave=1"
+	
+	}
+}
+
+state Chapter4_Main4
+{
+	conditions
+	{
+		
+		if message "MissionMessage" == 2.0 goto Chapter4_FailMission 
+
+		if module "Timer FailMission" == 1.0 goto Chapter4_FailMission
+		
+
+        if module "AirAttack WaveDestroyed" == 5.0 goto Chapter4_Main5
+	}
+	actions
+	{
+	CreateModule "#Speech" "#DefeatDrones" "#speech=#D1_ch4_obj3" "#AutoDestroy" "#Start"
+        SendToModule "#AirAttack" "#Total=2" "#VehicleTypes=DDRIVETYPE_STEALTH_B2" "#Spline=D1C4f22_1" "#SplinePos=1500" "#HeightOffset=50.0" "#CruiseSpd=125" "#AttackSpd=100" "#NumBomb=5" "#NumRocket=500" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.8" "#WeaponBias=0.9" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+	SendToModule "#AirAttack" "#Total=1" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=AirAssult2" "#SplinePos=0" "#HeightOffset=70.0" "#CruiseSpd=200" "#AttackSpd=150" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.7" "#WeaponBias=0.5" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+	
+	}
+}
+
+state Chapter4_Main5
+{
+	conditions
+	{
+		
+		if message "MissionMessage" == 2.0 goto Chapter4_FailMission 
+
+		if module "Timer FailMission" == 1.0 goto Chapter4_FailMission
+		
+        if module "AirAttack WaveDestroyed" == 8.0 goto Chapter4_Main6
+	}
+	actions
+	{
+        SendToModule "#AirAttack" "#Total=1" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=AirAssult" "#SplinePos=1000" "#HeightOffset=60.0" "#CruiseSpd=185" "#AttackSpd=175" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+	
+	}
+}
+
+state Chapter4_Main6
+{
+	conditions
+	{
+		
+		if message "MissionMessage" == 2.0 goto Chapter4_FailMission 
+
+		if module "Timer FailMission" == 1.0 goto Chapter4_FailMission
+		
+
+        if module "AirAttack WaveDestroyed" == 11.0 goto Chapter4_Complete
+
+	;if module "DroneCounter Complete" == 1.0 goto Chapter4_Complete
+	}
+	actions
+	{
+	CreateModule "#Speech" "#DefeatDrones" "#speech=#D1_ch4_obj5" "#AutoDestroy" "#Start"
+	SendToModule "#AirAttack" "#Total=2" "#VehicleTypes=DDRIVETYPE_F22" "#Spline=D1C4f22_1" "#SplinePos=0.0"  "#HeightOffset=50.0" "#CruiseSpd=150" "#AttackSpd=100" "#NumBomb=1" "#NumRocket=5" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.0" "#WeaponBias=0.5" "#Energy=150.0" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+        ;SendToModule "#AirAttack" "#Total=3" "#VehicleTypes=DDRIVETYPE_STEALTH_B2" "#Spline=D1C4f22_1" "#SplinePos=1500" "#HeightOffset=50.0" "#CruiseSpd=125" "#AttackSpd=100" "#NumBomb=5" "#NumRocket=500" "#BombDelay=5.0" "#RocketDelay=1.5" "#WeaponAccuracy=0.8" "#WeaponBias=0.9" "#HesitationTime=2.5" #HeatSeekToPlayer "#CreateWave=1"
+	}
+}
+
+
+state Chapter4_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter4_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter4_Restart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#FailMission"
+	}
+}
+state Chapter4_Restart
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+
+		
+		SendToModule "#General" "#PlayerType=Blackout,Blackout,Scorponok,Blackout"
+		SendToModule "#General" "#ResetAll" "#SetPlayerAtDeathPoint" "#FadeUp"
+
+		SetState "Exit"
+	}
+}
+state Chapter4_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter4_CompleteVideo
+	}
+	actions
+	{
+		SendToModule #General  "#EndOfMission" #UnlockBonus=Mission_FirstMission
+		SendToModule "#General" "#SetPosition=COMPPOINT4" "#Spline=COMCAM4" "#SetFocus=CAMFOCUS4"
+		SendToModule "#General" "#CompleteMission" "#LevelCompleteAchievement"
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter4" "#Unlock=#Chapter4"
+	}
+}
+state Chapter4_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter4_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#D1C4Outro1"
+	}
+}
+state Chapter4_CompleteVideoFinished
+{
+	conditions
+	{
+;		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#PlayerType=Blackout,Blackout,Scorponok,Blackout"
+
+		SendToModule "#General" "#FinishedOutroVideo"
+		SendToModule "#General" "#FinishedLevel"
+		Idle 1.0
+		SetState Chapter4_PreLeave
+	}
+}
+state Chapter4_PreLeave
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter4_Leave
+	}
+	
+}
+state Chapter4_Leave
+{
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		IncreasePlayerHealth max
+		SendToModule "#General" "#SetPlayerDeathPoint=#COMPPOINT4"
+		SendToModule #General #AllowPlayerMovement
+		SetState PickGoto
+	}
+}

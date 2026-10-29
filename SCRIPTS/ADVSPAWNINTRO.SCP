@@ -1,0 +1,137 @@
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if CarForm == 1.0 goto SpawnIntro
+		if RobotForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		  SetPhysicsState "static=false"
+		; SetState Alert
+	}
+}
+
+state TransformInit
+{
+	Conditions
+	{
+		if CarForm == 1.0 goto SpawnIntro
+	}
+	Actions
+	{
+		Transform Car Instant
+		SetState SpawnIntro
+	}
+}
+
+
+
+
+state SpawnIntro
+{
+
+	Actions
+	{
+		ResetTimer
+		;SpawnIntro
+		FollowLandingSpline Speed=330.0 ; Shadow
+		Transform UntilDoneState
+		SetState Randomizer
+	}
+}
+state Randomizer
+{
+	conditions
+	{
+		if AlwaysTrue > "RAND*4.0" goto Agile
+
+		;if AlwaysTrue > "RAND*5.0" goto Slammer
+		
+
+		if AlwaysTrue < "RAND*2.0" goto Advanced
+
+		if AlwaysTrue == 1.0 goto Main
+
+		
+		
+	}
+}
+
+state Main
+{
+    ReferenceScript {
+        Script=Combat
+        Source=Global
+        ReturnState=Main
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+state Advanced
+{
+    ReferenceScript {
+        Script=MigAdvanced
+        Source=Global
+        ReturnState=Advanced
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+
+state Agile
+{
+    ReferenceScript {
+        Script=MigAgile
+        Source=Global
+        ReturnState=Agile
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+
+state Slammer
+{
+    ReferenceScript {
+        Script=MigShotGunner
+        Source=Global
+        ReturnState=Slammer
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}
+
+
+

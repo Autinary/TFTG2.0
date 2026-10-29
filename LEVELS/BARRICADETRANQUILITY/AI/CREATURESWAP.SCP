@@ -1,0 +1,111 @@
+
+
+state PrepareSwap
+{
+	
+	actions
+	{
+		DestroyAllModules
+		SendToModule "#General" "#SetPlayer=#CSReset" 
+		;Idle 2.0
+		CreateModule "#KeyLocation" "#CreatureSwapArea" "#spline=D2C1KeyLocB" "#Radius=80" 
+		CreateModule "#AreaRange" "#SwapToTC" "#Trigger=#CSTripleChanger" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToBL" "#Trigger=#CSBlackout" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToS" "#Trigger=#CSScorponok" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToB" "#Trigger=#CSBarricade" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		CreateModule "#AreaRange" "#SwapToEB" "#Trigger=#CSEvilBumblebee" "#AddToRadar" "#ParticleRing" "#SetRadarType=#DecepticonRadarIcon"
+		
+		SendToModule "#General" "#SetMessage=BTCS" "#SetMessageTimer=1000" 
+		SetState CreatureSwapProcess
+	}
+}
+state CreatureSwapProcess
+{
+	conditions
+	{
+		if module "CreatureSwapArea InArea" == 0.0 goto LeftSwapArea
+		if module "SwapToTC InArea" == 1.0 goto SelectTC
+		if module "SwapToBL InArea" == 1.0 goto SelectBL
+		if module "SwapToS InArea" == 1.0 goto SelectS
+		if module "SwapToB InArea" == 1.0 goto SelectB
+		if module "SwapToEB InArea" == 1.0 goto SelectEB
+		
+	}
+	actions
+	{
+		ResetTimer
+	}	
+	
+}
+state SelectTC
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=TripleC" "#SetPlayer=#CSReset" "#CountASet=2"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectBL
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Blackout" "#SetPlayer=#CSReset" "#CountASet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectS
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Scorponok" "#SetPlayer=#CSReset" "#CountASet=1"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectB
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Barricade" "#SetPlayer=#CSReset" "#CountASet=0"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state SelectEB
+{
+	
+	actions
+	{
+		
+		SendToModule "#General" "#PlayerType=Brawl" "#SetPlayer=#CSReset" "#CountASet=3"
+		
+		 
+		SetState CreatureSwapProcess
+	}
+}
+state LeftSwapArea
+{
+	
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#SetMessageTimer=-1"
+		
+		 
+		SetState GlobalActionRing
+	}
+}

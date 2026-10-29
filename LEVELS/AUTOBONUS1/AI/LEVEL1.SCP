@@ -1,0 +1,5 @@
+include "AutoBonus1Init.scp"
+include "AutoBonus1.scp"
+include "AutoBonus2.scp"
+include "AutoBonus3.scp"
+include "AutoBonus4.scp"

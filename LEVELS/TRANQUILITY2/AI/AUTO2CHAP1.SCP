@@ -1,0 +1,785 @@
+state Chapter1_HubRestart
+{
+	conditions
+	{
+		
+		if module "General ChapterProgress" >= 1.0 goto GlobalActionRing
+		if timer > 0.1 goto LevelSpecialTune
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission" "#FadeUp"
+		;SetState "GlobalActionRing"
+	}
+}
+state Chapter1_HubDeath
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_HubRestart
+	}
+	actions
+	{
+		SendToModule "#General" "#EndOfMission"  "#DeathFailMission"
+	}
+}
+state Chapter1_InitGoto
+{
+	conditions
+	{
+		if module "General GetFinishedMissionStart" == 1.0 goto Chapter1_GotoWaitSpeech
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SetMusic "ACTION Mission1_1 QUIET Generic"
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=5" "#TrafficLv=1" "#PatrolLv=1" "#RoadBlocks=A2C1RoadBlocks"
+		
+		SendToModule "#General" "#StartMission" "#SetVehicle=#StartMission" "#VehicleRollingStart_MPH=90.0"
+	}
+}
+state Chapter1_GotoWaitSpeech
+{
+	actions
+	{
+		SendToModule "#General" "#AllowPlayerMovement" "#VehicleRollingStart_MPH=-30.0"
+		Idle 2.0
+		CreateModule "#Speech" "#MissionStartSpeech" "#speech=#A2_ch1_Goto" "#Start" "#AutoDestroy"
+		Idle 3.0
+		SetState Chapter1_Goto
+	}
+}
+state Chapter1_Goto
+{
+	actions
+	{
+		
+		CreateModule "#AndSwitch" "#AndSwitchReminder" "#moduletag=#DelayedSendReminder" "#placement=#Chapter1Beacon" "#rangeoutside=75"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		
+		SetState "GlobalActionRing"
+	}
+}
+state Chapter1_Enter
+{
+	conditions
+	{
+;;		if Timer > 0.8 goto Chapter1_LoadCreatures
+		if module "General GetMissionIntroTextFadedUp" == 1.0 goto Chapter1_LoadCreatures
+	}
+	actions
+	{
+;;		ResetTimer
+		DestroyAllModules 
+		
+; update/set the scripted values for mission
+		
+		SendToModule "#General" "#StartMissionIntro=#A2C1Intro1"
+	}
+}
+state Chapter1_LoadCreatures
+{
+	conditions
+	{
+;;		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_VideoIntro
+		if module "General GetFinishedMissionIntro" == 1.0 goto Chapter1_Main
+	}
+	actions
+	{
+		SendToModule "#ActionRing" "#RemoveCreatures"
+		SendToModule "#General" "#UnLoadCreature=DroneDefault_a"
+		
+		SendToModule "#General" "#LoadCreature=DroneDefault" "#PlayerType=Jazz"
+	}
+}
+;;state Chapter1_VideoIntro
+;;{
+;;	conditions
+;;	{
+;;		if module "General VideoFinished" == 1.0 goto Chapter1_Main
+;;	}
+;;	actions
+;;	{
+;;		DestroyAllModules 
+;;		SendToModule "#General" "#EndMissionIntro" "#StartVideo=#A2C1Intro1"
+;;	}
+;;}
+state Chapter1_Main
+{
+	conditions
+	{
+		if timer > 0.2 goto Chapter1_MainDelay
+	}
+	actions
+	{
+		ResetTimer
+		SetMusic "ACTION Mission1_1 QUIET Generic Play Action"
+		SetDeathPoint "Chapter1_DeathFailMission"
+		SendToModule "#General" "#PhysObj" "#SetVehicle=#Chapter1Start" "#FadeUp"
+		
+		CreateModule "#VehicleLevels" "#VehicleLevels" "#ResponseLv=5" "#TrafficLv=2" "#PatrolLv=0" "#RoadBlocks=A2C1RoadBlocks"
+				
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+	    CreateModule "#SpecialObj" "#SpecialObj" "#Placement=A2C1"
+	}
+}
+state Chapter1_MainDelay
+{
+	actions
+	{
+		CreateModule "#ProgressPoint" "#ProgressPoint" "#spline=A2C1RacePoints" "#Radius=5.0" "#Allowance=6.5" "#Index=RRRD0D0D0RD0RRRD0RRD0RR"; "#Index=RRRRD99RRRRD99RRRD99RRRRD99"
+		SendToModule "#ProgressPoint" "#SuperDamage=8" "#SuperDamage=12" 
+		CreateModule "#DriverDrone" "#DriverDrone" "#Spline=A2C1Spawn" "#FollowPlayer" "#type=suv" "#Count=5000" "#MaxAlive=5" "#spacing=-1.0" "#goalrange=3.0" "#SpawnMinRange=15.0" "#CullRange=100.0" 		;CreateModule "#Speech" "#DefeatDrones" "#speech=#A2_ch1_obj1" "#AutoDestroy" "#Start"
+		CreateModule "#Timer" "#TimerA" "#time=30"
+		
+		CreateModule "#Speech" "#A2_ch1_Obj1" "#speech=#A2_ch1_Obj1" "#AutoDestroy" "#Start" "#GermanWiiAudioFudge"
+
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_RaceMain
+{
+	conditions
+	{
+		if module "TimerA FailMission" == 1.0 goto Chapter1_FailMission
+		if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter1_PickCamera
+		if module "Trigger InArea" == 1.0 goto Chapter1_Shortcut1
+		if module "Trigger2 InArea" == 1.0 goto Chapter1_Shortcut2
+		if module "ProgressPoint GetCompleteTime" > 1.0 goto Chapter1_Complete
+	}
+}
+state Chapter1_RaceMain2
+{
+	conditions
+	{
+		if module "TimerA FailMission" == 1.0 goto Chapter1_FailMission
+		if module "ProgressPoint AnyBeenTriggered" == 1.0 goto Chapter1_PickCamera2
+		if module "Trigger InArea" == 1.0 goto Chapter1_Shortcut12
+		if module "Trigger2 InArea" == 1.0 goto Chapter1_Shortcut22
+		if module "ProgressPoint GetCompleteTime" > 1.0 goto Chapter1_Complete
+	}
+}
+state Chapter1_PickCamera
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter1_Shortcut1
+		if module "Trigger2 InArea" == 1.0 goto Chapter1_Shortcut2
+
+		if module "ProgressPoint IndexBeenTriggered" == 1.0 goto Chapter1_SayDialog2
+		if module "ProgressPoint IndexBeenTriggered" == 2.0 goto Chapter1_SetTime40; Chapter1_PlayCamera1
+		if module "ProgressPoint IndexBeenTriggered" == 3.0 goto Chapter1_SayDialog3
+		if module "ProgressPoint IndexBeenTriggered" == 4.0 goto Chapter1_SetTime20
+		if module "ProgressPoint IndexBeenTriggered" == 5.0 goto Chapter1_SetTime201; Chapter1_PlayDestructCameraA
+		if module "ProgressPoint IndexBeenTriggered" == 6.0 goto Chapter1_SayDialog4; 
+		if module "ProgressPoint IndexBeenTriggered" == 7.0 goto Chapter1_SetTime40; Chapter1_PlayCamera2
+		if module "ProgressPoint IndexBeenTriggered" == 8.0 goto Chapter1_SayDialog5
+		if module "ProgressPoint IndexBeenTriggered" == 9.0 goto Chapter1_SetTime303
+		if module "ProgressPoint IndexBeenTriggered" == 10.0 goto Chapter1_SetTime401; Chapter1_PlayDestructCameraB
+		if module "ProgressPoint IndexBeenTriggered" == 11.0 goto Chapter1_SetTime30
+		if module "ProgressPoint IndexBeenTriggered" == 12.0 goto Chapter1_SetTime404
+		if module "ProgressPoint IndexBeenTriggered" == 13.0 goto Chapter1_SetTime302
+		if module "ProgressPoint IndexBeenTriggered" == 14.0 goto Chapter1_SetTime20; Chapter1_PlayDestructCameraC
+		if module "ProgressPoint IndexBeenTriggered" == 15.0 goto Chapter1_SetTime304; Chapter1_PlayDestructCameraC
+		if module "ProgressPoint IndexBeenTriggered" == 16.0 goto Chapter1_SetTime30; Chapter1_PlayDestructCameraC
+		if module "ProgressPoint IndexBeenTriggered" == 17.0 goto Chapter1_Complete
+		;if module "ProgressPoint IndexBeenTriggered" == 15.0 goto Chapter1_NoPlay
+		;if module "ProgressPoint IndexBeenTriggered" == 16.0 goto Chapter1_NoPlay
+		;if module "ProgressPoint IndexBeenTriggered" == 17.0 goto Chapter1_NoPlay
+		;if module "ProgressPoint IndexBeenTriggered" == 18.0 goto Chapter1_NoPlay
+		;if module "ProgressPoint IndexBeenTriggered" == 19.0 goto Chapter1_NoPlay
+
+
+		if module "ProgressPoint IndexBeenTriggered" == 19.0 goto Chapter1_Complete
+
+	}
+	actions
+	{
+		DestroyModule "#SplineCamera"
+	}
+} 
+state Chapter1_PickCamera2
+{
+	conditions
+	{
+		if module "Trigger InArea" == 1.0 goto Chapter1_Shortcut12
+		if module "Trigger2 InArea" == 1.0 goto Chapter1_Shortcut22
+
+		if module "ProgressPoint IndexBeenTriggered" == 1.0 goto Chapter1_SayDialog2
+		if module "ProgressPoint IndexBeenTriggered" == 2.0 goto Chapter1_SetTime40; Chapter1_PlayCamera1
+		if module "ProgressPoint IndexBeenTriggered" == 3.0 goto Chapter1_SayDialog3
+		if module "ProgressPoint IndexBeenTriggered" == 4.0 goto Chapter1_SetTime20
+		if module "ProgressPoint IndexBeenTriggered" == 5.0 goto Chapter1_SetTime201; Chapter1_PlayDestructCameraA
+		if module "ProgressPoint IndexBeenTriggered" == 6.0 goto Chapter1_SayDialog4; 
+		if module "ProgressPoint IndexBeenTriggered" == 7.0 goto Chapter1_SetTime40; Chapter1_PlayCamera2
+		if module "ProgressPoint IndexBeenTriggered" == 8.0 goto Chapter1_SayDialog5
+		if module "ProgressPoint IndexBeenTriggered" == 9.0 goto Chapter1_SetTime303
+		if module "ProgressPoint IndexBeenTriggered" == 10.0 goto Chapter1_SetTime401; Chapter1_PlayDestructCameraB
+		if module "ProgressPoint IndexBeenTriggered" == 11.0 goto Chapter1_SetTime305
+		if module "ProgressPoint IndexBeenTriggered" == 12.0 goto Chapter1_SetTime404
+		if module "ProgressPoint IndexBeenTriggered" == 13.0 goto Chapter1_SetTime302
+		if module "ProgressPoint IndexBeenTriggered" == 14.0 goto Chapter1_SetTime20; Chapter1_PlayDestructCameraC
+		if module "ProgressPoint IndexBeenTriggered" == 15.0 goto Chapter1_SetTime304; Chapter1_PlayDestructCameraC
+		if module "ProgressPoint IndexBeenTriggered" == 16.0 goto Chapter1_SetTime30; Chapter1_PlayDestructCameraC
+		if module "ProgressPoint IndexBeenTriggered" == 17.0 goto Chapter1_Complete
+		;if module "ProgressPoint IndexBeenTriggered" == 15.0 goto Chapter1_NoPlay
+		;if module "ProgressPoint IndexBeenTriggered" == 16.0 goto Chapter1_NoPlay
+		;if module "ProgressPoint IndexBeenTriggered" == 17.0 goto Chapter1_NoPlay
+		;if module "ProgressPoint IndexBeenTriggered" == 18.0 goto Chapter1_NoPlay
+		;if module "ProgressPoint IndexBeenTriggered" == 19.0 goto Chapter1_NoPlay
+
+
+		if module "ProgressPoint IndexBeenTriggered" == 19.0 goto Chapter1_Complete
+
+	}
+	actions
+	{
+		DestroyModule "#SplineCamera"
+	}
+} 
+state Chapter1_Shortcut1
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		DestroyModule "Trigger"
+		CreateModule "#Speech" "#A2_ch1_Obj6" "#speech=#A2_ch1_Obj9" "#AutoDestroy" "#Start" 
+		;CreateModule "#AreaRange" "#Trigger2" "#Trigger=#JazzRace2" "#AddToRadar" "#Radar=#Jazz" "#DontDrawBeacon"
+		SendToModule "#General" "#SetMessage=SecCam1" "#SetMessageTimer=3"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		;SetState "Chapter1_RaceMain"
+		SetState "Chapter1_PlayCamera1"
+	}
+}
+state Chapter1_Shortcut2
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		DestroyModule "Trigger2"
+		CreateModule "#Speech" "#A2_ch1_Obj6" "#speech=#A2_ch1_Obj7" "#AutoDestroy" "#Start" 
+		
+		SendToModule "#General" "#SetMessage=SecCam1" "#SetMessageTimer=3"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		;SetState "Chapter1_RaceMain"
+		SetState "Chapter1_PlayCamera2"
+	}
+}
+state Chapter1_Shortcut12
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		DestroyModule "Trigger"
+		CreateModule "#Speech" "#A2_ch1_Obj6" "#speech=#A2_ch1_Obj9" "#AutoDestroy" "#Start" 
+		
+		;CreateModule "#AreaRange" "#Trigger2" "#Trigger=#JazzRace2" "#AddToRadar" "#Radar=#Jazz" "#DontDrawBeacon"
+		SendToModule "#General" "#SetMessage=SecCam2" "#SetMessageTimer=3"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		;SetState "Chapter1_RaceMain"
+		SetState "Chapter1_PlayCamera12"
+	}
+}
+state Chapter1_Shortcut22
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		DestroyModule "Trigger2"
+		CreateModule "#Speech" "#A2_ch1_Obj6" "#speech=#A2_ch1_Obj7" "#AutoDestroy" "#Start" 
+		SendToModule "#General" "#SetMessage=SecCam2" "#SetMessageTimer=3"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		;SetState "Chapter1_RaceMain"
+		SetState "Chapter1_PlayCamera22"
+	}
+}
+state Chapter1_SayDialog2
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch1_Obj2" "#speech=#A2_ch1_Obj2" "#AutoDestroy" "#Start"
+		SetState Chapter1_SetTime30
+	}
+}
+
+state Chapter1_SayDialog3
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch1_Obj3" "#speech=#A2_ch1_Obj3" "#AutoDestroy" "#Start"
+		CreateModule "#Speech" "#A2_ch1_Obj6" "#speech=#A2_ch1_Obj6" "#AutoDestroy" "#PlayDelay=4.0f" "#Start"
+		SendToModule "#TimerA" "#Time=25"
+		SetState Chapter1_PlayDestructCameraB
+	}
+}
+
+state Chapter1_SayDialog4
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch1_Obj4" "#speech=#A2_ch1_Obj4" "#AutoDestroy" "#Start"
+		SendToModule "#TimerA" "#Time=40"
+		;SetState Chapter1_SetTime40
+		SetState Chapter1_PlayDestructCameraC
+	}
+}
+
+state Chapter1_SayDialog5
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch1_Obj5" "#speech=#A2_ch1_Obj5" "#AutoDestroy" "#Start"
+		SetState Chapter1_SetTime30
+	}
+}
+
+state Chapter1_SayDialog6
+{
+	actions
+	{
+		CreateModule "#Speech" "#A2_ch1_Obj6" "#speech=#A2_ch1_Obj6" "#AutoDestroy" "#PlayDelay=4.0f" "#Start" 
+		SetState Chapter1_SetTime30
+	}
+}
+
+
+state Chapter1_SetTime20
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=20"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_SetTime201
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=20"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_SetTime202
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=20"
+		SetState Chapter1_PlayDestructCameraC
+	}
+}
+state Chapter1_SetTime25
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=25"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_SetTime30
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=30"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_SetTime302
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		;CreateModule "#Speech" "#A2_ch1_Obj6" "#speech=#A2_ch1_Obj7" "#AutoDestroy" "#PlayDelay=4.0f" "#Start" 
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=30"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_SetTime303
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		;CreateModule "#Speech" "#A2_ch1_Obj6" "#speech=#A2_ch1_Obj9" "#AutoDestroy" "#PlayDelay=4.0f" "#Start" 
+		;CreateModule "#AreaRange" "#Trigger" "#Trigger=#JazzRace1" "#AddToRadar" "#Radar=#Jazz" "#DontDrawBeacon"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=30"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_SetTime304
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		;CreateModule "#AreaRange" "#Trigger" "#Trigger=#JazzRace1" "#AddToRadar" "#Radar=#Jazz" "#DontDrawBeacon"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=30"
+		;SetState "Chapter1_RaceMain"
+		SetState Chapter1_PlayDestructCameraA
+	}
+}
+state Chapter1_SetTime305
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		;CreateModule "#AreaRange" "#Trigger" "#Trigger=#JazzRace1" "#AddToRadar" "#Radar=#Jazz" "#DontDrawBeacon"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=30"
+		SetState "Chapter1_RaceMain2"
+		;SetState Chapter1_PlayDestructCameraA
+	}
+}
+state Chapter1_SetTime35
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=30"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_SetTime40
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_SetTime401
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		CreateModule "#AreaRange" "#Trigger" "#Trigger=#JazzRace1"
+		CreateModule "#AreaRange" "#Trigger2" "#Trigger=#JazzRace2"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		SetState "Chapter1_RaceMain"
+		;SetState "Chapter1_PlayCamera1"
+	}
+}
+state Chapter1_SetTime402
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		SetState Chapter1_PlayCamera2
+	}
+}
+state Chapter1_SetTime403
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		SetState Chapter1_PlayDestructCameraB
+	}
+}
+state Chapter1_SetTime404
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		DestroyModule "#Trigger"
+		DestroyModule "#Trigger2"
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_NoPlay
+{
+	actions
+	{
+		IncreasePlayerHealth 6.25
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		SendToModule "#TimerA" "#Time=40"
+		SetState "Chapter1_RaceMain"
+	}
+}
+state Chapter1_PlayCamera1
+{
+	conditions 
+	{
+		if module "SplineCamera GetPercentageComplete" == 1.0 goto Chapter1_RaceMain2
+	}
+	Actions
+	{
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A2C1RaceCamA" "#SetFocus=A2C1RacePosA" "#CreatureMove=A2C1CARSP1" "#SetTime=3.5"
+		;CreateModule "#DriverDrone" "#AmbushVehicle1" "#Spline=A2C1CARSP1" "#SpawnInLOSInit" "#FollowPlayer" "#type=suv" "#Count=5000" "#MaxAlive=5" "#spacing=-1.0" "#goalrange=3.0" "#CullRange=100.0" 		
+		
+	}
+}
+state Chapter1_PlayCamera2
+{
+	conditions 
+	{
+		if module "SplineCamera GetPercentageComplete" == 1.0 goto Chapter1_RaceMain2
+	}
+	Actions
+	{
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A2C1RaceCamB" "#SetFocus=A2C1RacePosB" "#CreatureMove=A2C1CARSP2" "#SetTime=3.5"
+		;CreateModule "#DriverDrone" "#AmbushVehicle2" "#Spline=A2C1CARSP2" "#SpawnInLOSInit" "#FollowPlayer" "#type=suv" "#Count=5000" "#MaxAlive=5" "#spacing=-1.0" "#goalrange=3.0" "#CullRange=100.0" 		
+		
+	}
+}
+state Chapter1_PlayCamera12
+{
+	conditions 
+	{
+		if module "SplineCamera GetPercentageComplete" == 1.0 goto Chapter1_RaceMain
+	}
+	Actions
+	{
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A2C1RaceCamA" "#SetFocus=A2C1RacePosA" "#CreatureMove=A2C1CARSP1" "#SetTime=3.5"
+		;CreateModule "#DriverDrone" "#AmbushVehicle1" "#Spline=A2C1CARSP1" "#SpawnInLOSInit" "#FollowPlayer" "#type=suv" "#Count=5000" "#MaxAlive=2" "#spacing=-1.0" "#goalrange=3.0" "#CullRange=100.0" 		
+		
+	}
+}
+state Chapter1_PlayCamera22
+{
+	conditions 
+	{
+		if module "SplineCamera GetPercentageComplete" == 1.0 goto Chapter1_RaceMain
+	}
+	Actions
+	{
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A2C1RaceCamB" "#SetFocus=A2C1RacePosB" "#CreatureMove=A2C1CARSP2" "#SetTime=3.5"
+		;CreateModule "#DriverDrone" "#AmbushVehicle2" "#Spline=A2C1CARSP2" "#SpawnInLOSInit" "#FollowPlayer" "#type=suv" "#Count=5000" "#MaxAlive=5" "#spacing=-1.0" "#goalrange=3.0" "#CullRange=100.0" 		
+		
+	}
+}
+state Chapter1_PlayDestructCameraA
+{
+	conditions 
+	{
+		if module "SplineCamera GetPercentageComplete" == 1.0 goto Chapter1_RaceMain
+	}
+	Actions
+	{
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A2C1DestructCamA" "#SetFocus=A2C1DestructPosA" "#SetTime=4" "#PauseGame=1.0"
+	}
+}
+state Chapter1_PlayDestructCameraB
+{
+	conditions 
+	{
+		if module "SplineCamera GetPercentageComplete" == 1.0 goto Chapter1_RaceMainReturn
+	}
+	Actions
+	{
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+
+		SendToModule "#General" "#SetPlayer=#A2C1Reset"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A2C1DestructCamB" "#SetFocus=A2C1DestructPosB" "#SetTime=4" "#PauseGame=1.0"
+	}
+}
+state Chapter1_PlayDestructCameraC
+{
+	conditions 
+	{
+		if module "SplineCamera GetPercentageComplete" == 1.0 goto Chapter1_RaceMain
+	}
+	Actions
+	{
+		SendToModule "#ProgressPoint" "#ClearAnyBeenTriggered"
+		CreateModule "#SplineCamera" "#SplineCamera" "#SetPosition=A2C1DestructCamC" "#SetFocus=A2C1DestructPosC" "#SetTime=4" "#PauseGame=1.0"
+
+		
+	}
+}
+state Chapter1_RaceMainReturn
+{
+	
+	Actions
+	{
+		
+		SendToModule "#General" "#SetVehicle=#A2C1Reset"
+
+		SetState Chapter1_RaceMain
+	}
+}
+
+
+
+
+state Chapter1_DeathFailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#DeathFailMission"
+	}
+}
+state Chapter1_FailMission
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto Chapter1_Restart
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#FailMission"
+	}
+}
+state Chapter1_Restart
+{
+	actions
+	{
+		SendToModule "#VehicleLevels" "#RoadBlocks=Off"
+		DestroyAllModules "#IncludeProtected"
+
+		
+		SendToModule "#General" "#PlayerType=Jazz,Ironhide,OptimusPrime,OptimusPrime,Jazz"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#Chapter1Restart" "#FadeUp"
+		
+		SetState "Chapter1_RestartPolice"
+	}
+}
+
+state Chapter1_RestartPolice
+{
+	conditions
+	{
+		; need to keep the police response high after failing the first mission, if not already completed...
+		if module "General ChapterProgress" == 0.0 goto Chapter1_PoliceResponseCheck
+		if module "General ChapterProgress" > 0.0 goto GlobalActionRing
+	}
+
+}
+
+state Chapter1_PoliceResponseCheck
+{
+	conditions
+	{
+		if module "General ChapterProgress" == 0.0 goto Chapter1_PoliceResponseHigh
+		if module "General ChapterProgress" > 0.0 goto GlobalActionRing
+	}
+}
+
+state Chapter1_PoliceResponseHigh
+{
+	actions
+	{
+		SendToModule "#General" "#ResponseLv_FreeRoam"                  ; reset/default values for freeroaming
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 1"            ; lowest the response can reach
+    	SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_FreeRoamSet"               ; update/set the scripted values for freeroaming
+
+		SendToModule "#General" "#ResponseLv_Mission"                   ; reset/default values for mission
+		SendToModule "#General" "#ResponseLv_SetCurrent = 5"            ; starting response lv (1-5) - (0 = OFF)
+		SendToModule "#General" "#ResponseLv_ClampMin   = 5"            ; lowest the response can reach
+		SendToModule "#General" "#ResponseLv_ClampMax   = 5"            ; maximum the response can reach
+		SendToModule "#General" "#ResponseLv_Detection  = 0"            ; level set once place is 'detected' as a robot (0 = OFF)
+		SendToModule "#General" "#ResponseLv_MissionSet"                ; update/set the scripted values for mission
+		
+		SetState GlobalActionRing2
+	}
+}
+
+state Chapter1_Complete
+{
+	conditions
+	{
+		if module "General GetStartOutro" == 1.0 goto Chapter1_CompleteVideo
+	}
+	actions
+	{
+		SendToModule "#General"  "#EndOfMission" "#SetPosition=COMPPOINT1" "#Spline=COMCAM1" "#SetFocus=CAMFOCUS1"
+		DestroyModule "#TimerA"
+		SendToModule "#General" "#CompleteMission" 
+		SendToModule "#ActionRing" "#SetCompleted=#Chapter1" 
+		CreateModule "#Speech" "#DefeatDrones" "#PlayDelay=1.2" "#speech=#A2_ch1_cmplt" "#AutoDestroy" "#Start"
+	}
+}
+state Chapter1_CompleteVideo
+{
+	conditions
+	{
+		if module "General VideoFinished" == 1.0 goto Chapter1_CompleteVideoFinished
+	}
+	actions
+	{
+		IncreasePlayerHealth max
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#StartOutroVideo=#A2C1Outro1"
+	}
+}
+state Chapter1_CompleteVideoFinished
+{
+	conditions
+	{
+		if module "General GetFinishedOutro" == 1.0 goto Chapter1_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#PlayerType=Jazz,Ironhide,OptimusPrime,OptimusPrime,Jazz"
+
+		SendToModule "#General" "#FinishedOutroVideo" "#Radar"
+	}
+}
+state Chapter1_Leave
+{
+	actions
+	{
+		SendToModule "#VehicleLevels" "#RoadBlocks=Off"
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#ActionRing" "#Unlock=#Chapter2"
+		SendToModule "#General" "#SetVehicle=#COMPPOINT1" 
+		SetMusic "ACTION Mission2_1 QUIET Generic"
+		IncreasePlayerHealth max
+		setstate "PickGoto" ;goto next chapter
+	}
+}

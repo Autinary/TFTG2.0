@@ -1,0 +1,140 @@
+CONST TooCloseForComfort	15.0
+CONST AttackPeriodA			2.0
+CONST AttackPeriod			5.0
+CONST DesiredRange			60.0
+;;;;;;;;;;;;INIT;;;;;;;;;;;;;
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto Init
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto RobotInit
+		if CarForm == 1.0 goto HoverMain
+	}
+	Actions
+	{
+		SetPhysicsState "static=false" "immunetoshots=false"  
+		SetFlag "TakeHitPhysics=true" "TakeHitMelee=true" "TakeHit=false" "StuckEscape=false"
+	}
+}
+
+state RobotInit
+{
+	Actions
+	{
+		Transform "Car" "Instant"
+		SetState HoverMain
+	}
+}
+
+;;;;;;;;;;;;END OF INIT;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;HOVER;;;;;;;;;;;;;;;;;;;;
+
+
+
+state HoverMain
+{
+	Conditions
+	{
+		if TransformMeter == 1.0 goto FindNewHoverPositionAndIncVar
+		if OpponentRange < TooCloseForComfort goto FindNewHoverPosition
+		if OpponentRange > TooCloseForComfort goto HoverMainRockets
+		;if Timer > AttackPeriodA goto FindNewHoverPosition
+	}
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "static=false" "immunetoshots=false"  
+		
+		HoverAttack "speed=650.0" "height=43.0" "desiredrange=40" "range=10.0" "fireRate=3.15" "AttackType=0"
+	}
+}
+
+state HoverMainRockets
+{
+	Conditions
+	{
+		if TransformMeter == 1.0 goto FindNewHoverPositionAndIncVar
+		if OpponentRange < TooCloseForComfort goto FindNewHoverPosition
+		;if OpponentRange > DesiredRange goto HoverMain
+		if Timer > AttackPeriod goto Turn
+	}
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "static=false" "immunetoshots=false"  
+
+		CarDrive shootatopp fireinterval=3.1
+	}
+}
+state Turn
+{
+	Conditions
+	{
+		if TransformMeter == 1.0 goto FindNewHoverPositionAndIncVar
+		if OpponentRange < TooCloseForComfort goto FindNewHoverPosition
+		if Timer > AttackPeriodA goto HoverMainRockets
+	}
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "static=false" "immunetoshots=false"  
+		
+		HoverAttack "speed=650.0" "height=43.0" "desiredrange=40" "range=10.0" "fireRate=3.15" "AttackType=0"
+	}
+}
+
+state FindNewHoverPosition
+{
+	Conditions
+	{
+	
+	}
+	Actions
+	{
+		;Get New Hover Place
+		hoveravoid "Range=100.0" "height=17.0" 
+		SetState HoverMain
+	}
+}
+
+state FindNewHoverPositionA
+{
+	Actions
+	{
+		;Get New Hover Place
+		hoveravoid "Range=40.0" "height=17.0" 
+		SetState HoverMain
+	}
+}
+
+state FindNewHoverPositionB
+{
+	Actions
+	{
+		;Get New Hover Place
+		hoveravoid "Range=60.0" "height=17.0" 
+		SetState HoverMain
+	}
+}
+
+state FindNewHoverPositionAndIncVar
+{
+	Actions
+	{
+		BeenHitHard
+		SetTransformMeter "value=0.0"
+		SetState HoverMain
+	}
+}
+
+;;;;;;;;;;;End of HOVER;;;;;;;;;;;;;;;;;;;;

@@ -1,0 +1,41 @@
+
+state Base
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=false" "TakeHit=false" "StuckEscape=false"
+		SetState Slam
+	}
+}
+state Slam
+{
+	conditions
+	{
+		if Timer > 1.5 goto StartAttack
+
+		
+		
+	}
+	actions
+	{
+		ResetTimer
+		DoAttack "slammove"
+	}
+}
+
+
+state StartAttack
+{
+    	ReferenceScript {
+        Script=TruckDrone
+        Source=Global
+        ReturnState=StartAttack
+        Conditions {
+        }
+    }
+
+	Conditions {
+	}
+	Actions {
+	}
+}

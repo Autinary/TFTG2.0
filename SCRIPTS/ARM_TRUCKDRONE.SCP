@@ -1,0 +1,1366 @@
+; Elite Script
+; Note: Can always take a melee hit, physics flip/flops though
+
+CONST AutoMeleeRangeMin				5.0
+CONST AutoMeleeRangeMax				3.0
+CONST ClosestApproachRangedMin		30.0
+CONST ClosestApproachRangedMax		32.0
+
+ConditionMacro StuckTime
+{
+	if StuckTime > 1.0 AND
+	if GetFlag "StuckByPickup" == 1.0 AND
+	if GetFlag "StuckEscape" == 1.0
+}
+
+ConditionMacro StuckJump
+{
+	if GetFlag "StuckByObstacle" == 1.0
+}
+
+ConditionMacro StuckRoll
+{
+	if GetFlag "StuckByObstacle" == 2.0
+}
+
+ConditionMacro AttackPOI
+{
+	if BeenStruckTime > 5.0 and
+	if HasActivePOI == 1.0
+}
+
+state Base
+{
+	Conditions
+	{
+		if AlwaysTrue == 1.0 goto AmIAwakeYet
+	}
+}
+
+state AmIAwakeYet
+{
+	Conditions
+	{
+		if Awake == 1.0 goto Init
+
+		if GotOpponent == 1.0 AND
+		if DistanceBetweenOpponent < 10.0 goto WakeUp
+	}
+	Actions
+	{
+		CarDrive "park"
+	}
+}
+
+state WakeUp
+{
+	Actions
+	{
+		WakeUp
+		SetState AmIAwakeYet
+	}
+}
+
+state Init
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto SpecialRushChargeIntro
+		if CarForm == 1.0 goto TransformInit
+		if SecondaryForm == 1.0 goto TransformInit
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false" "TakeHitMelee=true" "TakeHit=false" "StuckEscape=true"
+		SetFlag "TakeHitSave"
+		SetPhysicsState "static=false" "immunetoshots=true"
+	}
+}
+
+
+
+state TransformInit
+{
+	Conditions
+	{
+		if RobotForm == 1.0 goto Alert
+	}
+	Actions
+	{
+		Transform UntilDone
+	}
+}
+
+state NoOpponent
+{
+	Conditions
+	{
+		if RobotForm == 0.0 goto Init
+		if GotOpponent == 1.0 goto Alert
+		if BeenStruckTime < 2.0 goto BeenStruck
+		if WalkToLocatorTime > 0.0 goto BeenStruck
+
+		OnMacro StuckTime goto StuckEscape
+	}
+	Actions
+	{
+		SetStrafe false
+		SetFlag "TakeHitPhysics=true"
+		GoToOrigin "xz_rangecheck" "goalrange=2.0" "turntime=5.0"
+	}
+}
+
+state ReEnterKeyLocation
+{
+	Actions
+	{
+		SetFlag "TakeHitPhysics=false"
+		GoToKeyLocation "rangeInside=0.5"
+		SetState Alert
+	}
+}
+state TransformCarInit
+{
+	Conditions
+	{
+		if AlwaysTrue < "RAND*3.0" goto TransformCarDo
+		if Timer > 0.2 goto Alert
+		
+	}
+	Actions
+	{
+		ResetTimer
+	}
+}
+state TransformCarDo
+{
+	Conditions
+	{
+		
+	}
+	Actions
+	{
+		Transform Car UntilDone
+		SetState RollOut
+	}
+}
+state RollOut
+{
+	Conditions
+	{
+		if DistanceBetweenOpponent < 40 goto TransformInit
+		if DistanceBetweenOpponent < 45 goto StartVehicleShooting
+		if BeenStruckTime < 2.0 goto TransformInit
+		if OnRoofTime > 1.0 goto TransformInit
+	}
+	Actions
+	{
+		CarDrive "gotoopponent" "overshoot=55.0" "speed=90" "ignorelights" 
+	}
+}
+state StartVehicleShooting
+{
+	Conditions
+	{
+		if DistanceBetweenOpponent < 40 goto TransformInit
+		if DistanceBetweenOpponent < 45 goto ForceTranVehicleShoot
+		if DistanceBetweenOpponent > 45 goto RollOut
+		if BeenStruckTime < 2.0 goto TransformInit
+		if OnRoofTime > 1.0 goto TransformInit
+	}
+	Actions
+	{
+		CarDrive "gotoopponent" "overshoot=55.0" "speed=90" "ignorelights" "shootatopp"
+	}
+}
+state ForceTranVehicleShoot
+{
+	Conditions
+	{
+		if DistanceBetweenOpponent < 40 goto TransformInit
+		if DistanceBetweenOpponent < 45 goto StartVehicleShooting
+		if DistanceBetweenOpponent > 45 goto RollOut
+		if BeenStruckTime < 2.0 goto TransformInit
+		if OnRoofTime > 1.0 goto TransformInit
+	}
+	Actions
+	{
+		EngageOpponentTC
+	}
+}
+
+state Alert
+{
+	Conditions
+	{
+		if RobotForm == 0.0 goto Init
+
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > 5.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if OpponentOverlapTime > 5.0 goto UnStickFromOpponent
+
+		
+
+		if HasPickup "Pole" == 1.0 AND
+		if CanApproach == 1.0 goto MeleeApproach
+
+		if HasPickup == 1.0 goto PickupAttack
+
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+
+		
+		if AlwaysTrue < "RAND*3.0" AND
+		if CanApproach == 1.0 goto SpecialOrTechnique
+
+
+		if CanApproach == 1.0 goto MeleeApproach
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		SetFlag "TakeHitRestore"
+		SetPhysicsState "immunetoshots=true" "immunetomelee=false" "immunetothrown=false"
+		SetState AttackRanged
+	}
+}
+state SpecialOrTechnique
+{
+	conditions
+	{
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+		if AlwaysTrue < "RAND*4.0" goto ChooseTechnique
+		
+		if Timer > 0.1 goto Alert
+	}
+	actions
+	{
+		ResetTimer 
+	}
+	
+}
+state ChooseTechnique
+{
+	conditions
+	{
+		if AlwaysTrue > "RAND*5.0" goto Agile
+
+		if AlwaysTrue > "RAND*4.0" goto Slammer
+		
+
+		if AlwaysTrue < "RAND*2.0" goto PickupAttack
+		
+		if Timer > 0.1 goto Alert
+	}
+	actions
+	{
+		ResetTimer 
+	}
+}
+state AttackRanged
+{
+	Conditions
+	{
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > 5.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0.0 goto NoOpponent
+		
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+		
+		if CanApproach == 1.0 goto Alert
+
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		if CanApproach == 0.0 AND
+		if LOSTimer > 1.0 AND
+		if DistanceBetweenOpponent < ClosestApproachRangedMin goto Retreat
+
+		if PickupAvailable == 1.0 AND
+		if CanApproach == 0.0 AND
+		if DistanceBetweenOpponent < 80 AND
+		if DistanceBetweenOpponent > 10 AND
+		if Timer > "(3.0+(RAND*3.0)-(6.0*PICKUPRATE))" AND
+		if AlwaysTrue 0.8 > "ThrashedPhys" goto PickupAttack
+
+
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		ResetTimer
+		SetPhysicsState "immunetoshots=true" "immunetomelee=false" "immunetothrown=false"
+		SetStrafe
+		EngageOpponent "goalrange=1.0" "fireinterval=((0.1-ThrashedMelee)/FIRERATE)" "firerange=90.0" "jinktime=2.0" "spread=0.1"
+	}
+}
+
+
+state UnStickFromOpponent
+{
+	Conditions
+	{
+		if Timer > 3.0 goto Alert
+		if GotOpponent == 0.0 goto NoOpponent
+	}
+	Actions
+	{
+		ResetTimer
+		Retreat "goalrange=1.0" "retreatrange=40.0"
+		SetState Alert
+	}
+}
+
+state PickupAttack
+{
+	Conditions
+	{
+		if StuckTime > 1.0 goto Alert
+		if Timer > 4.0 goto Alert
+
+		if PickupAvailable == 0.0 AND
+		if HasPickup == 0.0 goto Alert
+
+		if HasPickup == 0.0 AND
+		if CanApproach == 1.0 goto Alert
+
+		if HasPickup == 1.0 AND
+		if DistanceBetweenOpponent < 10 goto PickupPoleAttack
+
+		if HasPickup == 0.0 AND
+		if DistanceBetweenOpponent < 15 goto Alert
+
+		if DistanceBetweenOpponent > 45 goto PickupForceThrow
+		if HasPickup == 1.0 goto PickupForceThrow
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe false
+		EngageOpponentWithPickup "acquirerange=1.0" "throwrange=45.0"
+		SetState Alert
+	}
+}
+
+state SpecialPickupAttack
+{
+	Conditions
+	{
+		if StuckTime > 1.0 goto Alert
+		if Timer > 4.0 goto Alert
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe false
+		EngageOpponentWithPickup "acquirerange=1.0" "throwrange=45.0"
+		SetState Alert
+	}
+}
+
+
+state PickupForceThrow
+{
+	Conditions
+	{
+		if HasPickup == 0.0 goto Alert
+	}
+	Actions
+	{
+		EngageOpponentWithPickup "throwrange=1000000.0" "dontpickup"
+		; Attempt to catch error cases
+		Idle 1.0
+		SetState PickupForceThrow
+	}
+}
+state Agile
+{
+	Conditions
+	{
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if OpponentOverlapTime > 10.0 goto UnStickFromOpponent
+
+		if HasPickup == 1.0 goto PickupAttack
+
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+
+		if DistanceBetweenOpponent > 10.0 AND
+		if DistanceBetweenOpponent < 12.0 goto RollingAssault
+
+		if DistanceBetweenOpponent > 2.0 AND
+		if DistanceBetweenOpponent < 4.0 goto Boot
+
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		if CanApproach == 0.0 goto Alert
+
+		if PickupAvailable == 1.0 AND
+		if CanApproach == 0.0 AND
+		if DistanceBetweenOpponent < 55 AND
+		if DistanceBetweenOpponent > 10 AND
+		if Timer > "(3.0+(RAND*3.0)-(6.0*PICKUPRATE))" AND
+		if AlwaysTrue 0.8 > "ThrashedPhys" goto PickupAttack
+
+		
+		
+		if AlwaysTrue < "RAND*3.0" AND
+		if CanApproach == 1.0 goto SpecialOrTechnique
+
+
+		
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		SetPhysicsState "immunetoshots=true" "immunetomelee=false" "immunetothrown=false"
+		SetStrafe
+		EngageOpponent "goalrange=0.0" "fireinterval=((0.1-ThrashedMelee)/FIRERATE)" "firerange=90.0"  "spread=0.1"
+	}
+}
+state RollingAssault
+{
+	Conditions
+	{
+		if Timer > 3.0 goto MeleeApproach
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if OpponentOverlapTime > 10.0 goto UnStickFromOpponent
+
+		if HasPickup == 1.0 goto PickupAttack
+
+
+		if DistanceBetweenOpponent > 10.0 AND
+		if DistanceBetweenOpponent < 12.0 goto RollingAssault
+
+		if AlwaysTrue < "RAND*3.0" goto Slammer
+		
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+		
+		
+		if AlwaysTrue < "RAND*5.0" AND
+		if CanApproach == 1.0 goto SpecialOrTechnique
+
+		
+
+		if DistanceBetweenOpponent < 4.0 AND
+		if DistanceBetweenOpponent > 2.0 goto Boot
+
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		if CanApproach == 0.0 goto Alert
+
+		if PickupAvailable == 1.0 AND
+		if CanApproach == 0.0 AND
+		if DistanceBetweenOpponent < 55 AND
+		if DistanceBetweenOpponent > 10 AND
+		if Timer > "(3.0+(RAND*3.0)-(6.0*PICKUPRATE))" AND
+		if AlwaysTrue 0.8 > "ThrashedPhys" goto PickupAttack
+
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+		if Timer > 3.0 goto MeleeApproach
+	}
+	Actions
+	{
+
+		SetPhysicsState "immunetoshots=true" "immunetomelee=false" "immunetothrown=false"
+		ResetTimer
+		SetStrafe
+		CloseStrafe "MinAngle=110" "MaxAngle=140" "Range=13.0" "Time=5.0" "Roll" 
+		;DoAttack "roll"
+		;EngageOpponent "goalrange=1.0" 
+		SetState Agile
+	}
+}
+
+state Boot
+{
+	Conditions
+	{
+		if Timer > 3.0 goto MeleeApproach
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if OpponentOverlapTime > 10.0 goto UnStickFromOpponent
+
+		if HasPickup == 1.0 goto PickupAttack
+
+
+		if DistanceBetweenOpponent > 10.0 AND
+		if DistanceBetweenOpponent < 12.0 goto RollingAssault
+
+	
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+		
+		
+		if AlwaysTrue < "RAND*2.0" AND
+		if CanApproach == 1.0 goto SpecialOrTechnique
+
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		if CanApproach == 0.0 goto Alert
+
+		if PickupAvailable == 1.0 AND
+		if CanApproach == 0.0 AND
+		if DistanceBetweenOpponent < 55 AND
+		if DistanceBetweenOpponent > 10 AND
+		if Timer > "(3.0+(RAND*3.0)-(6.0*PICKUPRATE))" AND
+		if AlwaysTrue 0.8 > "ThrashedPhys" goto PickupAttack
+
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+		
+		if Timer == 0.6 goto Agile
+	}
+	Actions
+	{
+		ResetTimer
+		DoAttack "kick"
+	
+		EngageOpponent "goalrange=1.0" 
+		SetState MeleeApproach
+	}
+}
+state Slammer
+{
+	Conditions
+	{
+		OnMacro AttackPOI goto AttackPOI
+		
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if OpponentOverlapTime > 10.0 goto UnStickFromOpponent
+
+		if HasPickup == 1.0 goto PickupAttack
+
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+		if DistanceBetweenOpponent < 10.0 goto GunnerAttack
+
+		
+		if DistanceBetweenOpponent < 5.0 goto GunnerBlowAway
+
+		if DistanceBetweenOpponent < 2.0 goto MeleeAttack
+
+		if CanApproach == 0.0 goto Alert
+
+		if PickupAvailable == 1.0 AND
+		if CanApproach == 0.0 AND
+		if DistanceBetweenOpponent < 55 AND
+		if DistanceBetweenOpponent > 10 AND
+		if Timer > "(3.0+(RAND*3.0)-(6.0*PICKUPRATE))" AND
+		if AlwaysTrue 0.8 > "ThrashedPhys" goto PickupAttack
+
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		SetPhysicsState "immunetoshots=true" "immunetomelee=false" "immunetothrown=false"
+		SetStrafe
+		EngageOpponent "goalrange=1.0" "fireinterval=((0.1-ThrashedMelee)/FIRERATE)" "firerange=90.0"  "spread=0.1"
+	}
+}
+state GunnerAttack
+{
+	Conditions
+	{
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0 goto NoOpponent
+
+		if OpponentOverlapTime > 10.0 goto UnStickFromOpponent
+
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+		if CanApproach == 0.0 AND
+		if Timer > 1.5 AND
+		if DistanceBetweenOpponent > AutoMeleeRangeMax goto Alert
+
+		if Timer > 1.5 AND
+		if DistanceBetweenOpponent > AutoMeleeRangeMax goto PickupAttack
+
+		
+		
+		
+		if DistanceBetweenOpponent < 5.0 goto GunnerBlowAway
+
+		if Timer > 0.3 AND
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+		
+		if DistanceBetweenOpponent > 50 goto TransformCarInit
+
+		if Timer == 3.0 goto Agile
+		
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		ResetTimer
+		EngageOpponentTC "goalrange=10.0" "firerange=20.0" "RapidShootRange=20.0" "fireId=0" "firetimemin=0.3" "firetimemax=0.5"
+		;CloseStrafe "MinAngle=80" "MaxAngle=140" "Range=8.0" "Time=4.0" "Jump" "Slam"
+		SetState GunnerBlowAway
+	}
+}
+state GunnerBlowAway
+{
+	Conditions
+	{
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0 goto NoOpponent
+
+		if OpponentOverlapTime > 10.0 goto UnStickFromOpponent
+
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+		if AlwaysTrue < "RAND*3.0" AND
+		if CanApproach == 1.0 goto SpecialOrTechnique
+
+		if CanApproach == 0.0 AND
+		if DistanceBetweenOpponent > AutoMeleeRangeMax goto Alert
+
+		if CanApproach == 1.0 AND
+		if DistanceBetweenOpponent > AutoMeleeRangeMax goto Agile
+
+		
+
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		;DoAttack "slammove"
+		SetStrafe
+		CloseStrafe "MinAngle=80" "MaxAngle=140" "Range=8.0" "Time=4.0" "Jump" "Slam"
+		SetState AttackCloseInit
+	}
+}
+state PickupAssault
+{
+	Conditions
+	{
+		
+		if Timer > 2.0 goto Alert
+
+		if PickupAvailable == 0.0 AND
+		if HasPickup == 0.0 goto Alert
+
+		
+		if HasPickup == 1.0 AND
+		if DistanceBetweenOpponent < 10 goto PickupPoleAttack
+
+		if DistanceBetweenOpponent > 45 goto PickupForceThrow
+		if HasPickup == 1.0 goto PickupForceThrow
+		
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe false
+		EngageOpponentWithPickup "acquirerange=1.0" "throwrange=45.0"
+		SetState PickupForceThrow
+	}
+}
+state PickupPoleAttack
+{
+	conditions
+	{
+		if Timer > 1.0 AND
+		if HasPickup == 1.0 goto PickupForceThrow
+		if Timer > 1.0 AND
+		if HasPickup == 0.0 goto Alert
+		if Timer > 1.3 goto Alert
+	}
+	actions
+	{
+		ResetTimer 
+		EngageOpponent "goalrange=1.0" "firerange=10.0" "instant" "chainwithdelay=0.8" "numshots=1"
+	}
+}
+state MeleeApproach
+{
+	Conditions
+	{
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0.0 goto NoOpponent
+
+		if OpponentOverlapTime > 10.0 goto UnStickFromOpponent
+
+		if HasPickup == 1.0 goto PickupAttack
+		
+		
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		
+		
+		
+		
+		
+		if AlwaysTrue < "RAND*3.0" AND
+		if CanApproach == 1.0 goto SpecialOrTechnique
+
+		if CanApproach == 0.0 goto Alert
+
+		if PickupAvailable == 1.0 AND
+		if CanApproach == 0.0 AND
+		if DistanceBetweenOpponent < 55 AND
+		if DistanceBetweenOpponent > 10 AND
+		if Timer > "(3.0+(RAND*3.0)-(6.0*PICKUPRATE))" AND
+		if AlwaysTrue 0.8 > "ThrashedPhys" goto PickupAttack
+
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		SetPhysicsState "immunetoshots=true" "immunetomelee=false" "immunetothrown=false"
+		SetStrafe
+		EngageOpponent "goalrange=0.0" "fireinterval=((0.1-ThrashedMelee)/FIRERATE)" "firerange=90.0" "spread=0.1"
+	}
+}
+
+state MeleeAttack
+{
+	Conditions
+	{
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0 goto NoOpponent
+
+		if OpponentOverlapTime > 10.0 goto UnStickFromOpponent
+
+		if CanApproach == 0.0 AND
+		if DistanceBetweenOpponent > AutoMeleeRangeMax goto Alert
+
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+		if AlwaysTrue < "RAND*1.0" AND
+		if CanApproach == 1.0 goto SpecialOrTechnique
+
+		if CanApproach == 1.0 AND
+		if DistanceBetweenOpponent > AutoMeleeRangeMax goto MeleeApproach
+
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		SetStrafe false
+		EngageOpponent "goalrange=1.0" "firerange=7.0" "instant" "chainwithdelay=0.8" "numshots=1"
+		SetState AttackCloseInit
+	}
+}
+
+state Retreat
+{
+	Conditions
+	{
+		if RobotForm == 0.0 goto Init
+		OnMacro StuckTime goto StuckEscape
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0 goto NoOpponent
+
+		if CanApproach == 1.0 goto Alert
+
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		if DistanceBetweenOpponent > ClosestApproachRangedMax goto AttackRanged
+		if DistanceBetweenOpponent > 100 goto TransformCarInit
+
+	}
+	Actions
+	{
+		Retreat "goalrange=1.0" "jinktime=2.0" "retreatrange=40.0" "fireinterval=0.1" "spread=0.2"
+	}
+}
+
+state AttackCloseInit
+{
+	Conditions
+	{
+		OnMacro AttackPOI goto AttackPOI
+
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0 goto NoOpponent
+
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		if Timer == 0.0 AND
+		if AlwaysTrue > "RAND*2.0" goto MeleeStrafeClose
+
+		if Timer > 2.0 AND
+		if AlwaysTrue > "RAND*2.0" goto MeleeStrafeShoot
+
+		;;;JUMPING taken out at JB request
+		;if Timer == 3.0 AND
+		;if AlwaysTrue > "RAND*4.0" goto MeleeStrafeJump
+
+		;if Timer == 4.0 AND
+		;if AlwaysTrue > "RAND*4.0" goto MeleeStrafeSlam
+
+
+
+		if Timer > 2.0 goto AttackCloseWait
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		MoveAwayFromPlayer "face" "100.0"
+	}
+}
+
+state AttackCloseWait
+{
+	Conditions
+	{
+		OnMacro AttackPOI goto AttackPOI
+
+		if StickToKeyLocation == 1.0 and
+		if OutsideKeyLocation > -10.0 goto ReEnterKeyLocation
+
+		if GotOpponent == 0 goto NoOpponent
+
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+
+		if CanApproach == 0.0 goto Alert
+
+		if CanApproach == 1.0 AND
+		if Timer > 2.0 goto MeleeApproach
+
+		if Timer > 2.0 goto AttackRanged
+
+		if DistanceBetweenOpponent < AutoMeleeRangeMin goto MeleeAttack
+
+		OnMacro StuckTime goto StuckEscape
+		OnMacro StuckJump goto StuckEscapeJump
+		OnMacro StuckRoll goto StuckEscapeRoll
+	}
+
+	Actions
+	{
+		ResetTimer
+		SetStrafe
+		EngageOpponent "goalrange=12.0" "fireinterval=((0.1-ThrashedMelee)/FIRERATE)" "firerange=20.0" "spread=0.1" "retreat"
+	}
+}
+
+; Appears unused
+;state MeleeStrafeDodge
+;{
+;	Conditions
+;	{
+;		if GotOpponent == 0.0 goto Alert
+;		if Timer > 3.0 goto Alert
+;	}
+;	Actions
+;	{
+;		ResetTimer
+;		CloseStrafe "MinAngle=50" "MaxAngle=140" "Range=7.0" "Time=4.0" "Roll"		; "Jump" "Slam"
+;		SetState Alert
+;	}
+;}
+
+state MeleeStrafeJump
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto Alert
+		if Timer > 4.0 goto Alert
+	}
+	Actions
+	{
+		ResetTimer
+		CloseStrafe "MinAngle=80" "MaxAngle=140" "Range=6.5" "Time=4.0" "Jump"
+		SetState Alert
+	}
+}
+
+state MeleeStrafeSlam
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto Alert
+		if Timer > 4.0 goto Alert
+	}
+	Actions
+	{
+		ResetTimer
+		CloseStrafe "MinAngle=80" "MaxAngle=140" "Range=6.5" "Time=4.0" "Jump" "Slam"
+		SetState Alert
+	}
+}
+
+state MeleeStrafeClose
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto Alert
+		if Timer > 4.0 goto Alert
+	}
+	Actions
+	{
+		ResetTimer
+		CloseStrafe "MinAngle=80" "MaxAngle=140" "Range=5.5" "Time=4.0"
+		SetState Alert
+	}
+}
+
+state MeleeStrafeShoot
+{
+	Conditions
+	{
+		if GotOpponent == 0.0 goto Alert
+		if Timer > 5.0 goto Alert
+	}
+	Actions
+	{
+		ResetTimer
+		CloseStrafe "MinAngle=110" "MaxAngle=140" "Range=13.0" "Time=5.0" "RollAway" "Roll" 
+		SetState Alert
+	}
+}
+
+state TakenHitMelee
+{
+	Conditions
+	{
+		if AlwaysTrue 0.75 < "ThrashedMelee" AND
+		if Ability "Block" == 1.0 AND
+		if BlockRequest == 1.0 AND
+		if Param "Aggression" < 0.1 goto BlockAttackBegin
+
+		if Ability "Block" == 1.0 AND
+		if BlockRequest "forceonmelee" == 1.0 goto ForceBlock
+		
+		
+		
+		if AlwaysTrue == 1.0 goto Alert
+	}
+	Actions
+	{
+		ResetTimer
+	}
+}
+
+state TakenHitPhysics
+{
+	Conditions
+	{
+		if BeenStruck == 1.0 goto BeenStruck
+		if AlwaysTrue == 1.0 goto Alert
+	}
+	Actions
+	{
+		SetLocator "strikesource=20.0"
+	}
+}
+
+state TakenHitReflect
+{
+	Conditions
+	{
+		if Ability "Block" == 0.0 goto Alert
+		if AlwaysTrue == 1.0 goto ForceBlock
+	}
+}
+
+state ForceBlock
+{
+	Conditions
+	{
+		if RobotForm == 0.0 goto Init
+		if CanOperateSpecialMove == 1.0 goto CarryOutSpecialMove
+		if Timer > 0.1 goto BlockAttackEnd
+	}
+	Actions
+	{
+		ResetTimer
+		EngageOpponentTC "goalrange=1.0" "firerange=10.0" "RapidShootRange=10.0" "fireId=0" "firetimemin=0.3" "firetimemax=0.5"
+		SetState BlockAttackEnd
+	}
+}
+
+state BlockAttackBegin
+{
+	Conditions
+	{
+		if DistanceBetweenOpponent "ThirdScaleOnLargeCreature" > 6.0 goto BlockAttackEnd
+	}
+	Actions
+	{
+		SetBlocking "time=0.6" "faceopp"
+		SetState BlockAttackEnd
+	}
+}
+
+; Appears unused
+;state BlockAttackDo
+;{
+;	Actions
+;	{
+;		Idle "frames=1"		; As SetStrafe cannot be easily undone
+;		SetStrafe false
+;		DoAttack "slammove"
+;		SetState BlockAttackEnd
+;	}
+;}
+
+state BlockAttackEnd
+{
+	Actions
+	{
+		
+		SetState Alert
+	}
+}
+
+state BeenStruck
+{
+	Conditions
+	{
+		if StuckTime > 1.0 goto BeenStruckExit
+		if GotOpponent == 1.0 goto BeenStruckExit
+	}
+	Actions
+	{
+		SetFlag "TakeHitPhysics=true"
+		SetWalkToLocatorTimer Max
+		GoToLocator "run" "goalrange=3.0" "xz_rangecheck"
+		SetState BeenStruckExit
+	}
+}
+
+state BeenStruckExit
+{
+	Conditions
+	{
+		if GotOpponent == 1.0 goto Alert
+	}
+	Actions
+	{
+		Idle 3.0
+		SetWalkToLocatorTimer 0.0
+		SetState NoOpponent
+	}
+}
+
+state StuckEscape
+{
+	Actions
+	{
+		SetFlag "TempBlock=true"
+		SetStrafe false
+		DoAttack "jumporkick"
+		SetFlag "TempBlock=false"
+		SetState Alert
+	}
+}
+
+state StuckEscapeJump
+{
+	Actions
+	{
+		SetFlag "TempBlock=true"
+		SetStrafe false
+		DoAttack "jump"
+		SetFlag "TempBlock=false"
+		SetState Alert
+	}
+}
+
+state StuckEscapeRoll
+{
+	Actions
+	{
+		SetFlag "TempBlock=true"
+		SetStrafe false
+		MoveSideways "MinDist=8.0" "MaxDist=10.0" "RayTime=0.4" 
+		SetFlag "TempBlock=false"
+		SetState Alert
+	}
+}
+
+
+state AttackPOI
+{
+	Conditions
+	{
+		if BeenStruckTime <= 5.0 goto Alert
+		if HasActivePOI == 0.0 goto Alert
+	}
+	Actions
+	{
+		AttackPOI
+	}
+}
+
+state SpecialAssaultStart
+{
+	
+	actions
+	{
+		ResetTimer
+		
+
+		SetPhysicsState "immunetoshots=true" "immunetomelee=true" "immunetothrown=true"		
+		SetState SpecialRushCharge
+	}
+	
+}
+state SpecialRushChargeIntro
+{
+	conditions
+	{
+		
+		
+		
+
+		if CanOperateSpecialMove == 0.0 goto Alert
+
+		if Timer > 0.1 goto SpecialMoveChargeIntro;1.4 goto SpecialMoveChargeIntro
+	
+
+		
+	}
+	Actions
+	{
+		ResetTimer
+		
+		;EngageOpponent "goalrange=1.0" "firerange=-1.0" "#Walk" "holdspecialflail" 
+	}
+	
+}
+state SpecialMoveChargeIntro
+{
+	Conditions
+	{
+		if CanOperateSpecialMove == 0.0 goto Alert
+		
+
+		if OnPath == 0.0 AND
+		if TimeOffPath > 5.0 goto SpecialMoveChargeIntroReFindPath
+	}
+	Actions
+	{
+		ResetTimer
+		SpecialCharge "delay=3" "range=10.0" "overshoot=3"
+		SetState Alert		; Probably unnecessary
+	}
+}
+state SpecialMoveChargeIntroReFindPath
+{
+	Conditions
+	{
+		if OnPath == 1.0 AND
+		if Timer > 0.2 goto SpecialMoveChargeIntro
+	}
+	Actions
+	{
+		ResetTimer
+		GoToNearestNode
+	}
+}
+state SpecialRushCharge
+{
+	conditions
+	{
+		
+		
+		;if DistanceBetweenOpponent < 7 goto SpecialChargeBoot
+
+		if CanOperateSpecialMove == 0.0 goto Alert
+
+		if Timer > 2.0 goto SpecialMoveCharge
+	
+
+		
+	}
+	Actions
+	{
+		ResetTimer
+		EngageOpponent "goalrange=1.0" "firerange=-1.0" "#Walk" "holdspecialflail" 
+	}
+	
+}
+
+state SpecialMoveCharge
+{
+	Conditions
+	{
+		if CanOperateSpecialMove == 0.0 goto Alert
+		;if DistanceBetweenOpponent < 7 goto SpecialChargeBoot
+		
+
+		if OnPath == 0.0 AND
+		if TimeOffPath > 5.0 goto SpecialMoveChargeReFindPath
+	}
+	Actions
+	{
+		SetPhysicsState "immunetoshots=true" "immunetomelee=false" "immunetothrown=false"
+		ResetTimer
+		SpecialCharge "delay=3" "range=10.0" "overshoot=3"
+		SetState Alert		; Probably unnecessary
+	}
+}
+state SpecialMoveChargeReFindPath
+{
+	Conditions
+	{
+		if OnPath == 1.0 AND
+		if Timer > 0.2 goto SpecialMoveCharge
+	}
+	Actions
+	{
+		ResetTimer
+		GoToNearestNode
+	}
+}
+state SpecialChargeBoot
+{
+	Conditions
+	{
+		if Timer > 1.0 goto SpecialRushCharge
+	}
+	Actions
+	{
+		ResetTimer
+		DoAttack "kick"
+	
+		SetState SpecialRushCharge
+	}
+}
+state SpecialChargeFlailStop
+{
+	conditions
+	{
+		
+			
+
+		if CanOperateSpecialMove == 0.0 goto Alert
+		if Timer > 3.0 goto SpecialChargeFlailRush
+	
+
+		
+	}
+	Actions
+	{
+		ResetTimer
+		SetStrafe False 
+		EngageOpponent "goalrange=10000.0" 
+	}
+	
+}
+
+
+
+state CarryOutSpecialMove
+{
+	Conditions
+	{
+		
+		if Ability "SpecialCharge" == 1.0				goto SpecialAssaultStart
+
+		if AlwaysTrue == 1.0 goto Alert
+	}
+}
+
+

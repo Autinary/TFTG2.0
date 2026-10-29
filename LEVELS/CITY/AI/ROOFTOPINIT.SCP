@@ -1,0 +1,1288 @@
+state HubZoneInit
+{
+	actions
+	{
+				
+		
+		;SendToModule "#General" "#LoadCreature=DroneForklift_a"
+		SendToModule "#General" "#BG_LoadCreature=DroneDefault"
+		SendToModule "#General" "#BG_LoadCreature=DroneForklift"
+		SendToModule "#General" "#CountASet=0" "#CountBSet=10" "#CountCSet0" "#CountDSet=0" "#CountSet=0"
+		SendToModule "#General" "#SetMaxOpponents=9" "#SetMaxApproachers=9" "#SetAttackRingSize=20"
+		
+		CreateModule "#AreaRange" "#HubZoneA" "#Trigger=#HubRangeTrackerA" "#AddToRadarOff"
+		CreateModule "#AreaRange" "#HubZoneB" "#Trigger=#HubRangeTrackerB" "#AddToRadarOff"
+		CreateModule "#AreaRange" "#HubZoneC" "#Trigger=#HubRangeTrackerC" "#AddToRadarOff"
+		CreateModule "#AreaRange" "#HubZoneD" "#Trigger=#HubRangeTrackerD" "#AddToRadarOff"
+		;CreateModule "#Goto" "#HubZoneA" "#Spline=A5C2KeyLocCentre" "#SetPosition=#HubRangeTrackerA" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" ; "#Radius=250"
+		;CreateModule "#Goto" "#HubZoneB" "#Spline=A5C2KeyLocCentre" "#SetPosition=#HubRangeTrackerB" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" ; "#Radius=170" 
+		;CreateModule "#Goto" "#HubZoneC" "#Spline=A5C2KeyLocCentre" "#SetPosition=#HubRangeTrackerC" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" ; "#Radius=170"
+		;CreateModule "#Goto" "#HubZoneD" "#Spline=A5C2KeyLocCentre" "#SetPosition=#HubRangeTrackerD" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" ; "#Radius=250"
+		
+		SetState TrackHubZone
+
+
+	}
+
+}
+state TrackHubZone
+{
+	conditions
+	{
+
+		;;; GlobalActionRing
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+		if module "CreatureSwap InArea" == 1.0 goto PrepareSwap	
+		if module "AltChapter3 InArea" == 1.0 goto Chapter3Alt_Enter
+		
+
+		;;;No Active Zone
+		if module "HubZoneA InArea" == 1.0 and        
+			if module "HubZoneB InArea" == 0.0 and
+				if module "HubZoneC InArea" == 0.0 and 
+					if module "HubZoneD InArea" == 0.0 and        
+						if module "General GetCountC" == 0.0 goto SetCToZoneA
+		if module "HubZoneB InArea" == 1.0 and         
+			if module "HubZoneA InArea" == 0.0 and        
+				if module "HubZoneC InArea" == 0.0 and 
+					if module "HubZoneD InArea" == 0.0 and         
+						if module "General GetCountC" == 0.0 goto SetCToZoneB
+		if module "HubZoneC InArea" == 1.0 and         
+			if module "HubZoneA InArea" == 0.0 and        
+				if module "HubZoneB InArea" == 0.0 and 
+					if module "HubZoneD InArea" == 0.0 and        
+						if module "General GetCountC" == 0.0 goto SetCToZoneC
+		if module "HubZoneD InArea" == 1.0 and        
+			if module "HubZoneB InArea" == 0.0 and
+				if module "HubZoneC InArea" == 0.0 and 
+					if module "HubZoneA InArea" == 0.0 and        
+						if module "General GetCountC" == 0.0 goto SetCToZoneD
+
+
+		;;;Zone Entry		
+		if module "General GetCountC" == 1.0 and
+			if module "General GetCountD" == 0.0 and
+				if module "HubZoneA InArea" == 1.0 goto InHubZoneA ;;; Near NotBurgerKing
+		if module "General GetCountC" == 2.0 and
+			if module "General GetCountD" == 0.0 and
+				if module "HubZoneB InArea" == 1.0 goto InHubZoneB ;;; Near BeeCrashSite
+		if module "General GetCountC" == 3.0 and
+			if module "General GetCountD" == 0.0 and
+				if module "HubZoneC InArea" == 1.0 goto InHubZoneC ;;; Near Second D5C4 Fight area
+		if module "General GetCountC" == 4.0 and
+			if module "General GetCountD" == 0.0 and
+				if module "HubZoneD InArea" == 1.0 goto InHubZoneD ;;; Downtown
+
+
+
+		;;;Zone Exit
+		if module "ZoneDrones Energy" <= 0.0 and
+			if module "ZoneDrones2 Energy" <= 0.0 and
+				if module "ZoneDrones3 Energy" <= 0.0 and
+					if module "ZoneDrones4 Energy" <= 0.0 and
+						if module "General GetCountD" == 1.0 goto SetCToNoZone
+		if module "HubZoneA InArea" == 0.0 and        
+			if module "General GetCountC" == 1.0 and
+				if module "ZoneDrones PlayerRange" > 185 and
+					if module "ZoneDrones2 PlayerRange" > 185 and
+						if module "ZoneDrones3 PlayerRange" > 185 and
+							if module "ZoneDrones4 PlayerRange" > 185 goto SetCToNoZone
+		if module "HubZoneB InArea" == 0.0 and        
+			if module "General GetCountC" == 2.0 and
+				if module "ZoneDrones PlayerRange" > 185 and
+					if module "ZoneDrones2 PlayerRange" > 185 and
+						if module "ZoneDrones3 PlayerRange" > 185 and
+							if module "ZoneDrones4 PlayerRange" > 185 goto SetCToNoZone
+		if module "HubZoneC InArea" == 0.0 and         
+			if module "General GetCountC" == 3.0 and
+				if module "ZoneDrones PlayerRange" > 185 and
+					if module "ZoneDrones2 PlayerRange" > 185 and
+						if module "ZoneDrones3 PlayerRange" > 185 and
+							if module "ZoneDrones4 PlayerRange" > 185 goto SetCToNoZone
+		if module "HubZoneD InArea" == 0.0 and        
+			if module "General GetCountC" == 4.0 and
+				if module "ZoneDrones PlayerRange" > 185 and
+					if module "ZoneDrones2 PlayerRange" > 185 and
+						if module "ZoneDrones3 PlayerRange" > 185 and
+							if module "ZoneDrones4 PlayerRange" > 185 goto SetCToNoZone
+
+
+				 
+		
+		
+		
+		
+		if module "General GetCount" == 9.0 goto CycleReset2
+		if module "General GetCountA" == 9.0 goto CycleReset
+
+		
+		if Timer > 0.2 goto CycleCount
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetCToNoZone
+{
+	actions
+	{
+		DestroyModule "#ZoneDrones"
+		DestroyModule "#ZoneDrones2"
+		DestroyModule "#ZoneDrones3"
+		DestroyModule "#ZoneDrones4"
+		
+		DestroyModule "#HubZoneA"
+		DestroyModule "#HubZoneB"
+		DestroyModule "#HubZoneC"
+		DestroyModule "#HubZoneD"
+		CreateModule "#AreaRange" "#HubZoneA" "#Trigger=#HubRangeTrackerA" "#AddToRadarOff"
+		CreateModule "#AreaRange" "#HubZoneB" "#Trigger=#HubRangeTrackerB" "#AddToRadarOff"
+		CreateModule "#AreaRange" "#HubZoneC" "#Trigger=#HubRangeTrackerC" "#AddToRadarOff"
+		CreateModule "#AreaRange" "#HubZoneD" "#Trigger=#HubRangeTrackerD" "#AddToRadarOff"
+		
+		;CreateModule "#Goto" "#HubZoneA" "#Spline=A5C2KeyLocCentre" "#SetPosition=#HubRangeTrackerA" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" ; "#Radius=250"
+		;CreateModule "#Goto" "#HubZoneB" "#Spline=A5C2KeyLocCentre" "#SetPosition=#HubRangeTrackerB" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" ; "#Radius=170" 
+		;CreateModule "#Goto" "#HubZoneC" "#Spline=A5C2KeyLocCentre" "#SetPosition=#HubRangeTrackerC" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" ; "#Radius=170"
+		;CreateModule "#Goto" "#HubZoneD" "#Spline=A5C2KeyLocCentre" "#SetPosition=#HubRangeTrackerD" "#count=1" "#maxalive=1" "#Type=DroneForklift_a" "#AddToRadarOff" "#Unstoppable" "#SuppressShield" "#Friend" "#Script=StandAndWait" ; "#Radius=250"
+		
+		SendToModule "#General" "#CountCSet=0" "#CountDSet=0" 
+		SetState TrackHubZone
+
+	}
+}
+state SetCToZoneA
+{
+	actions
+	{
+		SendToModule "#General" "#CountCSet=1" "#CountInc"
+		DestroyModule "#HubZoneB"
+		DestroyModule "#HubZoneC"
+		DestroyModule "#HubZoneD"
+		SetState TrackHubZone
+
+	}
+}
+state SetCToZoneB
+{
+	actions
+	{
+		SendToModule "#General" "#CountCSet=2" "#CountInc"
+		DestroyModule "#HubZoneA"
+		DestroyModule "#HubZoneC"
+		DestroyModule "#HubZoneD"
+		SetState TrackHubZone
+
+	}
+}
+state SetCToZoneC
+{
+	actions
+	{
+		SendToModule "#General" "#CountCSet=3" "#CountInc"
+		DestroyModule "#HubZoneB"
+		DestroyModule "#HubZoneA"
+		DestroyModule "#HubZoneD"
+		SetState TrackHubZone
+
+	}
+}
+state SetCToZoneD
+{
+	actions
+	{
+		SendToModule "#General" "#CountCSet=4" 
+		DestroyModule "#HubZoneB"
+		DestroyModule "#HubZoneC"
+		DestroyModule "#HubZoneA"
+		SetState TrackHubZone
+
+	}
+}
+state CycleCount
+{
+	actions
+	{
+		SendToModule "#General" "#CountAInc" 
+		SetState TrackHubZone
+
+	}
+}
+state CycleReset
+{
+	actions
+	{
+		SendToModule "#General" "#CountASet=0" 
+		SetState TrackHubZone
+
+	}
+}
+state CycleReset2
+{
+	actions
+	{
+		SendToModule "#General" "#CountSet=0"
+		SetState TrackHubZone
+
+	}
+}
+state InHubZoneA 
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+
+		
+		if module "General GetCountA" <= 2.0 goto SetZoneADroneGroup1Init
+		if module "General GetCountA" <= 4.0 goto SetZoneADroneGroup2Init
+		if module "General GetCountA" <= 6.0 goto SetZoneADroneGroup3Init
+		if module "General GetCountA" <= 9.0 goto SetZoneADroneGroup4Init
+		
+
+		
+		if Timer > 0.2 goto SetZoneADroneGroup1Init
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneADroneGroup1Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 2.0 goto SetZoneADroneGroup2Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneADroneGroup1
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneADroneGroup2Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 4.0 and
+			if module "General GetCountB" > 2.0 goto SetZoneADroneGroup3Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneADroneGroup2
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneADroneGroup3Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 6.0 and
+			if module "General GetCountB" > 4.0 goto SetZoneADroneGroup4Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneADroneGroup3
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneADroneGroup4Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 9.0 and
+			if module "General GetCountB" > 6.0 goto SetZoneADroneGroup1Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneADroneGroup4
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneADroneGroup1
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=2" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos3" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneARooftopPos6" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos9" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos5" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneADroneGroup2
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=4" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos2" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos7" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos11" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos4" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneADroneGroup3
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=6" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos5" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos8" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneARooftopPos1" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos6" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneADroneGroup4
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=9" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos3" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos1" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos10" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneARooftopPos7" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		
+		SetState TrackHubZone
+		
+	}
+
+}
+state InHubZoneB 
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+
+		
+		if module "General GetCountA" <= 1.0 goto SetZoneBDroneGroup1Init
+		if module "General GetCountA" <= 2.0 goto SetZoneBDroneGroup2Init
+		if module "General GetCountA" <= 4.0 goto SetZoneBDroneGroup3Init
+		if module "General GetCountA" <= 6.0 goto SetZoneBDroneGroup4Init
+		if module "General GetCountA" <= 7.0 goto SetZoneBDroneGroup5Init
+		if module "General GetCountA" <= 8.0 goto SetZoneBDroneGroup6Init
+		if module "General GetCountA" <= 9.0 goto SetZoneBDroneGroup7Init
+		
+
+		
+		if Timer > 0.2 goto SetZoneBDroneGroup1Init
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneBDroneGroup1Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 1.0 goto SetZoneBDroneGroup2Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneBDroneGroup1
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneBDroneGroup2Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 2.0 and
+			if module "General GetCountB" > 1.0 goto SetZoneBDroneGroup3Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneBDroneGroup2
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneBDroneGroup3Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 4.0 and
+			if module "General GetCountB" > 2.0 goto SetZoneBDroneGroup4Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneBDroneGroup3
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneBDroneGroup4Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 6.0 and
+			if module "General GetCountB" > 4.0 goto SetZoneBDroneGroup5Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneBDroneGroup4
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneBDroneGroup5Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 7.0 and
+			if module "General GetCountB" > 6.0 goto SetZoneBDroneGroup6Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneBDroneGroup5
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneBDroneGroup6Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 8.0 and
+			if module "General GetCountB" > 7.0 goto SetZoneBDroneGroup7Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneBDroneGroup6
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneBDroneGroup7Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 9.0 and
+			if module "General GetCountB" > 8.0 goto SetZoneBDroneGroup1Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneBDroneGroup7
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+
+state SetZoneBDroneGroup1
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=1" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos1" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos2" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneBRooftopPos3" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos4" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneBDroneGroup2
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=2" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos8" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneBRooftopPos9" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos7" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos4" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneBDroneGroup3
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=4" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos10" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneBRooftopPos11" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos12" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneBRooftopPos13" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneBDroneGroup4
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=6" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos15" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos16" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos17" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos18" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneBDroneGroup5
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=7" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos2" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos7" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos11" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos14" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneBDroneGroup6
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=8" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos5" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos8" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos10" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneBRooftopPos15" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneBDroneGroup7
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=9" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos3" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos12" "#ForcePlayerAsOpp" "#AddToRadarOff" 
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos6" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneBRooftopPos10" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state InHubZoneC 
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+
+		
+		if module "General GetCountA" <= 1.0 goto SetZoneCDroneGroup1Init
+		if module "General GetCountA" <= 2.0 goto SetZoneCDroneGroup2Init
+		if module "General GetCountA" <= 4.0 goto SetZoneCDroneGroup3Init
+		if module "General GetCountA" <= 6.0 goto SetZoneCDroneGroup4Init
+		if module "General GetCountA" <= 7.0 goto SetZoneCDroneGroup5Init
+		if module "General GetCountA" <= 9.0 goto SetZoneCDroneGroup6Init
+		
+
+		
+		if Timer > 0.2 goto SetZoneCDroneGroup1Init
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneCDroneGroup1Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 1.0 goto SetZoneCDroneGroup2Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneCDroneGroup1
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneCDroneGroup2Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 2.0 and
+			if module "General GetCountB" > 1.0 goto SetZoneCDroneGroup3Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneCDroneGroup2
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneCDroneGroup3Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 4.0 and
+			if module "General GetCountB" > 2.0 goto SetZoneCDroneGroup4Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneCDroneGroup3
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneCDroneGroup4Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 6.0 and
+			if module "General GetCountB" > 4.0 goto SetZoneCDroneGroup5Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneCDroneGroup4
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneCDroneGroup5Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 7.0 and
+			if module "General GetCountB" > 6.0 goto SetZoneCDroneGroup6Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneCDroneGroup5
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneCDroneGroup6Init
+{
+	conditions
+	{
+		
+		if module "General GetCountB" <= 9.0 and
+			if module "General GetCountB" > 7.0 goto SetZoneCDroneGroup1Init
+		
+		
+
+		
+		if Timer > 0.1 goto SetZoneCDroneGroup6
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+
+state SetZoneCDroneGroup1
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=1" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos1" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos2" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneDRooftopPos3" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos4" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneCDroneGroup2
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=2" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos5" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneDRooftopPos6" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos7" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos4" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneCDroneGroup3
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=4" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos9" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneDRooftopPos10" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos11" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneDRooftopPos12" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneCDroneGroup4
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=6" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos13" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos14" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos7" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos4" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneCDroneGroup5
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=7" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos2" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos7" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos11" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos14" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneCDroneGroup6
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=9" "#CountDSet=1"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos5" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos8" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneDRooftopPos10" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneDRooftopPos6" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state InHubZoneD 
+{
+	conditions
+	{
+		if module "SubMissions GetSubMissionAnyBeenTriggered" == 1.0 goto SubMission_Init
+		if module "ActionRing AnyBeenTriggered"  == 1.0 goto GlobalStartChapter
+
+		
+		if module "General GetCountA" <= 2.0 goto SetZoneDDroneGroup1Init
+		if module "General GetCountA" <= 4.0 goto SetZoneDDroneGroup2Init
+		if module "General GetCountA" <= 6.0 goto SetZoneDDroneGroup3Init
+		if module "General GetCountA" <= 9.0 goto SetZoneDDroneGroup4Init
+		
+		
+
+		
+		if Timer > 0.2 goto SetZoneDDroneGroup1Init
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneDDroneGroup1Init
+{
+	conditions
+	{
+		
+		;if module "General GetCountB" <= 2.0 goto SetZoneDDroneGroup2Init
+
+		if module "General GetCount" <= 1.0 goto SetZoneDDroneGroup1A
+		if module "General GetCount" <= 2.0 goto SetZoneDDroneGroup1B
+		if module "General GetCount" <= 3.0 goto SetZoneDDroneGroup1C
+		if module "General GetCount" <= 4.0 goto SetZoneDDroneGroup1D
+		if module "General GetCount" <= 5.0 goto SetZoneDDroneGroup2A
+		if module "General GetCount" <= 6.0 goto SetZoneDDroneGroup2B
+		if module "General GetCount" <= 7.0 goto SetZoneDDroneGroup2C
+		if module "General GetCount" <= 8.0 goto SetZoneDDroneGroup2D
+		if module "General GetCount" <= 9.0 goto SetZoneDDroneGroup3A
+		
+
+		
+		if Timer > 0.1 goto SetZoneDDroneGroup1A
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneDDroneGroup2Init
+{
+	conditions
+	{
+		
+		;if module "General GetCountB" <= 4.0 and
+		;	if module "General GetCountB" > 2.0 goto SetZoneDDroneGroup3Init
+		
+		
+		if module "General GetCount" <= 1.0 goto SetZoneDDroneGroup2A
+		if module "General GetCount" <= 2.0 goto SetZoneDDroneGroup2B
+		if module "General GetCount" <= 3.0 goto SetZoneDDroneGroup2C
+		if module "General GetCount" <= 4.0 goto SetZoneDDroneGroup2D
+		if module "General GetCount" <= 5.0 goto SetZoneDDroneGroup3A
+		if module "General GetCount" <= 6.0 goto SetZoneDDroneGroup3B
+		if module "General GetCount" <= 7.0 goto SetZoneDDroneGroup3C
+		if module "General GetCount" <= 8.0 goto SetZoneDDroneGroup3D
+		if module "General GetCount" <= 9.0 goto SetZoneDDroneGroup4A
+		
+		if Timer > 0.1 goto SetZoneDDroneGroup2A
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneDDroneGroup3Init
+{
+	conditions
+	{
+		
+		;if module "General GetCountB" <= 6.0 and
+		;	if module "General GetCountB" > 4.0 goto SetZoneDDroneGroup4Init
+		
+		
+		if module "General GetCount" <= 1.0 goto SetZoneDDroneGroup3A
+		if module "General GetCount" <= 2.0 goto SetZoneDDroneGroup3B
+		if module "General GetCount" <= 3.0 goto SetZoneDDroneGroup3C
+		if module "General GetCount" <= 4.0 goto SetZoneDDroneGroup3D
+		if module "General GetCount" <= 5.0 goto SetZoneDDroneGroup4A
+		if module "General GetCount" <= 6.0 goto SetZoneDDroneGroup4B
+		if module "General GetCount" <= 7.0 goto SetZoneDDroneGroup4C
+		if module "General GetCount" <= 8.0 goto SetZoneDDroneGroup4D
+		if module "General GetCount" <= 9.0 goto SetZoneDDroneGroup1A
+		
+		if Timer > 0.1 goto SetZoneDDroneGroup3A
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+state SetZoneDDroneGroup4Init
+{
+	conditions
+	{
+		
+		;if module "General GetCountB" <= 9.0 and
+		;	if module "General GetCountB" > 6.0 goto SetZoneDDroneGroup1Init
+		
+		
+		if module "General GetCount" <= 1.0 goto SetZoneDDroneGroup4A
+		if module "General GetCount" <= 2.0 goto SetZoneDDroneGroup4B
+		if module "General GetCount" <= 3.0 goto SetZoneDDroneGroup4C
+		if module "General GetCount" <= 4.0 goto SetZoneDDroneGroup4D
+		if module "General GetCount" <= 5.0 goto SetZoneDDroneGroup1A
+		if module "General GetCount" <= 6.0 goto SetZoneDDroneGroup1B
+		if module "General GetCount" <= 7.0 goto SetZoneDDroneGroup1C
+		if module "General GetCount" <= 8.0 goto SetZoneDDroneGroup1D
+		if module "General GetCount" <= 9.0 goto SetZoneDDroneGroup2A
+		
+		if Timer > 0.1 goto SetZoneDDroneGroup4A
+		
+	}
+	actions
+	{
+		ResetTimer 
+	}
+
+}
+
+
+state SetZoneDDroneGroup1A
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=2" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos1" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos2" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos3" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos4" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+
+state SetZoneDDroneGroup1B
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=2" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos5" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos6" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos7" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos8" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+
+state SetZoneDDroneGroup1C
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=2" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos9" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos10" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos1" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos2" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+
+state SetZoneDDroneGroup1D
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=2" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos1" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos5" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos7" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos9" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup2A
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=4" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos11" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos12" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos13" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos14" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup2B
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=4" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos15" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos16" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos17" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos18" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup2C
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=4" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos19" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos20" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos21" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos22" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup2D
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=4" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos15" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos16" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos17" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos14" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup3A
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=6" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos23" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos24" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos25" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos26" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup3B
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=6" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos27" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos28" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos29" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos30" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup3C
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=6" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos31" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos32" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos33" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos21" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup3D
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=6" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos25" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos20" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos21" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneForklift" "#SpawnAsCreature" "#Script=FLRoofCombat" "#SetEnergyMax=800" "#SetHealth=800" "#SetPosition=#HubZoneCRooftopPos27" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup4A
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=9" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos34" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos35" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos36" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos37" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup4B
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=9" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos38" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos39" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos40" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos41" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup4C
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=9" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos42" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos43" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos44" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos41" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+state SetZoneDDroneGroup4D
+{
+	
+	actions
+	{
+		SendToModule "#General" "#CountBSet=9" "#CountDSet=1" "#CountInc"
+		CreateModule "#Creature" "#ZoneDrones" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos37" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones2" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos34" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones3" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos42" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		CreateModule "#Creature" "#ZoneDrones4" "#Spline=A5C3Spawn" "#count=1" "#maxalive=1" "#Type=DroneDefault" "#SpawnAsCreature" "#Script=CDRoofCombat" "#SetEnergyMax=1000" "#SetHealth=1000" "#SetPosition=#HubZoneCRooftopPos38" "#ForcePlayerAsOpp" "#AddToRadarOff"
+		SetState TrackHubZone
+		
+	}
+
+}
+

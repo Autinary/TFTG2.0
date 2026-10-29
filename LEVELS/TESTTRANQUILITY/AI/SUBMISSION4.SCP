@@ -1,0 +1,92 @@
+;node to node race
+
+state SubMission4_Enter
+{
+	actions
+	{
+		SendToModule "#SubMissions" "#TurnOff"
+		SetDeathPoint "SubMission4_Death"
+		SetState "SubMission4_Init"
+	}
+}
+state SubMission4_Init
+{
+	conditions
+	{
+		if timer > 0.1 goto SubMission4_Main
+	}
+	actions
+	{
+		ResetTimer
+		SendToModule "#SubMissions" "#SetTitle=#Race"
+		SendToModule "#General" "#ResetAll" "#SetPlayer=#StartMission""
+		CreateModule "#Timer" "#Timer" "#Time=120.0"
+		CreateModule "#RaceNodes" "#RaceNodes" "#Spline=RaceNode1" "#Range=8"
+
+	}
+}
+state SubMission4_Main
+{
+	conditions
+	{
+		if module "RaceNodes getpercentagecomplete" == 1.0 goto SubMission4_Finish
+		if module "Timer FailMission" == 1.0 goto SubMission4_Fail
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeUp"		
+	}
+}
+state SubMission4_Finish
+{
+	conditions
+	{
+		if module "General FadeDown" == 1.0 goto SubMission4_FinishWait
+	}
+	actions
+	{
+		SendToModule "#General" "#FadeDown"
+	}
+}
+state SubMission4_FinishWait
+{
+	conditions
+	{
+	}
+	actions
+	{
+		SendToModule "#SubMissions" "#SetCompleted=4"
+		SetState "SubMission4_Leave"
+	}
+}
+state SubMission4_Death
+{
+	conditions
+	{
+		if module "General GetFinishedMissionDeathFail" == 1.0 goto SubMission4_Leave
+	}
+	actions
+	{
+		DestroyAllModules "#IncludeProtected"
+		SendToModule "#General" "#DeathFailMission"
+	}
+}
+state SubMission4_Fail
+{
+	conditions
+	{
+		if module "General GetFinishedMissionFail" == 1.0 goto SubMission4_Leave
+	}
+	actions
+	{
+		SendToModule "#General" "#FailMission"
+	}
+}
+state SubMission4_Leave
+{
+	actions
+	{
+		SetState "Main"
+	}
+}
+
